@@ -88,7 +88,7 @@ Compact sampler inputs are linear RGBA float surfaces with clamp-to-edge behavio
 - `dFdx`, `dFdy`, and `fwidth` through deterministic 2×2 quad replay
 - multi-pass render graphs, named attachments, external textures, and half-float attachment truncation
 
-Of 214 canonical fragment programs, 210 are generated and 4 use full CPU adapters where an explicit implementation is clearer or faster. Additional narrowly scoped scalar adapters may replace a generated factory at dispatch time while retaining the generated kernel as a fallback.
+Of 212 canonical fragment programs, 208 are generated and 4 use full CPU adapters where an explicit implementation is clearer or faster. Additional narrowly scoped scalar adapters may replace a generated factory at dispatch time while retaining the generated kernel as a fallback.
 
 Generated catalog modules are ordinary ESM and work under strict Content Security Policy. `glsl-transpiler` is a development-only dependency.
 

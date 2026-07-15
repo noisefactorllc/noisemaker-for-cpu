@@ -44,9 +44,6 @@ export function createCanonicalBindings(options) {
     // their own scalar `size` parameter override this entry via `uniforms`.
     size: new Float32Array(4),
     motion: new Float32Array(4),
-    audioWaveform: new Float32Array(128),
-    audioSpectrum: new Float32Array(128),
-    midiClockCount: 0,
     ...uniforms,
     ...textures,
     resolution,

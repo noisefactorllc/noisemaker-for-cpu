@@ -26057,40 +26057,6 @@ function canonicalFactory203($bindings, $runtime) {
 }
 
 function canonicalFactory204($bindings, $runtime) {
-  const { abs, floor, fract, min, mix, smoothstep } = $runtime.stdlib
-  const gl_FragCoord = $runtime.fragCoord
-  
-  var resolution = $bindings["resolution"];
-  var tileOffset = $bindings["tileOffset"];
-  var fullResolution = $bindings["fullResolution"];
-  var audioWaveform = $bindings["audioWaveform"];
-  var lineColor = $bindings["lineColor"];
-  var lineThickness = $bindings["lineThickness"];
-  var gain = $bindings["gain"];
-  var fragColor = new Float32Array([0, 0, 0, 0]);
-  function main () {
-  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var fIndex = uv[0] * 127;
-  	var i0 = floor(fIndex)|0;
-  	var i1 = min(i0 + 1, 127);
-  	var fract_i = fract(fIndex);
-  	var s0 = audioWaveform[i0];
-  	var s1 = audioWaveform[i1];
-  	var wval = mix(s0, s1, fract_i);
-  	wval = 0.5 + (wval - 0.5) * gain;
-  	var dist = (abs(uv[1] - wval)) * fullResolution[1];
-  	var line = smoothstep(lineThickness + 1, lineThickness, dist);
-  	(fragColor[0] = lineColor[0] * line, fragColor[1] = lineColor[1] * line, fragColor[2] = lineColor[2] * line, fragColor[3] = line, fragColor);
-  };
-  return function canonicalKernel(context, out) {
-    $runtime.beginPixel(context)
-    main()
-    $runtime.writeColor(fragColor, out)
-  }
-}
-
-function canonicalFactory205($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, sin, cos, atan, abs, floor, fract, max, mix, smoothstep, length, dot, add, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -26539,7 +26505,7 @@ function canonicalFactory205($bindings, $runtime) {
   }
 }
 
-function canonicalFactory206($bindings, $runtime) {
+function canonicalFactory205($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var color = $bindings["color"];
@@ -26555,42 +26521,7 @@ function canonicalFactory206($bindings, $runtime) {
   }
 }
 
-function canonicalFactory207($bindings, $runtime) {
-  const { abs, floor, fract, min, max, mix, smoothstep } = $runtime.stdlib
-  const gl_FragCoord = $runtime.fragCoord
-  
-  var resolution = $bindings["resolution"];
-  var tileOffset = $bindings["tileOffset"];
-  var fullResolution = $bindings["fullResolution"];
-  var audioSpectrum = $bindings["audioSpectrum"];
-  var lineColor = $bindings["lineColor"];
-  var lineThickness = $bindings["lineThickness"];
-  var gain = $bindings["gain"];
-  var fragColor = new Float32Array([0, 0, 0, 0]);
-  function main () {
-  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var fIndex = uv[0] * 127;
-  	var i0 = floor(fIndex)|0;
-  	var i1 = min(i0 + 1, 127);
-  	var fract_i = fract(fIndex);
-  	var s0 = audioSpectrum[i0];
-  	var s1 = audioSpectrum[i1];
-  	var mag = (mix(s0, s1, fract_i)) * gain;
-  	var dist = (abs(uv[1] - mag)) * fullResolution[1];
-  	var line = smoothstep(lineThickness + 1, lineThickness, dist);
-  	var fill = (smoothstep(mag + 1 / fullResolution[1], mag, uv[1])) * 0.15000000596046448;
-  	var alpha = max(line, fill);
-  	(fragColor[0] = lineColor[0] * alpha, fragColor[1] = lineColor[1] * alpha, fragColor[2] = lineColor[2] * alpha, fragColor[3] = alpha, fragColor);
-  };
-  return function canonicalKernel(context, out) {
-    $runtime.beginPixel(context)
-    main()
-    $runtime.writeColor(fragColor, out)
-  }
-}
-
-function canonicalFactory208($bindings, $runtime) {
+function canonicalFactory206($bindings, $runtime) {
   const { float, abs, floor, fract, mod, min, max, clamp, mix, step, smoothstep, length, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -26858,7 +26789,7 @@ function canonicalFactory208($bindings, $runtime) {
   }
 }
 
-function canonicalFactory209($bindings, $runtime) {
+function canonicalFactory207($bindings, $runtime) {
   const { float, abs, round, fract, min, max, clamp, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27012,7 +26943,7 @@ function canonicalFactory209($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory209.usesDerivatives = true
+canonicalFactory207.usesDerivatives = true
 
 export const canonicalKernelFactories = Object.freeze({
   "classicNoisedeck/bitEffects:bitEffects": canonicalFactory0,
@@ -27219,10 +27150,8 @@ export const canonicalKernelFactories = Object.freeze({
   "synth/polygon:shape": canonicalFactory201,
   "synth/remap:remap": canonicalFactory202,
   "synth/sacredGeometry:sacredGeometry": canonicalFactory203,
-  "synth/scope:scope": canonicalFactory204,
-  "synth/shape:shape": canonicalFactory205,
-  "synth/solid:solid": canonicalFactory206,
-  "synth/spectrum:spectrum": canonicalFactory207,
-  "synth/subdivide:subdivide": canonicalFactory208,
-  "synth/testPattern:testPattern": canonicalFactory209,
+  "synth/shape:shape": canonicalFactory204,
+  "synth/solid:solid": canonicalFactory205,
+  "synth/subdivide:subdivide": canonicalFactory206,
+  "synth/testPattern:testPattern": canonicalFactory207,
 })

@@ -70,54 +70,6 @@ test('CpuRenderer preserves canonical effect seed defaults and explicit override
   assert.ok(Math.abs(explicitAlias.surface.data[0] - 0.3) < 1e-6)
 })
 
-test('CpuRenderer supplies waveform and spectrum samples to audio generators', () => {
-  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories, tileRows: 4 })
-  const zeros = new Float32Array(128)
-  const waveform = new Float32Array(128).fill(1)
-  const spectrum = new Float32Array(128).fill(0.75)
-
-  const scopeDsl = 'search synth\nscope().write(o0)\nrender(o0)'
-  const silentScope = renderer.render(scopeDsl, { width: 8, height: 8, audioWaveform: zeros })
-  const activeScope = renderer.render(scopeDsl, { width: 8, height: 8, audioWaveform: waveform })
-  assert.notDeepEqual([...activeScope.toRgba8()], [...silentScope.toRgba8()])
-
-  const spectrumDsl = 'search synth\nspectrum().write(o0)\nrender(o0)'
-  const silentSpectrum = renderer.render(spectrumDsl, { width: 8, height: 8, audioSpectrum: zeros })
-  const activeSpectrum = renderer.render(spectrumDsl, { width: 8, height: 8, audioSpectrum: spectrum })
-  assert.notDeepEqual([...activeSpectrum.toRgba8()], [...silentSpectrum.toRgba8()])
-})
-
-test('CpuRenderer snapshots audio samples before asynchronous tile yields', async () => {
-  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories, tileRows: 2 })
-  const waveform = new Float32Array(128).fill(1)
-  const source = 'search synth\nscope().write(o0)\nrender(o0)'
-  const expected = renderer.render(source, { width: 8, height: 8, audioWaveform: waveform })
-  let yields = 0
-  const actual = await renderer.renderAsync(source, {
-    width: 8,
-    height: 8,
-    audioWaveform: waveform,
-    scheduler: async () => {
-      if (yields++ === 0) waveform.fill(0)
-    },
-  })
-  assert.deepEqual([...actual.toRgba8()], [...expected.toRgba8()])
-})
-
-test('CpuRenderer validates audio sample buffers at the API boundary', () => {
-  const renderer = fixture()
-  const source = 'search synth\nsolid().write(o0)\nrender(o0)'
-
-  assert.throws(
-    () => renderer.render(source, { width: 1, height: 1, audioWaveform: new Float32Array(127) }),
-    /audioWaveform must contain exactly 128 finite samples/,
-  )
-  assert.throws(
-    () => renderer.render(source, { width: 1, height: 1, audioSpectrum: [...new Float32Array(127), Number.NaN] }),
-    /audioSpectrum must contain exactly 128 finite samples/,
-  )
-})
-
 test('CpuRenderer validates finite time and integer render seeds', () => {
   const renderer = fixture()
   const source = 'search synth\nsolid().write(o0)\nrender(o0)'

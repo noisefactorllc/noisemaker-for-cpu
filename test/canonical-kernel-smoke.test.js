@@ -3,7 +3,7 @@ import test from 'node:test'
 
 import { createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
-import { bindCanonicalKernel } from '../src/csl/glsl-kernel.js'
+import { bindCanonicalKernel, createCanonicalBindings } from '../src/csl/glsl-kernel.js'
 import { Surface } from '../src/runtime/surface.js'
 
 test('classic palette parameters expand to canonical shader uniforms', () => {
@@ -31,6 +31,13 @@ test('generated canonical noise kernel executes with pooled vector type operatio
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
   const result = renderer.render('search synth\nnoise().write(o0)\nrender(o0)', { width: 2, height: 2, seed: 3, time: 0.25 })
   assert.ok(result.surface.data.every(Number.isFinite))
+})
+
+test('canonical bindings contain no reactive-only inputs', () => {
+  const bindings = createCanonicalBindings({ width: 1, height: 1 })
+  assert.equal(Object.hasOwn(bindings, 'audioWaveform'), false)
+  assert.equal(Object.hasOwn(bindings, 'audioSpectrum'), false)
+  assert.equal(Object.hasOwn(bindings, 'midiClockCount'), false)
 })
 
 test('classic simplex ternary assigns both lattice branches', () => {

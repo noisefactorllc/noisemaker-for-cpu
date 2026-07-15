@@ -9,8 +9,12 @@ export const excludedEffects = Object.freeze({
     "synth/cellularAutomata",
     "synth/mnca",
     "synth/navierStokes",
-    "synth/reactionDiffusion",
-    "synth/roll"
+    "synth/reactionDiffusion"
+  ],
+  "reactive": [
+    "synth/roll",
+    "synth/scope",
+    "synth/spectrum"
   ],
   "threeD": [
     "classicNoisedeck/noise3d",
@@ -17474,56 +17478,6 @@ export const effectRecords = Object.freeze([
     "externalTexture": null
   },
   {
-    "id": "synth/scope",
-    "directoryName": "scope",
-    "name": "Scope",
-    "namespace": "synth",
-    "func": "scope",
-    "kind": "generator",
-    "tags": [
-      "audio"
-    ],
-    "description": "Audio waveform oscilloscope",
-    "paramAliases": {},
-    "params": {
-      "color": {
-        "type": "color",
-        "default": [
-          0,
-          1,
-          0
-        ],
-        "uniform": "lineColor"
-      },
-      "thickness": {
-        "type": "float",
-        "default": 2,
-        "uniform": "lineThickness",
-        "min": 0.5,
-        "max": 10
-      },
-      "gain": {
-        "type": "float",
-        "default": 1,
-        "uniform": "gain",
-        "min": 0.1,
-        "max": 5
-      }
-    },
-    "passes": [
-      {
-        "name": "main",
-        "program": "scope",
-        "inputs": {},
-        "outputs": {
-          "fragColor": "outputTex"
-        }
-      }
-    ],
-    "textures": {},
-    "externalTexture": null
-  },
-  {
     "id": "synth/shape",
     "directoryName": "shape",
     "name": "Shape",
@@ -17704,56 +17658,6 @@ export const effectRecords = Object.freeze([
         "inputs": {},
         "outputs": {
           "color": "outputTex"
-        }
-      }
-    ],
-    "textures": {},
-    "externalTexture": null
-  },
-  {
-    "id": "synth/spectrum",
-    "directoryName": "spectrum",
-    "name": "Spectrum",
-    "namespace": "synth",
-    "func": "spectrum",
-    "kind": "generator",
-    "tags": [
-      "audio"
-    ],
-    "description": "Audio spectrum analyzer",
-    "paramAliases": {},
-    "params": {
-      "color": {
-        "type": "color",
-        "default": [
-          0,
-          1,
-          0
-        ],
-        "uniform": "lineColor"
-      },
-      "thickness": {
-        "type": "float",
-        "default": 2,
-        "uniform": "lineThickness",
-        "min": 0.5,
-        "max": 10
-      },
-      "gain": {
-        "type": "float",
-        "default": 1,
-        "uniform": "gain",
-        "min": 0.1,
-        "max": 5
-      }
-    },
-    "passes": [
-      {
-        "name": "main",
-        "program": "spectrum",
-        "inputs": {},
-        "outputs": {
-          "fragColor": "outputTex"
         }
       }
     ],

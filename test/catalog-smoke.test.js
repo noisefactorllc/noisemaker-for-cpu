@@ -19,10 +19,10 @@ function choiceProgram(effect, name, value) {
   return `${search}\nsolid(color: #58c).write(o0)\nread(o0).${call}.write(o1)\nrender(o1)`
 }
 
-test('default catalog contains the exact canonical 169-effect coverage set', () => {
+test('default catalog contains the exact canonical 167-effect coverage set', () => {
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
-  assert.equal(createDefaultRegistry().list().length, 169)
-  assert.equal(kernelFactories.size, 214)
+  assert.equal(createDefaultRegistry().list().length, 167)
+  assert.equal(kernelFactories.size, 212)
   assert.ok(kernels.size >= 33)
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {

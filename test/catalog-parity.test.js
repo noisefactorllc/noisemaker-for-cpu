@@ -4,9 +4,10 @@ import test from 'node:test'
 import { effectCatalog } from '../src/effects/catalog.js'
 import { eligibleEffectIds, effectRecords } from '../src/effects/generated/upstream-snapshot.js'
 
-test('runtime catalog is the exact 169-effect canonical inventory', () => {
-  assert.equal(effectCatalog.length, 169)
+test('runtime catalog is the exact 167-effect canonical inventory', () => {
+  assert.equal(effectCatalog.length, 167)
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
+  assert.equal(effectCatalog.some((effect) => ['synth/scope', 'synth/spectrum', 'synth/roll'].includes(effect.id)), false)
 })
 
 test('runtime definitions preserve canonical metadata and pass schemas', () => {

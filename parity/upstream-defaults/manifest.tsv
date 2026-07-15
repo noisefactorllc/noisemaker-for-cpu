@@ -190,12 +190,9 @@ synth__perlin	parity/upstream-defaults/synth__perlin.dsl
 synth__polygon	parity/upstream-defaults/synth__polygon.dsl
 synth__reactionDiffusion	parity/upstream-defaults/synth__reactionDiffusion.dsl
 synth__remap	parity/upstream-defaults/synth__remap.dsl
-synth__roll	parity/upstream-defaults/synth__roll.dsl
 synth__sacredGeometry	parity/upstream-defaults/synth__sacredGeometry.dsl
-synth__scope	parity/upstream-defaults/synth__scope.dsl
 synth__shape	parity/upstream-defaults/synth__shape.dsl
 synth__solid	parity/upstream-defaults/synth__solid.dsl
-synth__spectrum	parity/upstream-defaults/synth__spectrum.dsl
 synth__subdivide	parity/upstream-defaults/synth__subdivide.dsl
 synth__testPattern	parity/upstream-defaults/synth__testPattern.dsl
 synth3d__cell3d	parity/upstream-defaults/synth3d__cell3d.dsl

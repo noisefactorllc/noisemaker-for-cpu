@@ -28,15 +28,13 @@ Options:
   --output FILE        PNG output [default: art.png]
   --input FILE         PNG bound as imageTex and textTex
   --texture NAME=FILE  Named external PNG texture (repeatable)
-  --waveform FILE      JSON array of 128 waveform samples
-  --spectrum FILE      JSON array of 128 spectrum samples
   --param NAME=VALUE   Effect parameter (repeatable)
   --uniform NAME=VALUE Custom CSL uniform (repeatable)
   -h, --help           Show help
 `
 
 function parseOptions(tokens) {
-  const options = { width: 512, height: 512, time: 0, seed: 1, output: 'art.png', input: null, waveform: null, spectrum: null, params: [], uniforms: [], textures: [], positional: [] }
+  const options = { width: 512, height: 512, time: 0, seed: 1, output: 'art.png', input: null, params: [], uniforms: [], textures: [], positional: [] }
   const repeatable = new Set(['param', 'uniform', 'texture'])
   for (let index = 0; index < tokens.length; index += 1) {
     const token = tokens[index]
@@ -57,8 +55,8 @@ function parseOptions(tokens) {
       options[`${key}s`].push(value)
       continue
     }
-    if (!['width', 'height', 'time', 'seed', 'output', 'input', 'waveform', 'spectrum'].includes(key)) throw new Error(`Unknown option "--${key}"`)
-    if (['output', 'input', 'waveform', 'spectrum'].includes(key)) options[key] = value
+    if (!['width', 'height', 'time', 'seed', 'output', 'input'].includes(key)) throw new Error(`Unknown option "--${key}"`)
+    if (['output', 'input'].includes(key)) options[key] = value
     else options[key] = Number(value)
   }
   if (!Number.isInteger(options.width) || options.width <= 0) throw new Error('width must be a positive integer')
@@ -135,26 +133,10 @@ async function loadExternalTextures(options) {
   return externalTextures
 }
 
-async function loadAudioSamples(path, name) {
-  if (!path) return undefined
-  let value
-  try {
-    value = JSON.parse(await readFile(resolve(path), 'utf8'))
-  } catch (error) {
-    throw new Error(`Failed to read ${name} JSON: ${error.message}`)
-  }
-  if (!Array.isArray(value) || value.length !== 128 || value.some((sample) => !Number.isFinite(sample))) {
-    throw new TypeError(`${name} must contain exactly 128 finite samples`)
-  }
-  return Float32Array.from(value)
-}
-
 async function renderDsl(program, options) {
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
   const externalTextures = await loadExternalTextures(options)
-  const audioWaveform = await loadAudioSamples(options.waveform, 'audioWaveform')
-  const audioSpectrum = await loadAudioSamples(options.spectrum, 'audioSpectrum')
-  const result = renderer.render(program, { ...options, externalTextures, audioWaveform, audioSpectrum })
+  const result = renderer.render(program, { ...options, externalTextures })
   await writePng(resolve(options.output), result.surface)
   console.log(`Rendered ${result.width}x${result.height} CPU frame in ${result.elapsedMs.toFixed(1)} ms -> ${options.output}`)
 }

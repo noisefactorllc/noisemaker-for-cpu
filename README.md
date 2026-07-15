@@ -1,6 +1,6 @@
 # noisemaker-cpu
 
-A CPU-only backport of the Noisemaker shader engine, Polymorphic DSL, and canonical stateless 2D shader collection. It renders in vanilla JavaScript in browsers or Node.js without WebGL, WebGPU, native addons, or runtime package dependencies.
+A CPU-only backport of the Noisemaker shader engine, Polymorphic DSL, and standalone-frame canonical 2D shader collection. It renders in vanilla JavaScript in browsers or Node.js without WebGL, WebGPU, native addons, or runtime package dependencies.
 
 The renderer is designed to reproduce a frame anywhere JavaScript runs, with the expectation that complex frames can be slow. CSL—CPU Shader Language—provides a compact GLSL-like language for custom CPU shaders. The upstream Noisemaker GLSL collection is translated ahead of time into ordinary ESM pixel kernels, so catalog rendering needs neither runtime evaluation nor the GLSL transpiler.
 
@@ -29,13 +29,9 @@ node bin/noisemaker-cpu.js render program.dsl \
   --texture imageTex=source.png \
   --texture textTex=mask.png \
   --output result.png
-
-node bin/noisemaker-cpu.js effect synth/scope \
-  --waveform waveform-128.json \
-  --output scope.png
 ```
 
-`--waveform` and `--spectrum` accept JSON arrays containing exactly 128 finite samples. Custom CSL uniforms are type-checked from their declarations; use `--uniform color=[1,0.5,0]`, `--uniform enabled=true`, and `--texture inputTex=source.png` for samplers.
+Custom CSL uniforms are type-checked from their declarations; use `--uniform color=[1,0.5,0]`, `--uniform enabled=true`, and `--texture inputTex=source.png` for samplers.
 
 Render from standard input:
 
@@ -75,7 +71,7 @@ const result = renderer.render(`
 const bytes = result.toRgba8()
 ```
 
-The render-level integer `seed` supplies omitted effect seed parameters; a seed written explicitly in the DSL takes precedence. External browser images can be converted to a `Surface` and passed through `externalTextures`. Audio effects accept `audioWaveform` and `audioSpectrum` render options as arrays or typed arrays of exactly 128 finite samples.
+The render-level integer `seed` supplies omitted effect seed parameters; a seed written explicitly in the DSL takes precedence. External browser images can be converted to a `Surface` and passed through `externalTextures`.
 
 Initialized fibers, scratches, and stray-hair overlays use a 64 MiB LRU cache by default. Set `cpuTextureCacheByteLimit` in the `CpuRenderer` constructor, inspect `cpuTextureCacheStats()`, or release retained overlays with `clearCpuTextureCache()`/`dispose()`.
 
@@ -122,14 +118,14 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 The catalog is the exact eligible collection from Noisemaker revision `dc67827bfc2d4e71d64cb6095cd8c922dc64360f`:
 
-- 169 effects: 18 `classicNoisedeck`, 112 `filter`, 15 `mixer`, and 24 `synth`
-- 214 fragment programs: 210 generated from canonical GLSL and 4 full CPU adapters
+- 167 effects: 18 `classicNoisedeck`, 112 `filter`, 15 `mixer`, and 22 `synth`
+- 212 fragment programs: 208 generated from canonical GLSL and 4 full CPU adapters
 - all 410 compile-time shader choices execute through the CPU backend
-- all 169 default programs render finite output
+- all 167 default programs render finite output
 
-Only the requested classes are excluded: 9 stateful effects, 3D/mesh/cubemap effects, particle/point systems, and render-loop control nodes. `filter/text` and `synth/media` are included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory and exclusions.
+Only the requested classes are excluded: 8 other stateful effects, the explicitly removed reactive effects `synth/roll`, `synth/scope`, and `synth/spectrum`, 3D/mesh/cubemap effects, particle/point systems, and render-loop control nodes. `filter/text` and `synth/media` are included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory and exclusions.
 
-Parity claims are enforced, not inferred. `npm run parity` compares every eligible default at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'` against GPU PNG goldens. The fixtures make each canonical effect seed default explicit so the render-level seed API cannot silently change the reference frame. The current strict result is 168/169 within ±2 RGBA bytes, with 119 byte-exact. `filter/crt` remains red because JavaScript and ANGLE/Metal fast-math still diverge in its hash-sensitive pipeline. The gate remains failing until CRT matches; the tolerance and eligible catalog have not been reduced.
+Parity claims are enforced, not inferred. `npm run parity` compares every eligible default at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'` against GPU PNG goldens. The fixtures make each canonical effect seed default explicit so the render-level seed API cannot silently change the reference frame. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact. `filter/crt` remains red because JavaScript and ANGLE/Metal fast-math still diverge in its hash-sensitive pipeline. The gate remains failing until CRT matches. The tolerance is unchanged; the denominator changed only through the three named, user-requested exclusions above.
 
 ## Performance model
 

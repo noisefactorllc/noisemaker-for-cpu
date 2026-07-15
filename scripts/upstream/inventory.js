@@ -22,8 +22,8 @@ const stateful = Object.freeze([
   'synth/mnca',
   'synth/navierStokes',
   'synth/reactionDiffusion',
-  'synth/roll',
 ])
+const reactive = Object.freeze(['synth/roll', 'synth/scope', 'synth/spectrum'])
 const classic3d = new Set(['classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d'])
 
 function projectParam(param, stdEnums) {
@@ -80,7 +80,7 @@ async function inventory() {
     for (const directoryName of (await readdir(resolve(effectsRoot, namespace))).sort()) {
       const id = `${namespace}/${directoryName}`
       const definitionPath = resolve(effectsRoot, id, 'definition.js')
-      if (!existsSync(definitionPath) || stateful.includes(id) || classic3d.has(id)) continue
+      if (!existsSync(definitionPath) || stateful.includes(id) || reactive.includes(id) || classic3d.has(id)) continue
       const definition = await loadDefinition(namespace, directoryName)
       records.push({
         id,
@@ -107,6 +107,7 @@ const upstreamRevision = assertPinnedSource(referenceRoot)
 const effectRecords = await inventory()
 const excludedEffects = {
   stateful: [...stateful],
+  reactive: [...reactive],
   threeD: [
     'classicNoisedeck/noise3d',
     'classicNoisedeck/shapes3d',

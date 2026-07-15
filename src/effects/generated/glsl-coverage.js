@@ -1873,15 +1873,6 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 8953
   },
   {
-    "effectId": "synth/scope",
-    "program": "scope",
-    "file": "scope.glsl",
-    "status": "generated",
-    "sourceBytes": 1124,
-    "normalizedBytes": 1105,
-    "generatedBytes": 1080
-  },
-  {
     "effectId": "synth/shape",
     "program": "shape",
     "file": "shape.glsl",
@@ -1898,15 +1889,6 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 273,
     "normalizedBytes": 254,
     "generatedBytes": 269
-  },
-  {
-    "effectId": "synth/spectrum",
-    "program": "spectrum",
-    "file": "spectrum.glsl",
-    "status": "generated",
-    "sourceBytes": 1104,
-    "normalizedBytes": 1085,
-    "generatedBytes": 1162
   },
   {
     "effectId": "synth/subdivide",

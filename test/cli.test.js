@@ -20,9 +20,11 @@ test('CLI prints help and the effect catalog', () => {
   assert.equal(help.status, 0, help.stderr)
   assert.match(help.stdout, /Usage: noisemaker-cpu/)
   assert.match(help.stdout, /render PROGRAM/)
+  assert.doesNotMatch(help.stdout, /waveform|spectrum/i)
   assert.equal(effects.status, 0, effects.stderr)
   assert.match(effects.stdout, /synth\/noise/)
   assert.match(effects.stdout, /filter\/blur/)
+  assert.doesNotMatch(effects.stdout, /synth\/(scope|spectrum|roll)/)
 })
 
 test('CLI renders DSL files and stdin to deterministic PNGs', async () => {
@@ -103,22 +105,15 @@ test('CLI csl command parses typed uniforms and named sampler textures', async (
   }
 })
 
-test('CLI drives audio effects from 128-sample JSON buffers', async () => {
-  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
-  try {
-    const waveformPath = join(dir, 'waveform.json')
-    const silentOutput = join(dir, 'silent.png')
-    const activeOutput = join(dir, 'active.png')
-    await writeFile(waveformPath, JSON.stringify(Array(128).fill(1)))
-
-    const silent = run(['effect', 'synth/scope', '--width=8', '--height=8', '--output', silentOutput])
-    const active = run(['effect', 'synth/scope', '--width=8', '--height=8', '--waveform', waveformPath, '--output', activeOutput])
-    assert.equal(silent.status, 0, silent.stderr)
-    assert.equal(active.status, 0, active.stderr)
-    assert.notDeepEqual(await readFile(activeOutput), await readFile(silentOutput))
-  } finally {
-    await rm(dir, { recursive: true, force: true })
+test('CLI rejects removed reactive effects and audio options', () => {
+  for (const effect of ['synth/scope', 'synth/spectrum', 'synth/roll']) {
+    const result = run(['effect', effect, '--width=1', '--height=1'])
+    assert.notEqual(result.status, 0)
+    assert.match(result.stderr, /Unknown effect/)
   }
+  const waveform = run(['effect', 'synth/noise', '--waveform', 'samples.json'])
+  assert.notEqual(waveform.status, 0)
+  assert.match(waveform.stderr, /Unknown option "--waveform"/)
 })
 
 test('CLI loads PNG input and named external textures', async () => {

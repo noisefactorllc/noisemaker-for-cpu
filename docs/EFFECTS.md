@@ -1,8 +1,8 @@
 # Effect coverage
 
-This is the exact stateless 2D catalog imported from Noisemaker revision `dc67827bfc2d4e71d64cb6095cd8c922dc64360f`. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact standalone-frame 2D target imported from Noisemaker revision `dc67827bfc2d4e71d64cb6095cd8c922dc64360f`, after the explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
-The runtime contains 169 effects and 214 fragment programs. Every default effect and all 410 non-null compile-time shader choices execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
+The runtime contains 167 effects and 212 fragment programs. Every default effect and all 410 non-null compile-time shader choices execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 
 ## `classicNoisedeck` — 18
 
@@ -16,15 +16,16 @@ The runtime contains 169 effects and 214 fragment programs. Every default effect
 
 `alphaMask`, `applyMode`, `blendMode`, `cellSplit`, `centerMask`, `channelCombine`, `distortion`, `focusBlur`, `mashup`, `patternMix`, `shadow`, `shapeMask`, `split`, `thresholdMix`, `uvRemap`
 
-## `synth` — 24
+## `synth` — 22
 
-`bitwise`, `cell`, `curl`, `gabor`, `gradient`, `julia`, `mandala`, `mandelbrot`, `media`, `modPattern`, `newton`, `noise`, `osc2d`, `pattern`, `perlin`, `polygon`, `remap`, `sacredGeometry`, `scope`, `shape`, `solid`, `spectrum`, `subdivide`, `testPattern`
+`bitwise`, `cell`, `curl`, `gabor`, `gradient`, `julia`, `mandala`, `mandelbrot`, `media`, `modPattern`, `newton`, `noise`, `osc2d`, `pattern`, `perlin`, `polygon`, `remap`, `sacredGeometry`, `shape`, `solid`, `subdivide`, `testPattern`
 
 ## Intentional exclusions
 
 These are excluded by the requested CPU-port scope, not by silent compiler failures:
 
-- Stateful (9): `filter/convolutionFeedback`, `filter/feedback`, `filter/motionBlur`, `filter/temporalAberration`, `synth/cellularAutomata`, `synth/mnca`, `synth/navierStokes`, `synth/reactionDiffusion`, `synth/roll`
+- Other stateful effects (8): `filter/convolutionFeedback`, `filter/feedback`, `filter/motionBlur`, `filter/temporalAberration`, `synth/cellularAutomata`, `synth/mnca`, `synth/navierStokes`, `synth/reactionDiffusion`
+- Reactive effects removed from this port: `synth/roll` (MIDI plus feedback), `synth/scope` (audio waveform), and `synth/spectrum` (audio spectrum)
 - 3D: `classicNoisedeck/noise3d`, `classicNoisedeck/shapes3d`, `filter3d/*`, `synth3d/*`, `render/*3d`, `render/*Cubemap*`, and `render/mesh*`
 - Particles: `points/*` and `render/points*`
 - Render control: `render/loopBegin` and `render/loopEnd`
@@ -33,4 +34,4 @@ Media and text are not excluded. `synth/media` and `filter/text` receive browser
 
 ## Parity status
 
-`npm run parity` compares all 169 canonical default programs to pinned GPU goldens with an unchanged ±2-byte RGBA threshold. Current result: 168/169 pass and 119 are byte-exact. `filter/crt` remains failing, so the strict parity command intentionally exits nonzero. Catalog, schema, graph, compile-time-choice, and execution coverage are exact for the 169-effect target; pixel parity remains an active one-effect gate.
+`npm run parity` compares all 167 canonical default programs to pinned GPU goldens with an unchanged ±2-byte RGBA threshold. Current result: 166/167 pass and 117 are byte-exact. `filter/crt` remains failing, so the strict parity command intentionally exits nonzero. Catalog, schema, graph, compile-time-choice, and execution coverage are exact for the 167-effect target; the denominator changed only through the three named exclusions above, and pixel parity remains an active one-effect gate.

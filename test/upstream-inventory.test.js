@@ -172,10 +172,8 @@ const EXPECTED_IDS = [
   'synth/polygon',
   'synth/remap',
   'synth/sacredGeometry',
-  'synth/scope',
   'synth/shape',
   'synth/solid',
-  'synth/spectrum',
   'synth/subdivide',
   'synth/testPattern',
 ]
@@ -189,10 +187,15 @@ const STATEFUL = [
   'synth/mnca',
   'synth/navierStokes',
   'synth/reactionDiffusion',
-  'synth/roll',
 ]
 
-test('upstream snapshot pins the exact 169-effect stateless 2D inventory', () => {
+const REACTIVE = [
+  'synth/roll',
+  'synth/scope',
+  'synth/spectrum',
+]
+
+test('upstream snapshot pins the exact 167-effect standalone-frame 2D inventory', () => {
   assert.equal(UPSTREAM_REVISION, 'dc67827bfc2d4e71d64cb6095cd8c922dc64360f')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
@@ -200,9 +203,10 @@ test('upstream snapshot pins the exact 169-effect stateless 2D inventory', () =>
       namespace,
       eligibleEffectIds.filter((id) => id.startsWith(`${namespace}/`)).length,
     ])),
-    { classicNoisedeck: 18, filter: 112, mixer: 15, synth: 24 },
+    { classicNoisedeck: 18, filter: 112, mixer: 15, synth: 22 },
   )
   assert.deepEqual(excludedEffects.stateful, STATEFUL)
+  assert.deepEqual(excludedEffects.reactive, REACTIVE)
 })
 
 test('upstream snapshot preserves parity-critical definition metadata', () => {

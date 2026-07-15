@@ -20,22 +20,12 @@ function assertRenderOptions(options) {
   if (!Number.isInteger(seed)) throw new TypeError('seed must be an integer')
   const oneShot = options.oneShot ?? 'ready'
   if (!['ready', 'initial'].includes(oneShot)) throw new TypeError('oneShot must be "ready" or "initial"')
-  const audioSamples = (value, name) => {
-    if (value === undefined) return undefined
-    const arrayLike = Array.isArray(value) || (ArrayBuffer.isView(value) && !(value instanceof DataView))
-    if (!arrayLike || value.length !== 128 || Array.from(value).some((sample) => !Number.isFinite(sample))) {
-      throw new TypeError(`${name} must contain exactly 128 finite samples`)
-    }
-    return Float32Array.from(value)
-  }
   return {
     width,
     height,
     time,
     seed,
     externalTextures: options.externalTextures ?? {},
-    audioWaveform: audioSamples(options.audioWaveform, 'audioWaveform'),
-    audioSpectrum: audioSamples(options.audioSpectrum, 'audioSpectrum'),
     oneShot,
   }
 }
@@ -139,8 +129,6 @@ export class CpuRenderer {
       }
     }
     if (definition.id === 'synth/remap') uniforms.data = remapUniformData(uniforms, renderOptions.width, renderOptions.height)
-    if (renderOptions.audioWaveform) uniforms.audioWaveform = renderOptions.audioWaveform
-    if (renderOptions.audioSpectrum) uniforms.audioSpectrum = renderOptions.audioSpectrum
     return { uniforms, textures }
   }
 
