@@ -1,0 +1,52 @@
+uniform int noiseType;
+uniform int octaves;
+uniform float scaleX;
+uniform float scaleY;
+uniform int seed;
+uniform bool wrap;
+uniform bool ridges;
+uniform int loopOffset;
+uniform float loopScale;
+uniform int speed;
+uniform int colorMode;
+
+float hash2(vec2 p, float channel) {
+  return fract(sin(dot(p, vec2(127.1, 311.7)) + float(seed) * 19.19 + channel * 73.73) * 43758.5453);
+}
+
+float noise2(vec2 p, float channel) {
+  vec2 cell = floor(p);
+  vec2 local = fract(p);
+  vec2 curve = local * local * (vec2(3.0) - local * 2.0);
+  float a = hash2(cell, channel);
+  float b = hash2(cell + vec2(1.0, 0.0), channel);
+  float c = hash2(cell + vec2(0.0, 1.0), channel);
+  float d = hash2(cell + vec2(1.0, 1.0), channel);
+  return mix(mix(a, b, curve.x), mix(c, d, curve.x), curve.y);
+}
+
+float fbm(vec2 p, float channel) {
+  float value = 0.0;
+  float amplitude = 0.5;
+  float total = 0.0;
+  for (int octave = 0; octave < octaves; octave++) {
+    value += noise2(p, channel) * amplitude;
+    total += amplitude;
+    p *= 2.0;
+    amplitude *= 0.5;
+  }
+  value /= max(total, 0.0001);
+  if (noiseType == 0) value = step(0.5, value);
+  else if (noiseType == 11) value = sin(value * 6.28318530718) * 0.5 + 0.5;
+  if (ridges) value = 1.0 - abs(value * 2.0 - 1.0);
+  return value;
+}
+
+vec4 main() {
+  vec2 p = uv * vec2(scaleX, scaleY) * 0.08;
+  p += vec2(time * float(speed) * 0.01, time * float(loopOffset) * 0.001);
+  if (wrap) p = fract(p / max(loopScale * 0.08, 1.0)) * max(loopScale * 0.08, 1.0);
+  float r = fbm(p, 0.0);
+  if (colorMode == 0) return vec4(vec3(r), 1.0);
+  return vec4(r, fbm(p + 17.0, 1.0), fbm(p + 37.0, 2.0), 1.0);
+}

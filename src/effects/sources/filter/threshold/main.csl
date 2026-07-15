@@ -1,0 +1,11 @@
+uniform sampler2D inputTex;
+uniform float level;
+uniform float sharpness;
+
+vec4 main() {
+  vec4 color = texture(inputTex, uv);
+  float luminance = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+  float width = max((1.0 - sharpness) * 0.25, 0.0001);
+  float value = smoothstep(level - width, level + width, luminance);
+  return vec4(vec3(value), color.a);
+}

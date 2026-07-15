@@ -1,0 +1,40 @@
+{
+  "name": "noisemaker-cpu",
+  "version": "0.1.0",
+  "description": "CPU-only Noisemaker shader engine with CSL and the Polymorphic DSL",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "noisemaker-cpu": "./bin/noisemaker-cpu.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "examples/",
+    "docs/CSL.md",
+    "docs/EFFECTS.md",
+    "README.md",
+    "LICENSE",
+    "TRADEMARK.md"
+  ],
+  "exports": {
+    ".": "./src/index.js",
+    "./node": "./src/node/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "generate": "node scripts/generate-kernels.js",
+    "import:upstream": "node scripts/upstream/inventory.js",
+    "compile:upstream": "node scripts/upstream/compile-glsl.js",
+    "parity": "node scripts/parity/run.js",
+    "parity:classic": "node scripts/parity/run.js --suite classic",
+    "parity:defaults": "node scripts/parity/run.js --suite defaults",
+    "bench": "node bench/render.js"
+  },
+  "devDependencies": {
+    "glsl-transpiler": "3.0.3"
+  },
+  "license": "MIT"
+}

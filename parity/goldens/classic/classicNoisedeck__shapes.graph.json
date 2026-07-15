@@ -1,0 +1,137 @@
+{
+  "id": "-j75skr",
+  "source": "search classicNoisedeck\n\nshapes()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "classicNoisedeck",
+      "func": "shapes",
+      "progName": "shapes",
+      "program": "node_0_shapes__LOOP_A_OFFSET_40__LOOP_B_OFFSET_30",
+      "defines": {
+        "LOOP_A_OFFSET": 40,
+        "LOOP_B_OFFSET": 30
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "loopAScale": 1,
+        "loopBScale": 1,
+        "speedA": 50,
+        "speedB": 50,
+        "seed": 1,
+        "wrap": true,
+        "palette": 46,
+        "paletteMode": 3,
+        "paletteOffset": [
+          0.78,
+          0.68,
+          0.15
+        ],
+        "paletteAmp": [
+          0.73,
+          0.36,
+          0.52
+        ],
+        "paletteFreq": [
+          1,
+          1,
+          1
+        ],
+        "palettePhase": [
+          0.74,
+          0.93,
+          0.28
+        ],
+        "cyclePalette": 1,
+        "rotatePalette": 0,
+        "repeatPalette": 1
+      },
+      "uniformSpecs": {
+        "loopAScale": {
+          "min": 1,
+          "max": 100
+        },
+        "loopBScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speedA": {
+          "min": -100,
+          "max": 100
+        },
+        "speedB": {
+          "min": -100,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "paletteMode": {
+          "min": 0,
+          "max": 100
+        },
+        "rotatePalette": {
+          "min": 0,
+          "max": 100
+        },
+        "repeatPalette": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      "effectKey": "classicNoisedeck.shapes",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

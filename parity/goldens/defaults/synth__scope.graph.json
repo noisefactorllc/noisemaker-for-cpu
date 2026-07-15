@@ -1,0 +1,86 @@
+{
+  "id": "-k6w5g6",
+  "source": "search synth\n\nscope()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "scope",
+      "progName": "scope",
+      "program": "node_0_scope",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "lineColor": [
+          0,
+          1,
+          0
+        ],
+        "lineThickness": 2,
+        "gain": 1
+      },
+      "uniformSpecs": {
+        "lineThickness": {
+          "min": 0.5,
+          "max": 10
+        },
+        "gain": {
+          "min": 0.1,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.scope",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

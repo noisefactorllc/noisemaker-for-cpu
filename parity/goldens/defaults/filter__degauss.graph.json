@@ -1,0 +1,134 @@
+{
+  "id": "-azr4u9",
+  "source": "search filter, synth\n\ntestPattern()\n.degauss()\n.write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "testPattern",
+      "progName": "testPattern",
+      "program": "node_0_testPattern",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "pattern": 0,
+        "gridSize": 4
+      },
+      "uniformSpecs": {
+        "gridSize": {
+          "min": 1,
+          "max": 16
+        }
+      },
+      "effectKey": "synth.testPattern",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "degauss",
+      "progName": "degauss",
+      "program": "node_1_degauss",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "pattern": 0,
+        "gridSize": 4,
+        "displacement": 0.0625,
+        "direction": 0,
+        "seed": 1,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "displacement": {
+          "min": 0,
+          "max": 0.25
+        },
+        "direction": {
+          "min": -180,
+          "max": 180
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 2
+        }
+      },
+      "effectKey": "filter.degauss",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "id": "d0b9kq",
+  "source": "search filter, synth\n\nnoise()\n  .tetraColorArray(smoothness: 0)\n  .write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": false,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "tetraColorArray",
+      "progName": "tetraColorArray",
+      "program": "node_1_tetraColorArray",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": false,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 0,
+        "type": 10,
+        "loopOffset": 300,
+        "colorCount": 6,
+        "positionMode": 0,
+        "color0": [
+          1,
+          0,
+          0
+        ],
+        "color1": [
+          1,
+          0.5,
+          0
+        ],
+        "color2": [
+          1,
+          1,
+          0
+        ],
+        "color3": [
+          0,
+          1,
+          0
+        ],
+        "color4": [
+          0,
+          0,
+          1
+        ],
+        "color5": [
+          0.58,
+          0,
+          0.83
+        ],
+        "color6": [
+          1,
+          1,
+          1
+        ],
+        "color7": [
+          0,
+          0,
+          0
+        ],
+        "pos0": 0,
+        "pos1": 0.14,
+        "pos2": 0.29,
+        "pos3": 0.43,
+        "pos4": 0.57,
+        "pos5": 0.71,
+        "pos6": 0.86,
+        "pos7": 1,
+        "rotation": 0,
+        "repeat": 1,
+        "offset": 0,
+        "alpha": 1,
+        "smoothness": 0
+      },
+      "uniformSpecs": {
+        "colorCount": {
+          "min": 2,
+          "max": 8
+        },
+        "pos0": {
+          "min": 0,
+          "max": 1
+        },
+        "pos1": {
+          "min": 0,
+          "max": 1
+        },
+        "pos2": {
+          "min": 0,
+          "max": 1
+        },
+        "pos3": {
+          "min": 0,
+          "max": 1
+        },
+        "pos4": {
+          "min": 0,
+          "max": 1
+        },
+        "pos5": {
+          "min": 0,
+          "max": 1
+        },
+        "pos6": {
+          "min": 0,
+          "max": 1
+        },
+        "pos7": {
+          "min": 0,
+          "max": 1
+        },
+        "repeat": {
+          "min": 0,
+          "max": 10
+        },
+        "offset": {
+          "min": 0,
+          "max": 1
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.tetraColorArray",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,66 @@
+const float PI = 3.14159265359;
+const float TAU = 6.28318530718;
+
+uniform int gradientType;
+uniform float rotation;
+uniform int repeat;
+uniform int speed;
+uniform int seed;
+uniform vec3 color1;
+uniform vec3 color2;
+uniform vec3 color3;
+uniform vec3 color4;
+uniform int colorCount;
+
+float hash2(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7)) + float(seed) * 0.17) * 43758.5453);
+}
+
+float valueNoise(vec2 p) {
+  vec2 cell = floor(p);
+  vec2 local = fract(p);
+  vec2 curve = local * local * (vec2(3.0) - local * 2.0);
+  float a = hash2(cell);
+  float b = hash2(cell + vec2(1.0, 0.0));
+  float c = hash2(cell + vec2(0.0, 1.0));
+  float d = hash2(cell + vec2(1.0, 1.0));
+  return mix(mix(a, b, curve.x), mix(c, d, curve.x), curve.y);
+}
+
+vec3 colorAt(int index) {
+  if (index == 0) return color1;
+  if (index == 1) return color2;
+  if (index == 2) return color3;
+  return color4;
+}
+
+vec3 gradientColor(float value) {
+  float wrapped = fract(value);
+  float segment = wrapped * float(colorCount);
+  int index = int(floor(segment));
+  int next = index + 1;
+  if (next >= colorCount) next = 0;
+  return mix(colorAt(index), colorAt(next), fract(segment));
+}
+
+vec4 main() {
+  float aspect = resolution.x / resolution.y;
+  vec2 centered = uv - 0.5;
+  centered.x *= aspect;
+  float angle = -rotation * PI / 180.0;
+  float sine = sin(angle);
+  float cosine = cos(angle);
+  vec2 rotated = vec2(centered.x * cosine - centered.y * sine, centered.x * sine + centered.y * cosine);
+  float value = rotated.y + 0.5;
+  if (gradientType == 0) value = (atan(rotated.y, rotated.x) + PI) / TAU;
+  else if (gradientType == 1) value = abs(rotated.x) + abs(rotated.y);
+  else if (gradientType == 2) {
+    vec3 top = mix(color1, colorCount >= 3 ? color2 : color1, uv.x);
+    vec3 bottom = mix(colorCount >= 3 ? color3 : color2, colorCount >= 4 ? color4 : color3, uv.x);
+    return vec4(mix(bottom, top, uv.y), 1.0);
+  } else if (gradientType == 4) value = valueNoise(rotated * 4.0);
+  else if (gradientType == 5) value = length(rotated) * 2.0;
+  else if (gradientType == 6) value = atan(rotated.y, rotated.x) / TAU + length(rotated) * 2.0;
+  value = value * float(repeat) + time * float(speed);
+  return vec4(gradientColor(value), 1.0);
+}

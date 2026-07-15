@@ -1,0 +1,40 @@
+uniform sampler2D inputTex;
+uniform float rotation;
+uniform float hueRange;
+uniform float saturation;
+
+vec3 rgbToHsv(vec3 color) {
+  float maximum = max(color.r, max(color.g, color.b));
+  float minimum = min(color.r, min(color.g, color.b));
+  float delta = maximum - minimum;
+  float hue = 0.0;
+  if (delta > 0.000001) {
+    if (maximum == color.r) hue = mod((color.g - color.b) / delta, 6.0) / 6.0;
+    else if (maximum == color.g) hue = ((color.b - color.r) / delta + 2.0) / 6.0;
+    else hue = ((color.r - color.g) / delta + 4.0) / 6.0;
+  }
+  float sat = maximum <= 0.0 ? 0.0 : delta / maximum;
+  return vec3(hue, sat, maximum);
+}
+
+vec3 hsvToRgb(vec3 hsv) {
+  float hue = fract(hsv.x) * 6.0;
+  float chroma = hsv.z * hsv.y;
+  float second = chroma * (1.0 - abs(mod(hue, 2.0) - 1.0));
+  vec3 rgb = vec3(0.0);
+  if (hue < 1.0) rgb = vec3(chroma, second, 0.0);
+  else if (hue < 2.0) rgb = vec3(second, chroma, 0.0);
+  else if (hue < 3.0) rgb = vec3(0.0, chroma, second);
+  else if (hue < 4.0) rgb = vec3(0.0, second, chroma);
+  else if (hue < 5.0) rgb = vec3(second, 0.0, chroma);
+  else rgb = vec3(chroma, 0.0, second);
+  return rgb + (hsv.z - chroma);
+}
+
+vec4 main() {
+  vec4 color = texture(inputTex, uv);
+  vec3 hsv = rgbToHsv(color.rgb);
+  hsv.x = fract(hsv.x * (hueRange * 0.01) + rotation / 360.0);
+  hsv.y *= saturation;
+  return vec4(hsvToRgb(hsv), color.a);
+}

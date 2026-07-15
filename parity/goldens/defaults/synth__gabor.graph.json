@@ -1,0 +1,111 @@
+{
+  "id": "-f6djgf",
+  "source": "search synth\n\ngabor()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "gabor",
+      "progName": "gabor",
+      "program": "node_0_gabor",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "scale": 75,
+        "orientation": 0,
+        "bandwidth": 75,
+        "isotropy": 0,
+        "density": 3,
+        "octaves": 1,
+        "speed": 1,
+        "seed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 100
+        },
+        "orientation": {
+          "min": -180,
+          "max": 180
+        },
+        "bandwidth": {
+          "min": 1,
+          "max": 100
+        },
+        "isotropy": {
+          "min": 0,
+          "max": 100
+        },
+        "density": {
+          "min": 1,
+          "max": 8
+        },
+        "octaves": {
+          "min": 1,
+          "max": 5
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.gabor",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

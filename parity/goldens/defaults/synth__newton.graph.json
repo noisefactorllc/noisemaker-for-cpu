@@ -1,0 +1,139 @@
+{
+  "id": "-gotp2n",
+  "source": "search synth\n\nnewton()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "newton",
+      "progName": "newton",
+      "program": "node_0_newton",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "poi": 5,
+        "outputMode": 2,
+        "iterations": 100,
+        "degree": 3,
+        "relaxation": 1,
+        "tolerance": 0.001,
+        "centerHiX": 0,
+        "centerHiY": 0,
+        "rotation": 0,
+        "zoomSpeed": 0,
+        "zoomDepth": 0,
+        "degreeSpeed": 0,
+        "degreeRange": 0,
+        "relaxSpeed": 0,
+        "relaxRange": 0,
+        "invert": false
+      },
+      "uniformSpecs": {
+        "iterations": {
+          "min": 10,
+          "max": 500
+        },
+        "degree": {
+          "min": 3,
+          "max": 8
+        },
+        "relaxation": {
+          "min": 0.5,
+          "max": 2
+        },
+        "tolerance": {
+          "min": 0.0001,
+          "max": 0.01
+        },
+        "centerHiX": {
+          "min": -3,
+          "max": 3
+        },
+        "centerHiY": {
+          "min": -3,
+          "max": 3
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "zoomSpeed": {
+          "min": 0,
+          "max": 5
+        },
+        "zoomDepth": {
+          "min": 0,
+          "max": 14
+        },
+        "degreeSpeed": {
+          "min": 0,
+          "max": 1
+        },
+        "degreeRange": {
+          "min": 0,
+          "max": 3
+        },
+        "relaxSpeed": {
+          "min": 0,
+          "max": 1
+        },
+        "relaxRange": {
+          "min": 0,
+          "max": 0.5
+        }
+      },
+      "effectKey": "synth.newton",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

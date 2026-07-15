@@ -1,0 +1,24 @@
+const float PI = 3.14159265359;
+uniform sampler2D inputTex;
+uniform float rotation;
+uniform int wrap;
+uniform int speed;
+
+float wrapCoord(float value) {
+  if (wrap == 2) return clamp(value, 0.0, 1.0);
+  if (wrap == 0) {
+    float folded = mod(value, 2.0);
+    return folded <= 1.0 ? folded : 2.0 - folded;
+  }
+  return fract(value);
+}
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  float angle = (rotation + time * float(speed) * 90.0) * PI / 180.0;
+  float sine = sin(angle);
+  float cosine = cos(angle);
+  vec2 coord = vec2(p.x * cosine - p.y * sine, p.x * sine + p.y * cosine) + 0.5;
+  coord = vec2(wrapCoord(coord.x), wrapCoord(coord.y));
+  return texture(inputTex, coord);
+}

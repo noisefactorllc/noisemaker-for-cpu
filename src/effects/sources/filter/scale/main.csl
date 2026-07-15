@@ -1,0 +1,23 @@
+uniform sampler2D inputTex;
+uniform float scaleX;
+uniform float scaleY;
+uniform float centerX;
+uniform float centerY;
+uniform int wrap;
+
+float wrapCoord(float value) {
+  if (wrap == 2) return clamp(value, 0.0, 1.0);
+  if (wrap == 0) {
+    float folded = mod(value, 2.0);
+    return folded <= 1.0 ? folded : 2.0 - folded;
+  }
+  return fract(value);
+}
+
+vec4 main() {
+  vec2 center = vec2(centerX, centerY);
+  vec2 divisor = max(vec2(scaleX, scaleY), vec2(0.0001));
+  vec2 coord = center + (uv - center) / divisor;
+  coord = vec2(wrapCoord(coord.x), wrapCoord(coord.y));
+  return texture(inputTex, coord);
+}

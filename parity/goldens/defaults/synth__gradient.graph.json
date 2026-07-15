@@ -1,0 +1,117 @@
+{
+  "id": "-7hp5wy",
+  "source": "search synth\n\ngradient()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "gradient",
+      "progName": "gradient",
+      "program": "node_0_gradient",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "gradientType": 0,
+        "rotation": 0,
+        "repeat": 1,
+        "speed": 0,
+        "seed": 1,
+        "color1": [
+          1,
+          0,
+          0
+        ],
+        "color2": [
+          1,
+          1,
+          0
+        ],
+        "color3": [
+          0,
+          1,
+          0
+        ],
+        "color4": [
+          0,
+          0,
+          1
+        ],
+        "colorCount": 4
+      },
+      "uniformSpecs": {
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "repeat": {
+          "min": 1,
+          "max": 4
+        },
+        "speed": {
+          "min": -5,
+          "max": 5
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "colorCount": {
+          "min": 2,
+          "max": 4
+        }
+      },
+      "effectKey": "synth.gradient",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "id": "86tj7q",
+  "source": "search filter, synth\n\nmodPattern()\n.smooth(type: blur, radius: 4)\n.write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "modPattern",
+      "progName": "modPattern",
+      "program": "node_0_modPattern",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "shape1": 0,
+        "scale1": 18,
+        "repeat1": 5,
+        "shape2": 1,
+        "scale2": 8,
+        "repeat2": 8,
+        "shape3": 2,
+        "scale3": 1.5,
+        "repeat3": 1.5,
+        "blend": 0,
+        "smoothing": 0,
+        "animMode": 0,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "scale1": {
+          "min": 0.1,
+          "max": 20
+        },
+        "repeat1": {
+          "min": 0,
+          "max": 20
+        },
+        "scale2": {
+          "min": 0.1,
+          "max": 10
+        },
+        "repeat2": {
+          "min": 0,
+          "max": 10
+        },
+        "scale3": {
+          "min": 0.1,
+          "max": 20
+        },
+        "repeat3": {
+          "min": 0,
+          "max": 5
+        },
+        "smoothing": {
+          "min": 0,
+          "max": 3
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.modPattern",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "smooth",
+      "progName": "smoothEdge",
+      "program": "node_1_smoothEdge",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1__smoothEdges"
+      },
+      "uniforms": {
+        "shape1": 0,
+        "scale1": 18,
+        "repeat1": 5,
+        "shape2": 1,
+        "scale2": 8,
+        "repeat2": 8,
+        "shape3": 2,
+        "scale3": 1.5,
+        "repeat3": 1.5,
+        "blend": 0,
+        "smoothing": 0,
+        "animMode": 0,
+        "speed": 1,
+        "smoothType": 2,
+        "strength": 1,
+        "threshold": 0.1,
+        "radius": 4,
+        "samples": 4,
+        "searchSteps": 8
+      },
+      "uniformSpecs": {
+        "strength": {
+          "min": 0,
+          "max": 1
+        },
+        "threshold": {
+          "min": 0,
+          "max": 1
+        },
+        "radius": {
+          "min": 0.5,
+          "max": 4
+        },
+        "searchSteps": {
+          "min": 1,
+          "max": 32
+        }
+      },
+      "effectKey": "filter.smooth",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_1",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "smooth",
+      "progName": "smoothBlend",
+      "program": "node_1_smoothBlend",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out",
+        "edgeTex": "node_1__smoothEdges"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "shape1": 0,
+        "scale1": 18,
+        "repeat1": 5,
+        "shape2": 1,
+        "scale2": 8,
+        "repeat2": 8,
+        "shape3": 2,
+        "scale3": 1.5,
+        "repeat3": 1.5,
+        "blend": 0,
+        "smoothing": 0,
+        "animMode": 0,
+        "speed": 1,
+        "smoothType": 2,
+        "strength": 1,
+        "threshold": 0.1,
+        "radius": 4,
+        "samples": 4,
+        "searchSteps": 8
+      },
+      "uniformSpecs": {
+        "strength": {
+          "min": 0,
+          "max": 1
+        },
+        "threshold": {
+          "min": 0,
+          "max": 1
+        },
+        "radius": {
+          "min": 0.5,
+          "max": 4
+        },
+        "searchSteps": {
+          "min": 1,
+          "max": 32
+        }
+      },
+      "effectKey": "filter.smooth",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1__smoothEdges": "phys_1",
+    "node_1_out": "phys_2"
+  },
+  "textures": {
+    "node_1__smoothEdges": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba8unorm",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,1529 @@
+{
+  "id": "82zhbc",
+  "source": "search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .grade()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "grade",
+      "progName": "primary",
+      "program": "node_1_primary",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1__primaryTex"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "preset": 0,
+        "alpha": 1,
+        "temperature": 0,
+        "tint": 0,
+        "exposure": 0,
+        "contrast": 0,
+        "highlights": 0,
+        "shadows": 0,
+        "whites": 0,
+        "blacks": 0,
+        "saturation": 1,
+        "vibrance": 0,
+        "fadedFilm": 0,
+        "shadowTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "highlightTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "splitToneBalance": 0,
+        "curveShadows": 0,
+        "curveMidtones": 0,
+        "curveHighlights": 0,
+        "wheelShadows": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelMidtones": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelHighlights": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelBalance": 0,
+        "hslEnable": 0,
+        "hslHueCenter": 0,
+        "hslHueRange": 0.1,
+        "hslSatMin": 0,
+        "hslSatMax": 1,
+        "hslLumMin": 0,
+        "hslLumMax": 1,
+        "hslFeather": 0.1,
+        "hslHueShift": 0,
+        "hslSatAdjust": 0,
+        "hslLumAdjust": 0,
+        "vignetteAmount": 0,
+        "vignetteMidpoint": 0.5,
+        "vignetteRoundness": 0,
+        "vignetteFeather": 0.5,
+        "vigHiProtect": 0
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "temperature": {
+          "min": -1,
+          "max": 1
+        },
+        "tint": {
+          "min": -1,
+          "max": 1
+        },
+        "exposure": {
+          "min": -4,
+          "max": 4
+        },
+        "contrast": {
+          "min": -1,
+          "max": 1
+        },
+        "highlights": {
+          "min": -1,
+          "max": 1
+        },
+        "shadows": {
+          "min": -1,
+          "max": 1
+        },
+        "whites": {
+          "min": -1,
+          "max": 1
+        },
+        "blacks": {
+          "min": -1,
+          "max": 1
+        },
+        "saturation": {
+          "min": 0,
+          "max": 2
+        },
+        "vibrance": {
+          "min": -1,
+          "max": 1
+        },
+        "fadedFilm": {
+          "min": 0,
+          "max": 1
+        },
+        "splitToneBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "curveShadows": {
+          "min": -1,
+          "max": 1
+        },
+        "curveMidtones": {
+          "min": -1,
+          "max": 1
+        },
+        "curveHighlights": {
+          "min": -1,
+          "max": 1
+        },
+        "wheelBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "hslEnable": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueCenter": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueRange": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslSatMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslSatMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslFeather": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslHueShift": {
+          "min": -0.5,
+          "max": 0.5
+        },
+        "hslSatAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "hslLumAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteAmount": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteMidpoint": {
+          "min": 0,
+          "max": 1
+        },
+        "vignetteRoundness": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteFeather": {
+          "min": 0,
+          "max": 1
+        },
+        "vigHiProtect": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.grade",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_1",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "grade",
+      "progName": "creative",
+      "program": "node_1_creative",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1__primaryTex"
+      },
+      "outputs": {
+        "fragColor": "node_1__creativeTex"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "preset": 0,
+        "alpha": 1,
+        "temperature": 0,
+        "tint": 0,
+        "exposure": 0,
+        "contrast": 0,
+        "highlights": 0,
+        "shadows": 0,
+        "whites": 0,
+        "blacks": 0,
+        "saturation": 1,
+        "vibrance": 0,
+        "fadedFilm": 0,
+        "shadowTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "highlightTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "splitToneBalance": 0,
+        "curveShadows": 0,
+        "curveMidtones": 0,
+        "curveHighlights": 0,
+        "wheelShadows": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelMidtones": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelHighlights": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelBalance": 0,
+        "hslEnable": 0,
+        "hslHueCenter": 0,
+        "hslHueRange": 0.1,
+        "hslSatMin": 0,
+        "hslSatMax": 1,
+        "hslLumMin": 0,
+        "hslLumMax": 1,
+        "hslFeather": 0.1,
+        "hslHueShift": 0,
+        "hslSatAdjust": 0,
+        "hslLumAdjust": 0,
+        "vignetteAmount": 0,
+        "vignetteMidpoint": 0.5,
+        "vignetteRoundness": 0,
+        "vignetteFeather": 0.5,
+        "vigHiProtect": 0
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "temperature": {
+          "min": -1,
+          "max": 1
+        },
+        "tint": {
+          "min": -1,
+          "max": 1
+        },
+        "exposure": {
+          "min": -4,
+          "max": 4
+        },
+        "contrast": {
+          "min": -1,
+          "max": 1
+        },
+        "highlights": {
+          "min": -1,
+          "max": 1
+        },
+        "shadows": {
+          "min": -1,
+          "max": 1
+        },
+        "whites": {
+          "min": -1,
+          "max": 1
+        },
+        "blacks": {
+          "min": -1,
+          "max": 1
+        },
+        "saturation": {
+          "min": 0,
+          "max": 2
+        },
+        "vibrance": {
+          "min": -1,
+          "max": 1
+        },
+        "fadedFilm": {
+          "min": 0,
+          "max": 1
+        },
+        "splitToneBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "curveShadows": {
+          "min": -1,
+          "max": 1
+        },
+        "curveMidtones": {
+          "min": -1,
+          "max": 1
+        },
+        "curveHighlights": {
+          "min": -1,
+          "max": 1
+        },
+        "wheelBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "hslEnable": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueCenter": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueRange": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslSatMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslSatMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslFeather": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslHueShift": {
+          "min": -0.5,
+          "max": 0.5
+        },
+        "hslSatAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "hslLumAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteAmount": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteMidpoint": {
+          "min": 0,
+          "max": 1
+        },
+        "vignetteRoundness": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteFeather": {
+          "min": 0,
+          "max": 1
+        },
+        "vigHiProtect": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.grade",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_2",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "grade",
+      "progName": "wheels",
+      "program": "node_1_wheels",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1__creativeTex"
+      },
+      "outputs": {
+        "fragColor": "node_1__wheelsTex"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "preset": 0,
+        "alpha": 1,
+        "temperature": 0,
+        "tint": 0,
+        "exposure": 0,
+        "contrast": 0,
+        "highlights": 0,
+        "shadows": 0,
+        "whites": 0,
+        "blacks": 0,
+        "saturation": 1,
+        "vibrance": 0,
+        "fadedFilm": 0,
+        "shadowTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "highlightTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "splitToneBalance": 0,
+        "curveShadows": 0,
+        "curveMidtones": 0,
+        "curveHighlights": 0,
+        "wheelShadows": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelMidtones": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelHighlights": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelBalance": 0,
+        "hslEnable": 0,
+        "hslHueCenter": 0,
+        "hslHueRange": 0.1,
+        "hslSatMin": 0,
+        "hslSatMax": 1,
+        "hslLumMin": 0,
+        "hslLumMax": 1,
+        "hslFeather": 0.1,
+        "hslHueShift": 0,
+        "hslSatAdjust": 0,
+        "hslLumAdjust": 0,
+        "vignetteAmount": 0,
+        "vignetteMidpoint": 0.5,
+        "vignetteRoundness": 0,
+        "vignetteFeather": 0.5,
+        "vigHiProtect": 0
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "temperature": {
+          "min": -1,
+          "max": 1
+        },
+        "tint": {
+          "min": -1,
+          "max": 1
+        },
+        "exposure": {
+          "min": -4,
+          "max": 4
+        },
+        "contrast": {
+          "min": -1,
+          "max": 1
+        },
+        "highlights": {
+          "min": -1,
+          "max": 1
+        },
+        "shadows": {
+          "min": -1,
+          "max": 1
+        },
+        "whites": {
+          "min": -1,
+          "max": 1
+        },
+        "blacks": {
+          "min": -1,
+          "max": 1
+        },
+        "saturation": {
+          "min": 0,
+          "max": 2
+        },
+        "vibrance": {
+          "min": -1,
+          "max": 1
+        },
+        "fadedFilm": {
+          "min": 0,
+          "max": 1
+        },
+        "splitToneBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "curveShadows": {
+          "min": -1,
+          "max": 1
+        },
+        "curveMidtones": {
+          "min": -1,
+          "max": 1
+        },
+        "curveHighlights": {
+          "min": -1,
+          "max": 1
+        },
+        "wheelBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "hslEnable": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueCenter": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueRange": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslSatMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslSatMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslFeather": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslHueShift": {
+          "min": -0.5,
+          "max": 0.5
+        },
+        "hslSatAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "hslLumAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteAmount": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteMidpoint": {
+          "min": 0,
+          "max": 1
+        },
+        "vignetteRoundness": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteFeather": {
+          "min": 0,
+          "max": 1
+        },
+        "vigHiProtect": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.grade",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_3",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "grade",
+      "progName": "hslSecondary",
+      "program": "node_1_hslSecondary",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1__wheelsTex"
+      },
+      "outputs": {
+        "fragColor": "node_1__hslTex"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "preset": 0,
+        "alpha": 1,
+        "temperature": 0,
+        "tint": 0,
+        "exposure": 0,
+        "contrast": 0,
+        "highlights": 0,
+        "shadows": 0,
+        "whites": 0,
+        "blacks": 0,
+        "saturation": 1,
+        "vibrance": 0,
+        "fadedFilm": 0,
+        "shadowTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "highlightTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "splitToneBalance": 0,
+        "curveShadows": 0,
+        "curveMidtones": 0,
+        "curveHighlights": 0,
+        "wheelShadows": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelMidtones": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelHighlights": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelBalance": 0,
+        "hslEnable": 0,
+        "hslHueCenter": 0,
+        "hslHueRange": 0.1,
+        "hslSatMin": 0,
+        "hslSatMax": 1,
+        "hslLumMin": 0,
+        "hslLumMax": 1,
+        "hslFeather": 0.1,
+        "hslHueShift": 0,
+        "hslSatAdjust": 0,
+        "hslLumAdjust": 0,
+        "vignetteAmount": 0,
+        "vignetteMidpoint": 0.5,
+        "vignetteRoundness": 0,
+        "vignetteFeather": 0.5,
+        "vigHiProtect": 0
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "temperature": {
+          "min": -1,
+          "max": 1
+        },
+        "tint": {
+          "min": -1,
+          "max": 1
+        },
+        "exposure": {
+          "min": -4,
+          "max": 4
+        },
+        "contrast": {
+          "min": -1,
+          "max": 1
+        },
+        "highlights": {
+          "min": -1,
+          "max": 1
+        },
+        "shadows": {
+          "min": -1,
+          "max": 1
+        },
+        "whites": {
+          "min": -1,
+          "max": 1
+        },
+        "blacks": {
+          "min": -1,
+          "max": 1
+        },
+        "saturation": {
+          "min": 0,
+          "max": 2
+        },
+        "vibrance": {
+          "min": -1,
+          "max": 1
+        },
+        "fadedFilm": {
+          "min": 0,
+          "max": 1
+        },
+        "splitToneBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "curveShadows": {
+          "min": -1,
+          "max": 1
+        },
+        "curveMidtones": {
+          "min": -1,
+          "max": 1
+        },
+        "curveHighlights": {
+          "min": -1,
+          "max": 1
+        },
+        "wheelBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "hslEnable": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueCenter": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueRange": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslSatMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslSatMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslFeather": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslHueShift": {
+          "min": -0.5,
+          "max": 0.5
+        },
+        "hslSatAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "hslLumAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteAmount": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteMidpoint": {
+          "min": 0,
+          "max": 1
+        },
+        "vignetteRoundness": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteFeather": {
+          "min": 0,
+          "max": 1
+        },
+        "vigHiProtect": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.grade",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_4",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "grade",
+      "progName": "lut",
+      "program": "node_1_lut",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1__hslTex"
+      },
+      "outputs": {
+        "fragColor": "node_1__lutTex"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "preset": 0,
+        "alpha": 1,
+        "temperature": 0,
+        "tint": 0,
+        "exposure": 0,
+        "contrast": 0,
+        "highlights": 0,
+        "shadows": 0,
+        "whites": 0,
+        "blacks": 0,
+        "saturation": 1,
+        "vibrance": 0,
+        "fadedFilm": 0,
+        "shadowTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "highlightTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "splitToneBalance": 0,
+        "curveShadows": 0,
+        "curveMidtones": 0,
+        "curveHighlights": 0,
+        "wheelShadows": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelMidtones": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelHighlights": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelBalance": 0,
+        "hslEnable": 0,
+        "hslHueCenter": 0,
+        "hslHueRange": 0.1,
+        "hslSatMin": 0,
+        "hslSatMax": 1,
+        "hslLumMin": 0,
+        "hslLumMax": 1,
+        "hslFeather": 0.1,
+        "hslHueShift": 0,
+        "hslSatAdjust": 0,
+        "hslLumAdjust": 0,
+        "vignetteAmount": 0,
+        "vignetteMidpoint": 0.5,
+        "vignetteRoundness": 0,
+        "vignetteFeather": 0.5,
+        "vigHiProtect": 0
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "temperature": {
+          "min": -1,
+          "max": 1
+        },
+        "tint": {
+          "min": -1,
+          "max": 1
+        },
+        "exposure": {
+          "min": -4,
+          "max": 4
+        },
+        "contrast": {
+          "min": -1,
+          "max": 1
+        },
+        "highlights": {
+          "min": -1,
+          "max": 1
+        },
+        "shadows": {
+          "min": -1,
+          "max": 1
+        },
+        "whites": {
+          "min": -1,
+          "max": 1
+        },
+        "blacks": {
+          "min": -1,
+          "max": 1
+        },
+        "saturation": {
+          "min": 0,
+          "max": 2
+        },
+        "vibrance": {
+          "min": -1,
+          "max": 1
+        },
+        "fadedFilm": {
+          "min": 0,
+          "max": 1
+        },
+        "splitToneBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "curveShadows": {
+          "min": -1,
+          "max": 1
+        },
+        "curveMidtones": {
+          "min": -1,
+          "max": 1
+        },
+        "curveHighlights": {
+          "min": -1,
+          "max": 1
+        },
+        "wheelBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "hslEnable": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueCenter": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueRange": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslSatMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslSatMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslFeather": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslHueShift": {
+          "min": -0.5,
+          "max": 0.5
+        },
+        "hslSatAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "hslLumAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteAmount": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteMidpoint": {
+          "min": 0,
+          "max": 1
+        },
+        "vignetteRoundness": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteFeather": {
+          "min": 0,
+          "max": 1
+        },
+        "vigHiProtect": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.grade",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_5",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "grade",
+      "progName": "vignette",
+      "program": "node_1_vignette",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1__lutTex"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "preset": 0,
+        "alpha": 1,
+        "temperature": 0,
+        "tint": 0,
+        "exposure": 0,
+        "contrast": 0,
+        "highlights": 0,
+        "shadows": 0,
+        "whites": 0,
+        "blacks": 0,
+        "saturation": 1,
+        "vibrance": 0,
+        "fadedFilm": 0,
+        "shadowTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "highlightTint": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "splitToneBalance": 0,
+        "curveShadows": 0,
+        "curveMidtones": 0,
+        "curveHighlights": 0,
+        "wheelShadows": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelMidtones": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelHighlights": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "wheelBalance": 0,
+        "hslEnable": 0,
+        "hslHueCenter": 0,
+        "hslHueRange": 0.1,
+        "hslSatMin": 0,
+        "hslSatMax": 1,
+        "hslLumMin": 0,
+        "hslLumMax": 1,
+        "hslFeather": 0.1,
+        "hslHueShift": 0,
+        "hslSatAdjust": 0,
+        "hslLumAdjust": 0,
+        "vignetteAmount": 0,
+        "vignetteMidpoint": 0.5,
+        "vignetteRoundness": 0,
+        "vignetteFeather": 0.5,
+        "vigHiProtect": 0
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        },
+        "temperature": {
+          "min": -1,
+          "max": 1
+        },
+        "tint": {
+          "min": -1,
+          "max": 1
+        },
+        "exposure": {
+          "min": -4,
+          "max": 4
+        },
+        "contrast": {
+          "min": -1,
+          "max": 1
+        },
+        "highlights": {
+          "min": -1,
+          "max": 1
+        },
+        "shadows": {
+          "min": -1,
+          "max": 1
+        },
+        "whites": {
+          "min": -1,
+          "max": 1
+        },
+        "blacks": {
+          "min": -1,
+          "max": 1
+        },
+        "saturation": {
+          "min": 0,
+          "max": 2
+        },
+        "vibrance": {
+          "min": -1,
+          "max": 1
+        },
+        "fadedFilm": {
+          "min": 0,
+          "max": 1
+        },
+        "splitToneBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "curveShadows": {
+          "min": -1,
+          "max": 1
+        },
+        "curveMidtones": {
+          "min": -1,
+          "max": 1
+        },
+        "curveHighlights": {
+          "min": -1,
+          "max": 1
+        },
+        "wheelBalance": {
+          "min": -1,
+          "max": 1
+        },
+        "hslEnable": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueCenter": {
+          "min": 0,
+          "max": 1
+        },
+        "hslHueRange": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslSatMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslSatMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMin": {
+          "min": 0,
+          "max": 1
+        },
+        "hslLumMax": {
+          "min": 0,
+          "max": 1
+        },
+        "hslFeather": {
+          "min": 0,
+          "max": 0.5
+        },
+        "hslHueShift": {
+          "min": -0.5,
+          "max": 0.5
+        },
+        "hslSatAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "hslLumAdjust": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteAmount": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteMidpoint": {
+          "min": 0,
+          "max": 1
+        },
+        "vignetteRoundness": {
+          "min": -1,
+          "max": 1
+        },
+        "vignetteFeather": {
+          "min": 0,
+          "max": 1
+        },
+        "vigHiProtect": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.grade",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1__primaryTex": "phys_1",
+    "node_1__creativeTex": "phys_0",
+    "node_1__wheelsTex": "phys_1",
+    "node_1__hslTex": "phys_0",
+    "node_1__lutTex": "phys_1",
+    "node_1_out": "phys_0"
+  },
+  "textures": {
+    "node_1__primaryTex": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba16float",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1__creativeTex": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba16float",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1__wheelsTex": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba16float",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1__hslTex": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba16float",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1__lutTex": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba16float",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

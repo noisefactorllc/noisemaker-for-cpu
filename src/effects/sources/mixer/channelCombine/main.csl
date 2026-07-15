@@ -1,0 +1,14 @@
+uniform sampler2D inputTex;
+uniform sampler2D rTex;
+uniform sampler2D gTex;
+uniform sampler2D bTex;
+uniform float rLevel;
+uniform float gLevel;
+uniform float bLevel;
+
+vec4 main() {
+  vec4 red = texture(rTex, uv);
+  vec4 green = texture(gTex, uv);
+  vec4 blue = texture(bTex, uv);
+  return vec4(red.r * rLevel * 0.01, green.g * gLevel * 0.01, blue.b * bLevel * 0.01, max(red.a, max(green.a, blue.a)));
+}

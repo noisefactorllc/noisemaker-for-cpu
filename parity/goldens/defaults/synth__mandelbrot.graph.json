@@ -1,0 +1,115 @@
+{
+  "id": "b7bhs4",
+  "source": "search synth\n\nmandelbrot()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "mandelbrot",
+      "progName": "mandelbrot",
+      "program": "node_0_mandelbrot",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "poi": 0,
+        "outputMode": 0,
+        "iterations": 500,
+        "centerHiX": -0.5,
+        "centerHiY": 0,
+        "rotation": 0,
+        "zoomSpeed": 0,
+        "zoomDepth": 0,
+        "stripeFreq": 5,
+        "trapShape": 0,
+        "lightAngle": 45,
+        "invert": false
+      },
+      "uniformSpecs": {
+        "iterations": {
+          "min": 50,
+          "max": 2000
+        },
+        "centerHiX": {
+          "min": -3,
+          "max": 3
+        },
+        "centerHiY": {
+          "min": -3,
+          "max": 3
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "zoomSpeed": {
+          "min": 0,
+          "max": 5
+        },
+        "zoomDepth": {
+          "min": 0,
+          "max": 14
+        },
+        "stripeFreq": {
+          "min": 0.5,
+          "max": 20
+        },
+        "lightAngle": {
+          "min": 0,
+          "max": 360
+        }
+      },
+      "effectKey": "synth.mandelbrot",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

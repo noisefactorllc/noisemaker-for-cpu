@@ -1,0 +1,104 @@
+{
+  "id": "-vu5flp",
+  "source": "search classicNoisedeck\n\ncaustic()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "classicNoisedeck",
+      "func": "caustic",
+      "progName": "caustic",
+      "program": "node_0_caustic__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "noiseScale": 85,
+        "speed": 25,
+        "wrap": true,
+        "seed": 44,
+        "hueRotation": 180,
+        "hueRange": 25,
+        "intensity": 0
+      },
+      "uniformSpecs": {
+        "noiseScale": {
+          "min": 1,
+          "max": 200
+        },
+        "speed": {
+          "min": 0,
+          "max": 100
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "hueRotation": {
+          "min": 0,
+          "max": 360
+        },
+        "hueRange": {
+          "min": 0,
+          "max": 100
+        },
+        "intensity": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "classicNoisedeck.caustic",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

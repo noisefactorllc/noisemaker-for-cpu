@@ -1,0 +1,31 @@
+const float TAU = 6.28318530718;
+uniform sampler2D inputTex;
+uniform int kaleido;
+uniform int metric;
+uniform int loopOffset;
+uniform float loopScale;
+uniform float speed;
+uniform int seed;
+uniform bool wrap;
+uniform int direction;
+uniform int kernel;
+uniform float effectWidth;
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  p.x *= resolution.x / resolution.y;
+  float radius = length(p);
+  if (metric == 1) radius = abs(p.x) + abs(p.y);
+  else if (metric == 4) radius = max(abs(p.x), abs(p.y));
+  float angle = atan(p.y, p.x);
+  float wedge = TAU / float(kaleido);
+  angle = abs(mod(angle + time * speed * 0.01, wedge) - wedge * 0.5);
+  if (direction == 0) angle = -angle;
+  else if (direction == 2) angle -= time * speed * 0.01;
+  radius += sin(radius * loopScale + float(loopOffset + seed) + time * speed * 0.1) * effectWidth * 0.01;
+  vec2 coord = vec2(cos(angle), sin(angle)) * radius;
+  coord.x /= resolution.x / resolution.y;
+  coord += 0.5;
+  if (wrap) coord = fract(coord);
+  return texture(inputTex, coord);
+}

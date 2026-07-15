@@ -1,0 +1,11 @@
+uniform sampler2D inputTex;
+uniform float aberrationAmt;
+uniform float passthru;
+
+vec4 main() {
+  vec2 direction = uv - 0.5;
+  vec2 offset = direction * aberrationAmt * 0.0002;
+  vec4 base = texture(inputTex, uv);
+  vec3 split = vec3(texture(inputTex, uv + offset).r, base.g, texture(inputTex, uv - offset).b);
+  return vec4(mix(split, base.rgb, passthru * 0.01), base.a);
+}

@@ -1,0 +1,29 @@
+const float PI = 3.14159265359;
+uniform sampler2D inputTex;
+uniform int symmetry;
+uniform float scale;
+uniform float offsetX;
+uniform float offsetY;
+uniform float angle;
+uniform float repeat;
+uniform bool aspectLens;
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  if (aspectLens) p.x *= resolution.x / resolution.y;
+  float radians = angle * PI / 180.0;
+  float sine = sin(radians);
+  float cosine = cos(radians);
+  p = vec2(p.x * cosine - p.y * sine, p.x * sine + p.y * cosine);
+  p = p * scale * repeat + vec2(offsetX, offsetY);
+  vec2 coord = fract(p);
+  if (symmetry == 0) coord = abs(coord * 2.0 - 1.0);
+  else if (symmetry == 1) coord = fract(abs(p));
+  else if (symmetry >= 2) {
+    float sectors = symmetry == 2 ? 4.0 : 6.0;
+    float radius = length(p);
+    float wedge = abs(mod(atan(p.y, p.x), 6.2831853 / sectors) - 3.14159265 / sectors);
+    coord = vec2(cos(wedge), sin(wedge)) * radius + 0.5;
+  }
+  return texture(inputTex, coord);
+}

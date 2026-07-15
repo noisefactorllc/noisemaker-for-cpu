@@ -1,0 +1,13 @@
+uniform sampler2D inputTex;
+uniform float vignetteBrightness;
+uniform float alpha;
+
+vec4 main() {
+  vec4 color = texture(inputTex, uv);
+  vec2 p = uv - 0.5;
+  p.x *= resolution.x / resolution.y;
+  float mask = smoothstep(0.8, 0.2, length(p));
+  vec3 darkened = color.rgb * mix(1.0 - vignetteBrightness, 1.0, mask);
+  color.rgb = mix(color.rgb, darkened, alpha);
+  return color;
+}

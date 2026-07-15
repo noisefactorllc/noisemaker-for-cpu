@@ -1,0 +1,46 @@
+const float PI = 3.14159265359;
+uniform int poi;
+uniform int outputMode;
+uniform int iterations;
+uniform float centerX;
+uniform float centerY;
+uniform float rotation;
+uniform float zoomSpeed;
+uniform float zoomDepth;
+uniform float stripeFreq;
+uniform int trapShape;
+uniform float lightAngle;
+uniform bool invert;
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  p.x *= resolution.x / resolution.y;
+  float angle = rotation * PI / 180.0;
+  float sine = sin(angle);
+  float cosine = cos(angle);
+  p = vec2(p.x * cosine - p.y * sine, p.x * sine + p.y * cosine);
+  float zoom = pow(2.0, zoomDepth + time * zoomSpeed);
+  vec2 c = p * 3.0 / zoom + vec2(centerX, centerY);
+  vec2 z = vec2(0.0);
+  float escaped = 0.0;
+  float smoothValue = 0.0;
+  float trap = 1000.0;
+  for (int index = 0; index < iterations; index++) {
+    float x = z.x * z.x - z.y * z.y + c.x;
+    float y = 2.0 * z.x * z.y + c.y;
+    z = vec2(x, y);
+    trap = min(trap, trapShape == 0 ? length(z) : trapShape == 1 ? min(abs(z.x), abs(z.y)) : abs(length(z) - 1.0));
+    if (dot(z, z) > 256.0) {
+      escaped = 1.0;
+      smoothValue = float(index) + 1.0 - log(log(length(z))) / log(2.0);
+      break;
+    }
+  }
+  float value = escaped > 0.5 ? smoothValue / float(iterations) : 0.0;
+  if (outputMode == 1) value = clamp(trap, 0.0, 1.0);
+  else if (outputMode == 2) value = sin(smoothValue * stripeFreq) * 0.5 + 0.5;
+  else if (outputMode == 3) value = 1.0 - smoothstep(0.0, 0.25, trap);
+  else if (outputMode == 4) value = dot(normalize(vec2(cos(lightAngle * PI / 180.0), sin(lightAngle * PI / 180.0))), normalize(z)) * 0.5 + 0.5;
+  if (invert) value = 1.0 - value;
+  return vec4(value, value * value, sqrt(max(value, 0.0)), 1.0);
+}

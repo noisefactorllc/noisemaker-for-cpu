@@ -1,0 +1,3 @@
+solid parity/programs/solid.dsl
+noise parity/programs/noise.dsl
+invert parity/programs/invert.dsl

@@ -1,0 +1,50 @@
+const float PI = 3.14159265359;
+uniform sampler2D inputTex;
+uniform int shape;
+uniform float distortion;
+uniform bool aspectLens;
+uniform float loopScale;
+uniform float speed;
+uniform int mode;
+uniform float aberration;
+uniform int blendMode;
+uniform bool modulate;
+uniform vec3 tint;
+uniform float alpha;
+uniform float hueRotation;
+uniform float hueRange;
+uniform float saturation;
+uniform float passthru;
+uniform float vignetteAmt;
+
+float lensMetric(vec2 p) {
+  vec2 q = abs(p);
+  if (shape == 1) return q.x + q.y;
+  if (shape == 4) return max(q.x, q.y);
+  if (shape == 10) return (cos(p.x * PI) + cos(p.y * PI)) * 0.25 + 0.5;
+  return length(p);
+}
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  if (aspectLens) p.x *= resolution.x / resolution.y;
+  float metric = lensMetric(p);
+  float wave = sin(metric * loopScale * 0.1 - time * speed * 0.1);
+  float strength = distortion * 0.01 * (0.5 + 0.5 * wave);
+  vec2 direction = normalize(p + vec2(0.000001));
+  vec2 offset = direction * strength * metric;
+  vec4 base = texture(inputTex, uv);
+  vec3 split = vec3(
+    texture(inputTex, uv + offset * (1.0 + aberration * 0.01)).r,
+    texture(inputTex, uv + offset).g,
+    texture(inputTex, uv + offset * (1.0 - aberration * 0.01)).b
+  );
+  if (mode == 1) split = vec3(split.g, split.b, split.r);
+  if (modulate) split *= tint + vec3(1.0);
+  split = mix(split, tint, alpha * 0.01);
+  float vignette = 1.0 - smoothstep(0.25, 0.75, metric) * vignetteAmt * 0.01;
+  split *= vignette;
+  float passAmount = passthru * 0.01;
+  vec3 result = blendMode == 0 ? split + base.rgb * passAmount : mix(split, base.rgb, passAmount);
+  return vec4(result, base.a);
+}

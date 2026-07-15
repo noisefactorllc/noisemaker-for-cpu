@@ -1,0 +1,291 @@
+{
+  "id": "omilbx",
+  "source": "search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .chrome()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "chrome",
+      "progName": "chBlurH",
+      "program": "node_1_chBlurH",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1__chBlurH"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "detail": 40,
+        "smoothness": 40,
+        "distortion": 30
+      },
+      "uniformSpecs": {
+        "detail": {
+          "min": 0,
+          "max": 100
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 100
+        },
+        "distortion": {
+          "min": 0,
+          "max": 100
+        }
+      },
+      "effectKey": "filter.chrome",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_1",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "chrome",
+      "progName": "chBlurV",
+      "program": "node_1_chBlurV",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1__chBlurH"
+      },
+      "outputs": {
+        "fragColor": "node_1__chBlur"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "detail": 40,
+        "smoothness": 40,
+        "distortion": 30
+      },
+      "uniformSpecs": {
+        "detail": {
+          "min": 0,
+          "max": 100
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 100
+        },
+        "distortion": {
+          "min": 0,
+          "max": 100
+        }
+      },
+      "effectKey": "filter.chrome",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_2",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "chrome",
+      "progName": "chMap",
+      "program": "node_1_chMap",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out",
+        "blurTex": "node_1__chBlur"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "detail": 40,
+        "smoothness": 40,
+        "distortion": 30
+      },
+      "uniformSpecs": {
+        "detail": {
+          "min": 0,
+          "max": 100
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 100
+        },
+        "distortion": {
+          "min": 0,
+          "max": 100
+        }
+      },
+      "effectKey": "filter.chrome",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1__chBlurH": "phys_1",
+    "node_1__chBlur": "phys_2",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_1__chBlurH": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba8unorm",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1__chBlur": {
+      "width": "input",
+      "height": "input",
+      "format": "rgba8unorm",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

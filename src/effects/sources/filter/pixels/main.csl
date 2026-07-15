@@ -1,0 +1,8 @@
+uniform sampler2D inputTex;
+uniform int size;
+
+vec4 main() {
+  vec2 block = vec2(float(size)) / resolution;
+  vec2 coord = (floor(uv / block) + 0.5) * block;
+  return texture(inputTex, coord);
+}

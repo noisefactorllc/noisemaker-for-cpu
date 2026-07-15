@@ -1,0 +1,10 @@
+uniform sampler2D inputTex;
+uniform int channel;
+uniform float scale;
+uniform float offset;
+
+vec4 main() {
+  vec4 color = texture(inputTex, uv);
+  float value = color[channel] * scale + offset;
+  return vec4(vec3(value), color.a);
+}

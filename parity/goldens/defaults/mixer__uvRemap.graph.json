@@ -1,0 +1,262 @@
+{
+  "id": "rfgvy3",
+  "source": "search mixer, synth\n\npattern()\n.write(o0)\n\nnoise(ridges: true)\n.uvRemap(tex: read(o0), scale: 25)\n.write(o1)\n",
+  "renderSurface": "o1",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "pattern",
+      "progName": "pattern",
+      "program": "node_0_pattern",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "patternType": 7,
+        "scale": 15,
+        "thickness": 0.5,
+        "smoothness": 0.02,
+        "rotation": 0,
+        "skew": 0,
+        "animation": 0,
+        "speed": 1,
+        "fgColor": [
+          1,
+          1,
+          1
+        ],
+        "bgColor": [
+          0,
+          0,
+          0
+        ]
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 20
+        },
+        "thickness": {
+          "min": 0,
+          "max": 1
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 1
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "skew": {
+          "min": -2,
+          "max": 2
+        },
+        "speed": {
+          "min": -5,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.pattern",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_2_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_2_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    },
+    {
+      "id": "node_3_pass_0",
+      "passType": "effect",
+      "namespace": "mixer",
+      "func": "uvRemap",
+      "progName": "uvRemap",
+      "program": "node_3_uvRemap",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_2_out",
+        "tex": "global_o0"
+      },
+      "outputs": {
+        "fragColor": "node_3_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 1,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "mapSource": 0,
+        "channel": 0,
+        "scale": 25,
+        "offset": 0
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 0,
+          "max": 200
+        },
+        "offset": {
+          "min": -1,
+          "max": 1
+        }
+      },
+      "effectKey": "mixer.uvRemap",
+      "nodeId": "node_3",
+      "stepIndex": 3,
+      "scopedParams": null
+    },
+    {
+      "id": "node_4_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_3_out"
+      },
+      "outputs": {
+        "color": "global_o1"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_4",
+      "stepIndex": 4,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_2_out": "phys_0",
+    "node_3_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_2_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_3_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

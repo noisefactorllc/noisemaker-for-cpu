@@ -1,0 +1,43 @@
+uniform int metric;
+uniform float scale;
+uniform float cellScale;
+uniform float cellSmooth;
+uniform float variation;
+uniform int speed;
+uniform int seed;
+
+vec2 hashCell(vec2 p) {
+  float x = fract(sin(dot(p, vec2(127.1, 311.7)) + float(seed)) * 43758.5453);
+  float y = fract(sin(dot(p, vec2(269.5, 183.3)) + float(seed) * 1.7) * 43758.5453);
+  return vec2(x, y);
+}
+
+float metricDistance(vec2 p) {
+  vec2 q = abs(p);
+  if (metric == 1) return q.x + q.y;
+  if (metric == 2) return max(q.x * 0.8660254 + q.y * 0.5, q.y);
+  if (metric == 3) return max(max(q.x, q.y), (q.x + q.y) * 0.7071067);
+  if (metric == 4) return max(q.x, q.y);
+  if (metric == 6) return max(q.y, q.x * 0.8660254 + q.y * 0.5);
+  return length(q);
+}
+
+vec4 main() {
+  vec2 p = uv * scale * 0.12;
+  vec2 base = floor(p);
+  vec2 local = fract(p);
+  float closest = 10.0;
+  for (int y = -1; y <= 1; y++) {
+    for (int x = -1; x <= 1; x++) {
+      vec2 offset = vec2(float(x), float(y));
+      vec2 randomPoint = hashCell(base + offset);
+      randomPoint = 0.5 + 0.5 * sin(time * float(speed) + 6.2831853 * randomPoint);
+      vec2 delta = offset + mix(vec2(0.5), randomPoint, variation * 0.01) - local;
+      closest = min(closest, metricDistance(delta));
+    }
+  }
+  float edge = max(cellScale * 0.01, 0.01);
+  float softness = max(cellSmooth * 0.005, 0.001);
+  float value = 1.0 - smoothstep(edge - softness, edge + softness, closest);
+  return vec4(vec3(value), 1.0);
+}

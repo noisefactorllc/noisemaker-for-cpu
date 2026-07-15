@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+
+import { existsSync } from 'node:fs'
+import { mkdir, readdir, writeFile } from 'node:fs/promises'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+
+import { assertPinnedSource } from './source-lock.js'
+
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const referenceRoot = resolve(process.env.NM_REFERENCE_ROOT ?? resolve(projectRoot, '..', 'noisemaker'))
+const effectsRoot = resolve(referenceRoot, 'shaders', 'effects')
+const outputPath = resolve(projectRoot, 'src', 'effects', 'generated', 'upstream-snapshot.js')
+
+const namespaces = ['classicNoisedeck', 'filter', 'mixer', 'synth']
+const stateful = Object.freeze([
+  'filter/convolutionFeedback',
+  'filter/feedback',
+  'filter/motionBlur',
+  'filter/temporalAberration',
+  'synth/cellularAutomata',
+  'synth/mnca',
+  'synth/navierStokes',
+  'synth/reactionDiffusion',
+  'synth/roll',
+])
+const classic3d = new Set(['classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d'])
+
+function projectParam(param, stdEnums) {
+  const projected = {}
+  for (const key of ['type', 'default', 'uniform', 'define', 'min', 'max', 'zero', 'choices', 'enum', 'enumPath', 'colorModeUniform']) {
+    if (param[key] !== undefined) projected[key] = param[key]
+  }
+  if (!projected.choices && projected.enum && stdEnums[projected.enum]) {
+    projected.choices = Object.fromEntries(Object.entries(stdEnums[projected.enum]).map(([name, value]) => [name, value.value]))
+  }
+  return projected
+}
+
+function projectPass(pass) {
+  const projected = {
+    name: pass.name,
+    program: pass.program,
+    inputs: pass.inputs ?? {},
+    outputs: pass.outputs ?? {},
+  }
+  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint']) {
+    if (pass[key] !== undefined) projected[key] = pass[key]
+  }
+  return projected
+}
+
+function projectTextures(textures = {}) {
+  return Object.fromEntries(Object.entries(textures).map(([name, texture]) => [name, Object.fromEntries(
+    ['width', 'height', 'depth', 'format', 'is3D'].filter((key) => texture[key] !== undefined).map((key) => [key, texture[key]]),
+  )]))
+}
+
+function inferKind(namespace, definition) {
+  if (namespace === 'synth') return 'generator'
+  if (namespace === 'mixer') return 'mixer'
+  const inputs = (definition.passes ?? []).flatMap((pass) => Object.keys(pass.inputs ?? {}))
+  if (inputs.length === 0) return 'generator'
+  return inputs.some((name) => name !== 'inputTex' && !name.startsWith('_')) ? 'mixer' : 'filter'
+}
+
+async function loadDefinition(namespace, directoryName) {
+  const path = resolve(effectsRoot, namespace, directoryName, 'definition.js')
+  let definition = (await import(pathToFileURL(path).href)).default
+  if (typeof definition === 'function') definition = new definition()
+  if (!definition) throw new Error(`${namespace}/${directoryName} has no default effect definition`)
+  return definition
+}
+
+async function inventory() {
+  if (!existsSync(effectsRoot)) throw new Error(`No Noisemaker effect tree at ${effectsRoot}; set NM_REFERENCE_ROOT`)
+  const { stdEnums } = await import(pathToFileURL(resolve(referenceRoot, 'shaders', 'src', 'lang', 'std_enums.js')).href)
+  const records = []
+  for (const namespace of namespaces) {
+    for (const directoryName of (await readdir(resolve(effectsRoot, namespace))).sort()) {
+      const id = `${namespace}/${directoryName}`
+      const definitionPath = resolve(effectsRoot, id, 'definition.js')
+      if (!existsSync(definitionPath) || stateful.includes(id) || classic3d.has(id)) continue
+      const definition = await loadDefinition(namespace, directoryName)
+      records.push({
+        id,
+        directoryName,
+        name: definition.name ?? definition.func ?? directoryName,
+        namespace: definition.namespace ?? namespace,
+        func: definition.func ?? directoryName,
+        kind: inferKind(namespace, definition),
+        tags: definition.tags ?? [],
+        description: definition.description ?? '',
+        paramAliases: definition.paramAliases ?? {},
+        params: Object.fromEntries(Object.entries(definition.globals ?? {}).map(([name, param]) => [name, projectParam(param, stdEnums)])),
+        passes: (definition.passes ?? []).map(projectPass),
+        textures: projectTextures(definition.textures),
+        externalTexture: definition.externalTexture ?? null,
+      })
+    }
+  }
+  records.sort((left, right) => left.id < right.id ? -1 : left.id > right.id ? 1 : 0)
+  return records
+}
+
+const upstreamRevision = assertPinnedSource(referenceRoot)
+const effectRecords = await inventory()
+const excludedEffects = {
+  stateful: [...stateful],
+  threeD: [
+    'classicNoisedeck/noise3d',
+    'classicNoisedeck/shapes3d',
+    'filter3d/*',
+    'synth3d/*',
+    'render/*3d',
+    'render/*Cubemap*',
+    'render/mesh*',
+  ],
+  particles: ['points/*', 'render/points*'],
+  control: ['render/loopBegin', 'render/loopEnd'],
+}
+const source = `// Generated by scripts/upstream/inventory.js. Do not edit.\n` +
+  `export const UPSTREAM_REVISION = ${JSON.stringify(upstreamRevision)}\n` +
+  `export const excludedEffects = Object.freeze(${JSON.stringify(excludedEffects, null, 2)})\n` +
+  `export const effectRecords = Object.freeze(${JSON.stringify(effectRecords, null, 2)})\n` +
+  `export const eligibleEffectIds = Object.freeze(effectRecords.map((effect) => effect.id))\n`
+
+await mkdir(dirname(outputPath), { recursive: true })
+await writeFile(outputPath, source)
+console.log(`Imported ${effectRecords.length} eligible effects from Noisemaker ${upstreamRevision}`)

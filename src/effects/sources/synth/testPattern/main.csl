@@ -1,0 +1,29 @@
+uniform int pattern;
+uniform int gridSize;
+
+vec4 main() {
+  if (pattern == 1) {
+    int bar = int(floor(uv.x * 7.0));
+    if (bar == 0) return vec4(1.0, 1.0, 1.0, 1.0);
+    if (bar == 1) return vec4(1.0, 1.0, 0.0, 1.0);
+    if (bar == 2) return vec4(0.0, 1.0, 1.0, 1.0);
+    if (bar == 3) return vec4(0.0, 1.0, 0.0, 1.0);
+    if (bar == 4) return vec4(1.0, 0.0, 1.0, 1.0);
+    if (bar == 5) return vec4(1.0, 0.0, 0.0, 1.0);
+    return vec4(0.0, 0.0, 1.0, 1.0);
+  }
+  if (pattern == 2) return vec4(vec3(uv.x), 1.0);
+  if (pattern == 3) return vec4(uv, 0.0, 1.0);
+  vec2 cell = fract(uv * float(gridSize));
+  if (pattern == 4) {
+    float line = max(step(cell.x, 0.08), step(cell.y, 0.08));
+    return vec4(vec3(line), 1.0);
+  }
+  if (pattern == 5) return vec4(fract(uv.x * float(gridSize)), fract(uv.y * float(gridSize)), 0.5, 1.0);
+  if (pattern == 6) {
+    float dotValue = 1.0 - smoothstep(0.15, 0.22, length(cell - 0.5));
+    return vec4(vec3(dotValue), 1.0);
+  }
+  int checker = (int(floor(uv.x * float(gridSize))) + int(floor(uv.y * float(gridSize)))) % 2;
+  return vec4(vec3(float(checker)), 1.0);
+}

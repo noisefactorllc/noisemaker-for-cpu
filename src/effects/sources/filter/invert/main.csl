@@ -1,0 +1,6 @@
+uniform sampler2D inputTex;
+
+vec4 main() {
+  vec4 color = texture(inputTex, uv);
+  return vec4(vec3(1.0) - color.rgb, color.a);
+}

@@ -1,0 +1,377 @@
+{
+  "id": "fop0zh",
+  "source": "search mixer, synth, filter\n\nnoise(ridges: true, colorMode: mono)\n.write(o0)\n\nperlin(colorMode: mono)\n.write(o1)\n\ngradient(type: linear)\n.write(o2)\n\nchannelCombine(rTex: read(o0), gTex: read(o1), bTex: read(o2))\n.write(o3)\n",
+  "renderSurface": "o3",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 0
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "perlin",
+      "progName": "perlin",
+      "program": "node_2_perlin__DIMENSIONS_2",
+      "defines": {
+        "DIMENSIONS": 2
+      },
+      "inputs": {},
+      "outputs": {
+        "color": "node_2_out"
+      },
+      "uniforms": {
+        "scale": 25,
+        "octaves": 1,
+        "colorMode": 0,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 0,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 0,
+          "max": 100
+        },
+        "octaves": {
+          "min": 1,
+          "max": 6
+        },
+        "dimensions": {
+          "min": 2,
+          "max": 3
+        },
+        "warpIterations": {
+          "min": 0,
+          "max": 4
+        },
+        "warpScale": {
+          "min": 0,
+          "max": 100
+        },
+        "warpIntensity": {
+          "min": 0,
+          "max": 100
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.perlin",
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    },
+    {
+      "id": "node_3_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_2_out"
+      },
+      "outputs": {
+        "color": "global_o1"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_3",
+      "stepIndex": 3,
+      "scopedParams": null
+    },
+    {
+      "id": "node_4_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "gradient",
+      "progName": "gradient",
+      "program": "node_4_gradient",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_4_out"
+      },
+      "uniforms": {
+        "gradientType": 3,
+        "rotation": 0,
+        "repeat": 1,
+        "speed": 0,
+        "seed": 1,
+        "color1": [
+          1,
+          0,
+          0
+        ],
+        "color2": [
+          1,
+          1,
+          0
+        ],
+        "color3": [
+          0,
+          1,
+          0
+        ],
+        "color4": [
+          0,
+          0,
+          1
+        ],
+        "colorCount": 4
+      },
+      "uniformSpecs": {
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "repeat": {
+          "min": 1,
+          "max": 4
+        },
+        "speed": {
+          "min": -5,
+          "max": 5
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "colorCount": {
+          "min": 2,
+          "max": 4
+        }
+      },
+      "effectKey": "synth.gradient",
+      "nodeId": "node_4",
+      "stepIndex": 4,
+      "scopedParams": null
+    },
+    {
+      "id": "node_5_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_4_out"
+      },
+      "outputs": {
+        "color": "global_o2"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_5",
+      "stepIndex": 5,
+      "scopedParams": null
+    },
+    {
+      "id": "node_6_pass_0",
+      "passType": "effect",
+      "namespace": "mixer",
+      "func": "channelCombine",
+      "progName": "channelCombine",
+      "program": "node_6_channelCombine",
+      "defines": {},
+      "inputs": {
+        "rTex": "global_o0",
+        "gTex": "global_o1",
+        "bTex": "global_o2"
+      },
+      "outputs": {
+        "fragColor": "node_6_out"
+      },
+      "uniforms": {
+        "rLevel": 100,
+        "gLevel": 100,
+        "bLevel": 100
+      },
+      "uniformSpecs": {
+        "rLevel": {
+          "min": 0,
+          "max": 100
+        },
+        "gLevel": {
+          "min": 0,
+          "max": 100
+        },
+        "bLevel": {
+          "min": 0,
+          "max": 100
+        }
+      },
+      "effectKey": "mixer.channelCombine",
+      "nodeId": "node_6",
+      "stepIndex": 6,
+      "scopedParams": null
+    },
+    {
+      "id": "node_7_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_6_out"
+      },
+      "outputs": {
+        "color": "global_o3"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_7",
+      "stepIndex": 7,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_2_out": "phys_0",
+    "node_4_out": "phys_0",
+    "node_6_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_2_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_4_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_6_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

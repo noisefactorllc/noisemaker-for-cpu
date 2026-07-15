@@ -1,0 +1,111 @@
+{
+  "id": "-m5k2i8",
+  "source": "search synth\n\npolygon()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "polygon",
+      "progName": "shape",
+      "program": "node_0_shape",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "sides": 3,
+        "radius": 0.5,
+        "smoothing": 0.01,
+        "rotation": 0,
+        "fgColor": [
+          1,
+          1,
+          1
+        ],
+        "fgAlpha": 1,
+        "bgColor": [
+          0,
+          0,
+          0
+        ],
+        "bgAlpha": 1
+      },
+      "uniformSpecs": {
+        "sides": {
+          "min": 3,
+          "max": 64
+        },
+        "radius": {
+          "min": 0,
+          "max": 1
+        },
+        "smoothing": {
+          "min": 0,
+          "max": 1
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "fgAlpha": {
+          "min": 0,
+          "max": 1
+        },
+        "bgAlpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "synth.polygon",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

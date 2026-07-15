@@ -1,0 +1,452 @@
+{
+  "id": "kl2zf9",
+  "source": "search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .pixelSort()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "pixelSort",
+      "progName": "prepare",
+      "program": "node_1_prepare",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_prepared"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 0,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "angled": 0,
+        "darkest": false,
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "angled": {
+          "min": -180,
+          "max": 180
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.pixelSort",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_1",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "pixelSort",
+      "progName": "luminance",
+      "program": "node_1_luminance",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1_prepared"
+      },
+      "outputs": {
+        "fragColor": "node_1_luminance"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 0,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "angled": 0,
+        "darkest": false,
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "angled": {
+          "min": -180,
+          "max": 180
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.pixelSort",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_2",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "pixelSort",
+      "progName": "findBrightest",
+      "program": "node_1_findBrightest",
+      "defines": {},
+      "inputs": {
+        "lumTex": "node_1_luminance"
+      },
+      "outputs": {
+        "fragColor": "node_1_brightest"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 0,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "angled": 0,
+        "darkest": false,
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "angled": {
+          "min": -180,
+          "max": 180
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.pixelSort",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_3",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "pixelSort",
+      "progName": "computeRank",
+      "program": "node_1_computeRank",
+      "defines": {},
+      "inputs": {
+        "lumTex": "node_1_luminance"
+      },
+      "outputs": {
+        "fragColor": "node_1_rank"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 0,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "angled": 0,
+        "darkest": false,
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "angled": {
+          "min": -180,
+          "max": 180
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.pixelSort",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_4",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "pixelSort",
+      "progName": "gatherSorted",
+      "program": "node_1_gatherSorted",
+      "defines": {},
+      "inputs": {
+        "preparedTex": "node_1_prepared",
+        "rankTex": "node_1_rank",
+        "brightestTex": "node_1_brightest"
+      },
+      "outputs": {
+        "fragColor": "node_1_sorted"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 0,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "angled": 0,
+        "darkest": false,
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "angled": {
+          "min": -180,
+          "max": 180
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.pixelSort",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_5",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "pixelSort",
+      "progName": "finalize",
+      "program": "node_1_finalize",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_1_sorted",
+        "originalTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": 0,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "angled": 0,
+        "darkest": false,
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "angled": {
+          "min": -180,
+          "max": 180
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.pixelSort",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_prepared": "phys_1",
+    "node_1_luminance": "phys_2",
+    "node_1_brightest": "phys_3",
+    "node_1_rank": "phys_4",
+    "node_1_sorted": "phys_2",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_1_prepared": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_luminance": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_brightest": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_rank": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_sorted": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

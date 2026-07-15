@@ -1,0 +1,100 @@
+{
+  "id": "ghqipj",
+  "source": "search synth\n\nshape()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "shape",
+      "progName": "shape",
+      "program": "node_0_shape__LOOP_A_OFFSET_40__LOOP_B_OFFSET_30",
+      "defines": {
+        "LOOP_A_OFFSET": 40,
+        "LOOP_B_OFFSET": 30
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "loopAScale": 1,
+        "loopBScale": 1,
+        "speedA": 50,
+        "speedB": 50,
+        "seed": 1,
+        "wrap": true
+      },
+      "uniformSpecs": {
+        "loopAScale": {
+          "min": 1,
+          "max": 100
+        },
+        "loopBScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speedA": {
+          "min": -100,
+          "max": 100
+        },
+        "speedB": {
+          "min": -100,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.shape",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

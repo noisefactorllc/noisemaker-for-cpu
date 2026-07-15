@@ -1,0 +1,123 @@
+{
+  "id": "-qt6p10",
+  "source": "search synth\n\nsacredGeometry()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "sacredGeometry",
+      "progName": "sacredGeometry",
+      "program": "node_0_sacredGeometry",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "geometry": 0,
+        "scale": 10,
+        "rings": 3,
+        "starPoints": 5,
+        "rotation": 0,
+        "thickness": 0.2,
+        "smoothness": 0.02,
+        "fgColor": [
+          1,
+          1,
+          1
+        ],
+        "bgColor": [
+          0,
+          0,
+          0
+        ],
+        "animation": 0,
+        "speed": 1,
+        "pulseDepth": 0.15
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 20
+        },
+        "rings": {
+          "min": 1,
+          "max": 6
+        },
+        "starPoints": {
+          "min": 5,
+          "max": 12
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "thickness": {
+          "min": 0,
+          "max": 1
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 1
+        },
+        "speed": {
+          "min": -5,
+          "max": 5
+        },
+        "pulseDepth": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "synth.sacredGeometry",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "id": "kcwxnh",
+  "source": "search mixer, synth\n\nsolid(color: #000000)\n.write(o0)\n\nnoise()\n.cellSplit(invert: sourceB)\n.write(o1)\n",
+  "renderSurface": "o1",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "solid",
+      "progName": "solid",
+      "program": "node_0_solid",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "color": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "alpha": 1
+      },
+      "uniformSpecs": {
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "synth.solid",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_2_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_2_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": false,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    },
+    {
+      "id": "node_3_pass_0",
+      "passType": "effect",
+      "namespace": "mixer",
+      "func": "cellSplit",
+      "progName": "cellSplit",
+      "program": "node_3_cellSplit",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_2_out",
+        "tex": "none"
+      },
+      "outputs": {
+        "fragColor": "node_3_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": false,
+        "loopScale": 75,
+        "speed": 1,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "invert": 1,
+        "mode": 0,
+        "scale": 15,
+        "edgeWidth": 0.08
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 30
+        },
+        "edgeWidth": {
+          "min": 0,
+          "max": 0.2
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "mixer.cellSplit",
+      "nodeId": "node_3",
+      "stepIndex": 3,
+      "scopedParams": null
+    },
+    {
+      "id": "node_4_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_3_out"
+      },
+      "outputs": {
+        "color": "global_o1"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_4",
+      "stepIndex": 4,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_2_out": "phys_0",
+    "node_3_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_2_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_3_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

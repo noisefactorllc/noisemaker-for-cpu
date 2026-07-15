@@ -1,0 +1,285 @@
+{
+  "id": "-6vgk82",
+  "source": "search classicNoisedeck\n\nnoise(seed: 1, ridges: true)\n  .colorLab()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "classicNoisedeck",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__COLOR_MODE_6__LOOP_OFFSET_300__METRIC_0__REFRACT_MODE_2__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "REFRACT_MODE": 2,
+        "LOOP_OFFSET": 300,
+        "METRIC": 0,
+        "COLOR_MODE": 6
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "xScale": 75,
+        "yScale": 75,
+        "ridges": true,
+        "wrap": true,
+        "seed": 1,
+        "refractAmt": 0,
+        "loopScale": 75,
+        "speed": 25,
+        "kaleido": 1,
+        "paletteMode": 3,
+        "hueRotation": 179,
+        "hueRange": 25,
+        "palette": 2,
+        "cyclePalette": 1,
+        "rotatePalette": 0,
+        "repeatPalette": 1,
+        "paletteOffset": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "paletteAmp": [
+          0.56851584,
+          0.7740668,
+          0.23485267
+        ],
+        "paletteFreq": [
+          1,
+          1,
+          1
+        ],
+        "palettePhase": [
+          0.727029,
+          0.08039695,
+          0.10427457
+        ]
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "xScale": {
+          "min": 1,
+          "max": 100
+        },
+        "yScale": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "refractAmt": {
+          "min": 0,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        },
+        "kaleido": {
+          "min": 1,
+          "max": 32
+        },
+        "paletteMode": {
+          "min": 0,
+          "max": 100
+        },
+        "hueRotation": {
+          "min": 0,
+          "max": 360
+        },
+        "hueRange": {
+          "min": 0,
+          "max": 100
+        },
+        "rotatePalette": {
+          "min": 0,
+          "max": 100
+        },
+        "repeatPalette": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      "effectKey": "classicNoisedeck.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "classicNoisedeck",
+      "func": "colorLab",
+      "progName": "colorLab",
+      "program": "node_1_colorLab",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "xScale": 75,
+        "yScale": 75,
+        "ridges": true,
+        "wrap": true,
+        "seed": 1,
+        "refractAmt": 0,
+        "loopScale": 75,
+        "speed": 25,
+        "kaleido": 1,
+        "paletteMode": 3,
+        "hueRotation": 0,
+        "hueRange": 100,
+        "palette": 46,
+        "cyclePalette": 1,
+        "rotatePalette": 0,
+        "repeatPalette": 1,
+        "paletteOffset": [
+          0.78,
+          0.68,
+          0.15
+        ],
+        "paletteAmp": [
+          0.73,
+          0.36,
+          0.52
+        ],
+        "paletteFreq": [
+          1,
+          1,
+          1
+        ],
+        "palettePhase": [
+          0.74,
+          0.93,
+          0.28
+        ],
+        "type": 10,
+        "refractMode": 2,
+        "loopOffset": 300,
+        "metric": 0,
+        "colorMode": 2,
+        "saturation": 0,
+        "invert": false,
+        "brightness": 0,
+        "contrast": 50,
+        "levels": 0,
+        "dither": 0
+      },
+      "uniformSpecs": {
+        "paletteMode": {
+          "min": 0,
+          "max": 100
+        },
+        "rotatePalette": {
+          "min": 0,
+          "max": 100
+        },
+        "repeatPalette": {
+          "min": 1,
+          "max": 10
+        },
+        "hueRotation": {
+          "min": 0,
+          "max": 360
+        },
+        "hueRange": {
+          "min": 0,
+          "max": 200
+        },
+        "saturation": {
+          "min": -100,
+          "max": 100
+        },
+        "brightness": {
+          "min": -100,
+          "max": 100
+        },
+        "contrast": {
+          "min": 0,
+          "max": 100
+        },
+        "levels": {
+          "min": 0,
+          "max": 32
+        }
+      },
+      "effectKey": "classicNoisedeck.colorLab",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

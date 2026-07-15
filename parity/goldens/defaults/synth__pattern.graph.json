@@ -1,0 +1,113 @@
+{
+  "id": "wuvjja",
+  "source": "search synth\n\npattern()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "pattern",
+      "progName": "pattern",
+      "program": "node_0_pattern",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "patternType": 7,
+        "scale": 15,
+        "thickness": 0.5,
+        "smoothness": 0.02,
+        "rotation": 0,
+        "skew": 0,
+        "animation": 0,
+        "speed": 1,
+        "fgColor": [
+          1,
+          1,
+          1
+        ],
+        "bgColor": [
+          0,
+          0,
+          0
+        ]
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 20
+        },
+        "thickness": {
+          "min": 0,
+          "max": 1
+        },
+        "smoothness": {
+          "min": 0,
+          "max": 1
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "skew": {
+          "min": -2,
+          "max": 2
+        },
+        "speed": {
+          "min": -5,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.pattern",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

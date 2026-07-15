@@ -1,0 +1,19 @@
+const float TAU = 6.28318530718;
+uniform sampler2D inputTex;
+uniform int polarMode;
+uniform float scale;
+uniform int rotation;
+uniform int speed;
+uniform bool aspectLens;
+uniform bool antialias;
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  if (aspectLens) p.x *= resolution.x / resolution.y;
+  float radius = length(p);
+  float angle = atan(p.y, p.x) / TAU + 0.5;
+  angle += float(rotation) * radius + time * float(speed);
+  vec2 coord = vec2(angle, radius * (1.0 + scale) * 2.0);
+  if (polarMode == 1) coord = vec2(fract(angle + radius), fract(radius * 2.0));
+  return texture(inputTex, fract(coord));
+}

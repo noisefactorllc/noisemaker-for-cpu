@@ -1,0 +1,116 @@
+{
+  "id": "dcns24",
+  "source": "search synth\n\nmodPattern()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "modPattern",
+      "progName": "modPattern",
+      "program": "node_0_modPattern",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "shape1": 0,
+        "scale1": 18,
+        "repeat1": 5,
+        "shape2": 1,
+        "scale2": 8,
+        "repeat2": 8,
+        "shape3": 2,
+        "scale3": 1.5,
+        "repeat3": 1.5,
+        "blend": 0,
+        "smoothing": 0,
+        "animMode": 0,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "scale1": {
+          "min": 0.1,
+          "max": 20
+        },
+        "repeat1": {
+          "min": 0,
+          "max": 20
+        },
+        "scale2": {
+          "min": 0.1,
+          "max": 10
+        },
+        "repeat2": {
+          "min": 0,
+          "max": 10
+        },
+        "scale3": {
+          "min": 0.1,
+          "max": 20
+        },
+        "repeat3": {
+          "min": 0,
+          "max": 5
+        },
+        "smoothing": {
+          "min": 0,
+          "max": 3
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.modPattern",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

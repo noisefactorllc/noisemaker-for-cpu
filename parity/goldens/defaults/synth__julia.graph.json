@@ -1,0 +1,136 @@
+{
+  "id": "-2yhm35",
+  "source": "search synth\n\njulia()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "julia",
+      "progName": "julia",
+      "program": "node_0_julia",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "poi": 10,
+        "outputMode": 3,
+        "iterations": 300,
+        "cReal": -0.123,
+        "cImag": 0.745,
+        "centerX": 0,
+        "centerY": 0,
+        "rotation": 0,
+        "cPath": 0,
+        "cSpeed": 0.3,
+        "cRadius": 0.7885,
+        "zoomSpeed": 0,
+        "zoomDepth": 0,
+        "stripeFreq": 5,
+        "trapShape": 0,
+        "lightAngle": 45,
+        "invert": false
+      },
+      "uniformSpecs": {
+        "iterations": {
+          "min": 50,
+          "max": 1000
+        },
+        "cReal": {
+          "min": -2,
+          "max": 2
+        },
+        "cImag": {
+          "min": -2,
+          "max": 2
+        },
+        "centerX": {
+          "min": -3,
+          "max": 3
+        },
+        "centerY": {
+          "min": -3,
+          "max": 3
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "cSpeed": {
+          "min": 0,
+          "max": 2
+        },
+        "cRadius": {
+          "min": 0.01,
+          "max": 1.5
+        },
+        "zoomSpeed": {
+          "min": 0,
+          "max": 5
+        },
+        "zoomDepth": {
+          "min": 0,
+          "max": 14
+        },
+        "stripeFreq": {
+          "min": 0.5,
+          "max": 20
+        },
+        "lightAngle": {
+          "min": 0,
+          "max": 360
+        }
+      },
+      "effectKey": "synth.julia",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

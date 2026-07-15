@@ -1,0 +1,370 @@
+{
+  "id": "62f9gd",
+  "source": "search filter, synth\n\nnoise(octaves: 4, scaleX: 100, scaleY: 100, ridges: true)\n  .celShading()\n  .write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 4,
+        "scaleX": 100,
+        "scaleY": 100,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "celShading",
+      "progName": "celShadingColor",
+      "program": "node_1_celShadingColor",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_celShadingColorTex"
+      },
+      "uniforms": {
+        "octaves": 4,
+        "scaleX": 100,
+        "scaleY": 100,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "mixAmount": 1,
+        "levels": 4,
+        "gamma": 0.65,
+        "antialias": false,
+        "edgeWidth": 1,
+        "edgeThreshold": 0.15,
+        "edgeColor": [
+          0,
+          0,
+          0
+        ],
+        "lightDirection": [
+          0.5,
+          0.5,
+          1
+        ],
+        "strength": 0
+      },
+      "uniformSpecs": {
+        "mixAmount": {
+          "min": 0,
+          "max": 1
+        },
+        "levels": {
+          "min": 2,
+          "max": 8
+        },
+        "gamma": {
+          "min": 0.1,
+          "max": 3
+        },
+        "edgeWidth": {
+          "min": 0,
+          "max": 5
+        },
+        "edgeThreshold": {
+          "min": 0.01,
+          "max": 1
+        },
+        "strength": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.celShading",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_1",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "celShading",
+      "progName": "celShadingEdges",
+      "program": "node_1_celShadingEdges",
+      "defines": {},
+      "inputs": {
+        "colorTex": "node_1_celShadingColorTex"
+      },
+      "outputs": {
+        "fragColor": "node_1_celShadingEdgeTex"
+      },
+      "uniforms": {
+        "octaves": 4,
+        "scaleX": 100,
+        "scaleY": 100,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "mixAmount": 1,
+        "levels": 4,
+        "gamma": 0.65,
+        "antialias": false,
+        "edgeWidth": 1,
+        "edgeThreshold": 0.15,
+        "edgeColor": [
+          0,
+          0,
+          0
+        ],
+        "lightDirection": [
+          0.5,
+          0.5,
+          1
+        ],
+        "strength": 0
+      },
+      "uniformSpecs": {
+        "mixAmount": {
+          "min": 0,
+          "max": 1
+        },
+        "levels": {
+          "min": 2,
+          "max": 8
+        },
+        "gamma": {
+          "min": 0.1,
+          "max": 3
+        },
+        "edgeWidth": {
+          "min": 0,
+          "max": 5
+        },
+        "edgeThreshold": {
+          "min": 0.01,
+          "max": 1
+        },
+        "strength": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.celShading",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_2",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "celShading",
+      "progName": "celShadingBlend",
+      "program": "node_1_celShadingBlend",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out",
+        "colorTex": "node_1_celShadingColorTex",
+        "edgeTex": "node_1_celShadingEdgeTex"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "octaves": 4,
+        "scaleX": 100,
+        "scaleY": 100,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 1,
+        "type": 10,
+        "loopOffset": 300,
+        "mixAmount": 1,
+        "levels": 4,
+        "gamma": 0.65,
+        "antialias": false,
+        "edgeWidth": 1,
+        "edgeThreshold": 0.15,
+        "edgeColor": [
+          0,
+          0,
+          0
+        ],
+        "lightDirection": [
+          0.5,
+          0.5,
+          1
+        ],
+        "strength": 0
+      },
+      "uniformSpecs": {
+        "mixAmount": {
+          "min": 0,
+          "max": 1
+        },
+        "levels": {
+          "min": 2,
+          "max": 8
+        },
+        "gamma": {
+          "min": 0.1,
+          "max": 3
+        },
+        "edgeWidth": {
+          "min": 0,
+          "max": 5
+        },
+        "edgeThreshold": {
+          "min": 0.01,
+          "max": 1
+        },
+        "strength": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.celShading",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_celShadingColorTex": "phys_1",
+    "node_1_celShadingEdgeTex": "phys_2",
+    "node_1_out": "phys_3"
+  },
+  "textures": {
+    "node_1_celShadingColorTex": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_celShadingEdgeTex": {
+      "width": "100%",
+      "height": "100%",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

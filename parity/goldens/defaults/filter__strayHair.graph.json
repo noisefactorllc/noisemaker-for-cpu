@@ -1,0 +1,185 @@
+{
+  "id": "-r2xm39",
+  "source": "search filter, synth\n\nperlin(scale: 100)\n  .strayHair()\n  .write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "perlin",
+      "progName": "perlin",
+      "program": "node_0_perlin__DIMENSIONS_2",
+      "defines": {
+        "DIMENSIONS": 2
+      },
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "scale": 100,
+        "octaves": 1,
+        "colorMode": 1,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 0,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 0,
+          "max": 100
+        },
+        "octaves": {
+          "min": 1,
+          "max": 6
+        },
+        "dimensions": {
+          "min": 2,
+          "max": 3
+        },
+        "warpIterations": {
+          "min": 0,
+          "max": 4
+        },
+        "warpScale": {
+          "min": 0,
+          "max": 100
+        },
+        "warpIntensity": {
+          "min": 0,
+          "max": 100
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.perlin",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "strayHair",
+      "progName": "strayHairBlend",
+      "program": "node_1_strayHairBlend",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out",
+        "overlayTex": "node_1_overlayTex"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "scale": 100,
+        "octaves": 1,
+        "colorMode": 1,
+        "dimensions": 2,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 1,
+        "speed": 1,
+        "density": 0.5,
+        "alpha": 0.5
+      },
+      "uniformSpecs": {
+        "density": {
+          "min": 0,
+          "max": 1
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "alpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.strayHair",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_1_overlayTex": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba8",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "id": "-9rd57",
+  "source": "search classicNoisedeck\nnoise(type: simplex, xScale: 8, yScale: 8, seed: 3, octaves: 1, colorMode: mono).write(o0)\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "classicNoisedeck",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__COLOR_MODE_0__LOOP_OFFSET_300__METRIC_0__REFRACT_MODE_2__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "REFRACT_MODE": 2,
+        "LOOP_OFFSET": 300,
+        "METRIC": 0,
+        "COLOR_MODE": 0
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 1,
+        "xScale": 8,
+        "yScale": 8,
+        "ridges": false,
+        "wrap": true,
+        "seed": 3,
+        "refractAmt": 0,
+        "loopScale": 75,
+        "speed": 25,
+        "kaleido": 1,
+        "paletteMode": 3,
+        "hueRotation": 179,
+        "hueRange": 25,
+        "palette": 2,
+        "cyclePalette": 1,
+        "rotatePalette": 0,
+        "repeatPalette": 1,
+        "paletteOffset": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "paletteAmp": [
+          0.56851584,
+          0.7740668,
+          0.23485267
+        ],
+        "paletteFreq": [
+          1,
+          1,
+          1
+        ],
+        "palettePhase": [
+          0.727029,
+          0.08039695,
+          0.10427457
+        ]
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "xScale": {
+          "min": 1,
+          "max": 100
+        },
+        "yScale": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "refractAmt": {
+          "min": 0,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        },
+        "kaleido": {
+          "min": 1,
+          "max": 32
+        },
+        "paletteMode": {
+          "min": 0,
+          "max": 100
+        },
+        "hueRotation": {
+          "min": 0,
+          "max": 360
+        },
+        "hueRange": {
+          "min": 0,
+          "max": 100
+        },
+        "rotatePalette": {
+          "min": 0,
+          "max": 100
+        },
+        "repeatPalette": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      "effectKey": "classicNoisedeck.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

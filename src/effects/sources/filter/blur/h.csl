@@ -1,0 +1,18 @@
+uniform sampler2D inputTex;
+uniform float radiusX;
+uniform float radiusY;
+
+vec4 main() {
+  vec4 sum = vec4(0.0);
+  float weightSum = 0.0;
+  float radius = min(radiusX, 8.0);
+  for (int offset = -8; offset <= 8; offset++) {
+    float distance = abs(float(offset));
+    if (distance <= radius) {
+      float weight = 1.0 - distance / (radius + 1.0);
+      sum += texture(inputTex, uv + vec2(float(offset) / resolution.x, 0.0)) * weight;
+      weightSum += weight;
+    }
+  }
+  return sum / max(weightSum, 0.0001);
+}

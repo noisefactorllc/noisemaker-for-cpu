@@ -1,0 +1,128 @@
+{
+  "id": "ex6dso",
+  "source": "search classicNoisedeck\n\nbitEffects()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "classicNoisedeck",
+      "func": "bitEffects",
+      "progName": "bitEffects",
+      "program": "node_0_bitEffects__COLOR_SCHEME_20__FORMULA_0__INTERP_0__MASK_COLOR_SCHEME_1__MASK_FORMULA_10__MODE_1",
+      "defines": {
+        "MODE": 1,
+        "FORMULA": 0,
+        "COLOR_SCHEME": 20,
+        "INTERP": 0,
+        "MASK_FORMULA": 10,
+        "MASK_COLOR_SCHEME": 1
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "speed": 50,
+        "n": 1,
+        "scale": 75,
+        "rotation": 0,
+        "tiles": 5,
+        "complexity": 57,
+        "baseHueRange": 50,
+        "hueRotation": 180,
+        "hueRange": 25,
+        "seed": 63
+      },
+      "uniformSpecs": {
+        "speed": {
+          "min": 0,
+          "max": 100
+        },
+        "n": {
+          "min": 1,
+          "max": 200
+        },
+        "scale": {
+          "min": 1,
+          "max": 100
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "tiles": {
+          "min": 1,
+          "max": 40
+        },
+        "complexity": {
+          "min": 1,
+          "max": 100
+        },
+        "baseHueRange": {
+          "min": 0,
+          "max": 100
+        },
+        "hueRotation": {
+          "min": 0,
+          "max": 360
+        },
+        "hueRange": {
+          "min": 0,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        }
+      },
+      "effectKey": "classicNoisedeck.bitEffects",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

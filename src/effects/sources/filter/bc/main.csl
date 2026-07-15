@@ -1,0 +1,10 @@
+uniform sampler2D inputTex;
+uniform float brightness;
+uniform float contrast;
+
+vec4 main() {
+  vec4 color = texture(inputTex, uv);
+  color.rgb *= brightness;
+  color.rgb = (color.rgb - 0.5) * (contrast * 2.0) + 0.5;
+  return color;
+}

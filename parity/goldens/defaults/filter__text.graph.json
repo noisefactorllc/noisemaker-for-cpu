@@ -1,0 +1,190 @@
+{
+  "id": "3t99hp",
+  "source": "search filter, synth\n\nperlin(scale: 100)\n  .text()\n  .write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "perlin",
+      "progName": "perlin",
+      "program": "node_0_perlin__DIMENSIONS_2",
+      "defines": {
+        "DIMENSIONS": 2
+      },
+      "inputs": {},
+      "outputs": {
+        "color": "node_0_out"
+      },
+      "uniforms": {
+        "scale": 100,
+        "octaves": 1,
+        "colorMode": 1,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 0,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 0,
+          "max": 100
+        },
+        "octaves": {
+          "min": 1,
+          "max": 6
+        },
+        "dimensions": {
+          "min": 2,
+          "max": 3
+        },
+        "warpIterations": {
+          "min": 0,
+          "max": 4
+        },
+        "warpScale": {
+          "min": 0,
+          "max": 100
+        },
+        "warpIntensity": {
+          "min": 0,
+          "max": 100
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.perlin",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "text",
+      "progName": "text",
+      "program": "node_1_text",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out",
+        "textTex": "textTex_step_1"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "scale": 100,
+        "octaves": 1,
+        "colorMode": 1,
+        "dimensions": 2,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 0,
+        "speed": 1,
+        "matteColor": "#000000",
+        "matteOpacity": 0,
+        "text": "Hello World",
+        "font": "Nunito",
+        "size": 0.1,
+        "posX": 0.5,
+        "posY": 0.5,
+        "rotation": 0,
+        "color": "#ffffff",
+        "justify": "center"
+      },
+      "uniformSpecs": {
+        "size": {
+          "min": 0.01,
+          "max": 1
+        },
+        "posX": {
+          "min": 0,
+          "max": 1
+        },
+        "posY": {
+          "min": 0,
+          "max": 1
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "matteOpacity": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.text",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

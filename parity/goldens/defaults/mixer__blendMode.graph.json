@@ -1,0 +1,256 @@
+{
+  "id": "-rh38v",
+  "source": "search mixer, synth\n\nnoise(ridges: true, colorMode: mono)\n.write(o0)\n\nperlin()\n.blendMode(tex: read(o0), mode: phoenix)\n.write(o1)\n",
+  "renderSurface": "o1",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "noise",
+      "progName": "noise",
+      "program": "node_0_noise__LOOP_OFFSET_300__NOISE_TYPE_10",
+      "defines": {
+        "NOISE_TYPE": 10,
+        "LOOP_OFFSET": 300
+      },
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "octaves": 2,
+        "scaleX": 75,
+        "scaleY": 75,
+        "seed": 1,
+        "wrap": true,
+        "ridges": true,
+        "loopScale": 75,
+        "speed": 25,
+        "colorMode": 0
+      },
+      "uniformSpecs": {
+        "octaves": {
+          "min": 1,
+          "max": 8
+        },
+        "scaleX": {
+          "min": 1,
+          "max": 100
+        },
+        "scaleY": {
+          "min": 1,
+          "max": 100
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        },
+        "loopScale": {
+          "min": 1,
+          "max": 100
+        },
+        "speed": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.noise",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "perlin",
+      "progName": "perlin",
+      "program": "node_2_perlin__DIMENSIONS_2",
+      "defines": {
+        "DIMENSIONS": 2
+      },
+      "inputs": {},
+      "outputs": {
+        "color": "node_2_out"
+      },
+      "uniforms": {
+        "scale": 25,
+        "octaves": 1,
+        "colorMode": 1,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 0,
+        "speed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 0,
+          "max": 100
+        },
+        "octaves": {
+          "min": 1,
+          "max": 6
+        },
+        "dimensions": {
+          "min": 2,
+          "max": 3
+        },
+        "warpIterations": {
+          "min": 0,
+          "max": 4
+        },
+        "warpScale": {
+          "min": 0,
+          "max": 100
+        },
+        "warpIntensity": {
+          "min": 0,
+          "max": 100
+        },
+        "seed": {
+          "min": 0,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        }
+      },
+      "effectKey": "synth.perlin",
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    },
+    {
+      "id": "node_3_pass_0",
+      "passType": "effect",
+      "namespace": "mixer",
+      "func": "blendMode",
+      "progName": "blendMode",
+      "program": "node_3_blendMode",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_2_out",
+        "tex": "global_o0"
+      },
+      "outputs": {
+        "fragColor": "node_3_out"
+      },
+      "uniforms": {
+        "scale": 25,
+        "octaves": 1,
+        "colorMode": 1,
+        "dimensions": 2,
+        "ridges": false,
+        "warpIterations": 0,
+        "warpScale": 50,
+        "warpIntensity": 50,
+        "seed": 0,
+        "speed": 1,
+        "mode": 12,
+        "mixAmt": 0
+      },
+      "uniformSpecs": {
+        "mixAmt": {
+          "min": -100,
+          "max": 100
+        }
+      },
+      "effectKey": "mixer.blendMode",
+      "nodeId": "node_3",
+      "stepIndex": 3,
+      "scopedParams": null
+    },
+    {
+      "id": "node_4_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_3_out"
+      },
+      "outputs": {
+        "color": "global_o1"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_4",
+      "stepIndex": 4,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_2_out": "phys_0",
+    "node_3_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_2_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_3_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

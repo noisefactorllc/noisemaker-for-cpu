@@ -1,0 +1,110 @@
+{
+  "id": "j0zxfe",
+  "source": "search synth\n\nmedia()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "media",
+      "progName": "mediaInput",
+      "program": "node_0_mediaInput",
+      "defines": {},
+      "inputs": {
+        "imageTex": "imageTex_step_0"
+      },
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "position": 4,
+        "tiling": 0,
+        "flip": 0,
+        "scaleAmt": 100,
+        "rotation": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "bgColor": [
+          0,
+          0,
+          0
+        ],
+        "bgAlpha": 0,
+        "imageSize": [
+          1024,
+          1024
+        ]
+      },
+      "uniformSpecs": {
+        "scaleAmt": {
+          "min": 25,
+          "max": 400
+        },
+        "rotation": {
+          "min": -180,
+          "max": 180
+        },
+        "offsetX": {
+          "min": -100,
+          "max": 100
+        },
+        "offsetY": {
+          "min": -100,
+          "max": 100
+        },
+        "bgAlpha": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "synth.media",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,15 @@
+uniform sampler2D inputTex;
+uniform int flipMode;
+
+vec4 main() {
+  vec2 coord = uv;
+  if (flipMode == 1) coord = vec2(1.0) - coord;
+  else if (flipMode == 2) coord.x = 1.0 - coord.x;
+  else if (flipMode == 3) coord.y = 1.0 - coord.y;
+  else if (flipMode == 11) coord.x = min(coord.x, 1.0 - coord.x) * 2.0;
+  else if (flipMode == 12) coord.x = 1.0 - min(coord.x, 1.0 - coord.x) * 2.0;
+  else if (flipMode == 13) coord.y = min(coord.y, 1.0 - coord.y) * 2.0;
+  else if (flipMode == 14) coord.y = 1.0 - min(coord.y, 1.0 - coord.y) * 2.0;
+  else if (flipMode == 15) coord = min(coord, vec2(1.0) - coord) * 2.0;
+  return texture(inputTex, coord);
+}

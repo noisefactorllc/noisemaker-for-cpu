@@ -1,0 +1,15 @@
+uniform sampler2D inputTex;
+uniform vec3 color;
+uniform float alpha;
+uniform int mode;
+
+vec4 main() {
+  vec4 source = texture(inputTex, uv);
+  vec3 result = mix(source.rgb, color, alpha);
+  if (mode == 1) result = mix(source.rgb, source.rgb * color, alpha);
+  else if (mode == 2) {
+    float luminance = dot(source.rgb, vec3(0.299, 0.587, 0.114));
+    result = mix(source.rgb, color * luminance, alpha);
+  }
+  return vec4(result, source.a);
+}

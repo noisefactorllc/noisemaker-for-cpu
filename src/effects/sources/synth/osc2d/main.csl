@@ -1,0 +1,24 @@
+const float PI = 3.14159265359;
+uniform int oscType;
+uniform int frequency;
+uniform int speed;
+uniform float rotation;
+uniform int seed;
+
+float hash1(float value) {
+  return fract(sin(value * 127.1 + float(seed) * 17.0) * 43758.5453);
+}
+
+vec4 main() {
+  vec2 p = uv - 0.5;
+  p.x *= resolution.x / resolution.y;
+  float angle = rotation * PI / 180.0;
+  float phase = (p.x * sin(angle) + p.y * cos(angle)) * float(frequency) + time * float(speed);
+  float value = sin(fract(phase) * PI);
+  if (oscType == 1) value = 1.0 - abs(fract(phase) * 2.0 - 1.0);
+  else if (oscType == 2) value = fract(phase);
+  else if (oscType == 3) value = 1.0 - fract(phase);
+  else if (oscType == 4) value = step(0.5, fract(phase));
+  else if (oscType >= 5) value = mix(hash1(floor(phase)), hash1(floor(phase) + 1.0), smoothstep(0.0, 1.0, fract(phase)));
+  return vec4(vec3(value), 1.0);
+}

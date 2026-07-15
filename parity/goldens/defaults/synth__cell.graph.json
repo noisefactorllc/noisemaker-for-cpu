@@ -1,0 +1,102 @@
+{
+  "id": "4fee4g",
+  "source": "search synth\n\ncell()\n  .write(o0)\n\nrender(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "cell",
+      "progName": "cell",
+      "program": "node_0_cell",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "metric": 0,
+        "scale": 75,
+        "cellScale": 87,
+        "cellSmooth": 0,
+        "variation": 50,
+        "speed": 1,
+        "seed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 100
+        },
+        "cellScale": {
+          "min": 1,
+          "max": 100
+        },
+        "cellSmooth": {
+          "min": 0,
+          "max": 100
+        },
+        "variation": {
+          "min": 0,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.cell",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_0_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "id": "rfyyor",
+  "source": "search synth, filter\n\ncell()\n  .smoothstep(edge1: 0.51)\n  .write(o0)\n",
+  "renderSurface": "o0",
+  "passes": [
+    {
+      "id": "node_0_pass_0",
+      "passType": "effect",
+      "namespace": "synth",
+      "func": "cell",
+      "progName": "cell",
+      "program": "node_0_cell",
+      "defines": {},
+      "inputs": {},
+      "outputs": {
+        "fragColor": "node_0_out"
+      },
+      "uniforms": {
+        "metric": 0,
+        "scale": 75,
+        "cellScale": 87,
+        "cellSmooth": 0,
+        "variation": 50,
+        "speed": 1,
+        "seed": 1
+      },
+      "uniformSpecs": {
+        "scale": {
+          "min": 1,
+          "max": 100
+        },
+        "cellScale": {
+          "min": 1,
+          "max": 100
+        },
+        "cellSmooth": {
+          "min": 0,
+          "max": 100
+        },
+        "variation": {
+          "min": 0,
+          "max": 100
+        },
+        "speed": {
+          "min": 0,
+          "max": 5
+        },
+        "seed": {
+          "min": 1,
+          "max": 100
+        }
+      },
+      "effectKey": "synth.cell",
+      "nodeId": "node_0",
+      "stepIndex": 0,
+      "scopedParams": null
+    },
+    {
+      "id": "node_1_pass_0",
+      "passType": "effect",
+      "namespace": "filter",
+      "func": "smoothstep",
+      "progName": "smoothstep",
+      "program": "node_1_smoothstep",
+      "defines": {},
+      "inputs": {
+        "inputTex": "node_0_out"
+      },
+      "outputs": {
+        "fragColor": "node_1_out"
+      },
+      "uniforms": {
+        "metric": 0,
+        "scale": 75,
+        "cellScale": 87,
+        "cellSmooth": 0,
+        "variation": 50,
+        "speed": 1,
+        "seed": 1,
+        "edge0": 0,
+        "edge1": 0.51
+      },
+      "uniformSpecs": {
+        "edge0": {
+          "min": 0,
+          "max": 1
+        },
+        "edge1": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "effectKey": "filter.smoothstep",
+      "nodeId": "node_1",
+      "stepIndex": 1,
+      "scopedParams": null
+    },
+    {
+      "id": "node_2_write_blit",
+      "passType": "blit",
+      "namespace": null,
+      "func": "blit",
+      "progName": "blit",
+      "program": "blit",
+      "defines": {},
+      "inputs": {
+        "src": "node_1_out"
+      },
+      "outputs": {
+        "color": "global_o0"
+      },
+      "uniforms": {},
+      "uniformSpecs": {},
+      "effectKey": null,
+      "nodeId": "node_2",
+      "stepIndex": 2,
+      "scopedParams": null
+    }
+  ],
+  "allocations": {
+    "node_0_out": "phys_0",
+    "node_1_out": "phys_1"
+  },
+  "textures": {
+    "node_0_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    },
+    "node_1_out": {
+      "width": "screen",
+      "height": "screen",
+      "format": "rgba16f",
+      "usage": [
+        "render",
+        "sample",
+        "copySrc",
+        "copyDst"
+      ]
+    }
+  },
+  "programs": {
+    "blit": {
+      "uniformLayout": {},
+      "defines": {}
+    }
+  }
+}
