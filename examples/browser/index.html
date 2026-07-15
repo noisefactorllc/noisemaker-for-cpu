@@ -1,81 +1,101 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="gray-dark">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>noisemaker-cpu — frame bench</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --housing: #17162b;
-      --housing-raised: #24223f;
-      --paper: #e9e8f4;
-      --paper-dim: #a7a5bd;
-      --apricot: #ff8a5b;
-      --iris: #746cff;
-      --mint: #a8f0d0;
-      --graphite: #5a5968;
-      --scan: 0%;
-      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-      background: var(--housing);
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: var(--housing); color: var(--paper); }
-    button, select, textarea { font: inherit; }
-    .bench { min-height: 100vh; display: grid; grid-template-columns: minmax(21rem, 0.82fr) minmax(24rem, 1.18fr); }
-    .controls { display: flex; flex-direction: column; min-height: 100vh; padding: clamp(1.4rem, 3vw, 3rem); border-right: 1px solid var(--graphite); }
-    .eyebrow, .telemetry, label { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .7rem; letter-spacing: .13em; text-transform: uppercase; }
-    .eyebrow { color: var(--mint); }
-    h1 { max-width: 10ch; margin: .7rem 0 .55rem; font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif; font-size: clamp(3.2rem, 7vw, 7.6rem); font-stretch: condensed; font-weight: 800; letter-spacing: -.055em; line-height: .78; text-transform: uppercase; }
-    .intro { max-width: 38rem; margin: 0 0 2rem; color: var(--paper-dim); line-height: 1.55; }
-    .editor-shell { position: relative; flex: 1; min-height: 24rem; border: 1px solid var(--graphite); background: #101020; }
-    .editor-shell::before { content: "POLYMORPHIC / CPU"; position: absolute; z-index: 1; top: .8rem; right: .9rem; color: var(--graphite); font: .62rem ui-monospace, monospace; letter-spacing: .12em; pointer-events: none; }
-    textarea { width: 100%; height: 100%; min-height: 24rem; resize: vertical; border: 0; outline: 0; padding: 2.8rem 1.2rem 1.2rem; background: transparent; color: var(--paper); caret-color: var(--apricot); font: .82rem/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; tab-size: 2; }
-    textarea:focus-visible { box-shadow: inset 0 0 0 2px var(--iris); }
-    .actions { display: grid; grid-template-columns: 1fr auto auto; gap: .65rem; margin-top: .75rem; }
-    button, select { min-height: 2.8rem; border: 1px solid var(--graphite); border-radius: 0; padding: 0 .95rem; background: var(--housing-raised); color: var(--paper); }
-    button { cursor: pointer; font-weight: 750; }
-    button.primary { border-color: var(--apricot); background: var(--apricot); color: #211523; }
-    button:hover { border-color: var(--paper); }
-    button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
-    button:disabled { cursor: wait; opacity: .62; }
-    .stage { position: relative; display: grid; place-items: center; overflow: hidden; min-height: 100vh; padding: clamp(1rem, 4vw, 4rem); background: var(--paper); color: var(--housing); }
-    .stage::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--scan); background: color-mix(in srgb, var(--iris) 9%, transparent); border-right: 1px solid color-mix(in srgb, var(--iris) 55%, transparent); pointer-events: none; transition: width 90ms linear; }
-    .frame { position: relative; width: min(78vh, 100%); aspect-ratio: 1; padding: clamp(.75rem, 2vw, 1.4rem); background: #d4d2df; box-shadow: 1.5rem 1.5rem 0 #c2bfd2; }
-    canvas { display: block; width: 100%; height: 100%; background: repeating-conic-gradient(#b7b4c5 0 25%, #d7d5e1 0 50%) 50% / 1rem 1rem; }
-    .telemetry { position: absolute; display: flex; justify-content: space-between; gap: 2rem; right: 0; bottom: -2.3rem; left: 0; color: var(--graphite); }
-    .telemetry strong { color: var(--housing); font-weight: 800; }
-    .fault { color: #ff4f64; }
-    @media (max-width: 820px) {
-      .bench { grid-template-columns: 1fr; }
-      .controls { min-height: auto; border-right: 0; border-bottom: 1px solid var(--graphite); }
-      .stage { min-height: 70vh; padding-bottom: 4.5rem; }
-      .actions { grid-template-columns: 1fr 1fr; }
-      .actions .primary { grid-column: 1 / -1; }
-    }
-    @media (prefers-reduced-motion: reduce) { .stage::before { transition: none; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noisemaker CPU Demo</title>
+    <meta name="description" content="Build a Polymorphic-DSL effect pipeline and render it on the CPU with noisemaker-cpu — no GPU required." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23101522'/%3E%3Ccircle cx='8' cy='8' r='3.5' fill='%23a5b8ff'/%3E%3C/svg%3E" />
+    <link rel="preload" href="https://fonts.noisefactor.io/fonts/nunito/Nunito-Blank.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="https://fonts.noisefactor.io/fonts/noto-sans-mono/NotoSansMono-Blank.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      @font-face { font-family: 'Nunito Blank'; src: url('https://fonts.noisefactor.io/fonts/nunito/Nunito-Blank.woff2') format('woff2'); }
+      @font-face { font-family: 'Noto Sans Mono Blank'; src: url('https://fonts.noisefactor.io/fonts/noto-sans-mono/NotoSansMono-Blank.woff2') format('woff2'); }
+    </style>
+    <link rel="stylesheet" href="https://handfish.noisefactor.io/0.9.0/styles/index.css" />
+    <link rel="stylesheet" href="https://handfish.noisefactor.io/0.9.0/styles/themes/gray.css" />
+    <link rel="stylesheet" href="./common-colors.css" />
+    <link rel="stylesheet" href="./common-layout.css" />
+    <link rel="stylesheet" href="./layout.css" />
 </head>
-<body>
-  <main class="bench">
-    <section class="controls">
-      <div class="eyebrow">One frame / no GPU</div>
-      <h1>CPU shader bench</h1>
-      <p class="intro">Edit the chain, then let the processor draw every pixel. The raster clock moves once per completed tile.</p>
-      <div class="editor-shell"><textarea id="source" spellcheck="false" aria-label="Polymorphic DSL source"></textarea></div>
-      <div class="actions">
-        <button class="primary" id="render">Render one frame</button>
-        <select id="size" aria-label="Frame size"><option>128</option><option selected>256</option><option>512</option></select>
-        <button id="seed">New seed</button>
-      </div>
-    </section>
-    <section class="stage" id="stage" aria-live="polite">
-      <div class="frame">
-        <canvas id="canvas" width="256" height="256"></canvas>
-        <div class="telemetry"><span id="status">Ready</span><strong id="timing">CPU / idle</strong></div>
-      </div>
-    </section>
-  </main>
-  <script type="module" src="./app.js"></script>
+<body class="fixed-canvas-mode">
+    <div id="loading" class="loading">loading effects…</div>
+
+    <div id="app-container" style="display: none;">
+        <div id="mobile-divider"></div>
+
+        <div id="left-panel">
+            <!-- Header + global render settings -->
+            <div class="shader-effect hf-panel" id="pipeline-effect">
+                <div class="effect-title" id="pipeline-title">
+                    <span class="effect-title-text">noisemaker cpu demo</span>
+                    <span style="flex: 1;"></span>
+                    <button id="code-btn" class="hf-action-btn tooltip" data-title="Show the generated DSL" aria-label="Show the generated DSL">code</button>
+                </div>
+                <div class="effect-content">
+                    <div class="render-settings">
+                        <label class="setting">
+                            <span class="setting-label">size</span>
+                            <select id="resolution" class="hf-select">
+                                <option value="128">128</option>
+                                <option value="256" selected>256</option>
+                                <option value="384">384</option>
+                                <option value="512">512</option>
+                            </select>
+                        </label>
+                        <label class="setting">
+                            <span class="setting-label">seed</span>
+                            <span class="seed-controls">
+                                <input id="seed" class="hf-number" type="number" step="1" min="0" value="11" />
+                                <button id="seed-randomize" class="hf-action-btn tooltip" data-title="Random seed" aria-label="Random seed">↻</button>
+                            </span>
+                        </label>
+                        <label class="setting">
+                            <span class="setting-label">time</span>
+                            <span id="time-control" class="time-control"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generator + filter chain (built by demo.js) -->
+            <div id="effect-controls-container"></div>
+
+            <!-- Add a filter -->
+            <div class="shader-effect hf-panel" id="add-effect-panel">
+                <div class="effect-content">
+                    <effect-select id="add-effect"></effect-select>
+                </div>
+            </div>
+
+            <!-- DSL code view (collapsed by default) -->
+            <div class="shader-effect hf-panel collapsed" id="code-effect">
+                <div class="effect-title" id="code-title">
+                    <span class="effect-title-text">dsl</span>
+                    <span style="flex: 1;"></span>
+                    <span id="dsl-mode" class="hf-text-dim hf-text-xs"></span>
+                </div>
+                <div class="effect-content">
+                    <textarea id="dsl-editor" class="dsl-editor" spellcheck="false" rows="8"></textarea>
+                    <div class="dsl-actions">
+                        <button id="dsl-run" class="hf-btn hf-btn-primary">run</button>
+                        <button id="dsl-revert" class="hf-btn">back to pipeline</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="noisemaker-info">Noisemaker is the open source engine behind <a href="https://noisedeck.app/" target="_blank" rel="noopener">Noisedeck</a> and other <a href="https://noisefactor.io/" target="_blank" rel="noopener">Noise Factor</a> tools.</div>
+        </div>
+
+        <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+            <div id="loadingOverlay">rendering…</div>
+            <div id="errorBanner"></div>
+        </div>
+    </div>
+
+    <div id="status" class="status" style="display: none;"></div>
+
+    <script type="module" src="./demo.js"></script>
 </body>
 </html>

@@ -14,9 +14,10 @@ node bin/noisemaker-cpu.js effect noise \
   --param scaleX=18 --param scaleY=12 \
   --output noise.png
 
-node bin/noisemaker-cpu.js render examples/programs/showcase.dsl \
-  --width 256 --height 256 --seed 11 \
-  --output showcase.png
+printf 'search synth, filter\nnoise(scaleX: 18, scaleY: 12).posterize(levels: 8).write(o0)\nrender(o0)\n' |
+  node bin/noisemaker-cpu.js render - \
+    --width 256 --height 256 --seed 11 \
+    --output showcase.png
 ```
 
 Use an input image or named texture:
@@ -75,7 +76,7 @@ The render-level integer `seed` supplies omitted effect seed parameters; a seed 
 
 Initialized fibers, scratches, and stray-hair overlays use a 64 MiB LRU cache by default. Set `cpuTextureCacheByteLimit` in the `CpuRenderer` constructor, inspect `cpuTextureCacheStats()`, or release retained overlays with `clearCpuTextureCache()`/`dispose()`.
 
-For a canvas, call `renderToCanvas(canvas, dsl, options)` or `await renderToCanvasAsync(...)`. The asynchronous form yields between scanline tiles so the page can update while the CPU works. A runnable editor/bench is in `examples/browser`.
+For a canvas, call `renderToCanvas(canvas, dsl, options)` or `await renderToCanvasAsync(...)`. The asynchronous form yields between scanline tiles so the page can update while the CPU works. A browser demo is in `examples/browser`: build a Polymorphic-DSL effect pipeline from the full effect catalog and watch it render on the CPU. Serve the repository over HTTP (for example `python3 -m http.server`) and open `examples/browser/index.html`.
 
 ## CSL
 
