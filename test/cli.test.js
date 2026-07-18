@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
@@ -11,6 +12,11 @@ const cli = resolve('bin/noisemaker-cpu.js')
 
 function run(args, options = {}) {
   return spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8', ...options })
+}
+
+function hasFfmpeg() {
+  const probe = spawnSync('ffmpeg', ['-version'], { encoding: 'utf8' })
+  return !probe.error && probe.status === 0
 }
 
 test('CLI prints help and the effect catalog', () => {
@@ -132,6 +138,78 @@ test('CLI loads PNG input and named external textures', async () => {
     const result = run(['render', program, '--width=2', '--height=2', '--input', input, '--texture', `textTex=${input}`, '--output', output])
     assert.equal(result.status, 0, result.stderr)
     assert.equal((await readFile(output)).subarray(1, 4).toString('ascii'), 'PNG')
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI generate renders a generator and apply filters an input at its dimensions', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    const gen = join(dir, 'gen.png')
+    const out = join(dir, 'out.png')
+    const generated = run(['generate', 'synth/curl', '--width', '12', '--height', '10', '--seed', '1', '--output', gen])
+    assert.equal(generated.status, 0, generated.stderr)
+    assert.match(generated.stdout, /^synth\/curl/m) // echoes the resolved effect id
+    const source = decodePng(await readFile(gen))
+    assert.deepEqual([source.width, source.height], [12, 10])
+
+    const applied = run(['apply', 'filter/invert', gen, '--output', out])
+    assert.equal(applied.status, 0, applied.stderr)
+    const inverted = decodePng(await readFile(out))
+    assert.deepEqual([inverted.width, inverted.height], [12, 10]) // output tracks the input dimensions
+    for (let i = 0; i < source.data.length; i += 4) {
+      for (let channel = 0; channel < 3; channel += 1) assert.equal(inverted.data[i + channel], 255 - source.data[i + channel])
+      assert.equal(inverted.data[i + 3], source.data[i + 3]) // alpha preserved
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI run renders DSL from stdin and apply rejects a generator id', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    const out = join(dir, 'run.png')
+    const program = 'search synth\nsolid(color: #336699).write(o0)\nrender(o0)\n'
+    const rendered = run(['run', '--width', '4', '--height', '4', '--output', out], { input: program })
+    assert.equal(rendered.status, 0, rendered.stderr)
+    assert.deepEqual([...decodePng(await readFile(out)).data.slice(0, 4)], [0x33, 0x66, 0x99, 0xff])
+
+    // apply seeds its input as o0 and reads it, so a generator id can't begin the chain.
+    const bad = run(['apply', 'synth/solid', out])
+    assert.notEqual(bad.status, 0)
+    assert.match(bad.stderr, /must begin a chain|requires an input/)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI animate keeps frames when ffmpeg is unavailable', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    const frames = join(dir, 'frames')
+    // Empty PATH hides ffmpeg; --save-frames makes the fallback keep frames and exit 0.
+    const result = run(
+      ['animate', 'synth/curl', '--width', '8', '--height', '8', '--frame-count', '2', '--seed', '1', '--save-frames', frames],
+      { env: { ...process.env, PATH: '' } },
+    )
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /ffmpeg not found/)
+    assert.equal((await readFile(join(frames, 'frame_0000.png'))).subarray(1, 4).toString('ascii'), 'PNG')
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI animate defaults its output to animation.mp4', { skip: !hasFfmpeg() }, async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    // No --filename: must default to animation.mp4 (never art.png), written into cwd.
+    const result = run(['animate', 'synth/curl', '--width', '8', '--height', '8', '--frame-count', '3', '--seed', '1'], { cwd: dir })
+    assert.equal(result.status, 0, result.stderr)
+    assert.ok((await readFile(join(dir, 'animation.mp4'))).length > 0)
+    assert.equal(existsSync(join(dir, 'art.png')), false)
   } finally {
     await rm(dir, { recursive: true, force: true })
   }

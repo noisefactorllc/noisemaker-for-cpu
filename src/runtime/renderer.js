@@ -26,6 +26,7 @@ function assertRenderOptions(options) {
     time,
     seed,
     externalTextures: options.externalTextures ?? {},
+    seedSurfaces: options.seedSurfaces ?? null,
     oneShot,
   }
 }
@@ -473,7 +474,7 @@ export class CpuRenderer {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
     const plan = compileDsl(source, this.registry, options)
-    const surfaces = new Map()
+    const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
     const stats = { passes: 0, pixels: 0 }
     try {
@@ -500,7 +501,7 @@ export class CpuRenderer {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
     const plan = compileDsl(source, this.registry, options)
-    const surfaces = new Map()
+    const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
     const stats = { passes: 0, pixels: 0 }
     const scheduler = options.scheduler ?? (() => new Promise((resolve) => setTimeout(resolve, 0)))
