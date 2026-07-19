@@ -1,5 +1,8 @@
 # noisemaker-cpu
 
+This is not the classic JS Noisemaker (Composer) library. This is a new
+effort centered around software shader execution.
+
 A CPU-only backport of the Noisemaker shader engine, Polymorphic DSL, and standalone-frame canonical 2D shader collection. It renders in vanilla JavaScript in browsers or Node.js without WebGL, WebGPU, native addons, or runtime package dependencies.
 
 The renderer is designed to reproduce a frame anywhere JavaScript runs, with the expectation that complex frames can be slow. CSL—CPU Shader Language—provides a compact GLSL-like language for custom CPU shaders. The upstream Noisemaker GLSL collection is translated ahead of time into ordinary ESM pixel kernels, so catalog rendering needs neither runtime evaluation nor the GLSL transpiler.
