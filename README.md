@@ -150,7 +150,7 @@ The catalog is the exact eligible collection from Noisemaker revision `246ff57f4
 
 Exactly five source effects remain excluded: reactive `synth/roll`, `synth/scope`, and `synth/spectrum`, plus `render/meshLoader` and `render/meshRender`. `filter/text` and `synth/media` remain included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory and exclusions.
 
-Parity claims are enforced, not inferred. `npm run parity` keeps the existing 167-golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact. `filter/crt` still fails because JavaScript and ANGLE/Metal fast-math diverge in its hash-sensitive pipeline. There are 38 explicit, compile-preflighted skips: the prior 21 CPU-divergent simulations and the 17 newly ported volume/loop effects awaiting pinned GPU goldens. The tolerance and denominator are unchanged. Skips never affect the pass/fail count or exit code.
+Parity claims are enforced, not inferred. `npm run parity` keeps the existing 167-golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact. `filter/crt` still fails because JavaScript and ANGLE/Metal fast-math diverge in its hash-sensitive pipeline; [docs/CRT-PARITY.md](docs/CRT-PARITY.md) records the failure analysis and fix constraints. There are 38 explicit, compile-preflighted skips: the prior 21 CPU-divergent simulations and the 17 newly ported volume/loop effects awaiting pinned GPU goldens. The tolerance and denominator are unchanged. Skips never affect the pass/fail count or exit code.
 
 ## Performance model
 
