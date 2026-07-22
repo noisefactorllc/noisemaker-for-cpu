@@ -17,6 +17,10 @@
     <link rel="stylesheet" href="./common-colors.css" />
     <link rel="stylesheet" href="./common-layout.css" />
     <link rel="stylesheet" href="./layout.css" />
+    <!-- Resolve the engine by the package's own name so the page is not tied to a fixed relative
+         layout: this maps to the in-repo engine, and a host serving the demo elsewhere points it at
+         wherever it placed src/. Node resolves the same specifier via package self-reference. -->
+    <script type="importmap">{ "imports": { "noisemaker-cpu": "../../src/index.js" } }</script>
 </head>
 <body class="fixed-canvas-mode">
     <div id="loading" class="loading">loading effects…</div>
