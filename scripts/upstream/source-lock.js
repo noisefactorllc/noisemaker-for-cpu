@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 
-export const PINNED_UPSTREAM_REVISION = 'dc67827bfc2d4e71d64cb6095cd8c922dc64360f'
+export const PINNED_UPSTREAM_REVISION = 'a024dc3a960cc44af454abc7aebce50456c194e6'
 export const PINNED_SOURCE_PATHS = Object.freeze(['shaders/effects', 'shaders/src'])
 
 export function assertPinnedSource(referenceRoot, run = execFileSync) {

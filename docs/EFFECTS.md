@@ -1,6 +1,6 @@
 # Effect coverage
 
-This is the exact standalone-frame 2D target imported from Noisemaker revision `dc67827bfc2d4e71d64cb6095cd8c922dc64360f`, after the explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact standalone-frame 2D target imported from Noisemaker revision `a024dc3a960cc44af454abc7aebce50456c194e6`, after the explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
 The runtime contains 167 effects and 212 fragment programs. Every default effect and all 410 non-null compile-time shader choices execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 

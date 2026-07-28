@@ -986,9 +986,9 @@ export const programCoverage = Object.freeze([
     "program": "pondRipples",
     "file": "pondRipples.glsl",
     "status": "generated",
-    "sourceBytes": 4791,
-    "normalizedBytes": 4773,
-    "generatedBytes": 3255
+    "sourceBytes": 5187,
+    "normalizedBytes": 5186,
+    "generatedBytes": 3360
   },
   {
     "effectId": "filter/posterize",

@@ -177,6 +177,30 @@ render(o1)`, { width: 4, height: 4 })
   assert.ok(blue.some((value) => value > 0.5))
 })
 
+test('pondRipples speed animates the ripple phase and defaults to the prior static behavior', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  // A solid-color input can't reveal a spatial warp (sampling any coordinate
+  // of a flat color yields that same color), so use a time-frozen noise
+  // field as the input; the only remaining time dependence is pondRipples's
+  // own speed uniform.
+  const source = (speed) => `search filter, synth
+noise(seed: 1, scaleX: 12, scaleY: 12, wrap: false, speed: 0).write(o0)
+read(o0).pondRipples(amount: 80, ridges: 6, speed: ${speed}).write(o1)
+render(o1)`
+  const render = (speed, time) => [...renderer.render(source(speed), {
+    width: 16, height: 16, time, seed: 1, oneShot: 'initial',
+  }).toRgba8()]
+
+  const static0Early = render(0, 0.25)
+  const static0Late = render(0, 0.75)
+  const moving3Early = render(3, 0.25)
+  const moving3Late = render(3, 0.75)
+
+  assert.deepEqual(static0Early, static0Late, 'speed 0 must stay bit-identical across time (the pre-resync static behavior)')
+  assert.notDeepEqual(moving3Early, moving3Late, 'nonzero speed must animate the ripple phase across time')
+  assert.notDeepEqual(static0Early, moving3Early, 'nonzero speed must diverge from the static default at the same time')
+})
+
 test('median compatibility kernel preserves unsigned packed whole-color ordering', () => {
   const data = new Float32Array(3 * 3 * 4)
   for (let index = 0; index < data.length; index += 4) data.set([1, 0, 0, 1], index)

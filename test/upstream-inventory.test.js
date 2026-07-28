@@ -196,7 +196,7 @@ const REACTIVE = [
 ]
 
 test('upstream snapshot pins the exact 167-effect standalone-frame 2D inventory', () => {
-  assert.equal(UPSTREAM_REVISION, 'dc67827bfc2d4e71d64cb6095cd8c922dc64360f')
+  assert.equal(UPSTREAM_REVISION, 'a024dc3a960cc44af454abc7aebce50456c194e6')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'mixer', 'synth'].map((namespace) => [
@@ -238,4 +238,11 @@ test('upstream snapshot preserves parity-critical definition metadata', () => {
   const channel = byId.get('filter/channel')
   assert.deepEqual(channel.params.channel.choices, { r: 0, g: 1, b: 2, a: 3 })
   assert.equal(channel.params.channel.default, 'channel.r')
+
+  const pondRipples = byId.get('filter/pondRipples')
+  assert.equal(pondRipples.params.speed.type, 'int')
+  assert.equal(pondRipples.params.speed.default, 0)
+  assert.equal(pondRipples.params.speed.uniform, 'speed')
+  assert.equal(pondRipples.params.speed.min, -5)
+  assert.equal(pondRipples.params.speed.max, 5)
 })

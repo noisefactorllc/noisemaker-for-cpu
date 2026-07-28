@@ -16124,6 +16124,8 @@ function canonicalFactory106($bindings, $runtime) {
   var fullResolution = $bindings["fullResolution"];
   var amount = $bindings["amount"];
   var ridges = $bindings["ridges"];
+  var speed = $bindings["speed"];
+  var time = $bindings["time"];
   var antialias = $bindings["antialias"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
@@ -16133,7 +16135,7 @@ function canonicalFactory106($bindings, $runtime) {
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
   	uv[0] *= aspectRatio;
   	var r = length(uv);
-  	var phase = ((r * (ridges)) * 2) * 3.1415927410125732;
+  	var phase = ((r * (ridges)) * 2) * 3.1415927410125732 - ((time * 2) * 3.1415927410125732) * (speed);
   	var damping = max(0, 1 - r);
   	var w = 0;
   	if (amount <= 30) {
