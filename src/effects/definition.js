@@ -100,6 +100,11 @@ export class EffectDefinition {
     this.func = spec.func
     this.id = `${spec.namespace}/${spec.func}`
     this.kind = spec.kind
+    // CPU-only stateful/particle effects re-run their passes `params.iterationCount.default`
+    // times per frame. Surfaced here (not just on the raw snapshot record) so renderer and
+    // tooling code that walks the runtime catalog can skip or special-case them without a
+    // second lookup against the generated snapshot.
+    this.iterated = spec.iterated === true
     this.name = spec.name ?? spec.func
     this.tags = cloneValue(spec.tags ?? [])
     this.description = spec.description ?? ''

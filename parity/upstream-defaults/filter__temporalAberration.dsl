@@ -7,3 +7,5 @@ noise(seed: 1,
 )
   .temporalAberration()
   .write(o0)
+
+render(o0)

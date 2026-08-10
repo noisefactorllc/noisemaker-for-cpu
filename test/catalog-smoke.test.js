@@ -3,13 +3,19 @@ import test from 'node:test'
 
 import { createDefaultRegistry, effectCatalog, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { eligibleEffectIds } from '../src/effects/generated/upstream-snapshot.js'
+import { resolveScatterAdapter } from '../src/effects/cpu/scatter-registry.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { Surface } from '../src/runtime/surface.js'
 
-function smokeProgram(effect) {
+// Iterated effects (the 21 stateful/particle records) default `iterationCount` to 60; the render
+// sweep below overrides it to a small, fixed value so the "does every default program render"
+// smoke check stays fast regardless of any one effect's own default. `overrides` is inserted as
+// the call's only named argument, which is always legal DSL (no positional/named mixing risk)
+// since `smokeProgram` never supplies any other argument itself.
+function smokeProgram(effect, overrides = '') {
   const search = effect.namespace === 'synth' ? 'search synth' : `search ${effect.namespace}, synth`
-  if (effect.kind === 'generator') return `${search}\n${effect.func}().write(o0)\nrender(o0)`
-  return `${search}\nsolid(color: #58c).write(o0)\nread(o0).${effect.func}().write(o1)\nrender(o1)`
+  if (effect.kind === 'generator') return `${search}\n${effect.func}(${overrides}).write(o0)\nrender(o0)`
+  return `${search}\nsolid(color: #58c).write(o0)\nread(o0).${effect.func}(${overrides}).write(o1)\nrender(o1)`
 }
 
 function choiceProgram(effect, name, value) {
@@ -19,14 +25,25 @@ function choiceProgram(effect, name, value) {
   return `${search}\nsolid(color: #58c).write(o0)\nread(o0).${call}.write(o1)\nrender(o1)`
 }
 
-test('default catalog contains the exact canonical 167-effect coverage set', () => {
+test('default catalog contains the exact canonical 188-effect coverage set', () => {
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
-  assert.equal(createDefaultRegistry().list().length, 167)
-  assert.equal(kernelFactories.size, 212)
+  assert.equal(createDefaultRegistry().list().length, 188)
+  assert.equal(kernelFactories.size, 269)
   assert.ok(kernels.size >= 33)
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {
-      assert.equal(typeof kernelFactories.get(`${effect.id}:${pass.program}`), 'function', `${effect.id}:${pass.program}`)
+      const key = `${effect.id}:${pass.program}`
+      // Vertex-stage scatter passes (`drawMode: 'points'|'billboards'`) are dispatched through
+      // the hand-written adapter registry, never through a transpiled fragment kernel - they
+      // rasterize a variable point/quad count rather than filling every destination pixel once
+      // (see src/effects/cpu/scatter-registry.js). Every other pass (every one of the 167
+      // pre-existing effects, plus 16 of the 21 iterated ones) has a generated or hand-adapted
+      // entry in kernelFactories.
+      if (pass.drawMode === 'points' || pass.drawMode === 'billboards') {
+        assert.equal(typeof resolveScatterAdapter(key), 'function', key)
+      } else {
+        assert.equal(typeof kernelFactories.get(key), 'function', key)
+      }
     }
   }
 })
@@ -36,14 +53,20 @@ test('every eligible canonical effect renders finite default pixels', () => {
   const external = new Surface(2, 2)
   external.clear([0.2, 0.4, 0.6, 1])
   for (const effect of effectCatalog) {
-    const result = renderer.render(smokeProgram(effect), {
-      width: 2,
-      height: 2,
+    // Iterated effects default iterationCount to 60; override to a small fixed value so this
+    // sweep stays fast, and render at 16x16 (rather than 2x2) so their pass graphs - some of
+    // which allocate particle-state textures independent of the render surface - exercise a
+    // realistic canvas.
+    const overrides = effect.iterated ? 'iterationCount: 4' : ''
+    const size = effect.iterated ? 16 : 2
+    const result = renderer.render(smokeProgram(effect, overrides), {
+      width: size,
+      height: size,
       seed: 3,
       time: 0.25,
       externalTextures: { imageTex: external, textTex: external },
     })
-    assert.equal(result.width, 2, effect.id)
+    assert.equal(result.width, size, effect.id)
     assert.ok(result.surface.data.every(Number.isFinite), `${effect.id} produced non-finite pixels`)
   }
 })
@@ -54,6 +77,9 @@ test('every compile-time shader choice executes through the CPU backend', () => 
   external.clear([0.2, 0.4, 0.6, 1])
   let choices = 0
   for (const effect of effectCatalog) {
+    // None of the 21 iterated effects carry a compile-time (`define`) choice param (verified: the
+    // inner loop below never enters its render call for any of them), so this sweep still covers
+    // exactly the pre-existing 410 without any iterated-specific handling.
     for (const [name, param] of Object.entries(effect.params)) {
       if (!param.define || !param.choices) continue
       for (const value of Object.values(param.choices)) {

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories } from '../../src/index.js'
+import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories, compileDsl } from '../../src/index.js'
 import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng, writePng } from '../../src/node/png.js'
 import { compareRgba8 } from './lib.js'
@@ -56,12 +56,43 @@ async function main() {
   const options = parseArgs(process.argv.slice(2))
   const registry = createDefaultRegistry()
   const manifest = await loadManifest()
-  const definitions = registry.list().filter((definition) => {
+  const candidates = registry.list().filter((definition) => {
     const suite = suiteFor(definition)
     if (options.suite !== 'all' && options.suite !== suite) return false
     if (options.only && options.only !== definition.id && options.only !== definition.id.replace('/', '__')) return false
     return true
   })
+  // The 21 stateful/particle effects have no GPU golden (their CPU-side per-iteration schedule
+  // intentionally diverges from any single upstream frame - see docs/EFFECTS.md's "CPU iteration
+  // divergence" section) and are reported as explicit skips rather than silently dropped from the
+  // candidate set: they still respect --suite/--only, they are still visible in the output, and
+  // they never affect the pass/fail denominator or the exit code.
+  const definitions = candidates.filter((definition) => !definition.iterated)
+  const skipped = candidates.filter((definition) => definition.iterated)
+
+  // A skip is an explicit claim that a healthy fixture exists with no GPU golden to compare
+  // against - not a way to silently stop looking at these 21 files. Read and compile each one
+  // (parse the DSL and resolve every effect call against the registry) before it is ever reported
+  // as SKIP, so a missing file, a parse error, or an unresolvable effect call fails this whole
+  // command loudly instead of being indistinguishable from "intentionally excluded." This never
+  // renders a pixel (`compileDsl` stops short of the pass-execution loop), so it doesn't
+  // reintroduce the iterationCount:60-by-default cost these 21 were skipped specifically to avoid.
+  for (const definition of skipped) {
+    const name = definition.id.replace('/', '__')
+    const programPath = manifest.get(name) ?? resolve(projectRoot, 'parity/upstream-defaults', `${name}.dsl`)
+    let source
+    try {
+      source = await readFile(programPath, 'utf8')
+    } catch (error) {
+      throw new Error(`${definition.id} skip fixture is missing at ${programPath}: ${error.message}`)
+    }
+    try {
+      compileDsl(source, registry, { sourceName: programPath })
+    } catch (error) {
+      throw new Error(`${definition.id} skip fixture ${programPath} failed to compile: ${error.message}`)
+    }
+  }
+
   const renderer = new CpuRenderer({ registry, kernelFactories })
   const blank = fixtureSurface(options.size, options.size)
   const results = []
@@ -100,12 +131,16 @@ async function main() {
     passed: results.length - failures.length,
     byteExact: results.filter((result) => result.exact).length,
     failures,
+    skipped: skipped.map((definition) => definition.id),
   }
   if (options.json) process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`)
   else {
-    process.stdout.write(`Parity ${summary.passed}/${summary.effects} within ±${summary.tolerance} RGBA bytes; ${summary.byteExact} byte-exact\n`)
+    process.stdout.write(`Parity ${summary.passed}/${summary.effects} within ±${summary.tolerance} RGBA bytes; ${summary.byteExact} byte-exact; ${summary.skipped.length} skipped\n`)
     for (const failure of failures) {
       process.stdout.write(`FAIL ${failure.id} max=${failure.maxError} mean=${failure.meanError.toFixed(4)} channels>${summary.tolerance}=${failure.channelsOverTolerance}\n`)
+    }
+    for (const id of summary.skipped) {
+      process.stdout.write(`SKIP ${id} (cpu-divergent, no GPU golden)\n`)
     }
   }
   if (failures.length > 0) process.exitCode = 1

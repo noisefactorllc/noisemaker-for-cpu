@@ -343,6 +343,7 @@ export class GlslCpuRuntime {
       round: unary(Math.round),
       fract: unary((value) => value - Math.floor(value)),
       tanh: unary(Math.tanh),
+      isnan: unary((value) => Number.isNaN(value) ? 1 : 0),
       mod,
       min,
       max,
@@ -402,6 +403,10 @@ export class GlslCpuRuntime {
       floatBitsToUint: (value) => {
         this.bitsFloat[0] = value
         return this.bitsUint[0]
+      },
+      uintBitsToFloat: (value) => {
+        this.bitsUint[0] = value
+        return this.bitsFloat[0]
       },
       packHalf2x16: (value) => uint32(floatToHalf(value[0]) | (floatToHalf(value[1]) << 16)),
       unpackHalf2x16: (value) => {

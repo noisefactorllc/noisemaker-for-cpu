@@ -50,6 +50,8 @@ export function quantizeTexture(surface, format = 'rgba16f') {
       const value = data[index]
       data[index] = value <= 0 ? 0 : value >= 1 ? 1 : Math.round(value * 255) * scale
     }
+  } else if (format === 'rgba32f' || format === 'rgba32float') {
+    // Surfaces already store Float32 data; full-precision formats are an explicit no-op.
   }
   return surface
 }

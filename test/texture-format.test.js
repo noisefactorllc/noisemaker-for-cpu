@@ -16,3 +16,15 @@ test('canonical half-float textures truncate pass outputs like reference WebGL a
   quantizeTexture(unorm, 'rgba8unorm')
   assert.deepEqual([...unorm.toRgba8()], [26, 128, 255, 0])
 })
+
+test('rgba32f and rgba32float formats are an explicit quantization no-op', () => {
+  // Captured post-construction (already float32-rounded) so the comparison below proves
+  // quantizeTexture leaves the bits untouched without needing to predict rounding.
+  const precise = new Surface(1, 1, new Float32Array([0.00001, 0.3333, 1.5, -0.25]))
+  const before = [...precise.data]
+  quantizeTexture(precise, 'rgba32f')
+  assert.deepEqual([...precise.data], before)
+
+  quantizeTexture(precise, 'rgba32float')
+  assert.deepEqual([...precise.data], before)
+})

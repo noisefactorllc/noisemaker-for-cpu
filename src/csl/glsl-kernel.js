@@ -4,13 +4,13 @@ export const GLSL_STDLIB_NAMES = Object.freeze([
   'bool', 'int', 'uint', 'float', 'vec2', 'vec3', 'vec4', 'ivec2', 'ivec3', 'ivec4',
   'radians', 'degrees', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
   'pow', 'exp', 'log', 'log2', 'exp2', 'sqrt', 'inversesqrt', 'abs',
-  'sign', 'floor', 'ceil', 'round', 'fract', 'tanh', 'mod', 'min', 'max',
+  'sign', 'floor', 'ceil', 'round', 'fract', 'tanh', 'isnan', 'mod', 'min', 'max',
   'clamp', 'mix', 'step', 'smoothstep', 'length', 'distance', 'dot',
   'normalize', 'reflect', 'refract', 'lessThan', 'lessThanEqual',
   'greaterThan', 'greaterThanEqual', 'equal', 'notEqual', 'any', 'all',
   'add', 'subtract', 'multiply', 'divide', 'matrixMult', 'texture',
   'textureLod', 'textureSize', 'texelFetch', 'dFdx', 'dFdy', 'fwidth',
-  'floatBitsToUint', 'packHalf2x16', 'unpackHalf2x16',
+  'floatBitsToUint', 'uintBitsToFloat', 'packHalf2x16', 'unpackHalf2x16',
 ])
 
 function f32(value) {
@@ -22,6 +22,8 @@ export function createCanonicalBindings(options) {
     width,
     height,
     time = 0,
+    frame = 0,
+    deltaTime = 0,
     seed = 1,
     uniforms = {},
     textures = {},
@@ -53,7 +55,8 @@ export function createCanonicalBindings(options) {
     aspect: f32(width / height),
     time: f32(time),
     globalTime: f32(time),
-    deltaTime: 0,
+    deltaTime: f32(deltaTime),
+    frame,
   })
 }
 

@@ -5,6 +5,7 @@ import { parseDsl } from '../src/dsl/parser.js'
 import { compileDsl } from '../src/dsl/compiler.js'
 import { EffectDefinition } from '../src/effects/definition.js'
 import { EffectRegistry } from '../src/effects/registry.js'
+import { createDefaultRegistry } from '../src/effects/catalog.js'
 
 function registry() {
   const out = new EffectRegistry()
@@ -136,4 +137,37 @@ test('DSL requires materialized generator chains and valid surface references', 
   assert.throws(() => compileDsl('search synth\nnoise()\nrender(o0)', registry()), /Generator chain must end with write/)
   assert.throws(() => compileDsl('search synth', registry()), /No render surface specified and no write\(\) found/)
   assert.throws(() => parseDsl('search synth\nnoise().write(o9)'), /Surface reference must be o0 through o7/)
+})
+
+// `render` is both a reserved directive keyword (`render(oN)`) and a real catalog namespace
+// (owning `pointsEmit`/`pointsRender`/`pointsBillboardRender`). These three tests cover the
+// context-sensitive parser fix that lets `search` accept it as a namespace without disturbing
+// the `render(oN)` directive parse elsewhere in the same program.
+test('DSL search list accepts the render keyword as a namespace and resolves pointsEmit', () => {
+  const program = 'search synth, points, render\nperlin().pointsEmit().write(o0)\nrender(o0)'
+  const ast = parseDsl(program)
+  assert.deepEqual(ast.search, ['synth', 'points', 'render'])
+
+  const plan = compileDsl(program, createDefaultRegistry())
+  assert.equal(plan.chains[0].steps[1].definition.id, 'render/pointsEmit')
+})
+
+test('DSL render(oN) directive still parses in a program whose search list includes render', () => {
+  const program = 'search synth, points, render\nperlin().pointsEmit().write(o0)\nrender(o0)'
+  const ast = parseDsl(program)
+  assert.equal(ast.render.name, 'o0')
+  assert.equal(ast.chains.length, 1)
+  assert.equal(ast.chains[0].calls.length, 3) // perlin, pointsEmit, write - "render" was not swallowed as a call
+})
+
+test('DSL compiles a program combining a render-namespace search entry, chained particle effects, and write(oN)', () => {
+  const plan = compileDsl(
+    'search synth, points, render\nperlin(seed: 0).pointsEmit(seed: 0).physical().pointsRender().write(o0)\nrender(o0)',
+    createDefaultRegistry(),
+  )
+  assert.equal(plan.renderSurface, 'o0')
+  assert.deepEqual(
+    plan.chains[0].steps.map((step) => step.definition?.id ?? step.kind),
+    ['synth/perlin', 'render/pointsEmit', 'points/physical', 'render/pointsRender', 'write'],
+  )
 })

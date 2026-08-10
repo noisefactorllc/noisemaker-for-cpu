@@ -139,10 +139,17 @@ function resolveEffect(name) {
 
 // Resolve an effect name to a catalog entry. 'random' picks one of the given
 // kind ('generator' for generate/animate, 'filter' for apply) so it never lands
-// on an effect that would render degenerately; an explicit name is used as-is.
+// on an effect that would render degenerately. Iterated (stateful/particle) effects are also
+// excluded from the random pool: they default `iterationCount` to 60 and can take tens of seconds
+// to minutes at real canvas sizes (see "CPU iteration divergence" in docs/EFFECTS.md) - `--effect
+// random` should never silently hang. Effects requiring an external texture are excluded for the
+// same reason in reverse: `random` has no image to bind, so the render fails outright. An explicit
+// name (for either class) is used as-is regardless.
 function pickEffect(name, kind) {
   if (name !== 'random') return resolveEffect(name)
-  const pool = effectCatalog.filter((effect) => effect.kind === kind)
+  const pool = effectCatalog.filter(
+    (effect) => effect.kind === kind && !effect.iterated && !effect.externalTexture,
+  )
   if (pool.length === 0) throw new Error(`No ${kind} effects available`)
   return pool[Math.floor(Math.random() * pool.length)]
 }

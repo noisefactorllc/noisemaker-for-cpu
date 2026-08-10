@@ -8,9 +8,9 @@ polygon(
   .write(o0)
 
 perlin(seed: 0, ridges: true)
-  .pointsEmit(stateSize: x64)
+  .pointsEmit(seed: 0, stateSize: x64)
   .physical()
-  .pointsBillboardRender(
+  .pointsBillboardRender(seed: 42, 
     tex: read(o0),
     pointSize: 40,
     sizeVariation: 50,

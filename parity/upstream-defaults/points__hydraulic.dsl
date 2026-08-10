@@ -1,7 +1,7 @@
 search points, synth, render
 
 perlin(seed: 0)
-  .pointsEmit()
+  .pointsEmit(seed: 0)
   .hydraulic()
   .pointsRender()
   .write(o0)

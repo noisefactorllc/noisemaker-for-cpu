@@ -343,6 +343,33 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 3743
   },
   {
+    "effectId": "filter/convolutionFeedback",
+    "program": "cfBlend",
+    "file": "cfBlend.glsl",
+    "status": "generated",
+    "sourceBytes": 818,
+    "normalizedBytes": 957,
+    "generatedBytes": 1093
+  },
+  {
+    "effectId": "filter/convolutionFeedback",
+    "program": "cfBlur",
+    "file": "cfBlur.glsl",
+    "status": "generated",
+    "sourceBytes": 1573,
+    "normalizedBytes": 1761,
+    "generatedBytes": 1936
+  },
+  {
+    "effectId": "filter/convolutionFeedback",
+    "program": "cfSharpen",
+    "file": "cfSharpen.glsl",
+    "status": "generated",
+    "sourceBytes": 1642,
+    "normalizedBytes": 1830,
+    "generatedBytes": 2180
+  },
+  {
     "effectId": "filter/corrupt",
     "program": "corrupt",
     "file": "corrupt.glsl",
@@ -431,6 +458,24 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 16945,
     "normalizedBytes": 16934,
     "generatedBytes": 9593
+  },
+  {
+    "effectId": "filter/feedback",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceBytes": 351,
+    "normalizedBytes": 486,
+    "generatedBytes": 545
+  },
+  {
+    "effectId": "filter/feedback",
+    "program": "feedback",
+    "file": "feedback.glsl",
+    "status": "generated",
+    "sourceBytes": 10931,
+    "normalizedBytes": 11045,
+    "generatedBytes": 14536
   },
   {
     "effectId": "filter/fibers",
@@ -710,6 +755,24 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 11349,
     "normalizedBytes": 11446,
     "generatedBytes": 7028
+  },
+  {
+    "effectId": "filter/motionBlur",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceBytes": 351,
+    "normalizedBytes": 486,
+    "generatedBytes": 545
+  },
+  {
+    "effectId": "filter/motionBlur",
+    "program": "motionBlur",
+    "file": "motionBlur.glsl",
+    "status": "generated",
+    "sourceBytes": 954,
+    "normalizedBytes": 932,
+    "generatedBytes": 677
   },
   {
     "effectId": "filter/normalMap",
@@ -1351,6 +1414,24 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 13019
   },
   {
+    "effectId": "filter/temporalAberration",
+    "program": "delayShift",
+    "file": "delayShift.glsl",
+    "status": "generated",
+    "sourceBytes": 677,
+    "normalizedBytes": 815,
+    "generatedBytes": 538
+  },
+  {
+    "effectId": "filter/temporalAberration",
+    "program": "temporalAberration",
+    "file": "temporalAberration.glsl",
+    "status": "generated",
+    "sourceBytes": 2291,
+    "normalizedBytes": 2414,
+    "generatedBytes": 2889
+  },
+  {
     "effectId": "filter/tetraColorArray",
     "program": "tetraColorArray",
     "file": "tetraColorArray.glsl",
@@ -1711,6 +1792,366 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 2109
   },
   {
+    "effectId": "points/attractor",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 4936,
+    "normalizedBytes": 5036,
+    "generatedBytes": 5192
+  },
+  {
+    "effectId": "points/attractor",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "points/buddhabrot",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 4826,
+    "normalizedBytes": 4922,
+    "generatedBytes": 4905
+  },
+  {
+    "effectId": "points/buddhabrot",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "points/buddhabrot",
+    "program": "zWrite",
+    "file": "zWrite.glsl",
+    "status": "generated",
+    "sourceBytes": 874,
+    "normalizedBytes": 1016,
+    "generatedBytes": 1097
+  },
+  {
+    "effectId": "points/dla",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 5928,
+    "normalizedBytes": 6277,
+    "generatedBytes": 6102
+  },
+  {
+    "effectId": "points/dla",
+    "program": "copyGrid",
+    "file": "copyGrid.glsl",
+    "status": "generated",
+    "sourceBytes": 274,
+    "normalizedBytes": 255,
+    "generatedBytes": 317
+  },
+  {
+    "effectId": "points/dla",
+    "program": "depositGrid",
+    "file": "depositGrid.frag",
+    "status": "adapter",
+    "sourceBytes": 471,
+    "normalizedBytes": 449,
+    "generatedBytes": 0
+  },
+  {
+    "effectId": "points/dla",
+    "program": "initGrid",
+    "file": "initGrid.glsl",
+    "status": "generated",
+    "sourceBytes": 1811,
+    "normalizedBytes": 1859,
+    "generatedBytes": 1939
+  },
+  {
+    "effectId": "points/dla",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 860,
+    "normalizedBytes": 841,
+    "generatedBytes": 839
+  },
+  {
+    "effectId": "points/flock",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 9726,
+    "normalizedBytes": 9903,
+    "generatedBytes": 10012
+  },
+  {
+    "effectId": "points/flock",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "points/flow",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 5848,
+    "normalizedBytes": 6042,
+    "generatedBytes": 5363
+  },
+  {
+    "effectId": "points/flow",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "points/hydraulic",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 6329,
+    "normalizedBytes": 6451,
+    "generatedBytes": 5195
+  },
+  {
+    "effectId": "points/hydraulic",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "points/lenia",
+    "program": "agentField",
+    "file": "agentField.glsl",
+    "status": "generated",
+    "sourceBytes": 3542,
+    "normalizedBytes": 3771,
+    "generatedBytes": 3558
+  },
+  {
+    "effectId": "points/lenia",
+    "program": "clear",
+    "file": "clear.glsl",
+    "status": "generated",
+    "sourceBytes": 157,
+    "normalizedBytes": 138,
+    "generatedBytes": 156
+  },
+  {
+    "effectId": "points/lenia",
+    "program": "convolve",
+    "file": "convolve.glsl",
+    "status": "generated",
+    "sourceBytes": 2019,
+    "normalizedBytes": 2112,
+    "generatedBytes": 1566
+  },
+  {
+    "effectId": "points/lenia",
+    "program": "deposit",
+    "file": "deposit.frag",
+    "status": "adapter",
+    "sourceBytes": 271,
+    "normalizedBytes": 252,
+    "generatedBytes": 0
+  },
+  {
+    "effectId": "points/lenia",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 266,
+    "normalizedBytes": 408,
+    "generatedBytes": 468
+  },
+  {
+    "effectId": "points/life",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 9544,
+    "normalizedBytes": 9685,
+    "generatedBytes": 8302
+  },
+  {
+    "effectId": "points/life",
+    "program": "matrix",
+    "file": "matrix.glsl",
+    "status": "generated",
+    "sourceBytes": 1889,
+    "normalizedBytes": 2132,
+    "generatedBytes": 1608
+  },
+  {
+    "effectId": "points/life",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 266,
+    "normalizedBytes": 408,
+    "generatedBytes": 468
+  },
+  {
+    "effectId": "points/physarum",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 4817,
+    "normalizedBytes": 4931,
+    "generatedBytes": 4754
+  },
+  {
+    "effectId": "points/physarum",
+    "program": "deposit",
+    "file": "deposit.frag",
+    "status": "adapter",
+    "sourceBytes": 175,
+    "normalizedBytes": 153,
+    "generatedBytes": 0
+  },
+  {
+    "effectId": "points/physarum",
+    "program": "diffuse",
+    "file": "diffuse.glsl",
+    "status": "generated",
+    "sourceBytes": 708,
+    "normalizedBytes": 689,
+    "generatedBytes": 718
+  },
+  {
+    "effectId": "points/physarum",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 266,
+    "normalizedBytes": 408,
+    "generatedBytes": 468
+  },
+  {
+    "effectId": "points/physical",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 4136,
+    "normalizedBytes": 4308,
+    "generatedBytes": 3680
+  },
+  {
+    "effectId": "points/physical",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "blend",
+    "file": "blend.glsl",
+    "status": "generated",
+    "sourceBytes": 1302,
+    "normalizedBytes": 1283,
+    "generatedBytes": 1747
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceBytes": 286,
+    "normalizedBytes": 267,
+    "generatedBytes": 323
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "deposit",
+    "file": "deposit.frag",
+    "status": "adapter",
+    "sourceBytes": 2455,
+    "normalizedBytes": 2430,
+    "generatedBytes": 0
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "diffuse",
+    "file": "diffuse.glsl",
+    "status": "generated",
+    "sourceBytes": 564,
+    "normalizedBytes": 545,
+    "generatedBytes": 556
+  },
+  {
+    "effectId": "render/pointsEmit",
+    "program": "init",
+    "file": "init.glsl",
+    "status": "generated",
+    "sourceBytes": 5236,
+    "normalizedBytes": 5390,
+    "generatedBytes": 4545
+  },
+  {
+    "effectId": "render/pointsEmit",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "render/pointsRender",
+    "program": "blend",
+    "file": "blend.glsl",
+    "status": "generated",
+    "sourceBytes": 1055,
+    "normalizedBytes": 1036,
+    "generatedBytes": 948
+  },
+  {
+    "effectId": "render/pointsRender",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceBytes": 286,
+    "normalizedBytes": 267,
+    "generatedBytes": 323
+  },
+  {
+    "effectId": "render/pointsRender",
+    "program": "deposit",
+    "file": "deposit.frag",
+    "status": "adapter",
+    "sourceBytes": 175,
+    "normalizedBytes": 153,
+    "generatedBytes": 0
+  },
+  {
+    "effectId": "render/pointsRender",
+    "program": "diffuse",
+    "file": "diffuse.glsl",
+    "status": "generated",
+    "sourceBytes": 620,
+    "normalizedBytes": 601,
+    "generatedBytes": 556
+  },
+  {
     "effectId": "synth/bitwise",
     "program": "bitwise",
     "file": "bitwise.glsl",
@@ -1727,6 +2168,24 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 3813,
     "normalizedBytes": 3903,
     "generatedBytes": 4718
+  },
+  {
+    "effectId": "synth/cellularAutomata",
+    "program": "ca",
+    "file": "ca.glsl",
+    "status": "generated",
+    "sourceBytes": 11253,
+    "normalizedBytes": 11299,
+    "generatedBytes": 14342
+  },
+  {
+    "effectId": "synth/cellularAutomata",
+    "program": "caFb",
+    "file": "caFb.glsl",
+    "status": "generated",
+    "sourceBytes": 7949,
+    "normalizedBytes": 8061,
+    "generatedBytes": 5305
   },
   {
     "effectId": "synth/curl",
@@ -1792,6 +2251,24 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 5295
   },
   {
+    "effectId": "synth/mnca",
+    "program": "mnca",
+    "file": "mnca.glsl",
+    "status": "generated",
+    "sourceBytes": 11142,
+    "normalizedBytes": 11188,
+    "generatedBytes": 14289
+  },
+  {
+    "effectId": "synth/mnca",
+    "program": "mncaFb",
+    "file": "mncaFb.glsl",
+    "status": "generated",
+    "sourceBytes": 5044,
+    "normalizedBytes": 5150,
+    "generatedBytes": 4538
+  },
+  {
     "effectId": "synth/modPattern",
     "program": "modPattern",
     "file": "modPattern.glsl",
@@ -1799,6 +2276,69 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 3818,
     "normalizedBytes": 3804,
     "generatedBytes": 3969
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "ns",
+    "file": "ns.glsl",
+    "status": "generated",
+    "sourceBytes": 1719,
+    "normalizedBytes": 2066,
+    "generatedBytes": 2232
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "nsAdvect",
+    "file": "nsAdvect.glsl",
+    "status": "generated",
+    "sourceBytes": 1954,
+    "normalizedBytes": 2128,
+    "generatedBytes": 2294
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "nsDivergence",
+    "file": "nsDivergence.glsl",
+    "status": "generated",
+    "sourceBytes": 1168,
+    "normalizedBytes": 1296,
+    "generatedBytes": 1558
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "nsGradient",
+    "file": "nsGradient.glsl",
+    "status": "generated",
+    "sourceBytes": 991,
+    "normalizedBytes": 1283,
+    "generatedBytes": 1445
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "nsPressure",
+    "file": "nsPressure.glsl",
+    "status": "generated",
+    "sourceBytes": 932,
+    "normalizedBytes": 1366,
+    "generatedBytes": 1449
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "nsSmooth",
+    "file": "nsSmooth.glsl",
+    "status": "generated",
+    "sourceBytes": 5301,
+    "normalizedBytes": 5495,
+    "generatedBytes": 8346
+  },
+  {
+    "effectId": "synth/navierStokes",
+    "program": "nsSplat",
+    "file": "nsSplat.glsl",
+    "status": "generated",
+    "sourceBytes": 3251,
+    "normalizedBytes": 3336,
+    "generatedBytes": 3077
   },
   {
     "effectId": "synth/newton",
@@ -1853,6 +2393,24 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 1707,
     "normalizedBytes": 1915,
     "generatedBytes": 2211
+  },
+  {
+    "effectId": "synth/reactionDiffusion",
+    "program": "rd",
+    "file": "rd.glsl",
+    "status": "generated",
+    "sourceBytes": 12782,
+    "normalizedBytes": 13224,
+    "generatedBytes": 16268
+  },
+  {
+    "effectId": "synth/reactionDiffusion",
+    "program": "rdFb",
+    "file": "rdFb.glsl",
+    "status": "generated",
+    "sourceBytes": 5763,
+    "normalizedBytes": 5873,
+    "generatedBytes": 6703
   },
   {
     "effectId": "synth/remap",

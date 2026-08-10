@@ -135,6 +135,7 @@ export function normalizeCanonicalGlsl(source, options = {}) {
   const sourceName = options.sourceName ?? '<canonical GLSL>'
   const runtimeDefines = options.runtimeDefines ?? {}
   const outputs = []
+  const outputLocations = []
   const varyings = []
   const macros = new Map()
   const stack = []
@@ -204,12 +205,15 @@ export function normalizeCanonicalGlsl(source, options = {}) {
     }
 
     let normalized = line
-    normalized = normalized.replace(/layout\s*\([^)]*\)\s*out\s+vec4\s+([A-Za-z_]\w*)\s*;/g, (_, name) => {
+    normalized = normalized.replace(/layout\s*\(([^)]*)\)\s*out\s+vec4\s+([A-Za-z_]\w*)\s*;/g, (_, layoutParams, name) => {
+      const locationMatch = layoutParams.match(/\blocation\s*=\s*(\d+)/)
       outputs.push(name)
+      outputLocations.push({ name, location: locationMatch ? Number(locationMatch[1]) : outputLocations.length })
       return `vec4 ${name};`
     })
     normalized = normalized.replace(/^\s*out\s+vec4\s+([A-Za-z_]\w*)\s*;/, (_, name) => {
       outputs.push(name)
+      outputLocations.push({ name, location: 0 })
       return `vec4 ${name};`
     })
     normalized = normalized.replace(/^\s*(?:flat\s+)?in\s+(vec[234])\s+([A-Za-z_]\w*)\s*;/, (_, type, name) => {
@@ -241,6 +245,7 @@ export function normalizeCanonicalGlsl(source, options = {}) {
   return Object.freeze({
     source: normalizedSource.endsWith('\n') ? normalizedSource : `${normalizedSource}\n`,
     outputs: Object.freeze([...new Set(outputs)]),
+    outputLocations: Object.freeze(outputLocations.map((entry) => Object.freeze(entry))),
     varyings: Object.freeze(varyings),
     runtimeDefines: Object.freeze({ ...runtimeDefines }),
   })

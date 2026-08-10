@@ -17,11 +17,30 @@ const effectsRoot = resolve(referenceRoot, 'shaders', 'effects')
 const outputPath = resolve(projectRoot, 'src', 'effects', 'generated', 'glsl-coverage.js')
 const kernelsPath = resolve(projectRoot, 'src', 'effects', 'generated', 'canonical-kernels.js')
 const adapterDataPath = resolve(projectRoot, 'src', 'effects', 'generated', 'canonical-adapter-data.js')
+// Keyed by `${effectId}:${program}` (program = GLSL filename minus extension) so a single
+// program within a multi-program effect can be routed to a hand/CPU-side adapter without
+// pulling its sibling programs (e.g. points/dla's agent/copyGrid/initGrid/passthrough) out of
+// the transpiled path. The five scatter/vertex-paired programs below are `.frag` halves of a
+// `.vert`+`.frag` gl.POINTS draw (vertex-stage scatter) — compile-glsl.js only ever reads
+// `.glsl`/`.frag` files (never `.vert`), so without this explicit skip their `.frag` half would
+// still be picked up and (incorrectly) sent through the fragment-kernel transpiler. These five
+// dispatch through the renderer's separate scatter-adapter mechanism at render time (`drawMode:
+// 'points'/'billboards'`, resolved via src/effects/cpu/scatter-registry.js), never through
+// canonicalKernelFactories/canonicalAdapterFactories: their real implementations are hand-written
+// CPU scatter adapters in src/effects/cpu/points-deposit.js and billboard-deposit.js, registered
+// under these same keys in scatter-registry.js. Skipping them here (excluding them from
+// transpilation) is what lets them carry `status: 'adapter'` in glsl-coverage.js rather than a
+// missing-coverage gap.
 const adapters = new Set([
-  'classicNoisedeck/fractal',
-  'filter/historicPalette',
-  'filter/palette',
-  'synth/julia',
+  'classicNoisedeck/fractal:fractal',
+  'filter/historicPalette:historicPalette',
+  'filter/palette:palette',
+  'synth/julia:julia',
+  'points/dla:depositGrid',
+  'points/lenia:deposit',
+  'points/physarum:deposit',
+  'render/pointsRender:deposit',
+  'render/pointsBillboardRender:deposit',
 ])
 
 assertPinnedSource(referenceRoot)
@@ -358,6 +377,16 @@ function adaptCanonicalSource(effectId, source) {
       )
     source = preserveScalarFloatDeclarations(source)
   }
+  if (effectId === 'synth/reactionDiffusion') {
+    // glsl-transpiler's `optimize: true` constant folder emits a literal `NaN` in place of the
+    // `a2`/`b2` locals when they reach `fragColor = vec4(a2, b2, 0.0, 1.0);` in rdFb.glsl — a
+    // transpiler bug reproduced in isolation (renaming the identifiers alone, with no other
+    // change, makes the bogus fold disappear), most likely the optimizer's `vecN`/`matN`-suffix
+    // detection misfiring on any bare `<letter><digit>` identifier. rd.glsl's unrelated bicubic
+    // helper also declares a local `b2`; renaming it too is free insurance against the same
+    // landmine. Renaming is a pure syntactic dodge — every read and write moves together.
+    source = source.replace(/\ba2\b/g, 'aNext').replace(/\bb2\b/g, 'bNext')
+  }
   return preserveFloatCasts(preserveTextureScalarSwizzles(preserveVectorAssignmentReads(preserveMatrixSelfAssignments(source))))
 }
 
@@ -379,6 +408,16 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
     ),
   )
   const varyingCopies = normalized.varyings.map(({ name }) => `  ${name}.set($runtime.varyings[${JSON.stringify(name)}])`).join('\n')
+  // Location-ascending output names (MRT kernel contract, Global Constraints). A single-output
+  // program's sole entry is always named "fragColor" in every canonical shader in this corpus,
+  // so this path is byte-identical to the previous hardcoded `writeColor(fragColor, out)` emission.
+  const outputNames = [...normalized.outputLocations].sort((left, right) => left.location - right.location).map((entry) => entry.name)
+  const isMrt = outputNames.length > 1
+  const writeOutputs = isMrt
+    ? outputNames.map((name, outputIndex) => [0, 1, 2, 3]
+      .map((component) => `    out[${outputIndex * 4 + component}] = ${name}[${component}]`)
+      .join('\n')).join('\n') + '\n'
+    : `    $runtime.writeColor(${outputNames[0] ?? 'fragColor'}, out)\n`
   return `function canonicalFactory${index}($bindings, $runtime) {\n` +
     (stdlibNames.length > 0 ? `  const { ${stdlibNames.join(', ')} } = $runtime.stdlib\n` : '') +
     `  const gl_FragCoord = $runtime.fragCoord\n` +
@@ -387,10 +426,11 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
     `    $runtime.beginPixel(context)\n` +
     (varyingCopies ? `${varyingCopies}\n` : '') +
     `    main()\n` +
-    `    $runtime.writeColor(fragColor, out)\n` +
+    writeOutputs +
     `  }\n` +
     `}\n` +
-    (/\b(?:dFdx|dFdy|fwidth)\s*\(/.test(originalSource) ? `canonicalFactory${index}.usesDerivatives = true\n` : '')
+    (/\b(?:dFdx|dFdy|fwidth)\s*\(/.test(originalSource) ? `canonicalFactory${index}.usesDerivatives = true\n` : '') +
+    (isMrt ? `canonicalFactory${index}.outputNames = ${JSON.stringify(outputNames)}\n` : '')
 }
 
 if (!existsSync(effectsRoot)) throw new Error(`No Noisemaker effect tree at ${effectsRoot}; set NM_REFERENCE_ROOT`)
@@ -405,6 +445,7 @@ for (const record of effectRecords) {
   const files = (await readdir(glslDirectory)).filter((file) => ['.glsl', '.frag'].includes(extname(file))).sort()
   if (files.length === 0) throw new Error(`${record.id} has no canonical fragment program`)
   for (const file of files) {
+    const program = file.slice(0, -extname(file).length)
     const sourceName = `${record.id}/glsl/${file}`
     const source = await readFile(resolve(glslDirectory, file), 'utf8')
     if (record.id === 'filter/palette') paletteData = parsePaletteEntries(source)
@@ -413,7 +454,7 @@ for (const record of effectRecords) {
     const normalized = Object.freeze({ ...rawNormalized, source: adaptCanonicalSource(record.id, rawNormalized.source) })
     let generatedBytes = 0
     let transpiled = ''
-    const status = adapters.has(record.id) ? 'adapter' : 'generated'
+    const status = adapters.has(`${record.id}:${program}`) ? 'adapter' : 'generated'
     if (status === 'generated') {
       try {
         transpiled = transpile(normalized.source)
@@ -424,7 +465,7 @@ for (const record of effectRecords) {
     }
     coverage.push({
       effectId: record.id,
-      program: file.slice(0, -extname(file).length),
+      program,
       file,
       status,
       sourceBytes: Buffer.byteLength(source),
@@ -432,7 +473,7 @@ for (const record of effectRecords) {
       generatedBytes,
     })
     if (status === 'generated') {
-      factories.push({ key: `${record.id}:${file.slice(0, -extname(file).length)}`, source: factorySource(factories.length, record.id, transpiled, normalized, source) })
+      factories.push({ key: `${record.id}:${program}`, source: factorySource(factories.length, record.id, transpiled, normalized, source) })
     }
   }
 }

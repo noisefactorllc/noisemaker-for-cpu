@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 import { decodePng, encodePng } from '../src/node/png.js'
+import { effectCatalog } from '../src/effects/catalog.js'
 
 const cli = resolve('bin/noisemaker-cpu.js')
 
@@ -78,6 +79,28 @@ test('CLI effect command renders single- and multi-surface mixers', async () => 
       assert.equal(result.status, 0, `${name}: ${result.stderr}`)
       assert.equal((await readFile(output)).subarray(1, 4).toString('ascii'), 'PNG')
     }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI effect command renders a filter-kind effect with a surface param via the filter branch', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    // render/pointsBillboardRender carries a `tex` (spriteTex) surface param but classifies
+    // `kind: 'filter'` (every points/render-namespace effect does - see inferKind in
+    // scripts/upstream/inventory.js), so bin/noisemaker-cpu.js's effect-mode auto-wiring takes
+    // the single-input branch (`solid().${func}().write(o0)`) and never synthesizes a secondary
+    // oN surface for `tex`; the param falls back to its own schema default ("none") instead.
+    // iterationCount is pinned to 1 to keep this fast - the filter-vs-mixer wiring under test
+    // doesn't depend on how many iterations run. Pins that this renders successfully rather
+    // than erroring or hanging.
+    const output = join(dir, 'billboard.png')
+    const result = run(['effect', 'render/pointsBillboardRender', '--width=4', '--height=4', '--param', 'iterationCount=1', '--output', output])
+    assert.equal(result.status, 0, result.stderr)
+    const decoded = decodePng(await readFile(output))
+    assert.deepEqual([decoded.width, decoded.height], [4, 4])
+    assert.ok(decoded.data.every(Number.isFinite))
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
@@ -161,6 +184,54 @@ test('CLI generate renders a generator and apply filters an input at its dimensi
     for (let i = 0; i < source.data.length; i += 4) {
       for (let channel = 0; channel < 3; channel += 1) assert.equal(inverted.data[i + channel], 255 - source.data[i + channel])
       assert.equal(inverted.data[i + 3], source.data[i + 3]) // alpha preserved
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI --effect random pools exclude iterated and external-texture effects', async () => {
+  // Deterministic pool check, not a statistical one: an iterated effect defaults iterationCount
+  // to 60 and can take tens of seconds to minutes at real canvas sizes (see "CPU iteration
+  // divergence" in docs/EFFECTS.md), so `random` must never be ABLE to select one - not just be
+  // unlikely to. External-texture effects (synth/media, filter/text) are excluded for the mirror
+  // reason: `random` binds no image, so picking one exits nonzero. Re-derive pickEffect's own pool
+  // predicate against the real catalog and assert every candidate satisfies it.
+  for (const kind of ['generator', 'filter']) {
+    const excluded = effectCatalog.filter((effect) => effect.kind === kind && effect.iterated === true)
+    assert.ok(excluded.length > 0, `expected at least one iterated ${kind} effect to exclude (catalog drift?)`)
+    const pool = effectCatalog.filter(
+      (effect) => effect.kind === kind && !effect.iterated && !effect.externalTexture,
+    )
+    assert.ok(pool.length > 0, `expected a non-empty random pool for kind "${kind}"`)
+    assert.ok(pool.every((effect) => effect.iterated !== true), `random pool for kind "${kind}" must exclude every iterated effect`)
+    assert.ok(pool.every((effect) => !effect.externalTexture), `random pool for kind "${kind}" must exclude every external-texture effect`)
+  }
+  // synth/media is a generator requiring imageTex: it was reachable by `generate random` before
+  // this exclusion and exited 1 whenever it came up.
+  assert.equal(effectCatalog.find((effect) => effect.id === 'synth/media')?.externalTexture, 'imageTex')
+
+  // End-to-end: exercise the real CLI dispatch (bin/noisemaker-cpu.js's pickEffect), not just the
+  // catalog data above. Small canvas keeps this fast; `--effect random` can genuinely land on any
+  // pool member, so a handful of repeats gives real (if not exhaustive) coverage of the wiring.
+  const iteratedIds = new Set(effectCatalog.filter((effect) => effect.iterated === true).map((effect) => effect.id))
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    const gen = join(dir, 'gen.png')
+    for (let i = 0; i < 8; i += 1) {
+      const generated = run(['generate', 'random', '--width', '4', '--height', '4', '--output', gen])
+      assert.equal(generated.status, 0, generated.stderr)
+      const id = generated.stdout.split('\n')[0].trim()
+      assert.ok(!iteratedIds.has(id), `generate random must never pick an iterated effect, picked "${id}"`)
+    }
+    const base = run(['generate', 'synth/solid', '--width', '4', '--height', '4', '--output', gen])
+    assert.equal(base.status, 0, base.stderr)
+    for (let i = 0; i < 8; i += 1) {
+      const out = join(dir, 'out.png')
+      const result = run(['apply', 'random', gen, '--output', out])
+      assert.equal(result.status, 0, result.stderr)
+      const id = result.stdout.split('\n')[0].trim()
+      assert.ok(!iteratedIds.has(id), `apply random must never pick an iterated effect, picked "${id}"`)
     }
   } finally {
     await rm(dir, { recursive: true, force: true })

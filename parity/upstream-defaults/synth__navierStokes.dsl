@@ -8,7 +8,7 @@ noise(seed: 1,
 )
   .write(o0)
 
-navierStokes(
+navierStokes(seed: 1, 
   tex: read(o0),
   dyeDecay: 98,
   inputForce: 0.5,

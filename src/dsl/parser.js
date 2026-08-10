@@ -39,10 +39,26 @@ class Parser {
     return token
   }
 
+  // `search` namespace lists are the one place a reserved keyword can legitimately name a
+  // catalog namespace: `render` is both the `render(oN)` directive keyword (see KEYWORDS in
+  // tokenize.js) and the real namespace owning `pointsEmit`/`pointsRender`/
+  // `pointsBillboardRender`. Accepting the keyword token here — and ONLY here — lets
+  // `search ..., render` resolve those effects without de-keywording `render` globally, which
+  // would break the top-level `render(oN)` directive's own dispatch (`this.match('render')` in
+  // `parseProgram`, unchanged below).
+  searchNamespace(message = 'Expected namespace after search') {
+    const token = this.peek()
+    if (token.type === 'identifier' || (token.type === 'keyword' && token.lexeme === 'render')) {
+      this.current += 1
+      return token
+    }
+    throw new DslError(message, location(token))
+  }
+
   parseProgram() {
     const ast = { kind: 'DslProgram', search: [], bindings: [], chains: [], render: null, loc: location(this.peek()) }
     if (this.match('search')) {
-      do ast.search.push(this.identifier('Expected namespace after search').lexeme)
+      do ast.search.push(this.searchNamespace().lexeme)
       while (this.match(','))
       this.match(';')
     }

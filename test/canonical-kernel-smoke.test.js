@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
+import { canonicalKernelFactories, createDefaultRegistry, effectCatalog, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { bindCanonicalKernel, createCanonicalBindings } from '../src/csl/glsl-kernel.js'
 import { Surface } from '../src/runtime/surface.js'
@@ -215,4 +215,114 @@ test('median compatibility kernel preserves unsigned packed whole-color ordering
   const out = new Float32Array(4)
   kernel({ fragCoord: new Float32Array([1.5, 1.5]), uv: new Float32Array([0.5, 0.5]), resolution: new Float32Array([3, 3]) }, out)
   assert.deepEqual([...out], [1, 0, 0, 0.25])
+})
+
+// Each of the 21 stateful/particle effects has generated canonical kernels for its non-scatter
+// passes (57 factories total; the five vertex-stage scatter passes route through hand-written
+// adapters instead - see scatter-registry.js). This test binds every one of those 57 factories
+// directly and calls it over a minimal 2x2 context, independent of the renderer's iteration-group/
+// pooling machinery - dedicated, per-factory coverage that catalog-smoke.test.js's end-to-end
+// program-rendering sweep doesn't provide on its own. Keys are derived from
+// canonicalKernelFactories rather than hand-listed so a drift between this set and the
+// generator's actual output fails loudly (via the `newKeys.length === 57` assertion) instead
+// of silently under-testing.
+test('generated kernels for the 21 new stateful/points/render effects bind and emit finite pixels over a 2x2 context', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const newEffectIds = new Set([
+    'filter/convolutionFeedback', 'filter/feedback', 'filter/motionBlur', 'filter/temporalAberration',
+    'synth/cellularAutomata', 'synth/mnca', 'synth/navierStokes', 'synth/reactionDiffusion',
+    'points/attractor', 'points/buddhabrot', 'points/dla', 'points/flock', 'points/flow',
+    'points/hydraulic', 'points/lenia', 'points/life', 'points/physarum', 'points/physical',
+    'render/pointsEmit', 'render/pointsRender', 'render/pointsBillboardRender',
+  ])
+  const newKeys = Object.keys(canonicalKernelFactories).filter((key) => newEffectIds.has(key.split(':')[0])).sort()
+  assert.equal(newKeys.length, 57)
+
+  for (const key of newKeys) {
+    const [effectId, program] = key.split(':')
+    const definition = effectCatalog.find((effect) => effect.id === effectId)
+    assert.ok(definition, `${key}: owning effect definition not found in effectCatalog`)
+    const pass = definition.passes.find((candidate) => candidate.program === program)
+    assert.ok(pass, `${key}: owning pass definition not found`)
+
+    const params = definition.normalizeArguments([])
+    const bindings = renderer.buildBindings(definition, params, [], null, new Map(), { width: 2, height: 2, externalTextures: {} })
+    const uniforms = renderer.passUniforms(pass, params, bindings.uniforms)
+
+    // Dummy mid-gray 2x2 surfaces for every sampler2D uniform this specific pass declares
+    // (pass.inputs is the authoritative uniform-name set — independent of buildBindings, which
+    // only resolves the pipeline's own `inputTex`/surface-typed params, not a pass's internal
+    // multi-texture reads like xyzTex/velTex/fbTex/h1../trailTex/...).
+    const textures = {}
+    for (const uniformName of Object.keys(pass.inputs ?? {})) {
+      const surface = new Surface(2, 2)
+      surface.clear([0.5, 0.5, 0.5, 1])
+      textures[uniformName] = surface
+    }
+
+    const factory = canonicalKernelFactories[key]
+    assert.equal(typeof factory, 'function', `${key}: missing generated factory`)
+    const outputNames = Array.isArray(factory.outputNames) ? factory.outputNames : null
+    if (outputNames) assert.equal(outputNames.length, pass.drawBuffers, `${key}: factory.outputNames length must match the pass's declared drawBuffers`)
+    const outputCount = outputNames ? outputNames.length : 1
+
+    const kernel = bindCanonicalKernel(factory, {
+      width: 2,
+      height: 2,
+      time: 0.25,
+      frame: 1,
+      deltaTime: 1 / 60,
+      seed: 3,
+      uniforms,
+      textures,
+    })
+
+    const resolution = new Float32Array([2, 2])
+    for (let y = 0; y < 2; y += 1) {
+      for (let x = 0; x < 2; x += 1) {
+        const out = new Float32Array(outputCount * 4)
+        const context = {
+          fragCoord: new Float32Array([x + 0.5, y + 0.5]),
+          uv: new Float32Array([(x + 0.5) / 2, (y + 0.5) / 2]),
+          resolution,
+        }
+        kernel(context, out)
+        assert.ok(out.every(Number.isFinite), `${key}: produced non-finite output at pixel (${x}, ${y}): ${out}`)
+      }
+    }
+  }
+})
+
+// Catalog-wide invariant (independent of the 57-key `newEffectIds` slice above): every MRT pass
+// anywhere in all 188 records must resolve to a factory carrying a matching `outputNames` array.
+// The `if (outputNames)` check above only fires when `factory.outputNames` already exists; if a
+// future kernel regeneration ever dropped `outputNames` from an MRT factory, that conditional
+// would stay silent while the renderer's own `pass.drawBuffers >= 2 && Array.isArray(factory.
+// outputNames)` guard (src/runtime/renderer.js) quietly fell through to the single-output code
+// path, writing only the first destination. This sweep asserts the precondition directly instead
+// of behind an `if`. It also asserts the reverse direction: every name a pass DECLARES in
+// `pass.outputs` must appear in `outputNames`, and vice versa (same count, same name set) - so a
+// catalog-authoring typo (an output added to one but not the other) fails loudly here instead of
+// silently dropping a destination or writing to a name nothing reads.
+test('every MRT pass in the full 188-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
+  let mrtPassCount = 0
+  for (const effect of effectCatalog) {
+    for (const pass of effect.passes) {
+      if (!(pass.drawBuffers >= 2)) continue
+      mrtPassCount += 1
+      const key = `${effect.id}:${pass.program}`
+      const factory = kernelFactories.get(key)
+      assert.equal(typeof factory, 'function', `${key}: missing kernel factory for an MRT pass`)
+      assert.ok(Array.isArray(factory.outputNames), `${key}: MRT pass (drawBuffers=${pass.drawBuffers}) factory must carry an outputNames array`)
+      assert.equal(factory.outputNames.length, pass.drawBuffers, `${key}: factory.outputNames length must match the pass's declared drawBuffers`)
+
+      const declaredOutputs = Object.keys(pass.outputs ?? {}).sort()
+      const factoryOutputs = [...factory.outputNames].sort()
+      assert.deepEqual(factoryOutputs, declaredOutputs, `${key}: factory.outputNames must exactly cover pass.outputs's keys (no unused declaration, no undeclared name)`)
+    }
+  }
+  // 10 points/*:agent(Field) + render/pointsEmit:init, per docs/EFFECTS.md and the final review -
+  // fails loudly (rather than vacuously passing on zero iterations) if the catalog's MRT set ever
+  // shrinks or grows without this test being revisited.
+  assert.equal(mrtPassCount, 11, 'expected exactly 11 MRT (drawBuffers >= 2) passes in the full catalog')
 })

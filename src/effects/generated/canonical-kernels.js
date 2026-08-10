@@ -8437,6 +8437,139 @@ function canonicalFactory36($bindings, $runtime) {
 }
 
 function canonicalFactory37($bindings, $runtime) {
+  const { ivec2, mix, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var inputTex = $bindings["inputTex"];
+  var feedbackTex = $bindings["feedbackTex"];
+  var intensity = $bindings["intensity"];
+  var resetState = $bindings["resetState"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var inputColor = texelFetch(inputTex, coord, 0);
+  	if (resetState) {
+  	(fragColor[0] = inputColor[0], fragColor[1] = inputColor[1], fragColor[2] = inputColor[2], fragColor[3] = inputColor[3], fragColor);
+  	return;
+  	};
+  	var feedback = texelFetch(feedbackTex, coord, 0);
+  	var result = mix(new $runtime.PooledFloat32Array([inputColor[0], inputColor[1], inputColor[2]]), new $runtime.PooledFloat32Array([feedback[0], feedback[1], feedback[2]]), intensity);
+  	(fragColor[0] = result[0], fragColor[1] = result[1], fragColor[2] = result[2], fragColor[3] = inputColor[3], fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory38($bindings, $runtime) {
+  const { float, ivec2, exp, clamp, mix, add, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var inputTex = $bindings["inputTex"];
+  var blurRadius = $bindings["blurRadius"];
+  var blurAmount = $bindings["blurAmount"];
+  var renderScale = $bindings["renderScale"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(inputTex, 0);
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var center = texelFetch(inputTex, coord, 0);
+  	var scaledRadius = (blurRadius) * renderScale|0;
+  	if ((scaledRadius <= 0) || (blurAmount <= 0)) {
+  	(fragColor[0] = center[0], fragColor[1] = center[1], fragColor[2] = center[2], fragColor[3] = center[3], fragColor);
+  	return;
+  	};
+  	var sigma = (scaledRadius) / 2;
+  	var sigma2 = sigma * sigma;
+  	var sum = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	var weightSum = 0;
+  	for (var ky = -scaledRadius; ky <= scaledRadius; ky++) {
+  	for (var kx = -scaledRadius; kx <= scaledRadius; kx++) {
+  	var samplePos = ivec2.add([], coord, cpu_ivec2(kx, ky));
+  	clamp(samplePos, cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), samplePos);
+  	var dist2 = cpu_float(kx * kx + ky * ky);
+  	var weight = exp(-dist2 / (2 * sigma2));
+  	var texSample = texelFetch(inputTex, samplePos, 0);
+  	(sum[0] += texSample[0] * weight, sum[1] += texSample[1] * weight, sum[2] += texSample[2] * weight, sum);
+  	weightSum += weight;
+  	};
+  	};
+  	var blurred = new $runtime.PooledFloat32Array([sum[0] / weightSum, sum[1] / weightSum, sum[2] / weightSum]);
+  	var result = mix(new $runtime.PooledFloat32Array([center[0], center[1], center[2]]), blurred, blurAmount);
+  	(fragColor[0] = result[0], fragColor[1] = result[1], fragColor[2] = result[2], fragColor[3] = center[3], fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory39($bindings, $runtime) {
+  const { float, ivec2, exp, clamp, add, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var inputTex = $bindings["inputTex"];
+  var sharpenRadius = $bindings["sharpenRadius"];
+  var sharpenAmount = $bindings["sharpenAmount"];
+  var renderScale = $bindings["renderScale"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(inputTex, 0);
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var center = texelFetch(inputTex, coord, 0);
+  	var scaledRadius = (sharpenRadius) * renderScale|0;
+  	if ((scaledRadius <= 0) || (sharpenAmount <= 0)) {
+  	(fragColor[0] = center[0], fragColor[1] = center[1], fragColor[2] = center[2], fragColor[3] = center[3], fragColor);
+  	return;
+  	};
+  	var sigma = (scaledRadius) / 2;
+  	var sigma2 = sigma * sigma;
+  	var blurSum = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	var weightSum = 0;
+  	for (var ky = -scaledRadius; ky <= scaledRadius; ky++) {
+  	for (var kx = -scaledRadius; kx <= scaledRadius; kx++) {
+  	var samplePos = ivec2.add([], coord, cpu_ivec2(kx, ky));
+  	clamp(samplePos, cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), samplePos);
+  	var dist2 = cpu_float(kx * kx + ky * ky);
+  	var weight = exp(-dist2 / (2 * sigma2));
+  	var texSample = texelFetch(inputTex, samplePos, 0);
+  	(blurSum[0] += texSample[0] * weight, blurSum[1] += texSample[1] * weight, blurSum[2] += texSample[2] * weight, blurSum);
+  	weightSum += weight;
+  	};
+  	};
+  	var blurred = new $runtime.PooledFloat32Array([blurSum[0] / weightSum, blurSum[1] / weightSum, blurSum[2] / weightSum]);
+  	var sharpened = new $runtime.PooledFloat32Array([center[0] + sharpenAmount * (center[0] - blurred[0]), center[1] + sharpenAmount * (center[1] - blurred[1]), center[2] + sharpenAmount * (center[2] - blurred[2])]);
+  	clamp(sharpened, 0, 1).reduce((res,el,i)=>(res[i] = el, res), sharpened);
+  	(fragColor[0] = sharpened[0], fragColor[1] = sharpened[1], fragColor[2] = sharpened[2], fragColor[3] = center[3], fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory40($bindings, $runtime) {
   const { float, sin, pow, floor, fract, max, clamp, mix, step, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -8624,7 +8757,7 @@ function canonicalFactory37($bindings, $runtime) {
   }
 }
 
-function canonicalFactory38($bindings, $runtime) {
+function canonicalFactory41($bindings, $runtime) {
   const { float, vec2, radians, sin, cos, sqrt, floor, fract, clamp, mix, smoothstep, length, dot, normalize, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8726,7 +8859,7 @@ function canonicalFactory38($bindings, $runtime) {
   }
 }
 
-function canonicalFactory39($bindings, $runtime) {
+function canonicalFactory42($bindings, $runtime) {
   const { vec3, vec4, ivec2, ivec3, sin, cos, pow, sqrt, abs, floor, fract, min, max, clamp, mix, step, length, dot, add, subtract, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9162,7 +9295,7 @@ function canonicalFactory39($bindings, $runtime) {
   }
 }
 
-function canonicalFactory40($bindings, $runtime) {
+function canonicalFactory43($bindings, $runtime) {
   const { vec3, vec4, ivec2, sin, cos, pow, sqrt, abs, floor, min, max, clamp, mix, step, length, dot, add, subtract, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9446,7 +9579,7 @@ function canonicalFactory40($bindings, $runtime) {
   }
 }
 
-function canonicalFactory41($bindings, $runtime) {
+function canonicalFactory44($bindings, $runtime) {
   const { ivec2, min, clamp, distance, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9487,7 +9620,7 @@ function canonicalFactory41($bindings, $runtime) {
   }
 }
 
-function canonicalFactory42($bindings, $runtime) {
+function canonicalFactory45($bindings, $runtime) {
   const { float, radians, sin, cos, fract, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9524,7 +9657,7 @@ function canonicalFactory42($bindings, $runtime) {
   }
 }
 
-function canonicalFactory43($bindings, $runtime) {
+function canonicalFactory46($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, abs, floor, fract, min, clamp, mix, smoothstep, length, dot, add, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -10039,7 +10172,7 @@ function canonicalFactory43($bindings, $runtime) {
   }
 }
 
-function canonicalFactory44($bindings, $runtime) {
+function canonicalFactory47($bindings, $runtime) {
   const { bool, vec4, ivec2, abs, min, max, clamp, mix, smoothstep, dot, lessThan, greaterThanEqual, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10198,7 +10331,7 @@ function canonicalFactory44($bindings, $runtime) {
   }
 }
 
-function canonicalFactory45($bindings, $runtime) {
+function canonicalFactory48($bindings, $runtime) {
   const { vec2, radians, sin, cos, abs, clamp, dot, equal, all, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10327,7 +10460,7 @@ function canonicalFactory45($bindings, $runtime) {
   }
 }
 
-function canonicalFactory46($bindings, $runtime) {
+function canonicalFactory49($bindings, $runtime) {
   const { float, vec2, abs, floor, fract, min, clamp, mix, length, dot, lessThanEqual, all, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10570,7 +10703,340 @@ function canonicalFactory46($bindings, $runtime) {
   }
 }
 
-function canonicalFactory47($bindings, $runtime) {
+function canonicalFactory50($bindings, $runtime) {
+  const { ivec2, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(inputTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory51($bindings, $runtime) {
+  const { vec4, sin, cos, sqrt, abs, fract, mod, min, max, clamp, mix, length, add, subtract, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var selfTex = $bindings["selfTex"];
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var seed = $bindings["seed"];
+  var scaleAmt = $bindings["scaleAmt"];
+  var rotation = $bindings["rotation"];
+  var blendMode = $bindings["blendMode"];
+  var mixAmt = $bindings["mixAmt"];
+  var hueRotation = $bindings["hueRotation"];
+  var intensity = $bindings["intensity"];
+  var distortion = $bindings["distortion"];
+  var aberration = $bindings["aberration"];
+  var refractAAmt = $bindings["refractAAmt"];
+  var refractBAmt = $bindings["refractBAmt"];
+  var refractADir = $bindings["refractADir"];
+  var refractBDir = $bindings["refractBDir"];
+  var resetState = $bindings["resetState"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function map (value, inMin, inMax, outMin, outMax) {
+  	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+  };
+  function blendOverlay (a, b) {
+  	return a < 0.5 ? ((2 * a) * b) : (1 - (2 * (1 - a)) * (1 - b));
+  };
+  function blendSoftLight (base, blend) {
+  	return (blend < 0.5) ? ((2 * base) * blend + (base * base) * (1 - 2 * blend)) : (sqrt(base) * (2 * blend - 1) + (2 * base) * (1 - blend));
+  };
+  function cloak (st) {
+  	st = $runtime.copy(st);
+  	var m = map(mixAmt, 0, 100, 0, 1);
+  	var ra = map(refractAAmt, 0, 100, 0, 0.125);
+  	var rb = map(refractBAmt, 0, 100, 0, 0.125);
+  	var leftColor = texture(inputTex, st);
+  	var rightColor = texture(selfTex, st);
+  	var leftUV = st;
+  	var rightLen = length(new $runtime.PooledFloat32Array([rightColor[0], rightColor[1], rightColor[2]]));
+  	leftUV[0] += (cos(rightLen * 6.2831854820251465)) * ra;
+  	leftUV[1] += (sin(rightLen * 6.2831854820251465)) * ra;
+  	var leftRefracted = texture(inputTex, fract(leftUV));
+  	var rightUV = st;
+  	var leftLen = length(new $runtime.PooledFloat32Array([leftColor[0], leftColor[1], leftColor[2]]));
+  	rightUV[0] += (cos(leftLen * 6.2831854820251465)) * rb;
+  	rightUV[1] += (sin(leftLen * 6.2831854820251465)) * rb;
+  	var rightRefracted = texture(selfTex, fract(rightUV));
+  	var leftReflected = min(new $runtime.PooledFloat32Array([(rightRefracted[0] * rightColor[0]) / (1 - leftRefracted[0] * leftColor[0]), (rightRefracted[1] * rightColor[1]) / (1 - leftRefracted[1] * leftColor[1]), (rightRefracted[2] * rightColor[2]) / (1 - leftRefracted[2] * leftColor[2]), (rightRefracted[3] * rightColor[3]) / (1 - leftRefracted[3] * leftColor[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1]));
+  	var rightReflected = min(new $runtime.PooledFloat32Array([(leftRefracted[0] * leftColor[0]) / (1 - rightRefracted[0] * rightColor[0]), (leftRefracted[1] * leftColor[1]) / (1 - rightRefracted[1] * rightColor[1]), (leftRefracted[2] * leftColor[2]) / (1 - rightRefracted[2] * rightColor[2]), (leftRefracted[3] * leftColor[3]) / (1 - rightRefracted[3] * rightColor[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1]));
+  	var left = new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  	var right = new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  	if (mixAmt < 50) {
+  	mix(leftRefracted, leftReflected, map(mixAmt, 0, 50, 0, 1)).reduce((res,el,i)=>(res[i] = el, res), left);
+  	(right[0] = rightReflected[0], right[1] = rightReflected[1], right[2] = rightReflected[2], right[3] = rightReflected[3], right);
+  	} else {
+  	(left[0] = leftReflected[0], left[1] = leftReflected[1], left[2] = leftReflected[2], left[3] = leftReflected[3], left);
+  	mix(rightReflected, rightRefracted, map(mixAmt, 50, 100, 0, 1)).reduce((res,el,i)=>(res[i] = el, res), right);
+  	};
+  	return mix(left, right, m);
+  };
+  function blend (color1, color2, mode, factor) {
+  	color1 = $runtime.copy(color1);
+  	color2 = $runtime.copy(color2);
+  	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  	var middle = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  	var amt = map(mixAmt, 0, 100, 0, 1);
+  	if (mode == 0) {
+  	min(new $runtime.PooledFloat32Array([color1[0] + color2[0], color1[1] + color2[1], color1[2] + color2[2], color1[3] + color2[3]]), 1).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 2) {
+  	(new $runtime.PooledFloat32Array([color2[0] == 0, color2[1] == 0, color2[2] == 0, color2[3] == 0])) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 3) {
+  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 4) {
+  	min(color1, color2).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 5) {
+  	abs(new $runtime.PooledFloat32Array([color1[0] - color2[0], color1[1] - color2[1], color1[2] - color2[2], color1[3] - color2[3]])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	middle[3] = max(color1[3], color2[3]);
+  	} else {
+  	if (mode == 6) {
+  	(middle[0] = color1[0] + color2[0] - (2 * color1[0]) * color2[0], middle[1] = color1[1] + color2[1] - (2 * color1[1]) * color2[1], middle[2] = color1[2] + color2[2] - (2 * color1[2]) * color2[2], middle[3] = color1[3] + color2[3] - (2 * color1[3]) * color2[3], middle);
+  	middle[3] = max(color1[3], color2[3]);
+  	} else {
+  	if (mode == 7) {
+  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 8) {
+  	new $runtime.PooledFloat32Array([blendOverlay(color2[0], color1[0]), blendOverlay(color2[1], color1[1]), blendOverlay(color2[2], color1[2]), mix(color1[3], color2[3], 0.5)]).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 9) {
+  	max(color1, color2).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 10) {
+  	mix(color1, color2, 0.5).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 11) {
+  	(middle[0] = color1[0] * color2[0], middle[1] = color1[1] * color2[1], middle[2] = color1[2] * color2[2], middle[3] = color1[3] * color2[3], middle);
+  	} else {
+  	if (mode == 12) {
+  	vec4.subtract([], new $runtime.PooledFloat32Array([1, 1, 1, 1]), abs(new $runtime.PooledFloat32Array([1 - color1[0] - color2[0], 1 - color1[1] - color2[1], 1 - color1[2] - color2[2], 1 - color1[3] - color2[3]]))).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	middle[3] = max(color1[3], color2[3]);
+  	} else {
+  	if (mode == 13) {
+  	new $runtime.PooledFloat32Array([blendOverlay(color1[0], color2[0]), blendOverlay(color1[1], color2[1]), blendOverlay(color1[2], color2[2]), mix(color1[3], color2[3], 0.5)]).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 14) {
+  	vec4.add([], vec4.subtract([], min(color1, color2), max(color1, color2)), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 15) {
+  	(new $runtime.PooledFloat32Array([color1[0] == 1, color1[1] == 1, color1[2] == 1, color1[3] == 1])) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 16) {
+  	(middle[0] = 1 - ((1 - color1[0]) * (1 - color2[0])), middle[1] = 1 - ((1 - color1[1]) * (1 - color2[1])), middle[2] = 1 - ((1 - color1[2]) * (1 - color2[2])), middle[3] = 1 - ((1 - color1[3]) * (1 - color2[3])), middle);
+  	} else {
+  	if (mode == 17) {
+  	new $runtime.PooledFloat32Array([blendSoftLight(color1[0], color2[0]), blendSoftLight(color1[1], color2[1]), blendSoftLight(color1[2], color2[2]), mix(color1[3], color2[3], 0.5)]).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	if (mode == 18) {
+  	max(new $runtime.PooledFloat32Array([color1[0] + color2[0] - 1, color1[1] + color2[1] - 1, color1[2] + color2[2] - 1, color1[3] + color2[3] - 1]), 0).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	} else {
+  	mix(color1, color2, 0.5).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	if (factor == 0.5) {
+  	(color[0] = middle[0], color[1] = middle[1], color[2] = middle[2], color[3] = middle[3], color);
+  	} else {
+  	if (factor < 0.5) {
+  	factor = map(amt, 0, 0.5, 0, 1);
+  	mix(color1, middle, factor).reduce((res,el,i)=>(res[i] = el, res), color);
+  	} else {
+  	if (factor > 0.5) {
+  	factor = map(amt, 0.5, 1, 0, 1);
+  	mix(middle, color2, factor).reduce((res,el,i)=>(res[i] = el, res), color);
+  	};
+  	};
+  	};
+  	return color;
+  };
+  function brightnessContrast (color) {
+  	color = $runtime.copy(color);
+  	var bright = map(intensity * 0.10000000149011612, -100, 100, -0.5, 0.5);
+  	var cont = map(intensity * 0.10000000149011612, -100, 100, 0.5, 1.5);
+  	(color[0] = (color[0] - 0.5) * cont + 0.5 + bright, color[1] = (color[1] - 0.5) * cont + 0.5 + bright, color[2] = (color[2] - 0.5) * cont + 0.5 + bright, color);
+  	return color;
+  };
+  function rotate2D (st, rot) {
+  	st = $runtime.copy(st);
+  	st[0] *= (resolution[0] / resolution[1]);
+  	rot = map(rot, 0, 360, 0, 2);
+  	var angle = rot * 3.1415927410125732;
+  	(st[0] -= 0.5 * (resolution[0] / resolution[1]), st[1] -= 0.5, st);
+  	var cpu_matrix_assignment_0 = new $runtime.PooledFloat32Array([cos(angle) * st[0] + sin(angle) * st[1], -sin(angle) * st[0] + cos(angle) * st[1]]);
+  	(st[0] = cpu_matrix_assignment_0[0], st[1] = cpu_matrix_assignment_0[1], st);
+  	(st[0] += 0.5 * (resolution[0] / resolution[1]), st[1] += 0.5, st);
+  	st[0] /= (resolution[0] / resolution[1]);
+  	return st;
+  };
+  function hsv2rgb (hsv) {
+  	hsv = $runtime.copy(hsv);
+  	var h = fract(hsv[0]);
+  	var s = hsv[1];
+  	var v = hsv[2];
+  	var c = v * s;
+  	var x = c * (1 - abs(mod(h * 6, 2) - 1));
+  	var m = v - c;
+  	var rgb = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	if ((0 <= h) && (h < 0.1666666716337204)) {
+  	(rgb[0] = c, rgb[1] = x, rgb[2] = 0, rgb);
+  	} else {
+  	if ((0.1666666716337204 <= h) && (h < 0.3333333432674408)) {
+  	(rgb[0] = x, rgb[1] = c, rgb[2] = 0, rgb);
+  	} else {
+  	if ((0.3333333432674408 <= h) && (h < 0.5)) {
+  	(rgb[0] = 0, rgb[1] = c, rgb[2] = x, rgb);
+  	} else {
+  	if ((0.5 <= h) && (h < 0.6666666865348816)) {
+  	(rgb[0] = 0, rgb[1] = x, rgb[2] = c, rgb);
+  	} else {
+  	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
+  	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
+  	} else {
+  	if ((0.8333333134651184 <= h) && (h < 1)) {
+  	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
+  	} else {
+  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	return new $runtime.PooledFloat32Array([rgb[0] + m, rgb[1] + m, rgb[2] + m]);
+  };
+  function rgb2hsv (rgb) {
+  	rgb = $runtime.copy(rgb);
+  	var r = rgb[0];
+  	var g = rgb[1];
+  	var b = rgb[2];
+  	var maxC = max(r, max(g, b));
+  	var minC = min(r, min(g, b));
+  	var delta = maxC - minC;
+  	var h = 0;
+  	if (delta != 0) {
+  	if (maxC == r) {
+  	h = (mod((g - b) / delta, 6)) / 6;
+  	} else {
+  	if (maxC == g) {
+  	h = ((b - r) / delta + 2) / 6;
+  	} else {
+  	if (maxC == b) {
+  	h = ((r - g) / delta + 4) / 6;
+  	};
+  	};
+  	};
+  	};
+  	var s = (maxC == 0) ? 0 : delta / maxC;
+  	var v = maxC;
+  	return new $runtime.PooledFloat32Array([h, s, v]);
+  };
+  function getImage (st) {
+  	st = $runtime.copy(st);
+  	rotate2D(st, rotation).reduce((res,el,i)=>(res[i] = el, res), st);
+  	var diff = new $runtime.PooledFloat32Array([0.5 - st[0], 0.5 - st[1]]);
+  	var centerDist = length(diff);
+  	var distort = 0;
+  	var zoom = 0;
+  	if (distortion < 0) {
+  	distort = map(distortion, -100, 0, -2, 0);
+  	zoom = map(distortion, -100, 0, 0.03999999910593033, 0);
+  	} else {
+  	distort = map(distortion, 0, 100, 0, 2);
+  	zoom = map(distortion, 0, 100, 0, -1);
+  	};
+  	(st[0] = (st[0] - diff[0] * zoom) - ((diff[0] * centerDist) * centerDist) * distort, st[1] = (st[1] - diff[1] * zoom) - ((diff[1] * centerDist) * centerDist) * distort, st);
+  	var scale = 100 / scaleAmt;
+  	if (scale == 0) {
+  	scale = 1;
+  	};
+  	st = new $runtime.PooledFloat32Array([st[0] * scale, st[1] * scale]);
+  	st[0] -= (scale * 0.5) - (0.5 - ((1 / resolution[0]) * scale));
+  	st[1] += (scale * 0.5) + (0.5 - ((1 / resolution[1]) * scale)) - (scale);
+  	(st[0] += 1 / resolution[0], st[1] += 1 / resolution[1], st);
+  	fract(st).reduce((res,el,i)=>(res[i] = el, res), st);
+  	var aberrationOffset = (((map(aberration, 0, 100, 0, 0.10000000149011612)) * centerDist) * 3.1415927410125732) * 0.5;
+  	var redOffset = mix(clamp(st[0] + aberrationOffset, 0, 1), st[0], st[0]);
+  	var red = texture(selfTex, new $runtime.PooledFloat32Array([redOffset, st[1]]));
+  	var green = texture(selfTex, st);
+  	var blueOffset = mix(st[0], clamp(st[0] - aberrationOffset, 0, 1), st[0]);
+  	var blue = texture(selfTex, new $runtime.PooledFloat32Array([blueOffset, st[1]]));
+  	var tex = new $runtime.PooledFloat32Array([red[0], green[1], blue[2], 1]);
+  	tex = new $runtime.PooledFloat32Array([tex[0] * tex[3], tex[1] * tex[3], tex[2] * tex[3], tex[3]]);
+  	return tex;
+  };
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	if (resetState) {
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	return;
+  	};
+  	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  	if (blendMode == 100) {
+  	cloak(uv).reduce((res,el,i)=>(res[i] = el, res), color);
+  	} else {
+  	var ra = map(refractAAmt, 0, 100, 0, 0.125);
+  	var rb = map(refractBAmt, 0, 100, 0, 0.125);
+  	var leftColor = texture(inputTex, uv);
+  	var rightColor = texture(selfTex, uv);
+  	var leftUV = uv;
+  	var rightLen = length(new $runtime.PooledFloat32Array([rightColor[0], rightColor[1], rightColor[2]])) + refractADir / 360;
+  	leftUV[0] += (cos(rightLen * 6.2831854820251465)) * ra;
+  	leftUV[1] += (sin(rightLen * 6.2831854820251465)) * ra;
+  	var rightUV = uv;
+  	var leftLen = length(new $runtime.PooledFloat32Array([leftColor[0], leftColor[1], leftColor[2]])) + refractBDir / 360;
+  	rightUV[0] += (cos(leftLen * 6.2831854820251465)) * rb;
+  	rightUV[1] += (sin(leftLen * 6.2831854820251465)) * rb;
+  	blend(texture(inputTex, leftUV), getImage(rightUV), blendMode, mixAmt * 0.009999999776482582).reduce((res,el,i)=>(res[i] = el, res), color);
+  	};
+  	var hsv = rgb2hsv(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]));
+  	hsv[0] = mod(hsv[0] + map(hueRotation, -180, 180, -0.05000000074505806, 0.05000000074505806), 1);
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, hsv2rgb(hsv));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, brightnessContrast(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
+  	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory52($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10597,7 +11063,7 @@ function canonicalFactory47($bindings, $runtime) {
   }
 }
 
-function canonicalFactory48($bindings, $runtime) {
+function canonicalFactory53($bindings, $runtime) {
   const { ivec2, fract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10697,7 +11163,7 @@ function canonicalFactory48($bindings, $runtime) {
   }
 }
 
-function canonicalFactory49($bindings, $runtime) {
+function canonicalFactory54($bindings, $runtime) {
   const { ivec2, exp, abs, round, max, mix, dot, add, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10832,7 +11298,7 @@ function canonicalFactory49($bindings, $runtime) {
   }
 }
 
-function canonicalFactory50($bindings, $runtime) {
+function canonicalFactory55($bindings, $runtime) {
   const { vec2, sqrt, abs, max, clamp, mix, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10894,7 +11360,7 @@ function canonicalFactory50($bindings, $runtime) {
   }
 }
 
-function canonicalFactory51($bindings, $runtime) {
+function canonicalFactory56($bindings, $runtime) {
   const { float, ivec2, floor, fract, min, max, clamp, length, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -11195,7 +11661,7 @@ function canonicalFactory51($bindings, $runtime) {
   }
 }
 
-function canonicalFactory52($bindings, $runtime) {
+function canonicalFactory57($bindings, $runtime) {
   const { ivec2, pow, abs, min, max, mix, smoothstep, length, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11305,7 +11771,7 @@ function canonicalFactory52($bindings, $runtime) {
   }
 }
 
-function canonicalFactory53($bindings, $runtime) {
+function canonicalFactory58($bindings, $runtime) {
   const { ivec2, pow, abs, fract, min, max, clamp, mix, smoothstep, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11448,7 +11914,7 @@ function canonicalFactory53($bindings, $runtime) {
   }
 }
 
-function canonicalFactory54($bindings, $runtime) {
+function canonicalFactory59($bindings, $runtime) {
   const { vec3, ivec2, pow, abs, floor, mod, min, max, clamp, mix, smoothstep, dot, multiply, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11879,7 +12345,7 @@ function canonicalFactory54($bindings, $runtime) {
   }
 }
 
-function canonicalFactory55($bindings, $runtime) {
+function canonicalFactory60($bindings, $runtime) {
   const { ivec2, pow, abs, max, clamp, smoothstep, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12020,7 +12486,7 @@ function canonicalFactory55($bindings, $runtime) {
   }
 }
 
-function canonicalFactory56($bindings, $runtime) {
+function canonicalFactory61($bindings, $runtime) {
   const { ivec2, pow, abs, max, mix, smoothstep, length, dot, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12126,7 +12592,7 @@ function canonicalFactory56($bindings, $runtime) {
   }
 }
 
-function canonicalFactory57($bindings, $runtime) {
+function canonicalFactory62($bindings, $runtime) {
   const { ivec2, pow, abs, max, smoothstep, length, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12226,7 +12692,7 @@ function canonicalFactory57($bindings, $runtime) {
   }
 }
 
-function canonicalFactory58($bindings, $runtime) {
+function canonicalFactory63($bindings, $runtime) {
   const { ivec2, ivec3, sin, cos, floor, round, fract, max, clamp, mix, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12404,7 +12870,7 @@ function canonicalFactory58($bindings, $runtime) {
   }
 }
 
-function canonicalFactory59($bindings, $runtime) {
+function canonicalFactory64($bindings, $runtime) {
   const { float, vec2, sin, cos, pow, sqrt, abs, floor, fract, max, clamp, mix, divide, texture, textureSize, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -12558,7 +13024,7 @@ function canonicalFactory59($bindings, $runtime) {
   }
 }
 
-function canonicalFactory60($bindings, $runtime) {
+function canonicalFactory65($bindings, $runtime) {
   const { radians, sin, cos, sqrt, abs, floor, fract, min, max, clamp, mix, smoothstep, length, dot, texture, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12705,9 +13171,9 @@ function canonicalFactory60($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory60.usesDerivatives = true
+canonicalFactory65.usesDerivatives = true
 
-function canonicalFactory61($bindings, $runtime) {
+function canonicalFactory66($bindings, $runtime) {
   const { float, vec2, radians, degrees, sin, cos, atan, abs, floor, fract, clamp, mix, step, smoothstep, length, dot, add, multiply, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12872,7 +13338,7 @@ function canonicalFactory61($bindings, $runtime) {
   }
 }
 
-function canonicalFactory62($bindings, $runtime) {
+function canonicalFactory67($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12908,7 +13374,7 @@ function canonicalFactory62($bindings, $runtime) {
   }
 }
 
-function canonicalFactory63($bindings, $runtime) {
+function canonicalFactory68($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12944,7 +13410,7 @@ function canonicalFactory63($bindings, $runtime) {
   }
 }
 
-function canonicalFactory64($bindings, $runtime) {
+function canonicalFactory69($bindings, $runtime) {
   const { clamp, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12972,7 +13438,7 @@ function canonicalFactory64($bindings, $runtime) {
   }
 }
 
-function canonicalFactory65($bindings, $runtime) {
+function canonicalFactory70($bindings, $runtime) {
   const { ivec2, abs, fract, mod, min, max, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13061,7 +13527,7 @@ function canonicalFactory65($bindings, $runtime) {
   }
 }
 
-function canonicalFactory66($bindings, $runtime) {
+function canonicalFactory71($bindings, $runtime) {
   const { ivec2, min, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13090,7 +13556,7 @@ function canonicalFactory66($bindings, $runtime) {
   }
 }
 
-function canonicalFactory67($bindings, $runtime) {
+function canonicalFactory72($bindings, $runtime) {
   const { ivec2, fract, clamp, length, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13158,9 +13624,9 @@ function canonicalFactory67($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory67.usesDerivatives = true
+canonicalFactory72.usesDerivatives = true
 
-function canonicalFactory68($bindings, $runtime) {
+function canonicalFactory73($bindings, $runtime) {
   const { cos, atan, pow, exp, abs, max, clamp, mix, smoothstep, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13296,7 +13762,7 @@ function canonicalFactory68($bindings, $runtime) {
   }
 }
 
-function canonicalFactory69($bindings, $runtime) {
+function canonicalFactory74($bindings, $runtime) {
   const { float, sin, cos, pow, abs, floor, mod, clamp, length, dot, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -13393,9 +13859,9 @@ function canonicalFactory69($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory69.usesDerivatives = true
+canonicalFactory74.usesDerivatives = true
 
-function canonicalFactory70($bindings, $runtime) {
+function canonicalFactory75($bindings, $runtime) {
   const { float, ivec2, sin, cos, pow, exp, sqrt, abs, fract, min, max, clamp, mix, dot, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13516,7 +13982,7 @@ function canonicalFactory70($bindings, $runtime) {
   }
 }
 
-function canonicalFactory71($bindings, $runtime) {
+function canonicalFactory76($bindings, $runtime) {
   const { vec2, ivec2, pow, max, mix, dot, normalize, reflect, add, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13677,7 +14143,7 @@ function canonicalFactory71($bindings, $runtime) {
   }
 }
 
-function canonicalFactory72($bindings, $runtime) {
+function canonicalFactory77($bindings, $runtime) {
   const { ivec2, sin, cos, pow, floor, min, max, clamp, mix, smoothstep, length, distance, dot, notEqual, any, add, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13849,9 +14315,9 @@ function canonicalFactory72($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory72.usesDerivatives = true
+canonicalFactory77.usesDerivatives = true
 
-function canonicalFactory73($bindings, $runtime) {
+function canonicalFactory78($bindings, $runtime) {
   const { ivec2, abs, max, clamp, dot, add, subtract, textureSize, texelFetch, floatBitsToUint, packHalf2x16, unpackHalf2x16 } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13967,7 +14433,7 @@ function canonicalFactory73($bindings, $runtime) {
   }
 }
 
-function canonicalFactory74($bindings, $runtime) {
+function canonicalFactory79($bindings, $runtime) {
   const { min, max, mix, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14022,7 +14488,7 @@ function canonicalFactory74($bindings, $runtime) {
   }
 }
 
-function canonicalFactory75($bindings, $runtime) {
+function canonicalFactory80($bindings, $runtime) {
   const { min, max, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14059,7 +14525,7 @@ function canonicalFactory75($bindings, $runtime) {
   }
 }
 
-function canonicalFactory76($bindings, $runtime) {
+function canonicalFactory81($bindings, $runtime) {
   const { float, radians, sin, cos, floor, fract, min, clamp, mix, smoothstep, dot, normalize, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14183,7 +14649,57 @@ function canonicalFactory76($bindings, $runtime) {
   }
 }
 
-function canonicalFactory77($bindings, $runtime) {
+function canonicalFactory82($bindings, $runtime) {
+  const { ivec2, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(inputTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory83($bindings, $runtime) {
+  const { clamp, mix, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var selfTex = $bindings["selfTex"];
+  var resolution = $bindings["resolution"];
+  var amount = $bindings["amount"];
+  var resetState = $bindings["resetState"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	if (resetState) {
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	return;
+  	};
+  	var current = texture(inputTex, uv);
+  	var previous = texture(selfTex, uv);
+  	var mixFactor = clamp(amount * 0.00800000037997961, 0, 0.9800000190734863);
+  	mix(current, previous, mixFactor).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory84($bindings, $runtime) {
   const { ivec2, pow, abs, round, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14316,7 +14832,7 @@ function canonicalFactory77($bindings, $runtime) {
   }
 }
 
-function canonicalFactory78($bindings, $runtime) {
+function canonicalFactory85($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14351,7 +14867,7 @@ function canonicalFactory78($bindings, $runtime) {
   }
 }
 
-function canonicalFactory79($bindings, $runtime) {
+function canonicalFactory86($bindings, $runtime) {
   const { ivec2, min, max, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14393,7 +14909,7 @@ function canonicalFactory79($bindings, $runtime) {
   }
 }
 
-function canonicalFactory80($bindings, $runtime) {
+function canonicalFactory87($bindings, $runtime) {
   const { ivec2, min, max, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14433,7 +14949,7 @@ function canonicalFactory80($bindings, $runtime) {
   }
 }
 
-function canonicalFactory81($bindings, $runtime) {
+function canonicalFactory88($bindings, $runtime) {
   const { ivec2, min, max, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14464,7 +14980,7 @@ function canonicalFactory81($bindings, $runtime) {
   }
 }
 
-function canonicalFactory82($bindings, $runtime) {
+function canonicalFactory89($bindings, $runtime) {
   const { float, sin, cos, pow, sqrt, abs, floor, fract, mod, max, clamp, mix, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14592,9 +15108,9 @@ function canonicalFactory82($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory82.usesDerivatives = true
+canonicalFactory89.usesDerivatives = true
 
-function canonicalFactory83($bindings, $runtime) {
+function canonicalFactory90($bindings, $runtime) {
   const { ivec2, abs, ceil, min, clamp, dot, add, subtract, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14771,7 +15287,7 @@ function canonicalFactory83($bindings, $runtime) {
   }
 }
 
-function canonicalFactory84($bindings, $runtime) {
+function canonicalFactory91($bindings, $runtime) {
   const { float, vec2, floor, fract, clamp, mix, length, dot, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14899,7 +15415,7 @@ function canonicalFactory84($bindings, $runtime) {
   }
 }
 
-function canonicalFactory85($bindings, $runtime) {
+function canonicalFactory92($bindings, $runtime) {
   const { float, ivec2, floor, max, clamp, mix, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15037,7 +15553,7 @@ function canonicalFactory85($bindings, $runtime) {
   }
 }
 
-function canonicalFactory86($bindings, $runtime) {
+function canonicalFactory93($bindings, $runtime) {
   const { ivec2, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15074,7 +15590,7 @@ function canonicalFactory86($bindings, $runtime) {
   }
 }
 
-function canonicalFactory87($bindings, $runtime) {
+function canonicalFactory94($bindings, $runtime) {
   const { ivec2, sqrt, abs, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15155,7 +15671,7 @@ function canonicalFactory87($bindings, $runtime) {
   }
 }
 
-function canonicalFactory88($bindings, $runtime) {
+function canonicalFactory95($bindings, $runtime) {
   const { ivec2, pow, abs, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15212,7 +15728,7 @@ function canonicalFactory88($bindings, $runtime) {
   }
 }
 
-function canonicalFactory89($bindings, $runtime) {
+function canonicalFactory96($bindings, $runtime) {
   const { mix, length, dot, normalize, textureLod, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15281,7 +15797,7 @@ function canonicalFactory89($bindings, $runtime) {
   }
 }
 
-function canonicalFactory90($bindings, $runtime) {
+function canonicalFactory97($bindings, $runtime) {
   const { radians, sin, cos, sign, floor, min, clamp, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15370,7 +15886,7 @@ function canonicalFactory90($bindings, $runtime) {
   }
 }
 
-function canonicalFactory91($bindings, $runtime) {
+function canonicalFactory98($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15406,7 +15922,7 @@ function canonicalFactory91($bindings, $runtime) {
   }
 }
 
-function canonicalFactory92($bindings, $runtime) {
+function canonicalFactory99($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15442,7 +15958,7 @@ function canonicalFactory92($bindings, $runtime) {
   }
 }
 
-function canonicalFactory93($bindings, $runtime) {
+function canonicalFactory100($bindings, $runtime) {
   const { abs, max, clamp, mix, smoothstep, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15485,7 +16001,7 @@ function canonicalFactory93($bindings, $runtime) {
   }
 }
 
-function canonicalFactory94($bindings, $runtime) {
+function canonicalFactory101($bindings, $runtime) {
   const { sin, cos, pow, abs, mod, clamp, length, normalize, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15557,9 +16073,9 @@ function canonicalFactory94($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory94.usesDerivatives = true
+canonicalFactory101.usesDerivatives = true
 
-function canonicalFactory95($bindings, $runtime) {
+function canonicalFactory102($bindings, $runtime) {
   const { float, ivec2, floor, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15604,7 +16120,7 @@ function canonicalFactory95($bindings, $runtime) {
   }
 }
 
-function canonicalFactory96($bindings, $runtime) {
+function canonicalFactory103($bindings, $runtime) {
   const { sin, cos, abs, fract, mod, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15674,7 +16190,7 @@ function canonicalFactory96($bindings, $runtime) {
   }
 }
 
-function canonicalFactory97($bindings, $runtime) {
+function canonicalFactory104($bindings, $runtime) {
   const { float, ivec2, floor, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15715,7 +16231,7 @@ function canonicalFactory97($bindings, $runtime) {
   }
 }
 
-function canonicalFactory98($bindings, $runtime) {
+function canonicalFactory105($bindings, $runtime) {
   const { float, ivec2, abs, floor, round, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15766,7 +16282,7 @@ function canonicalFactory98($bindings, $runtime) {
   }
 }
 
-function canonicalFactory99($bindings, $runtime) {
+function canonicalFactory106($bindings, $runtime) {
   const { float, ivec2, pow, abs, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15808,7 +16324,7 @@ function canonicalFactory99($bindings, $runtime) {
   }
 }
 
-function canonicalFactory100($bindings, $runtime) {
+function canonicalFactory107($bindings, $runtime) {
   const { sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15863,7 +16379,7 @@ function canonicalFactory100($bindings, $runtime) {
   }
 }
 
-function canonicalFactory101($bindings, $runtime) {
+function canonicalFactory108($bindings, $runtime) {
   const { ivec2, floor, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15902,7 +16418,7 @@ function canonicalFactory101($bindings, $runtime) {
   }
 }
 
-function canonicalFactory102($bindings, $runtime) {
+function canonicalFactory109($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15938,7 +16454,7 @@ function canonicalFactory102($bindings, $runtime) {
   }
 }
 
-function canonicalFactory103($bindings, $runtime) {
+function canonicalFactory110($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15974,7 +16490,7 @@ function canonicalFactory103($bindings, $runtime) {
   }
 }
 
-function canonicalFactory104($bindings, $runtime) {
+function canonicalFactory111($bindings, $runtime) {
   const { pow, max, clamp, mix, dot, normalize, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16029,7 +16545,7 @@ function canonicalFactory104($bindings, $runtime) {
   }
 }
 
-function canonicalFactory105($bindings, $runtime) {
+function canonicalFactory112($bindings, $runtime) {
   const { ivec2, atan, abs, fract, length, dot, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16110,9 +16626,9 @@ function canonicalFactory105($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory105.usesDerivatives = true
+canonicalFactory112.usesDerivatives = true
 
-function canonicalFactory106($bindings, $runtime) {
+function canonicalFactory113($bindings, $runtime) {
   const { sin, cos, abs, mod, max, clamp, length, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16194,9 +16710,9 @@ function canonicalFactory106($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory106.usesDerivatives = true
+canonicalFactory113.usesDerivatives = true
 
-function canonicalFactory107($bindings, $runtime) {
+function canonicalFactory114($bindings, $runtime) {
   const { vec2, vec3, pow, floor, round, fract, max, clamp, smoothstep, add, divide, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16273,9 +16789,9 @@ function canonicalFactory107($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory107.usesDerivatives = true
+canonicalFactory114.usesDerivatives = true
 
-function canonicalFactory108($bindings, $runtime) {
+function canonicalFactory115($bindings, $runtime) {
   const { vec3, vec4, abs, fract, mod, min, max, clamp, mix, length, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16404,7 +16920,7 @@ function canonicalFactory108($bindings, $runtime) {
   }
 }
 
-function canonicalFactory109($bindings, $runtime) {
+function canonicalFactory116($bindings, $runtime) {
   const { float, ivec2, pow, abs, fract, min, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16486,7 +17002,7 @@ function canonicalFactory109($bindings, $runtime) {
   }
 }
 
-function canonicalFactory110($bindings, $runtime) {
+function canonicalFactory117($bindings, $runtime) {
   const { ivec2, min, max, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16533,7 +17049,7 @@ function canonicalFactory110($bindings, $runtime) {
   }
 }
 
-function canonicalFactory111($bindings, $runtime) {
+function canonicalFactory118($bindings, $runtime) {
   const { ivec2, pow, abs, min, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16618,7 +17134,7 @@ function canonicalFactory111($bindings, $runtime) {
   }
 }
 
-function canonicalFactory112($bindings, $runtime) {
+function canonicalFactory119($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16655,7 +17171,7 @@ function canonicalFactory112($bindings, $runtime) {
   }
 }
 
-function canonicalFactory113($bindings, $runtime) {
+function canonicalFactory120($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16692,7 +17208,7 @@ function canonicalFactory113($bindings, $runtime) {
   }
 }
 
-function canonicalFactory114($bindings, $runtime) {
+function canonicalFactory121($bindings, $runtime) {
   const { float, radians, sin, cos, pow, abs, floor, fract, max, clamp, mix, step, smoothstep, length, dot, normalize, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16778,7 +17294,7 @@ function canonicalFactory114($bindings, $runtime) {
   }
 }
 
-function canonicalFactory115($bindings, $runtime) {
+function canonicalFactory122($bindings, $runtime) {
   const { vec2, abs, fract, mod, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16828,7 +17344,7 @@ function canonicalFactory115($bindings, $runtime) {
   }
 }
 
-function canonicalFactory116($bindings, $runtime) {
+function canonicalFactory123($bindings, $runtime) {
   const { vec4, ivec2, abs, fract, mod, clamp, mix, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16899,7 +17415,7 @@ function canonicalFactory116($bindings, $runtime) {
   }
 }
 
-function canonicalFactory117($bindings, $runtime) {
+function canonicalFactory124($bindings, $runtime) {
   const { vec4, ivec2, abs, max, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16935,7 +17451,7 @@ function canonicalFactory117($bindings, $runtime) {
   }
 }
 
-function canonicalFactory118($bindings, $runtime) {
+function canonicalFactory125($bindings, $runtime) {
   const { ivec2, sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16987,7 +17503,7 @@ function canonicalFactory118($bindings, $runtime) {
   }
 }
 
-function canonicalFactory119($bindings, $runtime) {
+function canonicalFactory126($bindings, $runtime) {
   const { abs, fract, mod, clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17030,7 +17546,7 @@ function canonicalFactory119($bindings, $runtime) {
   }
 }
 
-function canonicalFactory120($bindings, $runtime) {
+function canonicalFactory127($bindings, $runtime) {
   const { float, vec3, vec4, ivec2, sin, cos, pow, abs, floor, fract, min, max, clamp, mix, step, dot, add, subtract, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17318,7 +17834,7 @@ function canonicalFactory120($bindings, $runtime) {
   }
 }
 
-function canonicalFactory121($bindings, $runtime) {
+function canonicalFactory128($bindings, $runtime) {
   const { floor, fract, min, max, clamp, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17389,7 +17905,7 @@ function canonicalFactory121($bindings, $runtime) {
   }
 }
 
-function canonicalFactory122($bindings, $runtime) {
+function canonicalFactory129($bindings, $runtime) {
   const { abs, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17421,7 +17937,7 @@ function canonicalFactory122($bindings, $runtime) {
   }
 }
 
-function canonicalFactory123($bindings, $runtime) {
+function canonicalFactory130($bindings, $runtime) {
   const { ivec2, max, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17448,7 +17964,7 @@ function canonicalFactory123($bindings, $runtime) {
   }
 }
 
-function canonicalFactory124($bindings, $runtime) {
+function canonicalFactory131($bindings, $runtime) {
   const { vec2, abs, fract, mod, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17491,7 +18007,7 @@ function canonicalFactory124($bindings, $runtime) {
   }
 }
 
-function canonicalFactory125($bindings, $runtime) {
+function canonicalFactory132($bindings, $runtime) {
   const { ivec2, fract, min, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17542,7 +18058,7 @@ function canonicalFactory125($bindings, $runtime) {
   }
 }
 
-function canonicalFactory126($bindings, $runtime) {
+function canonicalFactory133($bindings, $runtime) {
   const { vec2, ivec2, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17597,7 +18113,7 @@ function canonicalFactory126($bindings, $runtime) {
   }
 }
 
-function canonicalFactory127($bindings, $runtime) {
+function canonicalFactory134($bindings, $runtime) {
   const { vec2, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17629,7 +18145,7 @@ function canonicalFactory127($bindings, $runtime) {
   }
 }
 
-function canonicalFactory128($bindings, $runtime) {
+function canonicalFactory135($bindings, $runtime) {
   const { ivec2, sin, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17670,7 +18186,7 @@ function canonicalFactory128($bindings, $runtime) {
   }
 }
 
-function canonicalFactory129($bindings, $runtime) {
+function canonicalFactory136($bindings, $runtime) {
   const { ivec2, sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17726,7 +18242,7 @@ function canonicalFactory129($bindings, $runtime) {
   }
 }
 
-function canonicalFactory130($bindings, $runtime) {
+function canonicalFactory137($bindings, $runtime) {
   const { float, ivec2, exp, sqrt, abs, floor, ceil, max, clamp, mix, dot, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17945,7 +18461,7 @@ function canonicalFactory130($bindings, $runtime) {
   }
 }
 
-function canonicalFactory131($bindings, $runtime) {
+function canonicalFactory138($bindings, $runtime) {
   const { ivec2, abs, max, clamp, step, dot, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17989,7 +18505,7 @@ function canonicalFactory131($bindings, $runtime) {
   }
 }
 
-function canonicalFactory132($bindings, $runtime) {
+function canonicalFactory139($bindings, $runtime) {
   const { ivec2, smoothstep, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18018,7 +18534,7 @@ function canonicalFactory132($bindings, $runtime) {
   }
 }
 
-function canonicalFactory133($bindings, $runtime) {
+function canonicalFactory140($bindings, $runtime) {
   const { float, vec3, ivec2, sin, cos, pow, abs, floor, round, min, max, clamp, mix, subtract, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18112,7 +18628,7 @@ function canonicalFactory133($bindings, $runtime) {
   }
 }
 
-function canonicalFactory134($bindings, $runtime) {
+function canonicalFactory141($bindings, $runtime) {
   const { vec2, ivec2, mix, distance, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18183,7 +18699,7 @@ function canonicalFactory134($bindings, $runtime) {
   }
 }
 
-function canonicalFactory135($bindings, $runtime) {
+function canonicalFactory142($bindings, $runtime) {
   const { float, ivec2, cos, pow, abs, floor, fract, max, clamp, mix, step, add, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18327,7 +18843,7 @@ function canonicalFactory135($bindings, $runtime) {
   }
 }
 
-function canonicalFactory136($bindings, $runtime) {
+function canonicalFactory143($bindings, $runtime) {
   const { float, radians, sin, cos, abs, fract, clamp, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18389,7 +18905,7 @@ function canonicalFactory136($bindings, $runtime) {
   }
 }
 
-function canonicalFactory137($bindings, $runtime) {
+function canonicalFactory144($bindings, $runtime) {
   const { sin, cos, atan, abs, sign, mod, clamp, length, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18464,9 +18980,9 @@ function canonicalFactory137($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory137.usesDerivatives = true
+canonicalFactory144.usesDerivatives = true
 
-function canonicalFactory138($bindings, $runtime) {
+function canonicalFactory145($bindings, $runtime) {
   const { float, floor, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18559,7 +19075,7 @@ function canonicalFactory138($bindings, $runtime) {
   }
 }
 
-function canonicalFactory139($bindings, $runtime) {
+function canonicalFactory146($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18595,7 +19111,7 @@ function canonicalFactory139($bindings, $runtime) {
   }
 }
 
-function canonicalFactory140($bindings, $runtime) {
+function canonicalFactory147($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18631,7 +19147,7 @@ function canonicalFactory140($bindings, $runtime) {
   }
 }
 
-function canonicalFactory141($bindings, $runtime) {
+function canonicalFactory148($bindings, $runtime) {
   const { float, vec2, floor, fract, max, clamp, mix, smoothstep, dot, add, texture, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18699,9 +19215,9 @@ function canonicalFactory141($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory141.usesDerivatives = true
+canonicalFactory148.usesDerivatives = true
 
-function canonicalFactory142($bindings, $runtime) {
+function canonicalFactory149($bindings, $runtime) {
   const { ivec2, step, smoothstep, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18734,9 +19250,9 @@ function canonicalFactory142($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory142.usesDerivatives = true
+canonicalFactory149.usesDerivatives = true
 
-function canonicalFactory143($bindings, $runtime) {
+function canonicalFactory150($bindings, $runtime) {
   const { float, vec2, radians, sin, cos, floor, fract, max, clamp, mix, step, smoothstep, length, dot, add, texture, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18870,9 +19386,9 @@ function canonicalFactory143($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory143.usesDerivatives = true
+canonicalFactory150.usesDerivatives = true
 
-function canonicalFactory144($bindings, $runtime) {
+function canonicalFactory151($bindings, $runtime) {
   const { ivec2, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18904,7 +19420,7 @@ function canonicalFactory144($bindings, $runtime) {
   }
 }
 
-function canonicalFactory145($bindings, $runtime) {
+function canonicalFactory152($bindings, $runtime) {
   const { clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18943,7 +19459,7 @@ function canonicalFactory145($bindings, $runtime) {
   }
 }
 
-function canonicalFactory146($bindings, $runtime) {
+function canonicalFactory153($bindings, $runtime) {
   const { float, vec4, radians, degrees, sin, cos, atan, pow, exp, abs, floor, fract, min, max, clamp, mix, smoothstep, length, dot, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19166,7 +19682,96 @@ function canonicalFactory146($bindings, $runtime) {
   }
 }
 
-function canonicalFactory147($bindings, $runtime) {
+function canonicalFactory154($bindings, $runtime) {
+  const { ivec2, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var srcTex = $bindings["srcTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(srcTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	texture(srcTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory155($bindings, $runtime) {
+  const { ivec2, floor, min, clamp, mix, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var inputTex = $bindings["inputTex"];
+  var h1 = $bindings["h1"];
+  var h2 = $bindings["h2"];
+  var h3 = $bindings["h3"];
+  var h4 = $bindings["h4"];
+  var h5 = $bindings["h5"];
+  var h6 = $bindings["h6"];
+  var h7 = $bindings["h7"];
+  var h8 = $bindings["h8"];
+  var redDelay = $bindings["redDelay"];
+  var greenDelay = $bindings["greenDelay"];
+  var blueDelay = $bindings["blueDelay"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(inputTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var cur = texture(inputTex, uv);
+  	var slots = [new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])];
+  	(slots[0][0] = cur[0], slots[0][1] = cur[1], slots[0][2] = cur[2], slots[0][3] = cur[3], slots[0]);
+  	var s = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  	texture(h1, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[1]);
+  	texture(h2, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[2]);
+  	texture(h3, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[3]);
+  	texture(h4, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[4]);
+  	texture(h5, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[5]);
+  	texture(h6, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[6]);
+  	texture(h7, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[7]);
+  	texture(h8, uv).reduce((res,el,i)=>(res[i] = el, res), s);
+  	(s[3] < 0.5) ? cur : s.reduce((res,el,i)=>(res[i] = el, res), slots[8]);
+  	var dr = clamp(redDelay, 0, 8);
+  	var ir0 = floor(dr)|0;
+  	var ir1 = min(ir0 + 1, 8);
+  	var rOut = mix(slots[ir0], slots[ir1], dr - (ir0))[0];
+  	var dg = clamp(greenDelay, 0, 8);
+  	var ig0 = floor(dg)|0;
+  	var ig1 = min(ig0 + 1, 8);
+  	var gOut = mix(slots[ig0], slots[ig1], dg - (ig0))[1];
+  	var db = clamp(blueDelay, 0, 8);
+  	var ib0 = floor(db)|0;
+  	var ib1 = min(ib0 + 1, 8);
+  	var bOut = mix(slots[ib0], slots[ib1], db - (ib0))[2];
+  	(fragColor[0] = rOut, fragColor[1] = gOut, fragColor[2] = bOut, fragColor[3] = cur[3], fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory156($bindings, $runtime) {
   const { float, sin, cos, atan, pow, abs, fract, mod, min, max, clamp, mix, step, smoothstep, length, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19478,7 +20083,7 @@ function canonicalFactory147($bindings, $runtime) {
   }
 }
 
-function canonicalFactory148($bindings, $runtime) {
+function canonicalFactory157($bindings, $runtime) {
   const { vec3, sin, cos, pow, abs, fract, mod, max, clamp, mix, step, dot, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19626,7 +20231,7 @@ function canonicalFactory148($bindings, $runtime) {
   }
 }
 
-function canonicalFactory149($bindings, $runtime) {
+function canonicalFactory158($bindings, $runtime) {
   const { vec2, max, mix, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19656,7 +20261,7 @@ function canonicalFactory149($bindings, $runtime) {
   }
 }
 
-function canonicalFactory150($bindings, $runtime) {
+function canonicalFactory159($bindings, $runtime) {
   const { float, vec2, ivec2, ivec3, sin, sqrt, inversesqrt, abs, floor, fract, min, max, clamp, mix, step, smoothstep, length, dot, add, multiply, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20025,7 +20630,7 @@ function canonicalFactory150($bindings, $runtime) {
   }
 }
 
-function canonicalFactory151($bindings, $runtime) {
+function canonicalFactory160($bindings, $runtime) {
   const { vec2, smoothstep, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20050,7 +20655,7 @@ function canonicalFactory151($bindings, $runtime) {
   }
 }
 
-function canonicalFactory152($bindings, $runtime) {
+function canonicalFactory161($bindings, $runtime) {
   const { vec2, sin, cos, atan, abs, fract, mod, length, dot, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20142,7 +20747,7 @@ function canonicalFactory152($bindings, $runtime) {
   }
 }
 
-function canonicalFactory153($bindings, $runtime) {
+function canonicalFactory162($bindings, $runtime) {
   const { vec2, ivec2, abs, floor, min, max, clamp, mix, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20225,7 +20830,7 @@ function canonicalFactory153($bindings, $runtime) {
   }
 }
 
-function canonicalFactory154($bindings, $runtime) {
+function canonicalFactory163($bindings, $runtime) {
   const { ivec2, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20264,7 +20869,7 @@ function canonicalFactory154($bindings, $runtime) {
   }
 }
 
-function canonicalFactory155($bindings, $runtime) {
+function canonicalFactory164($bindings, $runtime) {
   const { ivec2, cos, atan, pow, abs, floor, fract, mix, smoothstep, length, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20362,9 +20967,9 @@ function canonicalFactory155($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory155.usesDerivatives = true
+canonicalFactory164.usesDerivatives = true
 
-function canonicalFactory156($bindings, $runtime) {
+function canonicalFactory165($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20399,7 +21004,7 @@ function canonicalFactory156($bindings, $runtime) {
   }
 }
 
-function canonicalFactory157($bindings, $runtime) {
+function canonicalFactory166($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20434,7 +21039,7 @@ function canonicalFactory157($bindings, $runtime) {
   }
 }
 
-function canonicalFactory158($bindings, $runtime) {
+function canonicalFactory167($bindings, $runtime) {
   const { abs, max, clamp, smoothstep, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20462,7 +21067,7 @@ function canonicalFactory158($bindings, $runtime) {
   }
 }
 
-function canonicalFactory159($bindings, $runtime) {
+function canonicalFactory168($bindings, $runtime) {
   const { vec2, ivec2, sin, cos, exp, sqrt, abs, max, clamp, mix, smoothstep, divide, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20534,7 +21139,7 @@ function canonicalFactory159($bindings, $runtime) {
   }
 }
 
-function canonicalFactory160($bindings, $runtime) {
+function canonicalFactory169($bindings, $runtime) {
   const { ivec2, abs, max, clamp, mix, length, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20585,7 +21190,7 @@ function canonicalFactory160($bindings, $runtime) {
   }
 }
 
-function canonicalFactory161($bindings, $runtime) {
+function canonicalFactory170($bindings, $runtime) {
   const { float, sin, cos, abs, floor, mod, clamp, dot, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -20682,9 +21287,9 @@ function canonicalFactory161($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory161.usesDerivatives = true
+canonicalFactory170.usesDerivatives = true
 
-function canonicalFactory162($bindings, $runtime) {
+function canonicalFactory171($bindings, $runtime) {
   const { float, vec2, floor, fract, clamp, mix, smoothstep, length, dot, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20749,7 +21354,7 @@ function canonicalFactory162($bindings, $runtime) {
   }
 }
 
-function canonicalFactory163($bindings, $runtime) {
+function canonicalFactory172($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20767,7 +21372,7 @@ function canonicalFactory163($bindings, $runtime) {
   }
 }
 
-function canonicalFactory164($bindings, $runtime) {
+function canonicalFactory173($bindings, $runtime) {
   const { min, max, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20834,7 +21439,7 @@ function canonicalFactory164($bindings, $runtime) {
   }
 }
 
-function canonicalFactory165($bindings, $runtime) {
+function canonicalFactory174($bindings, $runtime) {
   const { vec2, sin, cos, abs, fract, mod, clamp, notEqual, any, divide, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20903,9 +21508,9 @@ function canonicalFactory165($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory165.usesDerivatives = true
+canonicalFactory174.usesDerivatives = true
 
-function canonicalFactory166($bindings, $runtime) {
+function canonicalFactory175($bindings, $runtime) {
   const { sin, exp, min, max, clamp, mix, smoothstep, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20996,7 +21601,7 @@ function canonicalFactory166($bindings, $runtime) {
   }
 }
 
-function canonicalFactory167($bindings, $runtime) {
+function canonicalFactory176($bindings, $runtime) {
   const { float, sin, cos, abs, floor, fract, mod, max, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21083,7 +21688,7 @@ function canonicalFactory167($bindings, $runtime) {
   }
 }
 
-function canonicalFactory168($bindings, $runtime) {
+function canonicalFactory177($bindings, $runtime) {
   const { vec2, sqrt, clamp, mix, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21127,7 +21732,7 @@ function canonicalFactory168($bindings, $runtime) {
   }
 }
 
-function canonicalFactory169($bindings, $runtime) {
+function canonicalFactory178($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var fragColor = new Float32Array([0, 0, 0, 0]);
@@ -21141,7 +21746,7 @@ function canonicalFactory169($bindings, $runtime) {
   }
 }
 
-function canonicalFactory170($bindings, $runtime) {
+function canonicalFactory179($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var vColor = new Float32Array([0, 0, 0, 0]);
@@ -21157,7 +21762,7 @@ function canonicalFactory170($bindings, $runtime) {
   }
 }
 
-function canonicalFactory171($bindings, $runtime) {
+function canonicalFactory180($bindings, $runtime) {
   const { float, ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -21207,7 +21812,7 @@ function canonicalFactory171($bindings, $runtime) {
   }
 }
 
-function canonicalFactory172($bindings, $runtime) {
+function canonicalFactory181($bindings, $runtime) {
   const { vec2, max, mix, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21250,7 +21855,7 @@ function canonicalFactory172($bindings, $runtime) {
   }
 }
 
-function canonicalFactory173($bindings, $runtime) {
+function canonicalFactory182($bindings, $runtime) {
   const { vec2, vec3, abs, fract, min, max, clamp, mix, step, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21317,7 +21922,7 @@ function canonicalFactory173($bindings, $runtime) {
   }
 }
 
-function canonicalFactory174($bindings, $runtime) {
+function canonicalFactory183($bindings, $runtime) {
   const { vec2, vec4, sqrt, abs, min, max, mix, add, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21414,7 +22019,7 @@ function canonicalFactory174($bindings, $runtime) {
   }
 }
 
-function canonicalFactory175($bindings, $runtime) {
+function canonicalFactory184($bindings, $runtime) {
   const { float, vec2, sin, abs, floor, fract, min, max, mix, step, dot, normalize, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -21521,7 +22126,7 @@ function canonicalFactory175($bindings, $runtime) {
   }
 }
 
-function canonicalFactory176($bindings, $runtime) {
+function canonicalFactory185($bindings, $runtime) {
   const { vec4, pow, sqrt, abs, min, max, clamp, mix, smoothstep, length, add, subtract, divide, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21646,7 +22251,7 @@ function canonicalFactory176($bindings, $runtime) {
   }
 }
 
-function canonicalFactory177($bindings, $runtime) {
+function canonicalFactory186($bindings, $runtime) {
   const { vec2, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21679,7 +22284,7 @@ function canonicalFactory177($bindings, $runtime) {
   }
 }
 
-function canonicalFactory178($bindings, $runtime) {
+function canonicalFactory187($bindings, $runtime) {
   const { vec2, sin, cos, abs, fract, mod, clamp, length, dot, normalize, reflect, add, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21910,9 +22515,9 @@ function canonicalFactory178($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory178.usesDerivatives = true
+canonicalFactory187.usesDerivatives = true
 
-function canonicalFactory179($bindings, $runtime) {
+function canonicalFactory188($bindings, $runtime) {
   const { vec2, sin, cos, sqrt, abs, max, clamp, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21975,7 +22580,7 @@ function canonicalFactory179($bindings, $runtime) {
   }
 }
 
-function canonicalFactory180($bindings, $runtime) {
+function canonicalFactory189($bindings, $runtime) {
   const { clamp, mix, step, smoothstep, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22083,7 +22688,7 @@ function canonicalFactory180($bindings, $runtime) {
   }
 }
 
-function canonicalFactory181($bindings, $runtime) {
+function canonicalFactory190($bindings, $runtime) {
   const { vec2, sin, cos, atan, abs, floor, fract, mod, min, max, mix, smoothstep, length, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22253,7 +22858,7 @@ function canonicalFactory181($bindings, $runtime) {
   }
 }
 
-function canonicalFactory182($bindings, $runtime) {
+function canonicalFactory191($bindings, $runtime) {
   const { float, vec2, exp, abs, fract, mod, min, max, clamp, mix, step, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22344,7 +22949,7 @@ function canonicalFactory182($bindings, $runtime) {
   }
 }
 
-function canonicalFactory183($bindings, $runtime) {
+function canonicalFactory192($bindings, $runtime) {
   const { vec2, sin, cos, atan, abs, sign, floor, mod, max, clamp, mix, smoothstep, length, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22485,7 +23090,7 @@ function canonicalFactory183($bindings, $runtime) {
   }
 }
 
-function canonicalFactory184($bindings, $runtime) {
+function canonicalFactory193($bindings, $runtime) {
   const { vec2, sin, cos, abs, floor, fract, mod, max, mix, smoothstep, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22541,7 +23146,7 @@ function canonicalFactory184($bindings, $runtime) {
   }
 }
 
-function canonicalFactory185($bindings, $runtime) {
+function canonicalFactory194($bindings, $runtime) {
   const { vec2, floor, mix, step, smoothstep, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22621,7 +23226,7 @@ function canonicalFactory185($bindings, $runtime) {
   }
 }
 
-function canonicalFactory186($bindings, $runtime) {
+function canonicalFactory195($bindings, $runtime) {
   const { fract, mod, clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22688,7 +23293,2422 @@ function canonicalFactory186($bindings, $runtime) {
   }
 }
 
-function canonicalFactory187($bindings, $runtime) {
+function canonicalFactory196($bindings, $runtime) {
+  const { float, ivec2, sin, isnan, length, any, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var time = $bindings["time"];
+  var resolution = $bindings["resolution"];
+  var seed = $bindings["seed"];
+  var attractor = $bindings["attractor"];
+  var speed = $bindings["speed"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function lorenz (p) {
+  	p = $runtime.copy(p);
+  	var sigma = 10;
+  	var rho = 28;
+  	var beta = 2.6666667461395264;
+  	return new $runtime.PooledFloat32Array([sigma * (p[1] - p[0]), p[0] * (rho - p[2]) - p[1], p[0] * p[1] - beta * p[2]]);
+  };
+  function rossler (p) {
+  	p = $runtime.copy(p);
+  	var a = 0.20000000298023224;
+  	var b = 0.20000000298023224;
+  	var c = 5.699999809265137;
+  	return new $runtime.PooledFloat32Array([-p[1] - p[2], p[0] + a * p[1], b + p[2] * (p[0] - c)]);
+  };
+  function aizawa (p) {
+  	p = $runtime.copy(p);
+  	var a = 0.949999988079071;
+  	var b = 0.699999988079071;
+  	var c = 0.6000000238418579;
+  	var d = 3.5;
+  	var e = 0.25;
+  	var f = 0.10000000149011612;
+  	return new $runtime.PooledFloat32Array([(p[2] - b) * p[0] - d * p[1], d * p[0] + (p[2] - b) * p[1], c + a * p[2] - ((p[2] * p[2]) * p[2]) / 3 - (p[0] * p[0] + p[1] * p[1]) * (1 + e * p[2]) + (((f * p[2]) * p[0]) * p[0]) * p[0]]);
+  };
+  function thomas (p) {
+  	p = $runtime.copy(p);
+  	var b = 0.20818600058555603;
+  	return new $runtime.PooledFloat32Array([sin(p[1]) - b * p[0], sin(p[2]) - b * p[1], sin(p[0]) - b * p[2]]);
+  };
+  function halvorsen (p) {
+  	p = $runtime.copy(p);
+  	var a = 1.8899999856948853;
+  	return new $runtime.PooledFloat32Array([-a * p[0] - 4 * p[1] - 4 * p[2] - p[1] * p[1], -a * p[1] - 4 * p[2] - 4 * p[0] - p[2] * p[2], -a * p[2] - 4 * p[0] - 4 * p[1] - p[0] * p[0]]);
+  };
+  function chen (p) {
+  	p = $runtime.copy(p);
+  	var a = 40;
+  	var b = 3;
+  	var c = 28;
+  	return new $runtime.PooledFloat32Array([a * (p[1] - p[0]), (c - a) * p[0] - p[0] * p[2] + c * p[1], p[0] * p[1] - b * p[2]]);
+  };
+  function dadras (p) {
+  	p = $runtime.copy(p);
+  	var a = 3;
+  	var b = 2.700000047683716;
+  	var c = 1.7000000476837158;
+  	var d = 2;
+  	var e = 9;
+  	return new $runtime.PooledFloat32Array([p[1] - a * p[0] + (b * p[1]) * p[2], c * p[1] - p[0] * p[2] + p[2], (d * p[0]) * p[1] - e * p[2]]);
+  };
+  function stepAttractor (p, type, dt) {
+  	p = $runtime.copy(p);
+  	var dp = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	if (type == 0) {
+  	lorenz(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	} else {
+  	if (type == 1) {
+  	rossler(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	} else {
+  	if (type == 2) {
+  	aizawa(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	} else {
+  	if (type == 3) {
+  	thomas(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	} else {
+  	if (type == 4) {
+  	halvorsen(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	} else {
+  	if (type == 5) {
+  	chen(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	} else {
+  	dadras(p).reduce((res,el,i)=>(res[i] = el, res), dp);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	return new $runtime.PooledFloat32Array([p[0] + dp[0] * dt, p[1] + dp[1] * dt, p[2] + dp[2] * dt]);
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var texSize = textureSize(xyzTex, 0);
+  	var stateSize = texSize[0];
+  	var pos = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var col = texelFetch(rgbaTex, coord, 0);
+  	var agentSeed = coord[0] + coord[1] * (stateSize|0) + seed|0;
+  	var needs3DInit = (pos[3] >= 0.5) && (pos[2] == 0) && (pos[0] >= 0) && (pos[0] <= 1) && (pos[1] >= 0) && (pos[1] <= 1);
+  	if (needs3DInit) {
+  	var initSeed = agentSeed + time * 1000|0;
+  	pos[0] = (hash(initSeed) - 0.5) * 20;
+  	pos[1] = (hash(initSeed + 1) - 0.5) * 20;
+  	pos[2] = (hash(initSeed + 2)) * 30 + 10;
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = pos[2], outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  	return;
+  	};
+  	if (pos[3] < 0.5) {
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = pos[2], outXYZ[3] = pos[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  	return;
+  	};
+  	var dt = speed * 0.009999999776482582;
+  	var newPos = stepAttractor(new $runtime.PooledFloat32Array([pos[0], pos[1], pos[2]]), attractor, dt);
+  	if (any(isnan(newPos)) || (length(newPos) > 1000)) {
+  	var respawnSeed = agentSeed + time * 1000|0;
+  	newPos[0] = (hash(respawnSeed) - 0.5) * 20;
+  	newPos[1] = (hash(respawnSeed + 1) - 0.5) * 20;
+  	newPos[2] = (hash(respawnSeed + 2)) * 30 + 10;
+  	};
+  	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = newPos[2], outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory196.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory197($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory198($bindings, $runtime) {
+  const { float, ivec2, min, dot, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var time = $bindings["time"];
+  var resolution = $bindings["resolution"];
+  var maxIter = $bindings["maxIter"];
+  var minIter = $bindings["minIter"];
+  var mode = $bindings["mode"];
+  var centerX = $bindings["centerX"];
+  var centerY = $bindings["centerY"];
+  var zoom = $bindings["zoom"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (s) {
+  	return cpu_float(hash_uint(s)) / 4294967296;
+  };
+  function complexToScreen (z) {
+  	z = $runtime.copy(z);
+  	return new $runtime.PooledFloat32Array([(((z[1] - centerY) * zoom) * zoom) * 0.20000000298023224 + 0.5, (((centerX - z[0]) * zoom) * zoom) * 0.20000000298023224 + 0.5]);
+  };
+  function inMandelbrotInterior (cRe, cIm) {
+  	var y2 = cIm * cIm;
+  	var q = (cRe - 0.25) * (cRe - 0.25) + y2;
+  	if ((q * (q + (cRe - 0.25))) <= (0.25 * y2)) {
+  	return true;
+  	};
+  	var xp1 = cRe + 1;
+  	return (xp1 * xp1 + y2) <= 0.0625;
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var texSize = textureSize(xyzTex, 0);
+  	var stateSize = texSize[0];
+  	var pos = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var col = texelFetch(rgbaTex, coord, 0);
+  	if (pos[3] < 0.5) {
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = pos[2], outXYZ[3] = pos[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  	return;
+  	};
+  	var agentSeed = (hash_uint(coord[0] + coord[1] * stateSize|0)) ^ (time * 65536|0) ^ (vel[2] * 137|0);
+  	var needsInit = pos[2] < 0.25;
+  	if (needsInit) {
+  	var cRe = hash(agentSeed) * 3.5 - 2.5;
+  	var cIm = (hash(agentSeed + 1)) * 3 - 1.5;
+  	if ((mode == 0) && (inMandelbrotInterior(cRe, cIm))) {
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = 0, outRGBA[1] = 0, outRGBA[2] = 0, outRGBA[3] = 0, outRGBA);
+  	return;
+  	};
+  	var z = new $runtime.PooledFloat32Array([0, 0]);
+  	var escapeAt = 0;
+  	var iterCap = min(maxIter, 2048);
+  	for (var i = 0; i < 2048; i++) {
+  	if (i >= iterCap) {
+  	break;
+  	};
+  	var zr = z[0] * z[0] - z[1] * z[1] + cRe;
+  	var zi = (2 * z[0]) * z[1] + cIm;
+  	(z[0] = zr, z[1] = zi, z);
+  	if ((dot(z, z)) > 4) {
+  	escapeAt = i + 1;
+  	break;
+  	};
+  	};
+  	var escaped = escapeAt > 0;
+  	var escapeStep = 0;
+  	var brightness = 0;
+  	if (mode == 0) {
+  	if (escaped && (escapeAt >= minIter)) {
+  	escapeStep = (escapeAt);
+  	brightness = 0.029999999329447746;
+  	};
+  	} else {
+  	if (!escaped) {
+  	escapeStep = (iterCap);
+  	brightness = 0.029999999329447746;
+  	};
+  	};
+  	if (brightness == 0) {
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = 0, outRGBA[1] = 0, outRGBA[2] = 0, outRGBA[3] = 0, outRGBA);
+  	return;
+  	};
+  	var screen = complexToScreen(new $runtime.PooledFloat32Array([cRe, cIm]));
+  	(outXYZ[0] = screen[0], outXYZ[1] = screen[1], outXYZ[2] = 0.5, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = cRe, outVel[1] = cIm, outVel[2] = 1, outVel[3] = escapeStep, outVel);
+  	(outRGBA[0] = brightness, outRGBA[1] = brightness, outRGBA[2] = brightness, outRGBA[3] = 1, outRGBA);
+  	return;
+  	};
+  	var cRe = vel[0];
+  	var cIm = vel[1];
+  	var step = vel[2];
+  	var escapeStep = vel[3];
+  	var z = new $runtime.PooledFloat32Array([0, 0]);
+  	var currentStep = step|0;
+  	for (var i = 0; i < 2048; i++) {
+  	if (i >= currentStep) {
+  	break;
+  	};
+  	var zr = z[0] * z[0] - z[1] * z[1] + cRe;
+  	var zi = (2 * z[0]) * z[1] + cIm;
+  	(z[0] = zr, z[1] = zi, z);
+  	};
+  	for (var s = 0; s < 8; s++) {
+  	step += 1;
+  	if (step >= escapeStep) {
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
+  	(outVel[0] = 0, outVel[1] = 0, outVel[2] = step, outVel[3] = 0, outVel);
+  	(outRGBA[0] = 0, outRGBA[1] = 0, outRGBA[2] = 0, outRGBA[3] = 0, outRGBA);
+  	return;
+  	};
+  	var zr = z[0] * z[0] - z[1] * z[1] + cRe;
+  	var zi = (2 * z[0]) * z[1] + cIm;
+  	(z[0] = zr, z[1] = zi, z);
+  	};
+  	var screen = complexToScreen(z);
+  	(outXYZ[0] = screen[0], outXYZ[1] = screen[1], outXYZ[2] = 0.5, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = cRe, outVel[1] = cIm, outVel[2] = step, outVel[3] = escapeStep, outVel);
+  	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory198.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory199($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory200($bindings, $runtime) {
+  const { ivec2, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var time = $bindings["time"];
+  var resolution = $bindings["resolution"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var pos = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	if (pos[3] < 0.5) {
+  	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
+  	return;
+  	};
+  	var cRe = vel[0];
+  	var cIm = vel[1];
+  	var stepI = vel[2]|0;
+  	var z = new $runtime.PooledFloat32Array([0, 0]);
+  	for (var i = 0; i < 2048; i++) {
+  	if (i >= stepI) {
+  	break;
+  	};
+  	var zr = z[0] * z[0] - z[1] * z[1] + cRe;
+  	var zi = (2 * z[0]) * z[1] + cIm;
+  	(z[0] = zr, z[1] = zi, z);
+  	};
+  	(fragColor[0] = z[0], fragColor[1] = z[1], fragColor[2] = 0, fragColor[3] = 0, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory201($bindings, $runtime) {
+  const { float, vec2, ivec2, sin, cos, fract, max, mix, smoothstep, length, normalize, multiply, textureSize, texelFetch, floatBitsToUint, uintBitsToFloat } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_texelFetch_a (samplerValue, coordValue, lodValue) {
+  	var cpuSample = texelFetch(samplerValue, coordValue, lodValue);
+  	return cpuSample[3];
+  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var frame = $bindings["frame"];
+  var stride = $bindings["stride"];
+  var inputWeight = $bindings["inputWeight"];
+  var attrition = $bindings["attrition"];
+  var stateSize = $bindings["stateSize"];
+  var resetState = $bindings["resetState"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var gridTex = $bindings["gridTex"];
+  var inputTex = $bindings["inputTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function rand (seed) {
+  	var bits = floatBitsToUint(seed);
+  	bits = hash_uint(bits);
+  	seed = uintBitsToFloat(bits | 1065353216) - 1;
+  	bits = hash_uint(bits + 1);
+  	seed = uintBitsToFloat((bits & 8388607) | 1065353216) - 1;
+  	rand.__return__ = seed;
+  	rand.__out__ = [seed];
+  	return rand.__return__;
+  };
+  function randomDirection (seed) {
+  	var theta = (rand(seed), [seed] = rand.__out__, rand.__return__) * 6.2831854820251465;
+  	randomDirection.__return__ = new $runtime.PooledFloat32Array([cos(theta), sin(theta)]);
+  	randomDirection.__out__ = [seed];
+  	return randomDirection.__return__;
+  };
+  function wrap01 (v) {
+  	v = $runtime.copy(v);
+  	return fract(max(v, 0));
+  };
+  function sampleGrid (uv) {
+  	uv = $runtime.copy(uv);
+  	var dims = textureSize(gridTex, 0);
+  	var coord = cpu_ivec2_vec2(vec2.multiply([], wrap01(uv), dims));
+  	return cpu_texelFetch_a(gridTex, coord, 0);
+  };
+  function neighborhood (uv, radius) {
+  	uv = $runtime.copy(uv);
+  	var gridDims = textureSize(gridTex, 0);
+  	var texel = new $runtime.PooledFloat32Array([radius / gridDims[0], radius / gridDims[1]]);
+  	var accum = 0;
+  	accum += sampleGrid(uv);
+  	accum += sampleGrid(new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]));
+  	accum += sampleGrid(new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]));
+  	accum += sampleGrid(new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]));
+  	accum += sampleGrid(new $runtime.PooledFloat32Array([uv[0], uv[1] - texel[1]]));
+  	return accum * 0.20000000298023224;
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var stateDims = textureSize(xyzTex, 0);
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var pos = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
+  	var alive = xyz[3];
+  	var seed = vel[0];
+  	var agentRand = vel[3];
+  	var agentId = coord[0] + coord[1] * stateDims[0]|0;
+  	if (seed <= 0) {
+  	seed = hash(agentId) + 0.0010000000474974513;
+  	};
+  	var frameSeed = hash_uint(cpu_umul(agentId, 31) + floatBitsToUint(seed));
+  	seed = uintBitsToFloat((frameSeed & 8388607) | 1065353216) - 1;
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = seed, outVel[1] = 0, outVel[2] = 0, outVel[3] = agentRand, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	var gridDims = textureSize(gridTex, 0);
+  	var texel = 1 / (max(gridDims[0], gridDims[1]));
+  	var local = neighborhood(pos, 2);
+  	var proximity = smoothstep(0.014999999664723873, 0.11999999731779099, local);
+  	var randomDir = (randomDirection(seed), [seed] = randomDirection.__out__, randomDirection.__return__);
+  	var inputW = inputWeight / 100;
+  	var stepDir = randomDir;
+  	if (inputW > 0) {
+  	var inputDims = textureSize(inputTex, 0);
+  	var inputCoord = cpu_ivec2_vec2(vec2.multiply([], wrap01(pos), inputDims));
+  	var inputVal = texelFetch(inputTex, inputCoord, 0);
+  	var inputDir = new $runtime.PooledFloat32Array([inputVal[0] * 2 - 1, inputVal[1] * 2 - 1]);
+  	if (length(inputDir) > 0.009999999776482582) {
+  	normalize(inputDir).reduce((res,el,i)=>(res[i] = el, res), inputDir);
+  	normalize(mix(randomDir, inputDir, inputW)).reduce((res,el,i)=>(res[i] = el, res), stepDir);
+  	};
+  	};
+  	var stepSize = ((stride / 10) * texel) * (mix(3, 0.5, proximity));
+  	(randomDirection(seed), [seed] = randomDirection.__out__, randomDirection.__return__).map(function (_) {return _ * 0.30000001192092896;}).reduce((res,el,i)=>(res[i] += el, res), stepDir);
+  	normalize(stepDir).reduce((res,el,i)=>(res[i] = el, res), stepDir);
+  	var candidate = wrap01(new $runtime.PooledFloat32Array([pos[0] + stepDir[0] * stepSize, pos[1] + stepDir[1] * stepSize]));
+  	var here = sampleGrid(candidate);
+  	var nearby = neighborhood(candidate, 1);
+  	var stuck = ((nearby > 0.30000001192092896) && (here < 0.5));
+  	var needsRespawn = false;
+  	if (attrition > 0) {
+  	var attritionRate = attrition * 0.009999999776482582;
+  	if ((rand(seed), [seed] = rand.__out__, rand.__return__) < attritionRate) {
+  	needsRespawn = true;
+  	};
+  	};
+  	if (stuck) {
+  	(outXYZ[0] = candidate[0], outXYZ[1] = candidate[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
+  	(outVel[0] = seed, outVel[1] = 1, outVel[2] = 0, outVel[3] = agentRand, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	} else {
+  	if (needsRespawn) {
+  	(outXYZ[0] = candidate[0], outXYZ[1] = candidate[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
+  	(outVel[0] = seed, outVel[1] = 0, outVel[2] = 0, outVel[3] = agentRand, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	} else {
+  	(outXYZ[0] = candidate[0], outXYZ[1] = candidate[1], outXYZ[2] = 0, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = seed, outVel[1] = 0, outVel[2] = 0, outVel[3] = agentRand, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	};
+  	};
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory201.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory202($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var gridTex = $bindings["gridTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(gridTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory203($bindings, $runtime) {
+  const { float, fract, min, max, mix, step, smoothstep, length, dot, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  
+  var gridTex = $bindings["gridTex"];
+  var resolution = $bindings["resolution"];
+  var frame = $bindings["frame"];
+  var decay = $bindings["decay"];
+  var anchorDensity = $bindings["anchorDensity"];
+  var resetState = $bindings["resetState"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function hash21 (p) {
+  	p = $runtime.copy(p);
+  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.1031000018119812, p[0] * 0.1031000018119812]));
+  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[2] + 31.31999969482422, p3[1] + 31.31999969482422, p3[0] + 31.31999969482422])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[2] + 31.31999969482422, p3[1] + 31.31999969482422, p3[0] + 31.31999969482422])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[2] + 31.31999969482422, p3[1] + 31.31999969482422, p3[0] + 31.31999969482422]))]);
+  	return fract(cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]));
+  };
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	if (resetState) {
+  	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
+  	return;
+  	};
+  	var prevGrid = texture(gridTex, uv);
+  	var prev = prevGrid[3];
+  	var prevColor = new $runtime.PooledFloat32Array([prevGrid[0], prevGrid[1], prevGrid[2]]);
+  	var persistence = 1 - decay;
+  	var energy = prev * persistence;
+  	var color = new $runtime.PooledFloat32Array([prevColor[0] * persistence, prevColor[1] * persistence, prevColor[2] * persistence]);
+  	energy = min(energy, 3);
+  	var rng = hash21(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var radial = smoothstep(0.25, 0, length(new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5])));
+  	var seedThreshold = 1 - anchorDensity * 0.10000000149011612;
+  	var seedWeight = (step(seedThreshold, rng)) * radial;
+  	if ((seedWeight > 0) && (prev < 0.10000000149011612)) {
+  	var strength = mix(0.5, 1, rng);
+  	energy = max(energy, strength);
+  	(color[0] = strength, color[1] = strength, color[2] = strength, color);
+  	};
+  	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = energy, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory204($bindings, $runtime) {
+  const { max, clamp, mix, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var gridTex = $bindings["gridTex"];
+  var resolution = $bindings["resolution"];
+  var matteOpacity = $bindings["matteOpacity"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var inputCol = texture(inputTex, uv);
+  	var grid = texture(gridTex, uv);
+  	var gridStrength = clamp(grid[3], 0, 1);
+  	var gridColor = new $runtime.PooledFloat32Array([grid[0], grid[1], grid[2]]);
+  	var matteAlpha = matteOpacity;
+  	var color = mix(new $runtime.PooledFloat32Array([inputCol[0] * matteAlpha, inputCol[1] * matteAlpha, inputCol[2] * matteAlpha]), gridColor, gridStrength);
+  	var alpha = max(gridStrength, matteAlpha);
+  	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = alpha, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory205($bindings, $runtime) {
+  const { float, ivec2, sin, cos, sqrt, floor, fract, mod, clamp, mix, length, dot, add, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var separation = $bindings["separation"];
+  var alignment = $bindings["alignment"];
+  var cohesion = $bindings["cohesion"];
+  var perceptionRadius = $bindings["perceptionRadius"];
+  var separationRadius = $bindings["separationRadius"];
+  var maxSpeed = $bindings["maxSpeed"];
+  var maxForce = $bindings["maxForce"];
+  var boundaryMode = $bindings["boundaryMode"];
+  var wallMargin = $bindings["wallMargin"];
+  var noiseWeight = $bindings["noiseWeight"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function hash2 (seed) {
+  	return new $runtime.PooledFloat32Array([hash(seed), hash(seed + 1)]);
+  };
+  function hashFloat (n) {
+  	return cpu_float(hash_uint(floatBitsToUint(n))) / 4294967296;
+  };
+  function noise2D (p) {
+  	p = $runtime.copy(p);
+  	var i = floor(p);
+  	var f = fract(p);
+  	(f[0] = (f[0] * f[0]) * (3 - 2 * f[0]), f[1] = (f[1] * f[1]) * (3 - 2 * f[1]), f);
+  	var n = i[0] + i[1] * 57;
+  	return (mix(mix(hashFloat(n), hashFloat(n + 1), f[0]), mix(hashFloat(n + 57), hashFloat(n + 58), f[0]), f[1])) * 2 - 1;
+  };
+  function wrapPosition (position, bounds) {
+  	position = $runtime.copy(position);
+  	bounds = $runtime.copy(bounds);
+  	return mod(new $runtime.PooledFloat32Array([position[0] + bounds[0], position[1] + bounds[1]]), bounds);
+  };
+  function limitVec (v, maxLen) {
+  	v = $runtime.copy(v);
+  	var len = length(v);
+  	if ((len > maxLen) && (len > 0)) {
+  	return new $runtime.PooledFloat32Array([v[0] * (maxLen / len), v[1] * (maxLen / len)]);
+  	};
+  	return v;
+  };
+  function setMag (v, mag) {
+  	v = $runtime.copy(v);
+  	var len = length(v);
+  	if (len > 0) {
+  	return new $runtime.PooledFloat32Array([v[0] * (mag / len), v[1] * (mag / len)]);
+  	};
+  	return v;
+  };
+  var GRID_SIZE = 16;
+  function getGridCell (pos, res) {
+  	pos = $runtime.copy(pos);
+  	res = $runtime.copy(res);
+  	var cellSize = new $runtime.PooledFloat32Array([res[0] / (GRID_SIZE), res[1] / (GRID_SIZE)]);
+  	return cpu_ivec2_vec2(clamp(new $runtime.PooledFloat32Array([pos[0] / cellSize[0], pos[1] / cellSize[1]]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([cpu_float(GRID_SIZE - 1), cpu_float(GRID_SIZE - 1)])));
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var stateSize = textureSize(xyzTex, 0);
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var px = xyz[0];
+  	var py = xyz[1];
+  	var alive = xyz[3];
+  	var vx = vel[0];
+  	var vy = vel[1];
+  	var age = vel[2];
+  	var seed = vel[3];
+  	var boidId = coord[0] + coord[1] * stateSize[0]|0;
+  	var pos = new $runtime.PooledFloat32Array([px * resolution[0], py * resolution[1]]);
+  	var velocity = new $runtime.PooledFloat32Array([vx, vy]);
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	if ((length(velocity) == 0) && (seed == 0)) {
+  	seed = hash(boidId + 99999);
+  	var angle = (hash(boidId + 12345)) * 6.2831854820251465;
+  	var speed = ((hash(boidId + 23456)) * maxSpeed) * 0.5 + maxSpeed * 0.25;
+  	(velocity[0] = cos(angle) * speed, velocity[1] = sin(angle) * speed, velocity);
+  	};
+  	var separationForce = new $runtime.PooledFloat32Array([0, 0]);
+  	var alignmentSum = new $runtime.PooledFloat32Array([0, 0]);
+  	var cohesionSum = new $runtime.PooledFloat32Array([0, 0]);
+  	var separationCount = 0;
+  	var alignmentCount = 0;
+  	var cohesionCount = 0;
+  	var myCell = getGridCell(pos, resolution);
+  	var perceptionSq = perceptionRadius * perceptionRadius;
+  	var separationSq = separationRadius * separationRadius;
+  	var totalBoids = stateSize[0] * stateSize[1];
+  	for (var dy = -1; dy <= 1; dy++) {
+  	for (var dx = -1; dx <= 1; dx++) {
+  	var checkCell = ivec2.add([], myCell, cpu_ivec2(dx, dy));
+  	if (boundaryMode == 0) {
+  	(checkCell[0] = (checkCell[0] + GRID_SIZE) % GRID_SIZE, checkCell[1] = (checkCell[1] + GRID_SIZE) % GRID_SIZE, checkCell);
+  	} else {
+  	clamp(checkCell, cpu_ivec2(0), cpu_ivec2(GRID_SIZE - 1)).reduce((res,el,i)=>(res[i] = el, res), checkCell);
+  	};
+  	var cellSeed = checkCell[1] * GRID_SIZE + checkCell[0]|0;
+  	for (var s = 0; s < 8; s++) {
+  	var sampleSeed = cpu_umul(cellSeed, 31) + (s|0) + time * 10|0;
+  	var sampleIdx = hash_uint(sampleSeed) % totalBoids|0|0;
+  	var sx = sampleIdx % stateSize[0];
+  	var sy = sampleIdx / stateSize[0];
+  	if ((sx == coord[0]) && (sy == coord[1])) {
+  	continue;
+  	};
+  	var otherXyz = texelFetch(xyzTex, cpu_ivec2(sx, sy), 0);
+  	var otherVel = texelFetch(velTex, cpu_ivec2(sx, sy), 0);
+  	if (otherXyz[3] < 0.5) {
+  	continue;
+  	};
+  	var otherPos = new $runtime.PooledFloat32Array([otherXyz[0] * resolution[0], otherXyz[1] * resolution[1]]);
+  	var otherVelocity = new $runtime.PooledFloat32Array([otherVel[0], otherVel[1]]);
+  	var diff = new $runtime.PooledFloat32Array([otherPos[0] - pos[0], otherPos[1] - pos[1]]);
+  	if (boundaryMode == 0) {
+  	if (diff[0] > (resolution[0] * 0.5)) {
+  	diff[0] -= resolution[0];
+  	};
+  	if (diff[0] < (-resolution[0] * 0.5)) {
+  	diff[0] += resolution[0];
+  	};
+  	if (diff[1] > (resolution[1] * 0.5)) {
+  	diff[1] -= resolution[1];
+  	};
+  	if (diff[1] < (-resolution[1] * 0.5)) {
+  	diff[1] += resolution[1];
+  	};
+  	};
+  	var distSq = dot(diff, diff);
+  	if ((distSq < separationSq) && (distSq > 0)) {
+  	var away = new $runtime.PooledFloat32Array([-diff[0], -diff[1]]);
+  	var dist = sqrt(distSq);
+  	(separationForce[0] += away[0] / dist, separationForce[1] += away[1] / dist, separationForce);
+  	separationCount++;
+  	};
+  	if ((distSq < perceptionSq) && (distSq > 0)) {
+  	(alignmentSum[0] += otherVelocity[0], alignmentSum[1] += otherVelocity[1], alignmentSum);
+  	alignmentCount++;
+  	(cohesionSum[0] += otherPos[0], cohesionSum[1] += otherPos[1], cohesionSum);
+  	cohesionCount++;
+  	};
+  	};
+  	};
+  	};
+  	var steer = new $runtime.PooledFloat32Array([0, 0]);
+  	if (separationCount > 0) {
+  	separationForce = new $runtime.PooledFloat32Array([separationForce[0] / (separationCount), separationForce[1] / (separationCount)]);
+  	if (length(separationForce) > 0) {
+  	setMag(separationForce, maxSpeed).reduce((res,el,i)=>(res[i] = el, res), separationForce);
+  	(separationForce[0] -= velocity[0], separationForce[1] -= velocity[1], separationForce);
+  	limitVec(separationForce, maxForce).reduce((res,el,i)=>(res[i] = el, res), separationForce);
+  	(steer[0] += separationForce[0] * separation, steer[1] += separationForce[1] * separation, steer);
+  	};
+  	};
+  	if (alignmentCount > 0) {
+  	var avgVel = new $runtime.PooledFloat32Array([alignmentSum[0] / (alignmentCount), alignmentSum[1] / (alignmentCount)]);
+  	if (length(avgVel) > 0) {
+  	setMag(avgVel, maxSpeed).reduce((res,el,i)=>(res[i] = el, res), avgVel);
+  	var alignSteer = new $runtime.PooledFloat32Array([avgVel[0] - velocity[0], avgVel[1] - velocity[1]]);
+  	limitVec(alignSteer, maxForce).reduce((res,el,i)=>(res[i] = el, res), alignSteer);
+  	(steer[0] += alignSteer[0] * alignment, steer[1] += alignSteer[1] * alignment, steer);
+  	};
+  	};
+  	if (cohesionCount > 0) {
+  	var avgPos = new $runtime.PooledFloat32Array([cohesionSum[0] / (cohesionCount), cohesionSum[1] / (cohesionCount)]);
+  	var desired = new $runtime.PooledFloat32Array([avgPos[0] - pos[0], avgPos[1] - pos[1]]);
+  	if (length(desired) > 0) {
+  	setMag(desired, maxSpeed).reduce((res,el,i)=>(res[i] = el, res), desired);
+  	var cohesionSteer = new $runtime.PooledFloat32Array([desired[0] - velocity[0], desired[1] - velocity[1]]);
+  	limitVec(cohesionSteer, maxForce).reduce((res,el,i)=>(res[i] = el, res), cohesionSteer);
+  	(steer[0] += cohesionSteer[0] * cohesion, steer[1] += cohesionSteer[1] * cohesion, steer);
+  	};
+  	};
+  	if (noiseWeight > 0) {
+  	var noiseScale = 0.009999999776482582;
+  	var nx = noise2D(new $runtime.PooledFloat32Array([pos[0] * noiseScale + time * 0.5, pos[1] * noiseScale + time * 0.5]));
+  	var ny = noise2D(new $runtime.PooledFloat32Array([pos[0] * noiseScale + 100 + time * 0.5, pos[1] * noiseScale + 100 + time * 0.5]));
+  	var noiseForce = new $runtime.PooledFloat32Array([(nx * maxForce) * noiseWeight, (ny * maxForce) * noiseWeight]);
+  	(steer[0] += noiseForce[0], steer[1] += noiseForce[1], steer);
+  	};
+  	if (boundaryMode == 1) {
+  	var wallForce = new $runtime.PooledFloat32Array([0, 0]);
+  	var turnStrength = maxForce * 2;
+  	if (pos[0] < wallMargin) {
+  	wallForce[0] = turnStrength * (1 - pos[0] / wallMargin);
+  	} else {
+  	if (pos[0] > (resolution[0] - wallMargin)) {
+  	wallForce[0] = -turnStrength * (1 - (resolution[0] - pos[0]) / wallMargin);
+  	};
+  	};
+  	if (pos[1] < wallMargin) {
+  	wallForce[1] = turnStrength * (1 - pos[1] / wallMargin);
+  	} else {
+  	if (pos[1] > (resolution[1] - wallMargin)) {
+  	wallForce[1] = -turnStrength * (1 - (resolution[1] - pos[1]) / wallMargin);
+  	};
+  	};
+  	(steer[0] += wallForce[0], steer[1] += wallForce[1], steer);
+  	};
+  	(velocity[0] += steer[0], velocity[1] += steer[1], velocity);
+  	limitVec(velocity, maxSpeed).reduce((res,el,i)=>(res[i] = el, res), velocity);
+  	(pos[0] += velocity[0], pos[1] += velocity[1], pos);
+  	if (boundaryMode == 0) {
+  	wrapPosition(pos, resolution).reduce((res,el,i)=>(res[i] = el, res), pos);
+  	} else {
+  	clamp(pos, new $runtime.PooledFloat32Array([1, 1]), new $runtime.PooledFloat32Array([resolution[0] - 1, resolution[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), pos);
+  	};
+  	age += 0.01600000075995922;
+  	var newPx = pos[0] / resolution[0];
+  	var newPy = pos[1] / resolution[1];
+  	(outXYZ[0] = newPx, outXYZ[1] = newPy, outXYZ[2] = xyz[2], outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = velocity[0], outVel[1] = velocity[1], outVel[2] = age, outVel[3] = seed, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory205.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory206($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory207($bindings, $runtime) {
+  const { float, ivec2, sin, cos, pow, abs, floor, round, fract, max, clamp, mix, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var stride = $bindings["stride"];
+  var strideDeviation = $bindings["strideDeviation"];
+  var kink = $bindings["kink"];
+  var quantize = $bindings["quantize"];
+  var inputWeight = $bindings["inputWeight"];
+  var behavior = $bindings["behavior"];
+  var inputTex = $bindings["inputTex"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  var TAU = 6.2831854820251465;
+  var RIGHT_ANGLE = 1.5707963705062866;
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function srgb_to_linear (value) {
+  	if (value <= 0.040449999272823334) {
+  	return value / 12.920000076293945;
+  	};
+  	return pow((value + 0.054999999701976776) / 1.0549999475479126, 2.4000000953674316);
+  };
+  function cube_root (value) {
+  	if (value == 0) {
+  	return 0;
+  	};
+  	var sign_value = value >= 0 ? 1 : -1;
+  	return sign_value * (pow(abs(value), 0.3333333432674408));
+  };
+  function oklab_l (rgb) {
+  	rgb = $runtime.copy(rgb);
+  	var r_lin = srgb_to_linear(clamp(rgb[0], 0, 1));
+  	var g_lin = srgb_to_linear(clamp(rgb[1], 0, 1));
+  	var b_lin = srgb_to_linear(clamp(rgb[2], 0, 1));
+  	var l = 0.4121656119823456 * r_lin + 0.5362752079963684 * g_lin + 0.051457565277814865 * b_lin;
+  	var m = 0.2118591070175171 * r_lin + 0.6807189583778381 * g_lin + 0.10740657895803452 * b_lin;
+  	var s = 0.08830979466438293 * r_lin + 0.28184741735458374 * g_lin + 0.6302613615989685 * b_lin;
+  	return 0.21045425534248352 * cube_root(l) + 0.7936177849769592 * cube_root(m) - 0.004072046838700771 * cube_root(s);
+  };
+  function normalized_sine (value) {
+  	return (sin(value) + 1) * 0.5;
+  };
+  function computeRotationBias (behaviorMode, baseHeading, rotRand, time, agentIndex, totalAgents) {
+  	if (behaviorMode <= 0) {
+  	return 0;
+  	} else {
+  	if (behaviorMode == 1) {
+  	return baseHeading;
+  	} else {
+  	if (behaviorMode == 2) {
+  	return baseHeading + (floor(rotRand * 4)) * RIGHT_ANGLE;
+  	} else {
+  	if (behaviorMode == 3) {
+  	return baseHeading + (rotRand - 0.5) * 0.25;
+  	} else {
+  	if (behaviorMode == 4) {
+  	return rotRand * TAU;
+  	} else {
+  	if (behaviorMode == 5) {
+  	var quarterSize = max(1, totalAgents / 4);
+  	var band = agentIndex / quarterSize;
+  	if (band <= 0) {
+  	return baseHeading;
+  	} else {
+  	if (band == 1) {
+  	return baseHeading + (floor(rotRand * 4)) * RIGHT_ANGLE;
+  	} else {
+  	if (band == 2) {
+  	return baseHeading + (rotRand - 0.5) * 0.25;
+  	} else {
+  	return rotRand * TAU;
+  	};
+  	};
+  	};
+  	} else {
+  	if (behaviorMode == 10) {
+  	return normalized_sine((time - rotRand) * TAU);
+  	} else {
+  	return rotRand * TAU;
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var stateSize = textureSize(xyzTex, 0);
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var px = xyz[0];
+  	var py = xyz[1];
+  	var pz = xyz[2];
+  	var alive = xyz[3];
+  	var rotRand = vel[2];
+  	var strideRand = vel[3];
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	var texSize = textureSize(inputTex, 0);
+  	var texCoord = cpu_ivec2_float_float(px * (texSize[0]), py * (texSize[1]));
+  	clamp(texCoord, cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), texCoord);
+  	var texel = texelFetch(inputTex, texCoord, 0);
+  	var inputLuma = oklab_l(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]));
+  	var weightBlend = clamp(inputWeight * 0.009999999776482582, 0, 1);
+  	var indexValue = mix(0.5, inputLuma, weightBlend);
+  	var _local_baseHeading_1 = hash(0) * TAU;
+  	var behaviorMode = behavior|0;
+  	var totalAgents = stateSize[0] * stateSize[1];
+  	var agentIndex = coord[0] + coord[1] * stateSize[0];
+  	var rotationBias = computeRotationBias(behaviorMode, _local_baseHeading_1, rotRand, time, agentIndex, totalAgents);
+  	var finalAngle = (indexValue * TAU) * kink + rotationBias;
+  	if (quantize > 0.5) {
+  	finalAngle = round(finalAngle);
+  	};
+  	var scale = max((max(resolution[0], resolution[1])) / 1024, 1);
+  	var devFactor = 1 + (strideRand * 2) * strideDeviation;
+  	var actualStride = max(0.00009999999747378752, (((stride * 0.10000000149011612) * scale) * devFactor) / (max(resolution[0], resolution[1])));
+  	var newX = px + sin(finalAngle) * actualStride;
+  	var newY = py + cos(finalAngle) * actualStride;
+  	newX = fract(newX);
+  	newY = fract(newY);
+  	(outXYZ[0] = newX, outXYZ[1] = newY, outXYZ[2] = pz, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = 0, outVel[1] = 0, outVel[2] = rotRand, outVel[3] = strideRand, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory207.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory208($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory209($bindings, $runtime) {
+  const { ivec2, pow, abs, floor, clamp, mix, length, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var stride = $bindings["stride"];
+  var quantize = $bindings["quantize"];
+  var inverse = $bindings["inverse"];
+  var inputWeight = $bindings["inputWeight"];
+  var inputTex = $bindings["inputTex"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash2 (seed) {
+  	var state = cpu_umul(seed, 747796405) + 2891336453;
+  	var word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
+  	var x_bits = (word >> 22) ^ word;
+  	state = cpu_umul(x_bits, 747796405) + 2891336453;
+  	word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
+  	var y_bits = (word >> 22) ^ word;
+  	return new $runtime.PooledFloat32Array([(x_bits) / 4294967296, (y_bits) / 4294967296]);
+  };
+  function wrap_float (value, size) {
+  	if (size <= 0) {
+  	return 0;
+  	};
+  	var scaled = floor(value / size);
+  	var wrapped = value - scaled * size;
+  	if (wrapped < 0) {
+  	wrapped += size;
+  	};
+  	return wrapped;
+  };
+  function wrap_int (value, size) {
+  	if (size <= 0) {
+  	return 0;
+  	};
+  	var result = value % size;
+  	if (result < 0) {
+  	result += size;
+  	};
+  	return result;
+  };
+  function srgb_to_linear (value) {
+  	if (value <= 0.040449999272823334) {
+  	return value / 12.920000076293945;
+  	};
+  	return pow((value + 0.054999999701976776) / 1.0549999475479126, 2.4000000953674316);
+  };
+  function cube_root (value) {
+  	if (value == 0) {
+  	return 0;
+  	};
+  	var sign_value = value >= 0 ? 1 : -1;
+  	return sign_value * (pow(abs(value), 0.3333333432674408));
+  };
+  function oklab_l (rgb) {
+  	rgb = $runtime.copy(rgb);
+  	var r_lin = srgb_to_linear(clamp(rgb[0], 0, 1));
+  	var g_lin = srgb_to_linear(clamp(rgb[1], 0, 1));
+  	var b_lin = srgb_to_linear(clamp(rgb[2], 0, 1));
+  	var l = 0.4121656119823456 * r_lin + 0.5362752079963684 * g_lin + 0.051457565277814865 * b_lin;
+  	var m = 0.2118591070175171 * r_lin + 0.6807189583778381 * g_lin + 0.10740657895803452 * b_lin;
+  	var s = 0.08830979466438293 * r_lin + 0.28184741735458374 * g_lin + 0.6302613615989685 * b_lin;
+  	return 0.21045425534248352 * cube_root(l) + 0.7936177849769592 * cube_root(m) - 0.004072046838700771 * cube_root(s);
+  };
+  function fetch_texel (x, y, width, height) {
+  	var wrapped_x = wrap_int(x, width);
+  	var wrapped_y = wrap_int(y, height);
+  	return texelFetch(inputTex, cpu_ivec2(wrapped_x, wrapped_y), 0);
+  };
+  function luminance_at (x, y, width, height) {
+  	var texel = fetch_texel(x, y, width, height);
+  	return oklab_l(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]));
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var stateSize = textureSize(xyzTex, 0);
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var px = xyz[0];
+  	var py = xyz[1];
+  	var alive = xyz[3];
+  	var vx = vel[0];
+  	var vy = vel[1];
+  	var vz = vel[2];
+  	var seed_f = vel[3];
+  	var width = resolution[0]|0;
+  	var height = resolution[1]|0;
+  	var agent_id = coord[0] + coord[1] * stateSize[0]|0;
+  	var x = px * resolution[0];
+  	var y = py * resolution[1];
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	if (seed_f == 0) {
+  	seed_f = hash2(agent_id + 99999)[0];
+  	};
+  	var inertia = 0.699999988079071 + seed_f * 0.30000001192092896;
+  	var xi = wrap_int(floor(x)|0, width);
+  	var yi = wrap_int(floor(y)|0, height);
+  	var x1i = wrap_int(xi + 1, width);
+  	var y1i = wrap_int(yi + 1, height);
+  	var u = x - floor(x);
+  	var v = y - floor(y);
+  	var c00 = luminance_at(xi, yi, width, height);
+  	var c10 = luminance_at(x1i, yi, width, height);
+  	var c01 = luminance_at(xi, y1i, width, height);
+  	var c11 = luminance_at(x1i, y1i, width, height);
+  	var gx = mix(c01 - c00, c11 - c10, u);
+  	var gy = mix(c10 - c00, c11 - c01, v);
+  	if (inverse > 0.5) {
+  	gx = -gx;
+  	gy = -gy;
+  	};
+  	if (quantize > 0.5) {
+  	gx = floor(gx);
+  	gy = floor(gy);
+  	};
+  	var glen = length(new $runtime.PooledFloat32Array([gx, gy]));
+  	var targetVx = 0;
+  	var targetVy = 0;
+  	if (glen > 9.999999974752427e-7) {
+  	var scale = (stride * 0.10000000149011612) / glen;
+  	targetVx = gx * scale;
+  	targetVy = gy * scale;
+  	};
+  	var weightBlend = clamp(inputWeight * 0.009999999776482582, 0, 1);
+  	var blendFactor = inertia * weightBlend;
+  	vx = mix(vx, targetVx, blendFactor);
+  	vy = mix(vy, targetVy, blendFactor);
+  	x = wrap_float(x + vx, resolution[0]);
+  	y = wrap_float(y + vy, resolution[1]);
+  	var newPx = x / resolution[0];
+  	var newPy = y / resolution[1];
+  	var normVx = vx / resolution[0];
+  	var normVy = vy / resolution[1];
+  	(outXYZ[0] = newPx, outXYZ[1] = newPy, outXYZ[2] = xyz[2], outXYZ[3] = alive, outXYZ);
+  	(outVel[0] = normVx, outVel[1] = normVy, outVel[2] = vz, outVel[3] = seed_f, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory209.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory210($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory211($bindings, $runtime) {
+  const { ivec2, exp, fract, min, length, texture, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_r (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[0];
+  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var fieldTex = $bindings["fieldTex"];
+  var resolution = $bindings["resolution"];
+  var muG = $bindings["muG"];
+  var sigmaG = $bindings["sigmaG"];
+  var repulsion = $bindings["repulsion"];
+  var dt = $bindings["dt"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  var EPSILON = 0.00009999999747378752;
+  function growth (u, mu, sigma) {
+  	var x = (u - mu) / sigma;
+  	return exp(-x * x);
+  };
+  function growthDerivative (u, mu, sigma) {
+  	var G = growth(u, mu, sigma);
+  	return (G * (-2 * (u - mu))) / (sigma * sigma);
+  };
+  function main () {
+  	var stateSize = textureSize(xyzTex, 0);
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var alive = xyz[3];
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	var uv = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
+  	var U = cpu_texture_r(fieldTex, uv);
+  	var fieldSize = textureSize(fieldTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / fieldSize[0], 1 / fieldSize[1]]);
+  	var Ux_plus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0] + texelSize[0], uv[1]])));
+  	var Ux_minus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0] - texelSize[0], uv[1]])));
+  	var Uy_plus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0], uv[1] + texelSize[1]])));
+  	var Uy_minus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0], uv[1] - texelSize[1]])));
+  	var gradU = new $runtime.PooledFloat32Array([(Ux_plus - Ux_minus) / (2 * texelSize[0]), (Uy_plus - Uy_minus) / (2 * texelSize[1])]);
+  	var worldScale = (min(resolution[0], resolution[1])) * 0.05000000074505806;
+  	gradU = new $runtime.PooledFloat32Array([gradU[0] / worldScale, gradU[1] / worldScale]);
+  	var dGdU = growthDerivative(U, muG, sigmaG);
+  	var gradG = new $runtime.PooledFloat32Array([dGdU * gradU[0], dGdU * gradU[1]]);
+  	var gradR = new $runtime.PooledFloat32Array([repulsion * gradU[0], repulsion * gradU[1]]);
+  	var force = new $runtime.PooledFloat32Array([gradG[0] - gradR[0], gradG[1] - gradR[1]]);
+  	var forceMag = length(force);
+  	if (forceMag > 10) {
+  	(force[0] = (force[0] / forceMag) * 10, force[1] = (force[1] / forceMag) * 10, force);
+  	};
+  	var newPos = new $runtime.PooledFloat32Array([uv[0] + (force[0] * dt) * 0.009999999776482582, uv[1] + (force[1] * dt) * 0.009999999776482582]);
+  	fract(new $runtime.PooledFloat32Array([newPos[0] + 1, newPos[1] + 1])).reduce((res,el,i)=>(res[i] = el, res), newPos);
+  	var velocity = new $runtime.PooledFloat32Array([(force[0] * dt) * 0.009999999776482582, (force[1] * dt) * 0.009999999776482582]);
+  	var age = vel[2] + 0.01600000075995922;
+  	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = xyz[2], outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = velocity[0], outVel[1] = velocity[1], outVel[2] = age, outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory211.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory212($bindings, $runtime) {
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory213($bindings, $runtime) {
+  const { exp, ceil, fract, max, length, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_r (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[0];
+  };
+  
+  var densityTex = $bindings["densityTex"];
+  var resolution = $bindings["resolution"];
+  var muK = $bindings["muK"];
+  var sigmaK = $bindings["sigmaK"];
+  var searchRadius = $bindings["searchRadius"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  var EPSILON = 0.00009999999747378752;
+  var PI = 3.1415927410125732;
+  function kernel (r, mu, sigma) {
+  	var x = (r - mu) / sigma;
+  	return exp(-x * x);
+  };
+  function main () {
+  	var densitySize = textureSize(densityTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / densitySize[0], gl_FragCoord[1] / densitySize[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / densitySize[0], 1 / densitySize[1]]);
+  	var wK = 0;
+  	var numSamples = 64;
+  	var dr = searchRadius / (numSamples);
+  	for (var i = 0; i < numSamples; i++) {
+  	var r = ((i) + 0.5) * dr;
+  	wK += ((kernel(r, muK, sigmaK)) * r) * dr;
+  	};
+  	wK = 1 / (max((wK * 2) * PI, EPSILON));
+  	var U = 0;
+  	var iRadius = ceil(searchRadius)|0;
+  	for (var dy = -iRadius; dy <= iRadius; dy++) {
+  	for (var dx = -iRadius; dx <= iRadius; dx++) {
+  	var r = length(new $runtime.PooledFloat32Array([(dx), (dy)]));
+  	if (r > searchRadius) {
+  	continue;
+  	};
+  	var sampleUV = fract(new $runtime.PooledFloat32Array([uv[0] + (dx) * texelSize[0], uv[1] + (dy) * texelSize[1]]));
+  	var density = cpu_texture_r(densityTex, sampleUV);
+  	var kVal = (kernel(r, muK, sigmaK)) * wK;
+  	U += density * kVal;
+  	};
+  	};
+  	(fragColor[0] = U, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory214($bindings, $runtime) {
+  const { ivec2, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	fragColor = texelFetch(inputTex, coord, 0);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory215($bindings, $runtime) {
+  const { float, ivec2, sin, cos, pow, abs, sign, floor, mod, max, clamp, length, add, texture, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var typeCount = $bindings["typeCount"];
+  var attractionScale = $bindings["attractionScale"];
+  var repulsionScale = $bindings["repulsionScale"];
+  var minRadius = $bindings["minRadius"];
+  var maxRadius = $bindings["maxRadius"];
+  var maxSpeed = $bindings["maxSpeed"];
+  var friction = $bindings["friction"];
+  var boundaryMode = $bindings["boundaryMode"];
+  var matrixSeed = $bindings["matrixSeed"];
+  var symmetricForces = $bindings["symmetricForces"];
+  var useTypeColor = $bindings["useTypeColor"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var dataTex = $bindings["dataTex"];
+  var forceMatrix = $bindings["forceMatrix"];
+  var inputTex = $bindings["inputTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  var outData = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function hash2 (seed) {
+  	return new $runtime.PooledFloat32Array([hash(seed), hash(seed + 1)]);
+  };
+  function typeColor (typeId, totalTypes) {
+  	var hue = (typeId) / (totalTypes);
+  	var h = hue * 6;
+  	var c = 1;
+  	var x = c * (1 - abs(mod(h, 2) - 1));
+  	var rgb = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	if (h < 1) {
+  	(rgb[0] = c, rgb[1] = x, rgb[2] = 0, rgb);
+  	} else {
+  	if (h < 2) {
+  	(rgb[0] = x, rgb[1] = c, rgb[2] = 0, rgb);
+  	} else {
+  	if (h < 3) {
+  	(rgb[0] = 0, rgb[1] = c, rgb[2] = x, rgb);
+  	} else {
+  	if (h < 4) {
+  	(rgb[0] = 0, rgb[1] = x, rgb[2] = c, rgb);
+  	} else {
+  	if (h < 5) {
+  	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
+  	} else {
+  	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	return rgb;
+  };
+  var GRID_SIZE = 16;
+  function getGridCell (pos) {
+  	pos = $runtime.copy(pos);
+  	var cellSize = new $runtime.PooledFloat32Array([1 / (GRID_SIZE), 1 / (GRID_SIZE)]);
+  	return cpu_ivec2_vec2(clamp(new $runtime.PooledFloat32Array([pos[0] / cellSize[0], pos[1] / cellSize[1]]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([cpu_float(GRID_SIZE - 1), cpu_float(GRID_SIZE - 1)])));
+  };
+  function radialForce (dist, strength, prefDist, curveShape) {
+  	var normDist = (dist - minRadius) / (maxRadius - minRadius);
+  	var forceScale = maxSpeed * 10;
+  	if (normDist < 0) {
+  	return (-repulsionScale * (1 - dist / minRadius)) * forceScale;
+  	};
+  	if (normDist > 1) {
+  	return 0;
+  	};
+  	var force = 0;
+  	if (normDist < prefDist) {
+  	force = strength * (normDist / prefDist);
+  	} else {
+  	force = strength * (1 - (normDist - prefDist) / (1 - prefDist));
+  	};
+  	var shaped = sign(force) * (pow(abs(force), 1 - curveShape * 0.5));
+  	if (shaped > 0) {
+  	return (shaped * attractionScale) * forceScale;
+  	} else {
+  	return (shaped * repulsionScale) * forceScale;
+  	};
+  };
+  function wrapPosition (pos) {
+  	pos = $runtime.copy(pos);
+  	return mod(new $runtime.PooledFloat32Array([pos[0] + 1, pos[1] + 1]), 1);
+  };
+  function limitVec (v, maxLen) {
+  	v = $runtime.copy(v);
+  	var len = length(v);
+  	if ((len > maxLen) && (len > 0)) {
+  	return new $runtime.PooledFloat32Array([v[0] * (maxLen / len), v[1] * (maxLen / len)]);
+  	};
+  	return v;
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var stateSize = textureSize(xyzTex, 0);
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var data = texelFetch(dataTex, coord, 0);
+  	var px = xyz[0];
+  	var py = xyz[1];
+  	var alive = xyz[3];
+  	var vx = vel[0];
+  	var vy = vel[1];
+  	var age = vel[2];
+  	var seed = vel[3];
+  	var typeId = data[0];
+  	var mass = data[1];
+  	var particleId = coord[0] + coord[1] * stateSize[0]|0;
+  	var pos = new $runtime.PooledFloat32Array([px, py]);
+  	var velocity = new $runtime.PooledFloat32Array([vx, vy]);
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	(outData[0] = data[0], outData[1] = data[1], outData[2] = data[2], outData[3] = data[3], outData);
+  	return;
+  	};
+  	if ((typeId == 0) && (mass == 0)) {
+  	var initSeed = particleId + time * 1000|0;
+  	typeId = floor((hash(initSeed + 4)) * (typeCount));
+  	mass = 0.800000011920929 + (hash(initSeed + 5)) * 0.4000000059604645;
+  	if (length(velocity) == 0) {
+  	var angle = (hash(initSeed + 2)) * 6.2831854820251465;
+  	var speed = ((hash(initSeed + 3)) * maxSpeed) * 0.30000001192092896;
+  	(velocity[0] = cos(angle) * speed, velocity[1] = sin(angle) * speed, velocity);
+  	};
+  	};
+  	mass = max(mass, 0.10000000149011612);
+  	var totalForce = new $runtime.PooledFloat32Array([0, 0]);
+  	var neighborCount = 0;
+  	var myType = typeId|0;
+  	var myCell = getGridCell(pos);
+  	var totalParticles = stateSize[0] * stateSize[1];
+  	for (var dy = -1; dy <= 1; dy++) {
+  	for (var dx = -1; dx <= 1; dx++) {
+  	var checkCell = ivec2.add([], myCell, cpu_ivec2(dx, dy));
+  	(checkCell[0] = (checkCell[0] + GRID_SIZE) % GRID_SIZE, checkCell[1] = (checkCell[1] + GRID_SIZE) % GRID_SIZE, checkCell);
+  	var cellSeed = checkCell[1] * GRID_SIZE + checkCell[0]|0;
+  	for (var s = 0; s < 12; s++) {
+  	var sampleSeed = cpu_umul(cellSeed, 31) + (s|0) + time * 7|0;
+  	var sampleIdx = hash_uint(sampleSeed) % totalParticles|0|0;
+  	var sx = sampleIdx % stateSize[0];
+  	var sy = sampleIdx / stateSize[0];
+  	if ((sx == coord[0]) && (sy == coord[1])) {
+  	continue;
+  	};
+  	var otherXyz = texelFetch(xyzTex, cpu_ivec2(sx, sy), 0);
+  	var otherData = texelFetch(dataTex, cpu_ivec2(sx, sy), 0);
+  	var otherPos = new $runtime.PooledFloat32Array([otherXyz[0], otherXyz[1]]);
+  	var otherAlive = otherXyz[3];
+  	var otherType = otherData[0]|0;
+  	if (otherAlive < 0.5) {
+  	continue;
+  	};
+  	var diff = new $runtime.PooledFloat32Array([otherPos[0] - pos[0], otherPos[1] - pos[1]]);
+  	if (diff[0] > 0.5) {
+  	diff[0] -= 1;
+  	};
+  	if (diff[0] < -0.5) {
+  	diff[0] += 1;
+  	};
+  	if (diff[1] > 0.5) {
+  	diff[1] -= 1;
+  	};
+  	if (diff[1] < -0.5) {
+  	diff[1] += 1;
+  	};
+  	var dist = length(diff);
+  	if ((dist < 0.00009999999747378752) || (dist > maxRadius)) {
+  	continue;
+  	};
+  	var forceParams = texelFetch(forceMatrix, cpu_ivec2(myType, otherType), 0);
+  	var strength = forceParams[0];
+  	var prefDist = forceParams[1];
+  	var curveShape = forceParams[2];
+  	var forceMag = radialForce(dist, strength, prefDist, curveShape);
+  	var forceDir = new $runtime.PooledFloat32Array([diff[0] / dist, diff[1] / dist]);
+  	(totalForce[0] += forceDir[0] * forceMag, totalForce[1] += forceDir[1] * forceMag, totalForce);
+  	neighborCount++;
+  	};
+  	};
+  	};
+  	totalForce = new $runtime.PooledFloat32Array([totalForce[0] / mass, totalForce[1] / mass]);
+  	(velocity[0] += totalForce[0], velocity[1] += totalForce[1], velocity);
+  	velocity = new $runtime.PooledFloat32Array([velocity[0] * (1 - friction), velocity[1] * (1 - friction)]);
+  	limitVec(velocity, maxSpeed).reduce((res,el,i)=>(res[i] = el, res), velocity);
+  	(pos[0] += velocity[0], pos[1] += velocity[1], pos);
+  	if (boundaryMode == 0) {
+  	wrapPosition(pos).reduce((res,el,i)=>(res[i] = el, res), pos);
+  	} else {
+  	if (pos[0] < 0) {
+  	pos[0] = -pos[0];
+  	velocity[0] = -velocity[0];
+  	};
+  	if (pos[0] > 1) {
+  	pos[0] = 2 - pos[0];
+  	velocity[0] = -velocity[0];
+  	};
+  	if (pos[1] < 0) {
+  	pos[1] = -pos[1];
+  	velocity[1] = -velocity[1];
+  	};
+  	if (pos[1] > 1) {
+  	pos[1] = 2 - pos[1];
+  	velocity[1] = -velocity[1];
+  	};
+  	clamp(pos, new $runtime.PooledFloat32Array([0.0010000000474974513, 0.0010000000474974513]), new $runtime.PooledFloat32Array([0.9990000128746033, 0.9990000128746033])).reduce((res,el,i)=>(res[i] = el, res), pos);
+  	};
+  	age += 0.01600000075995922;
+  	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = velocity[0], outVel[1] = velocity[1], outVel[2] = age, outVel[3] = seed, outVel);
+  	if (useTypeColor) {
+  	new $runtime.PooledFloat32Array([...typeColor(typeId|0, typeCount), 1]).reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	} else {
+  	texture(inputTex, pos).reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	};
+  	(outData[0] = typeId, outData[1] = mass, outData[2] = 0, outData[3] = 1, outData);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+    out[12] = outData[0]
+    out[13] = outData[1]
+    out[14] = outData[2]
+    out[15] = outData[3]
+  }
+}
+canonicalFactory215.outputNames = ["outXYZ","outVel","outRGBA","outData"]
+
+function canonicalFactory216($bindings, $runtime) {
+  const { float, ivec2 } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  var resolution = $bindings["resolution"];
+  var typeCount = $bindings["typeCount"];
+  var matrixSeed = $bindings["matrixSeed"];
+  var symmetricForces = $bindings["symmetricForces"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var typeA = coord[0];
+  	var typeB = coord[1];
+  	if ((typeA >= typeCount) || (typeB >= typeCount)) {
+  	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
+  	return;
+  	};
+  	var seed = matrixSeed * (1000|0) + typeA * 31 + typeB * 17|0;
+  	if (symmetricForces && (typeB < typeA)) {
+  	seed = matrixSeed * (1000|0) + typeB * 31 + typeA * 17|0;
+  	};
+  	var strength = 0;
+  	if (typeA == typeB) {
+  	strength = -0.30000001192092896 - hash(seed) * 0.4000000059604645;
+  	} else {
+  	strength = hash(seed) * 2 - 1;
+  	};
+  	var prefDist = 0.30000001192092896 + (hash(seed + 1)) * 0.5;
+  	var curveShape = hash(seed + 2);
+  	(fragColor[0] = strength, fragColor[1] = prefDist, fragColor[2] = curveShape, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory217($bindings, $runtime) {
+  const { ivec2, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	fragColor = texelFetch(inputTex, coord, 0);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory218($bindings, $runtime) {
+  const { float, ivec2, sin, cos, fract, clamp, mix, dot, texture, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var trailTex = $bindings["trailTex"];
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var moveSpeed = $bindings["moveSpeed"];
+  var turnSpeed = $bindings["turnSpeed"];
+  var sensorAngle = $bindings["sensorAngle"];
+  var sensorDistance = $bindings["sensorDistance"];
+  var inputWeight = $bindings["inputWeight"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  var TAU = 6.2831854820251465;
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function hash_f (n) {
+  	return cpu_float(hash_uint(floatBitsToUint(n))) / 4294967296;
+  };
+  function wrapPosition (pos) {
+  	pos = $runtime.copy(pos);
+  	return fract(new $runtime.PooledFloat32Array([pos[0] + 1, pos[1] + 1]));
+  };
+  function luminance (color) {
+  	color = $runtime.copy(color);
+  	return dot(color, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
+  };
+  function sampleTrail (uv) {
+  	uv = $runtime.copy(uv);
+  	return luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(trailTex, uv))));
+  };
+  function sampleExternalField (uv, weight) {
+  	uv = $runtime.copy(uv);
+  	if (weight <= 0) {
+  	return 0;
+  	};
+  	var blend = clamp(weight * 0.009999999776482582, 0, 1);
+  	return ((luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv))))) * blend) * 0.05000000074505806;
+  };
+  function main () {
+  	var stateSize = textureSize(xyzTex, 0);
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var pos = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
+  	var heading = xyz[2];
+  	var alive = xyz[3];
+  	var age = vel[2];
+  	var seed = vel[3];
+  	if (alive < 0.5) {
+  	new $runtime.PooledFloat32Array([...pos, ...new $runtime.PooledFloat32Array([(hash(seed * 1000|0)) * TAU, 0])]).reduce((res,el,i)=>(res[i] = el, res), outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	var forwardDir = new $runtime.PooledFloat32Array([cos(heading), sin(heading)]);
+  	var leftDir = new $runtime.PooledFloat32Array([cos(heading - sensorAngle), sin(heading - sensorAngle)]);
+  	var rightDir = new $runtime.PooledFloat32Array([cos(heading + sensorAngle), sin(heading + sensorAngle)]);
+  	var sensorPosF = wrapPosition(new $runtime.PooledFloat32Array([pos[0] + forwardDir[0] * sensorDistance, pos[1] + forwardDir[1] * sensorDistance]));
+  	var sensorPosL = wrapPosition(new $runtime.PooledFloat32Array([pos[0] + leftDir[0] * sensorDistance, pos[1] + leftDir[1] * sensorDistance]));
+  	var sensorPosR = wrapPosition(new $runtime.PooledFloat32Array([pos[0] + rightDir[0] * sensorDistance, pos[1] + rightDir[1] * sensorDistance]));
+  	var valF = sampleTrail(sensorPosF) + sampleExternalField(sensorPosF, inputWeight);
+  	var valL = sampleTrail(sensorPosL) + sampleExternalField(sensorPosL, inputWeight);
+  	var valR = sampleTrail(sensorPosR) + sampleExternalField(sensorPosR, inputWeight);
+  	var newHeading = heading;
+  	if ((valF > valL) && (valF > valR)) {
+  	
+  	} else {
+  	if ((valF < valL) && (valF < valR)) {
+  	newHeading += (((hash_f(time + pos[0]) - 0.5) * 2) * turnSpeed) * moveSpeed;
+  	} else {
+  	if (valL > valR) {
+  	newHeading -= turnSpeed * moveSpeed;
+  	} else {
+  	if (valR > valL) {
+  	newHeading += turnSpeed * moveSpeed;
+  	};
+  	};
+  	};
+  	};
+  	var moveDir = new $runtime.PooledFloat32Array([cos(newHeading), sin(newHeading)]);
+  	var speedScale = 1;
+  	var blend = clamp(inputWeight * 0.009999999776482582, 0, 1);
+  	if (blend > 0) {
+  	var localInput = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, pos))));
+  	speedScale = mix(1, mix(1.7999999523162842, 0.3499999940395355, localInput), blend);
+  	};
+  	var normalizedSpeed = (moveSpeed * 0.0010000000474974513) * speedScale;
+  	var newPos = wrapPosition(new $runtime.PooledFloat32Array([pos[0] + moveDir[0] * normalizedSpeed, pos[1] + moveDir[1] * normalizedSpeed]));
+  	var newAge = age + 0.01600000075995922;
+  	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = newHeading, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = 0, outVel[1] = 0, outVel[2] = newAge, outVel[3] = seed, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory218.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory219($bindings, $runtime) {
+  const { clamp, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var trailTex = $bindings["trailTex"];
+  var resolution = $bindings["resolution"];
+  var decay = $bindings["decay"];
+  var resetState = $bindings["resetState"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	if (resetState) {
+  	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
+  	return;
+  	};
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var trailColor = texture(trailTex, uv);
+  	var persistence = clamp(1 - decay, 0, 1);
+  	(fragColor[0] = trailColor[0] * persistence, fragColor[1] = trailColor[1] * persistence, fragColor[2] = trailColor[2] * persistence, fragColor[3] = trailColor[3] * persistence, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory220($bindings, $runtime) {
+  const { ivec2, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	fragColor = texelFetch(inputTex, coord, 0);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory221($bindings, $runtime) {
+  const { float, ivec2, sin, cos, floor, fract, mix, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var time = $bindings["time"];
+  var gravity = $bindings["gravity"];
+  var wind = $bindings["wind"];
+  var energy = $bindings["energy"];
+  var drag = $bindings["drag"];
+  var deviation = $bindings["deviation"];
+  var wander = $bindings["wander"];
+  var inputTex = $bindings["inputTex"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function noise2D (p) {
+  	p = $runtime.copy(p);
+  	var i = floor(p);
+  	var f = fract(p);
+  	(f[0] = (f[0] * f[0]) * (3 - 2 * f[0]), f[1] = (f[1] * f[1]) * (3 - 2 * f[1]), f);
+  	var n = (i[0]|0) + (i[1]|0) * 57;
+  	var a = hash(n);
+  	var b = hash(n + 1);
+  	var c = hash(n + 57);
+  	var d = hash(n + 58);
+  	return mix(mix(a, b, f[0]), mix(c, d, f[0]), f[1]);
+  };
+  function fbm (p) {
+  	p = $runtime.copy(p);
+  	var v = 0;
+  	var a = 0.5;
+  	for (var i = 0; i < 3; i++) {
+  	v += a * noise2D(p);
+  	p = new $runtime.PooledFloat32Array([p[0] * 2, p[1] * 2]);
+  	a *= 0.5;
+  	};
+  	return v;
+  };
+  function main () {
+  	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var stateSize = textureSize(xyzTex, 0);
+  	var xyz = texelFetch(xyzTex, coord, 0);
+  	var vel = texelFetch(velTex, coord, 0);
+  	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var px = xyz[0];
+  	var py = xyz[1];
+  	var pz = xyz[2];
+  	var alive = xyz[3];
+  	var vx = vel[0];
+  	var vy = vel[1];
+  	var vz = vel[2];
+  	var seed_f = vel[3];
+  	if (alive < 0.5) {
+  	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
+  	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	return;
+  	};
+  	var deviationMultiplier = 1 + ((seed_f - 0.5) * deviation) * 2;
+  	var noiseScale = 2;
+  	var wanderAngle = ((fbm(new $runtime.PooledFloat32Array([px * noiseScale + time * 0.5, py * noiseScale + time * 0.5]))) * 6.283185005187988) * 2;
+  	var wanderStrength = wander * 0.0020000000949949026;
+  	var wanderX = cos(wanderAngle) * wanderStrength;
+  	var wanderY = sin(wanderAngle) * wanderStrength;
+  	var ax = (wind * 0.009999999776482582 + wanderX) * energy;
+  	var ay = (-gravity * 0.009999999776482582 + wanderY) * energy;
+  	vx += ax * deviationMultiplier;
+  	vy += ay * deviationMultiplier;
+  	var dragFactor = 1 - drag;
+  	vx *= dragFactor;
+  	vy *= dragFactor;
+  	px += vx;
+  	py += vy;
+  	var needsRespawn = false;
+  	if ((px < 0) || (px > 1) || (py < 0) || (py > 1)) {
+  	needsRespawn = true;
+  	};
+  	if (needsRespawn) {
+  	(outXYZ[0] = px, outXYZ[1] = py, outXYZ[2] = pz, outXYZ[3] = 0, outXYZ);
+  	(outVel[0] = vx, outVel[1] = vy, outVel[2] = vz, outVel[3] = seed_f, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	} else {
+  	(outXYZ[0] = px, outXYZ[1] = py, outXYZ[2] = pz, outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = vx, outVel[1] = vy, outVel[2] = vz, outVel[3] = seed_f, outVel);
+  	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	};
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory221.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory222($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory223($bindings, $runtime) {
+  const { max, clamp, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var trailTex = $bindings["trailTex"];
+  var resolution = $bindings["resolution"];
+  var inputIntensity = $bindings["inputIntensity"];
+  var blendMode = $bindings["blendMode"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var inputColor = texture(inputTex, uv);
+  	var trailColor = texture(trailTex, uv);
+  	var t = inputIntensity / 100;
+  	var scaledInput = new $runtime.PooledFloat32Array([inputColor[0] * t, inputColor[1] * t, inputColor[2] * t, inputColor[3] * t]);
+  	var outRGB = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	var outAlpha = 0;
+  	if (blendMode == 1) {
+  	outAlpha = trailColor[3] + scaledInput[3] * (1 - trailColor[3]);
+  	var outRGB_pre = new $runtime.PooledFloat32Array([trailColor[0] + (scaledInput[0] * scaledInput[3]) * (1 - trailColor[3]), trailColor[1] + (scaledInput[1] * scaledInput[3]) * (1 - trailColor[3]), trailColor[2] + (scaledInput[2] * scaledInput[3]) * (1 - trailColor[3])]);
+  	outAlpha > 0 ? new $runtime.PooledFloat32Array([outRGB_pre[0] / outAlpha, outRGB_pre[1] / outAlpha, outRGB_pre[2] / outAlpha]) : new $runtime.PooledFloat32Array([0, 0, 0]).reduce((res,el,i)=>(res[i] = el, res), outRGB);
+  	} else {
+  	var trail = clamp(new $runtime.PooledFloat32Array([trailColor[0], trailColor[1], trailColor[2]]), 0, 1);
+  	var trailPresence = max(max(trail[0], trail[1]), trail[2]);
+  	(outRGB[0] = trail[0] + scaledInput[0] * (1 - trail[0]), outRGB[1] = trail[1] + scaledInput[1] * (1 - trail[1]), outRGB[2] = trail[2] + scaledInput[2] * (1 - trail[2]), outRGB);
+  	outAlpha = max(trailPresence, scaledInput[3]);
+  	};
+  	clamp(new $runtime.PooledFloat32Array([outRGB[0], outRGB[1], outRGB[2], outAlpha]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory224($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var sourceTex = $bindings["sourceTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(sourceTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory225($bindings, $runtime) {
+  const { clamp, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var trailTex = $bindings["trailTex"];
+  var resolution = $bindings["resolution"];
+  var intensity = $bindings["intensity"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var trailColor = texture(trailTex, uv);
+  	var decay = clamp(intensity / 100, 0, 1);
+  	clamp(new $runtime.PooledFloat32Array([trailColor[0] * decay, trailColor[1] * decay, trailColor[2] * decay, trailColor[3] * decay]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory226($bindings, $runtime) {
+  const { float, ivec2, sin, cos, floor, fract, clamp, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
+  var time = $bindings["time"];
+  var resolution = $bindings["resolution"];
+  var seed = $bindings["seed"];
+  var stateSize = $bindings["stateSize"];
+  var layoutMode = $bindings["layoutMode"];
+  var attrition = $bindings["attrition"];
+  var resetState = $bindings["resetState"];
+  var xyzTex = $bindings["xyzTex"];
+  var velTex = $bindings["velTex"];
+  var rgbaTex = $bindings["rgbaTex"];
+  var inputTex = $bindings["inputTex"];
+  var outXYZ = new Float32Array([0, 0, 0, 0]);
+  var outVel = new Float32Array([0, 0, 0, 0]);
+  var outRGBA = new Float32Array([0, 0, 0, 0]);
+  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash (seed) {
+  	return cpu_float(hash_uint(seed)) / 4294967296;
+  };
+  function hash2 (seed) {
+  	return new $runtime.PooledFloat32Array([hash(seed), hash(seed + 1)]);
+  };
+  function main () {
+  	var stateCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / (stateSize), gl_FragCoord[1] / (stateSize)]);
+  	var agentSeed = stateCoord[0] + stateCoord[1] * (stateSize|0) + seed|0;
+  	var pPos = texelFetch(xyzTex, stateCoord, 0);
+  	var pVel = texelFetch(velTex, stateCoord, 0);
+  	var pCol = texelFetch(rgbaTex, stateCoord, 0);
+  	var needsRespawn = resetState || (pPos[3] < 0.5) || ((time < 0.009999999776482582) && (pPos[3] == 0));
+  	if (!needsRespawn && (attrition > 0)) {
+  	var timeBits = floatBitsToUint(time);
+  	var check_seed = cpu_umul(agentSeed, 1664525) + timeBits;
+  	check_seed = hash_uint(check_seed);
+  	var respawnRand = (check_seed) / 4294967296;
+  	var attritionRate = attrition * 0.009999999776482582;
+  	if (respawnRand < attritionRate) {
+  	needsRespawn = true;
+  	};
+  	};
+  	var rnd = hash2(agentSeed);
+  	var newPos = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	if (layoutMode == 0) {
+  	(newPos[0] = rnd[0], newPos[1] = rnd[1], newPos[2] = 0, newPos);
+  	} else {
+  	if (layoutMode == 1) {
+  	(newPos[0] = uv[0], newPos[1] = uv[1], newPos[2] = 0, newPos);
+  	} else {
+  	if (layoutMode == 2) {
+  	(newPos[0] = 0.5 + (rnd[0] - 0.5) * 0.10000000149011612, newPos[1] = 0.5 + (rnd[1] - 0.5) * 0.10000000149011612, newPos[2] = 0, newPos);
+  	} else {
+  	if (layoutMode == 3) {
+  	var angle = rnd[0] * 6.283180236816406;
+  	var radius = 0.30000001192092896 + rnd[1] * 0.10000000149011612;
+  	(newPos[0] = 0.5 + cos(angle) * radius, newPos[1] = 0.5 + sin(angle) * radius, newPos[2] = 0, newPos);
+  	} else {
+  	if (layoutMode == 4) {
+  	var clusterSeed = (seed|0) * 12345;
+  	var clusterId = floor(rnd[0] * 5);
+  	var centerSeed = clusterSeed + (clusterId|0) * 31;
+  	var center = new $runtime.PooledFloat32Array([hash(centerSeed), hash(centerSeed + 17)]);
+  	var r = (hash(agentSeed + 2)) * 0.15000000596046448;
+  	var a = (hash(agentSeed + 3)) * 6.283180236816406;
+  	(newPos[0] = center[0] + cos(a) * r, newPos[1] = center[1] + sin(a) * r, newPos[2] = 0, newPos);
+  	newPos = [0, 1, null].map(function (idx, i) { return idx == null ? newPos[i] : this[idx]; }, fract(new $runtime.PooledFloat32Array([newPos[0], newPos[1]])));
+  	} else {
+  	if (layoutMode == 5) {
+  	var t = rnd[0] * 20;
+  	var r = t * 0.019999999552965164;
+  	var a = t * 6.283180236816406;
+  	(newPos[0] = 0.5 + cos(a) * r, newPos[1] = 0.5 + sin(a) * r, newPos[2] = 0, newPos);
+  	newPos = [0, 1, null].map(function (idx, i) { return idx == null ? newPos[i] : this[idx]; }, clamp(new $runtime.PooledFloat32Array([newPos[0], newPos[1]]), 0, 1));
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	var texDims = textureSize(inputTex, 0);
+  	var texCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([newPos[0] * texDims[0], newPos[1] * texDims[1]]));
+  	var sampledCol = texelFetch(inputTex, texCoord, 0);
+  	var newCol = (sampledCol[3] > 0) ? sampledCol : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  	if (needsRespawn) {
+  	var rotRand = hash(agentSeed + 100);
+  	var strideRand = hash(agentSeed + 101) - 0.5;
+  	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = newPos[2], outXYZ[3] = 1, outXYZ);
+  	(outVel[0] = 0, outVel[1] = 0, outVel[2] = rotRand, outVel[3] = strideRand, outVel);
+  	(outRGBA[0] = newCol[0], outRGBA[1] = newCol[1], outRGBA[2] = newCol[2], outRGBA[3] = newCol[3], outRGBA);
+  	} else {
+  	(outXYZ[0] = pPos[0], outXYZ[1] = pPos[1], outXYZ[2] = pPos[2], outXYZ[3] = pPos[3], outXYZ);
+  	(outVel[0] = pVel[0], outVel[1] = pVel[1], outVel[2] = pVel[2], outVel[3] = pVel[3], outVel);
+  	(outRGBA[0] = pCol[0], outRGBA[1] = pCol[1], outRGBA[2] = pCol[2], outRGBA[3] = pCol[3], outRGBA);
+  	};
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    out[0] = outXYZ[0]
+    out[1] = outXYZ[1]
+    out[2] = outXYZ[2]
+    out[3] = outXYZ[3]
+    out[4] = outVel[0]
+    out[5] = outVel[1]
+    out[6] = outVel[2]
+    out[7] = outVel[3]
+    out[8] = outRGBA[0]
+    out[9] = outRGBA[1]
+    out[10] = outRGBA[2]
+    out[11] = outRGBA[3]
+  }
+}
+canonicalFactory226.outputNames = ["outXYZ","outVel","outRGBA"]
+
+function canonicalFactory227($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory228($bindings, $runtime) {
+  const { max, clamp, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var inputTex = $bindings["inputTex"];
+  var trailTex = $bindings["trailTex"];
+  var resolution = $bindings["resolution"];
+  var inputIntensity = $bindings["inputIntensity"];
+  var matteOpacity = $bindings["matteOpacity"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var inputColor = texture(inputTex, uv);
+  	var trailColor = texture(trailTex, uv);
+  	var t = inputIntensity / 100;
+  	var matteAlpha = matteOpacity;
+  	var trailPresence = max(max(trailColor[0], trailColor[1]), trailColor[2]);
+  	var rgb = new $runtime.PooledFloat32Array([trailColor[0] + (inputColor[0] * t) * matteAlpha, trailColor[1] + (inputColor[1] * t) * matteAlpha, trailColor[2] + (inputColor[2] * t) * matteAlpha]);
+  	var alpha = max(trailPresence, matteAlpha);
+  	clamp(new $runtime.PooledFloat32Array([rgb[0], rgb[1], rgb[2], alpha]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory229($bindings, $runtime) {
+  const { texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var sourceTex = $bindings["sourceTex"];
+  var resolution = $bindings["resolution"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	texture(sourceTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory230($bindings, $runtime) {
+  const { clamp, texture } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  var trailTex = $bindings["trailTex"];
+  var resolution = $bindings["resolution"];
+  var intensity = $bindings["intensity"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var trailColor = texture(trailTex, uv);
+  	var decay = clamp(intensity / 100, 0, 1);
+  	clamp(new $runtime.PooledFloat32Array([trailColor[0] * decay, trailColor[1] * decay, trailColor[2] * decay, trailColor[3] * decay]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory231($bindings, $runtime) {
   const { float, sin, cos, abs, floor, fract, clamp, mix } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22789,7 +25809,7 @@ function canonicalFactory187($bindings, $runtime) {
   }
 }
 
-function canonicalFactory188($bindings, $runtime) {
+function canonicalFactory232($bindings, $runtime) {
   const { float, sin, cos, atan, abs, floor, fract, min, max, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -22910,7 +25930,415 @@ function canonicalFactory188($bindings, $runtime) {
   }
 }
 
-function canonicalFactory189($bindings, $runtime) {
+function canonicalFactory233($bindings, $runtime) {
+  const { cos, floor, fract, clamp, mix, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_g (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[1];
+  };
+  
+  
+  var time = $bindings["time"];
+  var seed = $bindings["seed"];
+  var resolution = $bindings["resolution"];
+  var tileOffset = $bindings["tileOffset"];
+  var fullResolution = $bindings["fullResolution"];
+  var fbTex = $bindings["fbTex"];
+  var smoothing = $bindings["smoothing"];
+  var prevFrameTex = $bindings["prevFrameTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function quadratic3 (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	return new $runtime.PooledFloat32Array([(p0[0] * 0.5) * (1 - t) * (1 - t) + (p1[0] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[0] * 0.5) * t2, (p0[1] * 0.5) * (1 - t) * (1 - t) + (p1[1] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[1] * 0.5) * t2, (p0[2] * 0.5) * (1 - t) * (1 - t) + (p1[2] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[2] * 0.5) * t2, (p0[3] * 0.5) * (1 - t) * (1 - t) + (p1[3] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[3] * 0.5) * t2]);
+  };
+  function quadratic (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 0.5, texCoord[1] - 0.5]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 0.5, texCoord[1] - 0.5]));
+  	var v00 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v10 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v20 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v01 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v11 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v21 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v02 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v12 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v22 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var y0 = quadratic3(v00, v10, v20, f[0]);
+  	var y1 = quadratic3(v01, v11, v21, f[0]);
+  	var y2 = quadratic3(v02, v12, v22, f[0]);
+  	return quadratic3(y0, y1, y2, f[1]);
+  };
+  function bicubic4 (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	var b0 = (1 - t) * (1 - t) * (1 - t) / 6;
+  	var b1 = (3 * t3 - 6 * t2 + 4) / 6;
+  	var b2 = (-3 * t3 + 3 * t2 + 3 * t + 1) / 6;
+  	var b3 = t3 / 6;
+  	return new $runtime.PooledFloat32Array([p0[0] * b0 + p1[0] * b1 + p2[0] * b2 + p3[0] * b3, p0[1] * b0 + p1[1] * b1 + p2[1] * b2 + p3[1] * b3, p0[2] * b0 + p1[2] * b1 + p2[2] * b2 + p3[2] * b3, p0[3] * b0 + p1[3] * b1 + p2[3] * b2 + p3[3] * b3]);
+  };
+  function bicubic (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var row0 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), f[0]);
+  	var row1 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), f[0]);
+  	var row2 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), f[0]);
+  	var row3 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), f[0]);
+  	return bicubic4(row0, row1, row2, row3, f[1]);
+  };
+  function catmullRom3 (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	return new $runtime.PooledFloat32Array([p1[0] + (0.5 * t) * (p2[0] - p0[0]) + (0.5 * t2) * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p0[0]) + (0.5 * t3) * (-p0[0] + 3 * p1[0] - 3 * p2[0] + p0[0]), p1[1] + (0.5 * t) * (p2[1] - p0[1]) + (0.5 * t2) * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p0[1]) + (0.5 * t3) * (-p0[1] + 3 * p1[1] - 3 * p2[1] + p0[1]), p1[2] + (0.5 * t) * (p2[2] - p0[2]) + (0.5 * t2) * (2 * p0[2] - 5 * p1[2] + 4 * p2[2] - p0[2]) + (0.5 * t3) * (-p0[2] + 3 * p1[2] - 3 * p2[2] + p0[2]), p1[3] + (0.5 * t) * (p2[3] - p0[3]) + (0.5 * t2) * (2 * p0[3] - 5 * p1[3] + 4 * p2[3] - p0[3]) + (0.5 * t3) * (-p0[3] + 3 * p1[3] - 3 * p2[3] + p0[3])]);
+  };
+  function catmullRom4 (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	return new $runtime.PooledFloat32Array([p1[0] + (0.5 * t) * (p2[0] - p0[0] + t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0] + t * (3 * (p1[0] - p2[0]) + p3[0] - p0[0]))), p1[1] + (0.5 * t) * (p2[1] - p0[1] + t * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1] + t * (3 * (p1[1] - p2[1]) + p3[1] - p0[1]))), p1[2] + (0.5 * t) * (p2[2] - p0[2] + t * (2 * p0[2] - 5 * p1[2] + 4 * p2[2] - p3[2] + t * (3 * (p1[2] - p2[2]) + p3[2] - p0[2]))), p1[3] + (0.5 * t) * (p2[3] - p0[3] + t * (2 * p0[3] - 5 * p1[3] + 4 * p2[3] - p3[3] + t * (3 * (p1[3] - p2[3]) + p3[3] - p0[3])))]);
+  };
+  function catmullRom3x3 (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var v00 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v10 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v20 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v01 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v11 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v21 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v02 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v12 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v22 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var y0 = catmullRom3(v00, v10, v20, f[0]);
+  	var y1 = catmullRom3(v01, v11, v21, f[0]);
+  	var y2 = catmullRom3(v02, v12, v22, f[0]);
+  	return catmullRom3(y0, y1, y2, f[1]);
+  };
+  function catmullRom4x4 (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var row0 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), f[0]);
+  	var row1 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), f[0]);
+  	var row2 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), f[0]);
+  	var row3 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), f[0]);
+  	return catmullRom4(row0, row1, row2, row3, f[1]);
+  };
+  function cosineMix (a, b, t) {
+  	var amount = (1 - cos(t * 3.1415927410125732)) * 0.5;
+  	return mix(a, b, amount);
+  };
+  function main () {
+  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
+  	var state = 0;
+  	if (smoothing == 0) {
+  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]));
+  	} else {
+  	if (smoothing == 3) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = catmullRom3x3(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 4) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = catmullRom4x4(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 5) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = quadratic(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 6) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = bicubic(fbTex, uv, texelSize)[1];
+  	} else {
+  	var texSize = textureSize(fbTex, 0);
+  	var nd2 = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var xy = new $runtime.PooledFloat32Array([globalCoord[0] - nd2[0] * 0.5, globalCoord[1] - nd2[1] * 0.5]);
+  	var v00 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([xy[0] / fullResolution[0], xy[1] / fullResolution[1]]));
+  	var v10 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1]) / fullResolution[1]]));
+  	var v01 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
+  	var v11 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
+  	var xAmount = fract(xy[0] / nd2[0]);
+  	var yAmount = fract(xy[1] / nd2[1]);
+  	if (smoothing == 1) {
+  	var v0 = mix(v00, v10, xAmount);
+  	var v1 = mix(v01, v11, xAmount);
+  	state = mix(v0, v1, yAmount);
+  	} else {
+  	var v0 = cosineMix(v00, v10, xAmount);
+  	var v1 = cosineMix(v01, v11, xAmount);
+  	state = cosineMix(v0, v1, yAmount);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	var intensity = clamp(state, 0, 1);
+  	(fragColor[0] = intensity, fragColor[1] = intensity, fragColor[2] = intensity, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory234($bindings, $runtime) {
+  const { sin, fract, min, mix, step, dot, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_r (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[0];
+  };
+  
+  
+  var time = $bindings["time"];
+  var deltaTime = $bindings["deltaTime"];
+  var frame = $bindings["frame"];
+  var bufTex = $bindings["bufTex"];
+  var tex = $bindings["tex"];
+  var resolution = $bindings["resolution"];
+  var ruleIndex = $bindings["ruleIndex"];
+  var speed = $bindings["speed"];
+  var weight = $bindings["weight"];
+  var seed = $bindings["seed"];
+  var resetState = $bindings["resetState"];
+  function random (st) {
+  	st = $runtime.copy(st);
+  	return fract((sin(dot(st, new $runtime.PooledFloat32Array([12.989800453186035, 78.23300170898438])))) * 43758.546875);
+  };
+  var useCustom = $bindings["useCustom"];
+  var source = $bindings["source"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function map (value, inMin, inMax, outMin, outMax) {
+  	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+  };
+  function lum (color) {
+  	color = $runtime.copy(color);
+  	return 0.2125999927520752 * color[0] + 0.7152000069618225 * color[1] + 0.0722000002861023 * color[2];
+  };
+  function shouldBeBorn (n) {
+  	var should = false;
+  	if ((ruleIndex == 0) || (ruleIndex == 5) || (ruleIndex == 8)) {
+  	should = n == 3;
+  	} else {
+  	if ((ruleIndex == 1) || (ruleIndex == 11) || (ruleIndex == 16)) {
+  	should = (n == 3) || (n == 6);
+  	} else {
+  	if (ruleIndex == 2) {
+  	should = n == 2;
+  	} else {
+  	if (ruleIndex == 3) {
+  	should = (n == 3) || (n == 8);
+  	} else {
+  	if (ruleIndex == 4) {
+  	should = (n == 3) || (n == 6) || (n == 7) || (n == 8);
+  	} else {
+  	if (ruleIndex == 6) {
+  	should = (n == 1) || (n == 3) || (n == 5) || (n == 7);
+  	} else {
+  	if (ruleIndex == 7) {
+  	should = (n == 3) || (n == 5) || (n == 7);
+  	} else {
+  	if (ruleIndex == 9) {
+  	should = (n == 2) || (n == 5);
+  	} else {
+  	if (ruleIndex == 10) {
+  	should = (n == 3) || (n >= 5);
+  	} else {
+  	if (ruleIndex == 12) {
+  	should = (n == 3) || (n == 6) || (n == 8);
+  	} else {
+  	if (ruleIndex == 13) {
+  	should = (n == 4) || (n == 6) || (n == 7) || (n == 8);
+  	} else {
+  	if (ruleIndex == 14) {
+  	should = (n == 3) || (n == 4);
+  	} else {
+  	if (ruleIndex == 15) {
+  	should = (n == 3) || (n == 6) || (n == 8);
+  	} else {
+  	if (ruleIndex == 17) {
+  	should = (n == 3) || (n == 7);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	return should;
+  };
+  function shouldSurvive (n, current) {
+  	var should = false;
+  	if ((ruleIndex == 0) || (ruleIndex == 1) || (ruleIndex == 3) || (ruleIndex == 17)) {
+  	should = (n == 2) || (n == 3);
+  	} else {
+  	if (ruleIndex == 2) {
+  	should = false;
+  	} else {
+  	if (ruleIndex == 4) {
+  	should = (n == 3) || (n == 4) || (n == 6) || (n == 7) || (n == 8);
+  	} else {
+  	if (ruleIndex == 5) {
+  	should = true;
+  	} else {
+  	if (ruleIndex == 6) {
+  	should = (n == 1) || (n == 3) || (n == 5) || (n == 7);
+  	} else {
+  	if (ruleIndex == 7) {
+  	should = (n == 1) || (n == 3) || (n == 5) || (n == 8);
+  	} else {
+  	if (ruleIndex == 8) {
+  	should = (n >= 1) && (n <= 5);
+  	} else {
+  	if (ruleIndex == 9) {
+  	should = n == 4;
+  	} else {
+  	if (ruleIndex == 10) {
+  	should = n >= 5;
+  	} else {
+  	if (ruleIndex == 11) {
+  	should = (n == 1) || (n == 2) || (n == 5);
+  	} else {
+  	if ((ruleIndex == 12) || (ruleIndex == 16)) {
+  	should = (n == 2) || (n == 4) || (n == 5);
+  	} else {
+  	if (ruleIndex == 13) {
+  	should = (n == 3) || (n >= 5);
+  	} else {
+  	if (ruleIndex == 14) {
+  	should = (n == 3) || (n == 4);
+  	} else {
+  	if (ruleIndex == 15) {
+  	should = (n == 1) || (n == 2) || (n == 5) || (n >= 7);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	if (current < 0.5) {
+  	should = false;
+  	};
+  	return should;
+  };
+  function countNeighbors (uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	var count = 0;
+  	for (var y = -1; y <= 1; y++) {
+  	for (var x = -1; x <= 1; x++) {
+  	if ((x == 0) && (y == 0)) {
+  	continue;
+  	};
+  	var offset = new $runtime.PooledFloat32Array([(x) * texelSize[0], (y) * texelSize[1]]);
+  	var n = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] + offset[0], uv[1] + offset[1]]));
+  	count += n > 0.5|0;
+  	};
+  	};
+  	return count;
+  };
+  function main () {
+  	var texSize = textureSize(bufTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var state = cpu_texture_r(bufTex, uv);
+  	var bufState = texture(bufTex, uv);
+  	var bufferIsEmpty = ((bufState[0] == 0) && (bufState[1] == 0) && (bufState[2] == 0) && (bufState[3] == 0));
+  	if (resetState || bufferIsEmpty) {
+  	var r = random(new $runtime.PooledFloat32Array([uv[0] + (seed), uv[1] + (seed)]));
+  	var alive = step(0.5, r);
+  	(fragColor[0] = alive, fragColor[1] = alive, fragColor[2] = alive, fragColor[3] = 1, fragColor);
+  	return;
+  	};
+  	var prevFrame = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, uv)));
+  	var prevLum = lum(prevFrame);
+  	var neighbors = countNeighbors(uv, texelSize);
+  	var newState = state;
+  	if (shouldBeBorn(neighbors)) {
+  	newState = 1;
+  	} else {
+  	if (shouldSurvive(neighbors, state)) {
+  	newState = 1;
+  	} else {
+  	newState = 0;
+  	};
+  	};
+  	if (weight > 0) {
+  	newState = mix(newState, prevLum, weight * 0.009999999776482582);
+  	};
+  	var animSpeed = map(speed, 1, 100, 0.10000000149011612, 100);
+  	var currentState = new $runtime.PooledFloat32Array([state, state, state, 1]);
+  	var nextState = new $runtime.PooledFloat32Array([newState, newState, newState, 1]);
+  	mix(currentState, nextState, min(1, deltaTime * animSpeed)).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory235($bindings, $runtime) {
   const { vec4, sin, cos, abs, floor, tanh, mod, min, max, step, length, dot, add, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23066,7 +26494,7 @@ function canonicalFactory189($bindings, $runtime) {
   }
 }
 
-function canonicalFactory190($bindings, $runtime) {
+function canonicalFactory236($bindings, $runtime) {
   const { float, sin, cos, exp, floor, fract, mix, dot } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -23168,7 +26596,7 @@ function canonicalFactory190($bindings, $runtime) {
   }
 }
 
-function canonicalFactory191($bindings, $runtime) {
+function canonicalFactory237($bindings, $runtime) {
   const { float, sin, cos, atan, abs, floor, fract, mix, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -23341,7 +26769,7 @@ function canonicalFactory191($bindings, $runtime) {
   }
 }
 
-function canonicalFactory192($bindings, $runtime) {
+function canonicalFactory238($bindings, $runtime) {
   const { float, sin, cos, atan, abs, sign, floor, mod, max, clamp, mix, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23474,7 +26902,7 @@ function canonicalFactory192($bindings, $runtime) {
   }
 }
 
-function canonicalFactory193($bindings, $runtime) {
+function canonicalFactory239($bindings, $runtime) {
   const { sin, cos, atan, pow, log, sqrt, abs, floor, min, max, clamp, length, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23827,7 +27255,7 @@ function canonicalFactory193($bindings, $runtime) {
   }
 }
 
-function canonicalFactory194($bindings, $runtime) {
+function canonicalFactory240($bindings, $runtime) {
   const { sin, cos, fract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24030,7 +27458,357 @@ function canonicalFactory194($bindings, $runtime) {
   }
 }
 
-function canonicalFactory195($bindings, $runtime) {
+function canonicalFactory241($bindings, $runtime) {
+  const { cos, floor, fract, mix, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_g (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[1];
+  };
+  
+  
+  var time = $bindings["time"];
+  var seed = $bindings["seed"];
+  var resolution = $bindings["resolution"];
+  var tileOffset = $bindings["tileOffset"];
+  var fullResolution = $bindings["fullResolution"];
+  var fbTex = $bindings["fbTex"];
+  var smoothing = $bindings["smoothing"];
+  var prevFrameTex = $bindings["prevFrameTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function quadratic3 (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	return new $runtime.PooledFloat32Array([(p0[0] * 0.5) * (1 - t) * (1 - t) + (p1[0] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[0] * 0.5) * t2, (p0[1] * 0.5) * (1 - t) * (1 - t) + (p1[1] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[1] * 0.5) * t2, (p0[2] * 0.5) * (1 - t) * (1 - t) + (p1[2] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[2] * 0.5) * t2, (p0[3] * 0.5) * (1 - t) * (1 - t) + (p1[3] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[3] * 0.5) * t2]);
+  };
+  function quadratic (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 0.5, texCoord[1] - 0.5]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 0.5, texCoord[1] - 0.5]));
+  	var v00 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v10 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v20 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v01 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v11 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v21 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v02 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v12 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v22 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var y0 = quadratic3(v00, v10, v20, f[0]);
+  	var y1 = quadratic3(v01, v11, v21, f[0]);
+  	var y2 = quadratic3(v02, v12, v22, f[0]);
+  	return quadratic3(y0, y1, y2, f[1]);
+  };
+  function bicubic4 (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	var b0 = (1 - t) * (1 - t) * (1 - t) / 6;
+  	var b1 = (3 * t3 - 6 * t2 + 4) / 6;
+  	var b2 = (-3 * t3 + 3 * t2 + 3 * t + 1) / 6;
+  	var b3 = t3 / 6;
+  	return new $runtime.PooledFloat32Array([p0[0] * b0 + p1[0] * b1 + p2[0] * b2 + p3[0] * b3, p0[1] * b0 + p1[1] * b1 + p2[1] * b2 + p3[1] * b3, p0[2] * b0 + p1[2] * b1 + p2[2] * b2 + p3[2] * b3, p0[3] * b0 + p1[3] * b1 + p2[3] * b2 + p3[3] * b3]);
+  };
+  function bicubic (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var row0 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), f[0]);
+  	var row1 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), f[0]);
+  	var row2 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), f[0]);
+  	var row3 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), f[0]);
+  	return bicubic4(row0, row1, row2, row3, f[1]);
+  };
+  function catmullRom3 (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	return new $runtime.PooledFloat32Array([p1[0] + (0.5 * t) * (p2[0] - p0[0]) + (0.5 * t2) * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p0[0]) + (0.5 * t3) * (-p0[0] + 3 * p1[0] - 3 * p2[0] + p0[0]), p1[1] + (0.5 * t) * (p2[1] - p0[1]) + (0.5 * t2) * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p0[1]) + (0.5 * t3) * (-p0[1] + 3 * p1[1] - 3 * p2[1] + p0[1]), p1[2] + (0.5 * t) * (p2[2] - p0[2]) + (0.5 * t2) * (2 * p0[2] - 5 * p1[2] + 4 * p2[2] - p0[2]) + (0.5 * t3) * (-p0[2] + 3 * p1[2] - 3 * p2[2] + p0[2]), p1[3] + (0.5 * t) * (p2[3] - p0[3]) + (0.5 * t2) * (2 * p0[3] - 5 * p1[3] + 4 * p2[3] - p0[3]) + (0.5 * t3) * (-p0[3] + 3 * p1[3] - 3 * p2[3] + p0[3])]);
+  };
+  function catmullRom4 (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	return new $runtime.PooledFloat32Array([p1[0] + (0.5 * t) * (p2[0] - p0[0] + t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0] + t * (3 * (p1[0] - p2[0]) + p3[0] - p0[0]))), p1[1] + (0.5 * t) * (p2[1] - p0[1] + t * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1] + t * (3 * (p1[1] - p2[1]) + p3[1] - p0[1]))), p1[2] + (0.5 * t) * (p2[2] - p0[2] + t * (2 * p0[2] - 5 * p1[2] + 4 * p2[2] - p3[2] + t * (3 * (p1[2] - p2[2]) + p3[2] - p0[2]))), p1[3] + (0.5 * t) * (p2[3] - p0[3] + t * (2 * p0[3] - 5 * p1[3] + 4 * p2[3] - p3[3] + t * (3 * (p1[3] - p2[3]) + p3[3] - p0[3])))]);
+  };
+  function catmullRom3x3 (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var v00 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v10 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v20 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v01 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v11 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v21 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v02 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v12 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v22 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var y0 = catmullRom3(v00, v10, v20, f[0]);
+  	var y1 = catmullRom3(v01, v11, v21, f[0]);
+  	var y2 = catmullRom3(v02, v12, v22, f[0]);
+  	return catmullRom3(y0, y1, y2, f[1]);
+  };
+  function catmullRom4x4 (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var row0 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), f[0]);
+  	var row1 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), f[0]);
+  	var row2 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), f[0]);
+  	var row3 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), f[0]);
+  	return catmullRom4(row0, row1, row2, row3, f[1]);
+  };
+  function cosineMix (a, b, t) {
+  	var amount = (1 - cos(t * 3.1415927410125732)) * 0.5;
+  	return mix(a, b, amount);
+  };
+  function main () {
+  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
+  	var state = 0;
+  	if (smoothing == 0) {
+  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]));
+  	} else {
+  	if (smoothing == 3) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = catmullRom3x3(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 4) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = catmullRom4x4(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 5) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = quadratic(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 6) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = bicubic(fbTex, uv, texelSize)[1];
+  	} else {
+  	var texSize = textureSize(fbTex, 0);
+  	var nd2 = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var xy = new $runtime.PooledFloat32Array([globalCoord[0] - nd2[0] * 0.5, globalCoord[1] - nd2[1] * 0.5]);
+  	var v00 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([xy[0] / fullResolution[0], xy[1] / fullResolution[1]]));
+  	var v10 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1]) / fullResolution[1]]));
+  	var v01 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
+  	var v11 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
+  	var xAmount = fract(xy[0] / nd2[0]);
+  	var yAmount = fract(xy[1] / nd2[1]);
+  	if (smoothing == 1) {
+  	var v0 = mix(v00, v10, xAmount);
+  	var v1 = mix(v01, v11, xAmount);
+  	state = mix(v0, v1, yAmount);
+  	} else {
+  	var v0 = cosineMix(v00, v10, xAmount);
+  	var v1 = cosineMix(v01, v11, xAmount);
+  	state = cosineMix(v0, v1, yAmount);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	(fragColor[0] = state, fragColor[1] = state, fragColor[2] = state, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory242($bindings, $runtime) {
+  const { sin, abs, fract, min, mix, step, dot, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_r (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[0];
+  };
+  
+  
+  var time = $bindings["time"];
+  var deltaTime = $bindings["deltaTime"];
+  var bufTex = $bindings["bufTex"];
+  var seedTex = $bindings["seedTex"];
+  var resolution = $bindings["resolution"];
+  var speed = $bindings["speed"];
+  var weight = $bindings["weight"];
+  var seed = $bindings["seed"];
+  var resetState = $bindings["resetState"];
+  var n1v1 = $bindings["n1v1"];
+  var n1v2 = $bindings["n1v2"];
+  var n1v3 = $bindings["n1v3"];
+  var n1v4 = $bindings["n1v4"];
+  var n2v1 = $bindings["n2v1"];
+  var n2v2 = $bindings["n2v2"];
+  var n1r1 = $bindings["n1r1"];
+  var n1r2 = $bindings["n1r2"];
+  var n1r3 = $bindings["n1r3"];
+  var n1r4 = $bindings["n1r4"];
+  var n2r1 = $bindings["n2r1"];
+  var n2r2 = $bindings["n2r2"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function map (value, inMin, inMax, outMin, outMax) {
+  	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+  };
+  function lum (color) {
+  	color = $runtime.copy(color);
+  	return 0.2125999927520752 * color[0] + 0.7152000069618225 * color[1] + 0.0722000002861023 * color[2];
+  };
+  function random (st) {
+  	st = $runtime.copy(st);
+  	return fract((sin(dot(st, new $runtime.PooledFloat32Array([12.989800453186035, 78.23300170898438])))) * 43758.546875);
+  };
+  function neighborsAvgCircle (uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	var avg = 0, total = 0;
+  	for (var y = -3; y <= 3; y++) {
+  	for (var x = -3; x <= 3; x++) {
+  	if ((x == 0) && (y == 0)) {
+  	continue;
+  	};
+  	if ((abs(x) == 3) && (abs(y) > 1)) {
+  	continue;
+  	};
+  	if ((abs(y) == 3) && (abs(x) > 1)) {
+  	continue;
+  	};
+  	var offset = new $runtime.PooledFloat32Array([(x) * texelSize[0], (y) * texelSize[1]]);
+  	var n = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] + offset[0], uv[1] + offset[1]]));
+  	total += n;
+  	};
+  	};
+  	avg = total / 36;
+  	return avg;
+  };
+  function neighborsAvgRing (uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	var avg = 0, total = 0;
+  	for (var y = -7; y <= 7; y++) {
+  	for (var x = -7; x <= 7; x++) {
+  	if ((abs(x) <= 3) && (abs(y) <= 3)) {
+  	continue;
+  	};
+  	if ((abs(x) == 4) && (abs(y) <= 2)) {
+  	continue;
+  	};
+  	if ((abs(y) == 4) && (abs(x) <= 2)) {
+  	continue;
+  	};
+  	if ((abs(x) == 7) && (abs(y) > 2)) {
+  	continue;
+  	};
+  	if ((abs(x) == 6) && (abs(y) > 4)) {
+  	continue;
+  	};
+  	if ((abs(x) == 5) && (abs(y) > 5)) {
+  	continue;
+  	};
+  	if ((abs(x) > 2) && (abs(y) > 6)) {
+  	continue;
+  	};
+  	var offset = new $runtime.PooledFloat32Array([(x) * texelSize[0], (y) * texelSize[1]]);
+  	var n = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] + offset[0], uv[1] + offset[1]]));
+  	total += n;
+  	};
+  	};
+  	avg = total / 108;
+  	return avg;
+  };
+  function getState (avg1, avg2, state) {
+  	if ((avg1 >= (n1v1 * 0.009999999776482582)) && (avg1 <= (n1v1 * 0.009999999776482582 + n1r1 * 0.009999999776482582))) {
+  	state = 1;
+  	};
+  	if ((avg1 >= (n1v2 * 0.009999999776482582)) && (avg1 <= (n1v2 * 0.009999999776482582 + n1r2 * 0.009999999776482582))) {
+  	state = 0;
+  	};
+  	if ((avg1 >= (n1v3 * 0.009999999776482582)) && (avg1 <= (n1v3 * 0.009999999776482582 + n1r3 * 0.009999999776482582))) {
+  	state = 0;
+  	};
+  	if ((avg2 >= (n2v1 * 0.009999999776482582)) && (avg2 <= (n2v1 * 0.009999999776482582 + n2r1 * 0.009999999776482582))) {
+  	state = 0;
+  	};
+  	if ((avg2 >= (n2v2 * 0.009999999776482582)) && (avg2 <= (n2v2 * 0.009999999776482582 + n2r2 * 0.009999999776482582))) {
+  	state = 1;
+  	};
+  	if ((avg1 >= (n1v4 * 0.009999999776482582)) && (avg1 <= (n1v4 * 0.009999999776482582 + n1r4 * 0.009999999776482582))) {
+  	state = 0;
+  	};
+  	return state;
+  };
+  function main () {
+  	var texSize = textureSize(bufTex, 0);
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var state = cpu_texture_r(bufTex, uv);
+  	var bufState = texture(bufTex, uv);
+  	var bufferIsEmpty = ((bufState[0] == 0) && (bufState[1] == 0) && (bufState[2] == 0) && (bufState[3] == 0));
+  	if (resetState || bufferIsEmpty) {
+  	var r = random(new $runtime.PooledFloat32Array([uv[0] + (seed), uv[1] + (seed)]));
+  	var alive = step(0.5, r);
+  	(fragColor[0] = alive, fragColor[1] = alive, fragColor[2] = alive, fragColor[3] = 1, fragColor);
+  	return;
+  	};
+  	var prevFrame = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(seedTex, uv)));
+  	var prevLum = lum(prevFrame);
+  	var newState = state;
+  	var n1 = neighborsAvgCircle(uv, texelSize);
+  	var n2 = neighborsAvgRing(uv, texelSize);
+  	newState = getState(n1, n2, state);
+  	if (weight > 0) {
+  	newState = mix(newState, prevLum, weight * 0.009999999776482582);
+  	};
+  	var animSpeed = map(speed, 1, 100, 0.10000000149011612, 100);
+  	var currentState = new $runtime.PooledFloat32Array([state, state, state, 1]);
+  	var nextState = new $runtime.PooledFloat32Array([newState, newState, newState, 1]);
+  	mix(currentState, nextState, min(1, deltaTime * animSpeed)).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory243($bindings, $runtime) {
   const { sin, abs, floor, fract, mod, min, max, mix, smoothstep } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24141,7 +27919,466 @@ function canonicalFactory195($bindings, $runtime) {
   }
 }
 
-function canonicalFactory196($bindings, $runtime) {
+function canonicalFactory244($bindings, $runtime) {
+  const { ivec2, floor, fract, clamp, mix, add, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texelFetch_b (samplerValue, coordValue, lodValue) {
+  	var cpuSample = texelFetch(samplerValue, coordValue, lodValue);
+  	return cpuSample[2];
+  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var tileOffset = $bindings["tileOffset"];
+  var fullResolution = $bindings["fullResolution"];
+  var inputIntensity = $bindings["inputIntensity"];
+  var fbTex = $bindings["fbTex"];
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
+  	var texSize = textureSize(fbTex, 0);
+  	var minIdx = cpu_ivec2(0);
+  	var maxIdx = ivec2.subtract([], texSize, cpu_ivec2(1));
+  	var texelPos = new $runtime.PooledFloat32Array([((globalCoord[0] * texSize[0]) / fullResolution[0]) - 0.5, ((globalCoord[1] * texSize[1]) / fullResolution[1]) - 0.5]);
+  	var baseI = cpu_ivec2_vec2(floor(texelPos));
+  	var f = fract(texelPos);
+  	var v00 = cpu_texelFetch_b(fbTex, clamp(baseI, minIdx, maxIdx), 0);
+  	var v10 = cpu_texelFetch_b(fbTex, clamp(ivec2.add([], baseI, cpu_ivec2(1, 0)), minIdx, maxIdx), 0);
+  	var v01 = cpu_texelFetch_b(fbTex, clamp(ivec2.add([], baseI, cpu_ivec2(0, 1)), minIdx, maxIdx), 0);
+  	var v11 = cpu_texelFetch_b(fbTex, clamp(ivec2.add([], baseI, cpu_ivec2(1, 1)), minIdx, maxIdx), 0);
+  	var v0 = mix(v00, v10, f[0]);
+  	var v1 = mix(v01, v11, f[0]);
+  	var state = mix(v0, v1, f[1]);
+  	var intensity = clamp(state, 0, 1);
+  	var outCol = new $runtime.PooledFloat32Array([intensity, intensity, intensity]);
+  	var blend = (clamp(inputIntensity, 0, 100)) * 0.009999999776482582;
+  	if (blend > 0) {
+  	var inputUv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var inputColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, inputUv)));
+  	mix(outCol, inputColor, blend).reduce((res,el,i)=>(res[i] = el, res), outCol);
+  	};
+  	(fragColor[0] = outCol[0], fragColor[1] = outCol[1], fragColor[2] = outCol[2], fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory245($bindings, $runtime) {
+  const { ivec2, pow, floor, fract, clamp, mix, add, subtract, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var speed = $bindings["speed"];
+  var dyeDecay = $bindings["dyeDecay"];
+  var velocityDecay = $bindings["velocityDecay"];
+  var bufTex = $bindings["bufTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function fetchTex (idx, minIdx, maxIdx) {
+  	return texelFetch(bufTex, clamp(idx, minIdx, maxIdx), 0);
+  };
+  function sampleBilinear (uv, texSize) {
+  	uv = $runtime.copy(uv);
+  	var minIdx = cpu_ivec2(0);
+  	var maxIdx = ivec2.subtract([], texSize, cpu_ivec2(1));
+  	var texelPos = new $runtime.PooledFloat32Array([uv[0] * texSize[0] - 0.5, uv[1] * texSize[1] - 0.5]);
+  	var baseI = cpu_ivec2_vec2(floor(texelPos));
+  	var f = fract(texelPos);
+  	var v00 = fetchTex(baseI, minIdx, maxIdx);
+  	var v10 = fetchTex(ivec2.add([], baseI, cpu_ivec2(1, 0)), minIdx, maxIdx);
+  	var v01 = fetchTex(ivec2.add([], baseI, cpu_ivec2(0, 1)), minIdx, maxIdx);
+  	var v11 = fetchTex(ivec2.add([], baseI, cpu_ivec2(1, 1)), minIdx, maxIdx);
+  	var v0 = mix(v00, v10, f[0]);
+  	var v1 = mix(v01, v11, f[0]);
+  	return mix(v0, v1, f[1]);
+  };
+  function main () {
+  	var texSize = textureSize(bufTex, 0);
+  	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
+  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var here = texelFetch(bufTex, clamp(cpu_ivec2_vec2(fragCoord), cpu_ivec2(0), ivec2.subtract([], texSize, cpu_ivec2(1))), 0);
+  	var u = new $runtime.PooledFloat32Array([here[0], here[1]]);
+  	var dt = (clamp(speed, 0, 200)) * 0.00009999999747378752;
+  	var backUv = clamp(new $runtime.PooledFloat32Array([uv[0] - u[0] * dt, uv[1] - u[1] * dt]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([1, 1]));
+  	var advected = sampleBilinear(backUv, texSize);
+  	var newVel = new $runtime.PooledFloat32Array([advected[0], advected[1]]);
+  	var newDye = advected[2];
+  	var vDecay = pow((clamp(velocityDecay, 0, 100)) * 0.009999999776482582, dt * 60);
+  	var dDecay = pow((clamp(dyeDecay, 0, 100)) * 0.009999999776482582, dt * 60);
+  	newVel = new $runtime.PooledFloat32Array([newVel[0] * vDecay, newVel[1] * vDecay]);
+  	newDye *= dDecay;
+  	(fragColor[0] = newVel[0], fragColor[1] = newVel[1], fragColor[2] = newDye, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory246($bindings, $runtime) {
+  const { ivec2, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var velTex = $bindings["velTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(velTex, 0);
+  	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
+  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var uR = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]))));
+  	var uL = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]))));
+  	var uT = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]))));
+  	var uB = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0], uv[1] - texel[1]]))));
+  	if (fragCoord[0] < 1) {
+  	uL[0] = -uR[0];
+  	};
+  	if (fragCoord[0] > ((texSize[0]) - 1)) {
+  	uR[0] = -uL[0];
+  	};
+  	if (fragCoord[1] < 1) {
+  	uB[1] = -uT[1];
+  	};
+  	if (fragCoord[1] > ((texSize[1]) - 1)) {
+  	uT[1] = -uB[1];
+  	};
+  	var div = 0.5 * ((uR[0] - uL[0]) + (uT[1] - uB[1]));
+  	(fragColor[0] = 0, fragColor[1] = div, fragColor[2] = 0, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory247($bindings, $runtime) {
+  const { ivec2, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_r (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[0];
+  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var velTex = $bindings["velTex"];
+  var pressureTex = $bindings["pressureTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(velTex, 0);
+  	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
+  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var pR = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]));
+  	var pL = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]));
+  	var pT = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]));
+  	var pB = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0], uv[1] - texel[1]]));
+  	var grad = new $runtime.PooledFloat32Array([0.5 * (pR - pL), 0.5 * (pT - pB)]);
+  	var here = texture(velTex, uv);
+  	var u = new $runtime.PooledFloat32Array([here[0] - grad[0], here[1] - grad[1]]);
+  	(fragColor[0] = u[0], fragColor[1] = u[1], fragColor[2] = here[2], fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory248($bindings, $runtime) {
+  const { ivec2, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_r (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[0];
+  };
+  function cpu_texture_g (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[1];
+  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var bufTex = $bindings["bufTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function main () {
+  	var texSize = textureSize(bufTex, 0);
+  	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
+  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var pR = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]));
+  	var pL = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]));
+  	var pT = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]));
+  	var pB = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0], uv[1] - texel[1]]));
+  	var div = cpu_texture_g(bufTex, uv);
+  	var p = (pR + pL + pT + pB - div) * 0.25;
+  	(fragColor[0] = p, fragColor[1] = div, fragColor[2] = 0, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory249($bindings, $runtime) {
+  const { ivec2, floor, fract, clamp, mix, smoothstep, add, subtract, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var smoothing = $bindings["smoothing"];
+  var canvasTex = $bindings["canvasTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function fetchTex (idx, minIdx, maxIdx) {
+  	return texelFetch(canvasTex, clamp(idx, minIdx, maxIdx), 0);
+  };
+  function quad3v (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	return new $runtime.PooledFloat32Array([(p0[0] * 0.5) * (1 - t) * (1 - t) + (p1[0] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[0] * 0.5) * t2, (p0[1] * 0.5) * (1 - t) * (1 - t) + (p1[1] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[1] * 0.5) * t2, (p0[2] * 0.5) * (1 - t) * (1 - t) + (p1[2] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[2] * 0.5) * t2, (p0[3] * 0.5) * (1 - t) * (1 - t) + (p1[3] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[3] * 0.5) * t2]);
+  };
+  function bicubic4v (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	var b0 = (1 - t) * (1 - t) * (1 - t) / 6;
+  	var b1 = (3 * t3 - 6 * t2 + 4) / 6;
+  	var b2 = (-3 * t3 + 3 * t2 + 3 * t + 1) / 6;
+  	var b3 = t3 / 6;
+  	return new $runtime.PooledFloat32Array([p0[0] * b0 + p1[0] * b1 + p2[0] * b2 + p3[0] * b3, p0[1] * b0 + p1[1] * b1 + p2[1] * b2 + p3[1] * b3, p0[2] * b0 + p1[2] * b1 + p2[2] * b2 + p3[2] * b3, p0[3] * b0 + p1[3] * b1 + p2[3] * b2 + p3[3] * b3]);
+  };
+  function catmull3v (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	var m = new $runtime.PooledFloat32Array([0.5 * (p2[0] - p0[0]), 0.5 * (p2[1] - p0[1]), 0.5 * (p2[2] - p0[2]), 0.5 * (p2[3] - p0[3])]);
+  	return new $runtime.PooledFloat32Array([(2 * t3 - 3 * t2 + 1) * p1[0] + (t3 - 2 * t2 + t) * m[0] + (-2 * t3 + 3 * t2) * p2[0] + (t3 - t2) * m[0], (2 * t3 - 3 * t2 + 1) * p1[1] + (t3 - 2 * t2 + t) * m[1] + (-2 * t3 + 3 * t2) * p2[1] + (t3 - t2) * m[1], (2 * t3 - 3 * t2 + 1) * p1[2] + (t3 - 2 * t2 + t) * m[2] + (-2 * t3 + 3 * t2) * p2[2] + (t3 - t2) * m[2], (2 * t3 - 3 * t2 + 1) * p1[3] + (t3 - 2 * t2 + t) * m[3] + (-2 * t3 + 3 * t2) * p2[3] + (t3 - t2) * m[3]]);
+  };
+  function catmull4v (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	return new $runtime.PooledFloat32Array([p1[0] + (0.5 * t) * (p2[0] - p0[0] + t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0] + t * (3 * (p1[0] - p2[0]) + p3[0] - p0[0]))), p1[1] + (0.5 * t) * (p2[1] - p0[1] + t * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1] + t * (3 * (p1[1] - p2[1]) + p3[1] - p0[1]))), p1[2] + (0.5 * t) * (p2[2] - p0[2] + t * (2 * p0[2] - 5 * p1[2] + 4 * p2[2] - p3[2] + t * (3 * (p1[2] - p2[2]) + p3[2] - p0[2]))), p1[3] + (0.5 * t) * (p2[3] - p0[3] + t * (2 * p0[3] - 5 * p1[3] + 4 * p2[3] - p3[3] + t * (3 * (p1[3] - p2[3]) + p3[3] - p0[3])))]);
+  };
+  function main () {
+  	var texSize = textureSize(canvasTex, 0);
+  	var minIdx = cpu_ivec2(0);
+  	var maxIdx = ivec2.subtract([], texSize, cpu_ivec2(1));
+  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var texelPos = new $runtime.PooledFloat32Array([uv[0] * texSize[0] - 0.5, uv[1] * texSize[1] - 0.5]);
+  	var baseI = cpu_ivec2_vec2(floor(texelPos));
+  	var f = fract(texelPos);
+  	var sampled = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  	if (smoothing == 0) {
+  	var idx = clamp(cpu_ivec2_vec2(floor(new $runtime.PooledFloat32Array([texelPos[0] + 0.5, texelPos[1] + 0.5]))), minIdx, maxIdx);
+  	sampled = texelFetch(canvasTex, idx, 0);
+  	} else {
+  	if (smoothing == 2) {
+  	var v00 = fetchTex(baseI, minIdx, maxIdx);
+  	var v10 = fetchTex(ivec2.add([], baseI, cpu_ivec2(1, 0)), minIdx, maxIdx);
+  	var v01 = fetchTex(ivec2.add([], baseI, cpu_ivec2(0, 1)), minIdx, maxIdx);
+  	var v11 = fetchTex(ivec2.add([], baseI, cpu_ivec2(1, 1)), minIdx, maxIdx);
+  	var w = smoothstep(new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([1, 1]), f);
+  	var v0 = mix(v00, v10, w[0]);
+  	var v1 = mix(v01, v11, w[0]);
+  	mix(v0, v1, w[1]).reduce((res,el,i)=>(res[i] = el, res), sampled);
+  	} else {
+  	if (smoothing == 3) {
+  	var p = [new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])];
+  	for (var j = 0; j < 3; j++) {
+  	for (var i = 0; i < 3; i++) {
+  	fetchTex(ivec2.add([], baseI, cpu_ivec2(i - 1, j - 1)), minIdx, maxIdx).reduce((res,el,i)=>(res[i] = el, res), p[j * 3 + i]);
+  	};
+  	};
+  	var r0 = catmull3v(p[0], p[1], p[2], f[0]);
+  	var r1 = catmull3v(p[3], p[4], p[5], f[0]);
+  	var r2 = catmull3v(p[6], p[7], p[8], f[0]);
+  	catmull3v(r0, r1, r2, f[1]).reduce((res,el,i)=>(res[i] = el, res), sampled);
+  	} else {
+  	if (smoothing == 4) {
+  	var p = [new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])];
+  	for (var j = 0; j < 4; j++) {
+  	for (var i = 0; i < 4; i++) {
+  	fetchTex(ivec2.add([], baseI, cpu_ivec2(i - 1, j - 1)), minIdx, maxIdx).reduce((res,el,i)=>(res[i] = el, res), p[j * 4 + i]);
+  	};
+  	};
+  	var r0 = catmull4v(p[0], p[1], p[2], p[3], f[0]);
+  	var r1 = catmull4v(p[4], p[5], p[6], p[7], f[0]);
+  	var r2 = catmull4v(p[8], p[9], p[10], p[11], f[0]);
+  	var r3 = catmull4v(p[12], p[13], p[14], p[15], f[0]);
+  	catmull4v(r0, r1, r2, r3, f[1]).reduce((res,el,i)=>(res[i] = el, res), sampled);
+  	} else {
+  	if (smoothing == 5) {
+  	var p = [new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])];
+  	for (var j = 0; j < 3; j++) {
+  	for (var i = 0; i < 3; i++) {
+  	fetchTex(ivec2.add([], baseI, cpu_ivec2(i - 1, j - 1)), minIdx, maxIdx).reduce((res,el,i)=>(res[i] = el, res), p[j * 3 + i]);
+  	};
+  	};
+  	var r0 = quad3v(p[0], p[1], p[2], f[0]);
+  	var r1 = quad3v(p[3], p[4], p[5], f[0]);
+  	var r2 = quad3v(p[6], p[7], p[8], f[0]);
+  	quad3v(r0, r1, r2, f[1]).reduce((res,el,i)=>(res[i] = el, res), sampled);
+  	} else {
+  	if (smoothing == 6) {
+  	var p = [new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])];
+  	for (var j = 0; j < 4; j++) {
+  	for (var i = 0; i < 4; i++) {
+  	fetchTex(ivec2.add([], baseI, cpu_ivec2(i - 1, j - 1)), minIdx, maxIdx).reduce((res,el,i)=>(res[i] = el, res), p[j * 4 + i]);
+  	};
+  	};
+  	var r0 = bicubic4v(p[0], p[1], p[2], p[3], f[0]);
+  	var r1 = bicubic4v(p[4], p[5], p[6], p[7], f[0]);
+  	var r2 = bicubic4v(p[8], p[9], p[10], p[11], f[0]);
+  	var r3 = bicubic4v(p[12], p[13], p[14], p[15], f[0]);
+  	bicubic4v(r0, r1, r2, r3, f[1]).reduce((res,el,i)=>(res[i] = el, res), sampled);
+  	} else {
+  	var v00 = fetchTex(baseI, minIdx, maxIdx);
+  	var v10 = fetchTex(ivec2.add([], baseI, cpu_ivec2(1, 0)), minIdx, maxIdx);
+  	var v01 = fetchTex(ivec2.add([], baseI, cpu_ivec2(0, 1)), minIdx, maxIdx);
+  	var v11 = fetchTex(ivec2.add([], baseI, cpu_ivec2(1, 1)), minIdx, maxIdx);
+  	var v0 = mix(v00, v10, f[0]);
+  	var v1 = mix(v01, v11, f[0]);
+  	mix(v0, v1, f[1]).reduce((res,el,i)=>(res[i] = el, res), sampled);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	(fragColor[0] = sampled[0], fragColor[1] = sampled[1], fragColor[2] = sampled[2], fragColor[3] = sampled[3], fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory250($bindings, $runtime) {
+  const { ivec2, sin, exp, fract, clamp, dot, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var resolution = $bindings["resolution"];
+  var seed = $bindings["seed"];
+  var speed = $bindings["speed"];
+  var inputForce = $bindings["inputForce"];
+  var inputDye = $bindings["inputDye"];
+  var resetState = $bindings["resetState"];
+  var bufTex = $bindings["bufTex"];
+  var inputTex = $bindings["inputTex"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function hash11 (x) {
+  	return fract((sin(x * 12.989800453186035)) * 43758.546875);
+  };
+  function hash22 (p) {
+  	p = $runtime.copy(p);
+  	(p[0] = dot(p, new $runtime.PooledFloat32Array([127.0999984741211, 311.70001220703125])), p[1] = dot(p, new $runtime.PooledFloat32Array([269.5, 183.3000030517578])), p);
+  	return fract(sin(p).map(function (_) {return _ * 43758.546875;}));
+  };
+  function lum (c) {
+  	c = $runtime.copy(c);
+  	return 0.2125999927520752 * c[0] + 0.7152000069618225 * c[1] + 0.0722000002861023 * c[2];
+  };
+  function main () {
+  	var texSize = textureSize(bufTex, 0);
+  	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
+  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var prev = texture(bufTex, uv);
+  	var bufferEmpty = (prev[3] == 0);
+  	if (resetState || bufferEmpty) {
+  	var vel = new $runtime.PooledFloat32Array([0, 0]);
+  	var dye = 0;
+  	var seedF = (seed);
+  	for (var i = 0; i < 9; i++) {
+  	var idf = (i);
+  	var c = hash22(new $runtime.PooledFloat32Array([idf * 7.309999942779541 + 1, seedF * 13.699999809265137 + idf]));
+  	var sign = (hash11(idf * 4.170000076293945 + seedF * 5.900000095367432)) > 0.5 ? 1 : -1;
+  	var radius = 0.10000000149011612 + 0.05999999865889549 * (hash11(idf * 2.109999895095825 + seedF));
+  	var d = new $runtime.PooledFloat32Array([uv[0] - c[0], uv[1] - c[1]]);
+  	var r2 = dot(d, d);
+  	var falloff = exp(-r2 / ((2 * radius) * radius));
+  	var tangent = new $runtime.PooledFloat32Array([-d[1], d[0]]);
+  	(vel[0] += ((tangent[0] * sign) * falloff) * 12, vel[1] += ((tangent[1] * sign) * falloff) * 12, vel);
+  	dye += falloff;
+  	};
+  	new $runtime.PooledFloat32Array([...vel, ...new $runtime.PooledFloat32Array([clamp(dye, 0, 1), 1])]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	return;
+  	};
+  	var vel = new $runtime.PooledFloat32Array([prev[0], prev[1]]);
+  	var dye = prev[2];
+  	var dt = (clamp(speed, 0, 200)) * 0.00009999999747378752;
+  	var iForce = (clamp(inputForce, 0, 100)) * 0.009999999776482582;
+  	var iDye = (clamp(inputDye, 0, 100)) * 0.009999999776482582;
+  	if ((iForce > 0) || (iDye > 0)) {
+  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var lc = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv))));
+  	var lr = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]])))));
+  	var lu = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]])))));
+  	var grad = new $runtime.PooledFloat32Array([lr - lc, lu - lc]);
+  	(vel[0] += (grad[0] * iForce) * 50, vel[1] += (grad[1] * iForce) * 50, vel);
+  	dye += ((lc * iDye) * dt) * 60;
+  	};
+  	dye = clamp(dye, 0, 2);
+  	(fragColor[0] = vel[0], fragColor[1] = vel[1], fragColor[2] = dye, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory251($bindings, $runtime) {
   const { vec2, sin, cos, pow, log, log2, sqrt, floor, min, clamp, add } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24443,7 +28680,7 @@ function canonicalFactory196($bindings, $runtime) {
   }
 }
 
-function canonicalFactory197($bindings, $runtime) {
+function canonicalFactory252($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, sin, cos, atan, pow, abs, floor, fract, max, mix, smoothstep, length, dot, add, subtract, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -24961,7 +29198,7 @@ function canonicalFactory197($bindings, $runtime) {
   }
 }
 
-function canonicalFactory198($bindings, $runtime) {
+function canonicalFactory253($bindings, $runtime) {
   const { sin, cos, abs, floor, fract, mod, mix, step } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25078,7 +29315,7 @@ function canonicalFactory198($bindings, $runtime) {
   }
 }
 
-function canonicalFactory199($bindings, $runtime) {
+function canonicalFactory254($bindings, $runtime) {
   const { vec2, sin, cos, atan, sqrt, abs, sign, floor, fract, mod, min, max, mix, smoothstep, length, dot, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25299,7 +29536,7 @@ function canonicalFactory199($bindings, $runtime) {
   }
 }
 
-function canonicalFactory200($bindings, $runtime) {
+function canonicalFactory255($bindings, $runtime) {
   const { float, ivec3, sin, cos, abs, floor, fract, mod, max, clamp, mix, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25562,7 +29799,7 @@ function canonicalFactory200($bindings, $runtime) {
   }
 }
 
-function canonicalFactory201($bindings, $runtime) {
+function canonicalFactory256($bindings, $runtime) {
   const { float, sin, cos, atan, floor, max, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25616,7 +29853,443 @@ function canonicalFactory201($bindings, $runtime) {
   }
 }
 
-function canonicalFactory202($bindings, $runtime) {
+function canonicalFactory257($bindings, $runtime) {
+  const { ivec2, cos, floor, fract, clamp, mix, smoothstep, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_texture_g (samplerValue, coordValue) {
+  	coordValue = $runtime.copy(coordValue);
+  	var cpuSample = texture(samplerValue, coordValue);
+  	return cpuSample[1];
+  };
+  function cpu_texelFetch_g (samplerValue, coordValue, lodValue) {
+  	var cpuSample = texelFetch(samplerValue, coordValue, lodValue);
+  	return cpuSample[1];
+  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var time = $bindings["time"];
+  var seed = $bindings["seed"];
+  var resolution = $bindings["resolution"];
+  var tileOffset = $bindings["tileOffset"];
+  var fullResolution = $bindings["fullResolution"];
+  var fbTex = $bindings["fbTex"];
+  var inputTex = $bindings["inputTex"];
+  var smoothing = $bindings["smoothing"];
+  var inputIntensity = $bindings["inputIntensity"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function quadratic3 (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	return new $runtime.PooledFloat32Array([(p0[0] * 0.5) * (1 - t) * (1 - t) + (p1[0] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[0] * 0.5) * t2, (p0[1] * 0.5) * (1 - t) * (1 - t) + (p1[1] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[1] * 0.5) * t2, (p0[2] * 0.5) * (1 - t) * (1 - t) + (p1[2] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[2] * 0.5) * t2, (p0[3] * 0.5) * (1 - t) * (1 - t) + (p1[3] * 0.5) * (-2 * t2 + 2 * t + 1) + (p2[3] * 0.5) * t2]);
+  };
+  function quadratic (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 0.5, texCoord[1] - 0.5]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 0.5, texCoord[1] - 0.5]));
+  	var v00 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v10 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v20 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v01 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v11 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v21 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v02 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v12 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v22 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var y0 = quadratic3(v00, v10, v20, f[0]);
+  	var y1 = quadratic3(v01, v11, v21, f[0]);
+  	var y2 = quadratic3(v02, v12, v22, f[0]);
+  	return quadratic3(y0, y1, y2, f[1]);
+  };
+  function bicubic4 (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	var b0 = (1 - t) * (1 - t) * (1 - t) / 6;
+  	var b1 = (3 * t3 - 6 * t2 + 4) / 6;
+  	var bNext = (-3 * t3 + 3 * t2 + 3 * t + 1) / 6;
+  	var b3 = t3 / 6;
+  	return new $runtime.PooledFloat32Array([p0[0] * b0 + p1[0] * b1 + p2[0] * bNext + p3[0] * b3, p0[1] * b0 + p1[1] * b1 + p2[1] * bNext + p3[1] * b3, p0[2] * b0 + p1[2] * b1 + p2[2] * bNext + p3[2] * b3, p0[3] * b0 + p1[3] * b1 + p2[3] * bNext + p3[3] * b3]);
+  };
+  function bicubic (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var row0 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), f[0]);
+  	var row1 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), f[0]);
+  	var row2 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), f[0]);
+  	var row3 = bicubic4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), f[0]);
+  	return bicubic4(row0, row1, row2, row3, f[1]);
+  };
+  function catmullRom3 (p0, p1, p2, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	var t2 = t * t;
+  	var t3 = t2 * t;
+  	var m = new $runtime.PooledFloat32Array([0.5 * (p2[0] - p0[0]), 0.5 * (p2[1] - p0[1]), 0.5 * (p2[2] - p0[2]), 0.5 * (p2[3] - p0[3])]);
+  	return new $runtime.PooledFloat32Array([(2 * t3 - 3 * t2 + 1) * p1[0] + (t3 - 2 * t2 + t) * m[0] + (-2 * t3 + 3 * t2) * p2[0] + (t3 - t2) * m[0], (2 * t3 - 3 * t2 + 1) * p1[1] + (t3 - 2 * t2 + t) * m[1] + (-2 * t3 + 3 * t2) * p2[1] + (t3 - t2) * m[1], (2 * t3 - 3 * t2 + 1) * p1[2] + (t3 - 2 * t2 + t) * m[2] + (-2 * t3 + 3 * t2) * p2[2] + (t3 - t2) * m[2], (2 * t3 - 3 * t2 + 1) * p1[3] + (t3 - 2 * t2 + t) * m[3] + (-2 * t3 + 3 * t2) * p2[3] + (t3 - t2) * m[3]]);
+  };
+  function catmullRom4 (p0, p1, p2, p3, t) {
+  	p0 = $runtime.copy(p0);
+  	p1 = $runtime.copy(p1);
+  	p2 = $runtime.copy(p2);
+  	p3 = $runtime.copy(p3);
+  	return new $runtime.PooledFloat32Array([p1[0] + (0.5 * t) * (p2[0] - p0[0] + t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0] + t * (3 * (p1[0] - p2[0]) + p3[0] - p0[0]))), p1[1] + (0.5 * t) * (p2[1] - p0[1] + t * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1] + t * (3 * (p1[1] - p2[1]) + p3[1] - p0[1]))), p1[2] + (0.5 * t) * (p2[2] - p0[2] + t * (2 * p0[2] - 5 * p1[2] + 4 * p2[2] - p3[2] + t * (3 * (p1[2] - p2[2]) + p3[2] - p0[2]))), p1[3] + (0.5 * t) * (p2[3] - p0[3] + t * (2 * p0[3] - 5 * p1[3] + 4 * p2[3] - p3[3] + t * (3 * (p1[3] - p2[3]) + p3[3] - p0[3])))]);
+  };
+  function catmullRom3x3 (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var v00 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v10 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v20 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]]));
+  	var v01 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v11 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v21 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]]));
+  	var v02 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v12 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var v22 = texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]]));
+  	var y0 = catmullRom3(v00, v10, v20, f[0]);
+  	var y1 = catmullRom3(v01, v11, v21, f[0]);
+  	var y2 = catmullRom3(v02, v12, v22, f[0]);
+  	return catmullRom3(y0, y1, y2, f[1]);
+  };
+  function catmullRom4x4 (tex, uv, texelSize) {
+  	uv = $runtime.copy(uv);
+  	texelSize = $runtime.copy(texelSize);
+  	(uv[0] += texelSize[0], uv[1] += texelSize[1], uv);
+  	var texCoord = new $runtime.PooledFloat32Array([uv[0] / texelSize[0], uv[1] / texelSize[1]]);
+  	var baseCoord = floor(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var f = fract(new $runtime.PooledFloat32Array([texCoord[0] - 1, texCoord[1] - 1]));
+  	var row0 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + -0.5) * texelSize[1]])), f[0]);
+  	var row1 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 0.5) * texelSize[1]])), f[0]);
+  	var row2 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 1.5) * texelSize[1]])), f[0]);
+  	var row3 = catmullRom4(texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + -0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 0.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 1.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), texture(tex, new $runtime.PooledFloat32Array([(baseCoord[0] + 2.5) * texelSize[0], (baseCoord[1] + 2.5) * texelSize[1]])), f[0]);
+  	return catmullRom4(row0, row1, row2, row3, f[1]);
+  };
+  function cosineMix (a, b, t) {
+  	var amount = (1 - cos(t * 3.1415927410125732)) * 0.5;
+  	return mix(a, b, amount);
+  };
+  function main () {
+  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
+  	var state = 0;
+  	if (smoothing == 0) {
+  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]));
+  	} else {
+  	if (smoothing == 2) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelPos = new $runtime.PooledFloat32Array([((globalCoord[0] * texSize[0]) / fullResolution[0]) - 0.5, ((globalCoord[1] * texSize[1]) / fullResolution[1]) - 0.5]);
+  	var base = floor(texelPos);
+  	var weights = fract(texelPos);
+  	var next = new $runtime.PooledFloat32Array([base[0] + 1, base[1] + 1]);
+  	var texSizeI = textureSize(fbTex, 0);
+  	var minIdx = cpu_ivec2(0);
+  	var maxIdx = ivec2.subtract([], texSizeI, cpu_ivec2(1));
+  	var baseIdx = clamp(cpu_ivec2_vec2(base), minIdx, maxIdx);
+  	var nextIdx = clamp(cpu_ivec2_vec2(next), minIdx, maxIdx);
+  	var v00 = cpu_texelFetch_g(fbTex, baseIdx, 0);
+  	var v10 = cpu_texelFetch_g(fbTex, cpu_ivec2_float_float(nextIdx[0], baseIdx[1]), 0);
+  	var v01 = cpu_texelFetch_g(fbTex, cpu_ivec2_float_float(baseIdx[0], nextIdx[1]), 0);
+  	var v11 = cpu_texelFetch_g(fbTex, nextIdx, 0);
+  	var smoothWeights = smoothstep(0, 1, weights);
+  	var v0 = mix(v00, v10, smoothWeights[0]);
+  	var v1 = mix(v01, v11, smoothWeights[0]);
+  	state = mix(v0, v1, smoothWeights[1]);
+  	} else {
+  	if (smoothing == 3) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = catmullRom3x3(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 4) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = catmullRom4x4(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 5) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = quadratic(fbTex, uv, texelSize)[1];
+  	} else {
+  	if (smoothing == 6) {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	state = bicubic(fbTex, uv, texelSize)[1];
+  	} else {
+  	var texSize = textureSize(fbTex, 0);
+  	var texelPos = new $runtime.PooledFloat32Array([((globalCoord[0] * texSize[0]) / fullResolution[0]) - 0.5, ((globalCoord[1] * texSize[1]) / fullResolution[1]) - 0.5]);
+  	var base = floor(texelPos);
+  	var weights = fract(texelPos);
+  	var next = new $runtime.PooledFloat32Array([base[0] + 1, base[1] + 1]);
+  	var texSizeI = textureSize(fbTex, 0);
+  	var minIdx = cpu_ivec2(0);
+  	var maxIdx = ivec2.subtract([], texSizeI, cpu_ivec2(1));
+  	var baseIdx = clamp(cpu_ivec2_vec2(base), minIdx, maxIdx);
+  	var nextIdx = clamp(cpu_ivec2_vec2(next), minIdx, maxIdx);
+  	var v00 = cpu_texelFetch_g(fbTex, baseIdx, 0);
+  	var v10 = cpu_texelFetch_g(fbTex, cpu_ivec2_float_float(nextIdx[0], baseIdx[1]), 0);
+  	var v01 = cpu_texelFetch_g(fbTex, cpu_ivec2_float_float(baseIdx[0], nextIdx[1]), 0);
+  	var v11 = cpu_texelFetch_g(fbTex, nextIdx, 0);
+  	if (smoothing == 1) {
+  	var v0 = mix(v00, v10, weights[0]);
+  	var v1 = mix(v01, v11, weights[0]);
+  	state = mix(v0, v1, weights[1]);
+  	} else {
+  	var v0 = cosineMix(v00, v10, weights[0]);
+  	var v1 = cosineMix(v01, v11, weights[0]);
+  	state = cosineMix(v0, v1, weights[1]);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	var intensity = clamp(state, 0, 1);
+  	var rdColor = new $runtime.PooledFloat32Array([intensity, intensity, intensity]);
+  	var blend = inputIntensity * 0.009999999776482582;
+  	if (blend > 0) {
+  	var inputUv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var inputColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, inputUv)));
+  	mix(rdColor, inputColor, blend).reduce((res,el,i)=>(res[i] = el, res), rdColor);
+  	};
+  	(fragColor[0] = rdColor[0], fragColor[1] = rdColor[1], fragColor[2] = rdColor[2], fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory258($bindings, $runtime) {
+  const { ivec2, fract, clamp, mix, dot, texture, textureSize } = $runtime.stdlib
+  const gl_FragCoord = $runtime.fragCoord
+  
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
+  
+  var time = $bindings["time"];
+  var seed = $bindings["seed"];
+  var resolution = $bindings["resolution"];
+  var bufTex = $bindings["bufTex"];
+  var feed = $bindings["feed"];
+  var kill = $bindings["kill"];
+  var rate1 = $bindings["rate1"];
+  var rate2 = $bindings["rate2"];
+  var speed = $bindings["speed"];
+  var weight = $bindings["weight"];
+  var sourceF = $bindings["sourceF"];
+  var sourceK = $bindings["sourceK"];
+  var sourceR1 = $bindings["sourceR1"];
+  var sourceR2 = $bindings["sourceR2"];
+  var zoom = $bindings["zoom"];
+  var inputTex = $bindings["inputTex"];
+  var resetState = $bindings["resetState"];
+  var fragColor = new Float32Array([0, 0, 0, 0]);
+  function lp (tex, uv, size) {
+  	uv = $runtime.copy(uv);
+  	size = $runtime.copy(size);
+  	var val = new $runtime.PooledFloat32Array([0, 0, 0]);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0] + -1) / size[0], (uv[1] + -1) / size[1]])))).map(function (_) {return _ * 0.05000000074505806;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0]) / size[0], (uv[1] + -1) / size[1]])))).map(function (_) {return _ * 0.20000000298023224;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0] + 1) / size[0], (uv[1] + -1) / size[1]])))).map(function (_) {return _ * 0.05000000074505806;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0] + -1) / size[0], (uv[1]) / size[1]])))).map(function (_) {return _ * 0.20000000298023224;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0]) / size[0], (uv[1]) / size[1]])))).map(function (_) {return _ * -1;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0] + 1) / size[0], (uv[1]) / size[1]])))).map(function (_) {return _ * 0.20000000298023224;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0] + -1) / size[0], (uv[1] + 1) / size[1]])))).map(function (_) {return _ * 0.05000000074505806;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0]) / size[0], (uv[1] + 1) / size[1]])))).map(function (_) {return _ * 0.20000000298023224;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, new $runtime.PooledFloat32Array([(uv[0] + 1) / size[0], (uv[1] + 1) / size[1]])))).map(function (_) {return _ * 0.05000000074505806;}).reduce((res,el,i)=>(res[i] += el, res), val);
+  	return val;
+  };
+  function map (value, inMin, inMax, outMin, outMax) {
+  	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+  };
+  function lum (color) {
+  	color = $runtime.copy(color);
+  	return 0.2125999927520752 * color[0] + 0.7152000069618225 * color[1] + 0.0722000002861023 * color[2];
+  };
+  function hash (p) {
+  	p = $runtime.copy(p);
+  	var p2 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.10300000011920929]));
+  	p2 = new $runtime.PooledFloat32Array([p2[0] + dot(p2, new $runtime.PooledFloat32Array([p2[1] + 33.33000183105469, p2[0] + 33.33000183105469])), p2[1] + dot(p2, new $runtime.PooledFloat32Array([p2[1] + 33.33000183105469, p2[0] + 33.33000183105469]))]);
+  	return fract((p2[0] + p2[1]) * p2[0]);
+  };
+  function main () {
+  	var texSize = textureSize(bufTex, 0);
+  	var tex = texture(bufTex, new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]));
+  	var a = tex[0];
+  	var b = tex[1];
+  	var bufferIsEmpty = ((tex[0] == 0) && (tex[1] == 0) && (tex[2] == 0) && (tex[3] == 0));
+  	if (bufferIsEmpty || resetState) {
+  	a = 1;
+  	b = 0;
+  	if ((hash(new $runtime.PooledFloat32Array([gl_FragCoord[0] + (seed), gl_FragCoord[1] + (seed)]))) > 0.9900000095367432) {
+  	b = 1;
+  	};
+  	(fragColor[0] = a, fragColor[1] = b, fragColor[2] = 0, fragColor[3] = 1, fragColor);
+  	return;
+  	};
+  	var color = lp(bufTex, new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), texSize);
+  	var prevFrameCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var prevFrame = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, prevFrameCoord)));
+  	var prevLum = lum(prevFrame);
+  	var f = feed * 0.0010000000474974513;
+  	var k = kill * 0.0010000000474974513;
+  	var r1 = rate1 * 0.009999999776482582;
+  	var r2 = rate2 * 0.009999999776482582;
+  	var s = speed * 0.009999999776482582;
+  	if (sourceF > 0) {
+  	var val = prevLum;
+  	if (sourceF == 2) {
+  	val = 1 - prevLum;
+  	} else {
+  	if (sourceF == 3) {
+  	val = prevFrame[0];
+  	} else {
+  	if (sourceF == 4) {
+  	val = prevFrame[1];
+  	} else {
+  	if (sourceF == 5) {
+  	val = prevFrame[2];
+  	} else {
+  	if (sourceF == 6) {
+  	val = map(prevLum, 0, 1, 0.009999999776482582, 0.10999999940395355);
+  	f = mix(f, val, weight * 0.009999999776482582);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	if (sourceF != 6) {
+  	val = map(val, 0, 1, 0.009999999776482582, 0.10999999940395355);
+  	f = val;
+  	};
+  	};
+  	if (sourceK > 0) {
+  	var val = prevLum;
+  	if (sourceK == 2) {
+  	val = 1 - prevLum;
+  	} else {
+  	if (sourceK == 3) {
+  	val = prevFrame[0];
+  	} else {
+  	if (sourceK == 4) {
+  	val = prevFrame[1];
+  	} else {
+  	if (sourceK == 5) {
+  	val = prevFrame[2];
+  	} else {
+  	if (sourceK == 6) {
+  	val = map(prevLum, 0, 1, 0.04500000178813934, 0.07000000029802322);
+  	k = mix(k, val, weight * 0.009999999776482582);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	if (sourceK != 6) {
+  	val = map(val, 0, 1, 0.04500000178813934, 0.07000000029802322);
+  	k = val;
+  	};
+  	};
+  	if (sourceR1 > 0) {
+  	var val = prevLum;
+  	if (sourceR1 == 2) {
+  	val = 1 - prevLum;
+  	} else {
+  	if (sourceR1 == 3) {
+  	val = prevFrame[0];
+  	} else {
+  	if (sourceR1 == 4) {
+  	val = prevFrame[1];
+  	} else {
+  	if (sourceR1 == 5) {
+  	val = prevFrame[2];
+  	} else {
+  	if (sourceR1 == 6) {
+  	val = map(prevLum, 0, 1, 0.5, 1.2000000476837158);
+  	r1 = mix(r1, val, weight * 0.009999999776482582);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	if (sourceR1 != 6) {
+  	val = map(val, 0, 1, 0.5, 1.2000000476837158);
+  	r1 = val;
+  	};
+  	};
+  	if (sourceR2 > 0) {
+  	var val = prevLum;
+  	if (sourceR2 == 2) {
+  	val = 1 - prevLum;
+  	} else {
+  	if (sourceR2 == 3) {
+  	val = prevFrame[0];
+  	} else {
+  	if (sourceR2 == 4) {
+  	val = prevFrame[1];
+  	} else {
+  	if (sourceR2 == 5) {
+  	val = prevFrame[2];
+  	} else {
+  	if (sourceR2 == 6) {
+  	val = map(prevLum, 0, 1, 0.20000000298023224, 0.5);
+  	r2 = mix(r2, val, weight * 0.009999999776482582);
+  	};
+  	};
+  	};
+  	};
+  	};
+  	if (sourceR2 != 6) {
+  	val = map(val, 0, 1, 0.20000000298023224, 0.5);
+  	r2 = val;
+  	};
+  	};
+  	var aNext = a + (r1 * color[0] - (a * b) * b + f * (1 - a)) * s;
+  	var bNext = b + (r2 * color[1] + (a * b) * b - (k + f) * b) * s;
+  	aNext = clamp(aNext, 0, 1);
+  	bNext = clamp(bNext, 0, 1);
+  	(fragColor[0] = aNext, fragColor[1] = bNext, fragColor[2] = 0, fragColor[3] = 1, fragColor);
+  };
+  return function canonicalKernel(context, out) {
+    $runtime.beginPixel(context)
+    main()
+    $runtime.writeColor(fragColor, out)
+  }
+}
+
+function canonicalFactory259($bindings, $runtime) {
   const { min, max, clamp, mix, smoothstep, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25761,7 +30434,7 @@ function canonicalFactory202($bindings, $runtime) {
   }
 }
 
-function canonicalFactory203($bindings, $runtime) {
+function canonicalFactory260($bindings, $runtime) {
   const { float, vec2, sin, cos, abs, floor, max, clamp, mix, smoothstep, length, dot, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26058,7 +30731,7 @@ function canonicalFactory203($bindings, $runtime) {
   }
 }
 
-function canonicalFactory204($bindings, $runtime) {
+function canonicalFactory261($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, sin, cos, atan, abs, floor, fract, max, mix, smoothstep, length, dot, add, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -26507,7 +31180,7 @@ function canonicalFactory204($bindings, $runtime) {
   }
 }
 
-function canonicalFactory205($bindings, $runtime) {
+function canonicalFactory262($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var color = $bindings["color"];
@@ -26523,7 +31196,7 @@ function canonicalFactory205($bindings, $runtime) {
   }
 }
 
-function canonicalFactory206($bindings, $runtime) {
+function canonicalFactory263($bindings, $runtime) {
   const { float, abs, floor, fract, mod, min, max, clamp, mix, step, smoothstep, length, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -26791,7 +31464,7 @@ function canonicalFactory206($bindings, $runtime) {
   }
 }
 
-function canonicalFactory207($bindings, $runtime) {
+function canonicalFactory264($bindings, $runtime) {
   const { float, abs, round, fract, min, max, clamp, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26945,7 +31618,7 @@ function canonicalFactory207($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory207.usesDerivatives = true
+canonicalFactory264.usesDerivatives = true
 
 export const canonicalKernelFactories = Object.freeze({
   "classicNoisedeck/bitEffects:bitEffects": canonicalFactory0,
@@ -26985,175 +31658,232 @@ export const canonicalKernelFactories = Object.freeze({
   "filter/clouds:clouds": canonicalFactory34,
   "filter/colorReplace:colorReplace": canonicalFactory35,
   "filter/colorspace:colorspace": canonicalFactory36,
-  "filter/corrupt:corrupt": canonicalFactory37,
-  "filter/craquelure:craquelure": canonicalFactory38,
-  "filter/crt:crt": canonicalFactory39,
-  "filter/degauss:degauss": canonicalFactory40,
-  "filter/deriv:deriv": canonicalFactory41,
-  "filter/directionalBlur:directionalBlur": canonicalFactory42,
-  "filter/dither:dither": canonicalFactory43,
-  "filter/edge:edge": canonicalFactory44,
-  "filter/emboss:emboss": canonicalFactory45,
-  "filter/extrude:extrude": canonicalFactory46,
-  "filter/fibers:fibersBlend": canonicalFactory47,
-  "filter/flipMirror:flipMirror": canonicalFactory48,
-  "filter/fxaa:fxaa": canonicalFactory49,
-  "filter/glowingEdge:glowingEdge": canonicalFactory50,
-  "filter/glyphMap:glyphMap": canonicalFactory51,
-  "filter/grade:creative": canonicalFactory52,
-  "filter/grade:hslSecondary": canonicalFactory53,
-  "filter/grade:lut": canonicalFactory54,
-  "filter/grade:primary": canonicalFactory55,
-  "filter/grade:vignette": canonicalFactory56,
-  "filter/grade:wheels": canonicalFactory57,
-  "filter/grain:grain": canonicalFactory58,
-  "filter/grime:grime": canonicalFactory59,
-  "filter/halftone:halftone": canonicalFactory60,
-  "filter/hatch:hatch": canonicalFactory61,
-  "filter/highPass:hpBlurH": canonicalFactory62,
-  "filter/highPass:hpBlurV": canonicalFactory63,
-  "filter/highPass:hpCombine": canonicalFactory64,
-  "filter/hs:hs": canonicalFactory65,
-  "filter/invert:inv": canonicalFactory66,
-  "filter/lens:lens": canonicalFactory67,
-  "filter/lensFlare:lensFlare": canonicalFactory68,
-  "filter/lensWarp:lensWarp": canonicalFactory69,
-  "filter/lightLeak:lightLeak": canonicalFactory70,
-  "filter/lighting:lighting": canonicalFactory71,
-  "filter/lowPoly:lowPoly": canonicalFactory72,
-  "filter/median:median": canonicalFactory73,
-  "filter/morphology:morphA": canonicalFactory74,
-  "filter/morphology:morphB": canonicalFactory75,
-  "filter/mosaicTiles:mosaicTiles": canonicalFactory76,
-  "filter/normalMap:normalMap": canonicalFactory77,
-  "filter/normalize:apply": canonicalFactory78,
-  "filter/normalize:reduce": canonicalFactory79,
-  "filter/normalize:reduceMinmax": canonicalFactory80,
-  "filter/normalize:statsFinal": canonicalFactory81,
-  "filter/octaveWarp:octaveWarp": canonicalFactory82,
-  "filter/oilPaint:oilFlatten": canonicalFactory83,
-  "filter/oilPaint:oilPost": canonicalFactory84,
-  "filter/osd:osd": canonicalFactory85,
-  "filter/outline:outlineBlend": canonicalFactory86,
-  "filter/outline:outlineSobel": canonicalFactory87,
-  "filter/outline:outlineValueMap": canonicalFactory88,
-  "filter/parallax:parallax": canonicalFactory89,
-  "filter/patchwork:patchwork": canonicalFactory90,
-  "filter/photocopy:pcBlurH": canonicalFactory91,
-  "filter/photocopy:pcBlurV": canonicalFactory92,
-  "filter/photocopy:pcCombine": canonicalFactory93,
-  "filter/pinch:pinch": canonicalFactory94,
-  "filter/pixelSort:computeRank": canonicalFactory95,
-  "filter/pixelSort:finalize": canonicalFactory96,
-  "filter/pixelSort:findBrightest": canonicalFactory97,
-  "filter/pixelSort:gatherSorted": canonicalFactory98,
-  "filter/pixelSort:luminance": canonicalFactory99,
-  "filter/pixelSort:prepare": canonicalFactory100,
-  "filter/pixels:pixels": canonicalFactory101,
-  "filter/plasticWrap:pwBlurH": canonicalFactory102,
-  "filter/plasticWrap:pwBlurV": canonicalFactory103,
-  "filter/plasticWrap:pwSpec": canonicalFactory104,
-  "filter/polar:polar": canonicalFactory105,
-  "filter/pondRipples:pondRipples": canonicalFactory106,
-  "filter/posterize:posterize": canonicalFactory107,
-  "filter/prismaticAberration:prismaticAberration": canonicalFactory108,
-  "filter/reindex:nmReindexApply": canonicalFactory109,
-  "filter/reindex:nmReindexReduce": canonicalFactory110,
-  "filter/reindex:nmReindexStats": canonicalFactory111,
-  "filter/relief:rlBlurH": canonicalFactory112,
-  "filter/relief:rlBlurV": canonicalFactory113,
-  "filter/relief:rlShade": canonicalFactory114,
-  "filter/repeat:repeat": canonicalFactory115,
-  "filter/reverb:reverb": canonicalFactory116,
-  "filter/ridge:ridge": canonicalFactory117,
-  "filter/rotate:rot": canonicalFactory118,
-  "filter/scale:scale": canonicalFactory119,
-  "filter/scanlineError:scanlineError": canonicalFactory120,
-  "filter/scatter:scatterJitter": canonicalFactory121,
-  "filter/scatter:scatterSmooth": canonicalFactory122,
-  "filter/scratches:scratchesBlend": canonicalFactory123,
-  "filter/scroll:scroll": canonicalFactory124,
-  "filter/seamless:seamless": canonicalFactory125,
-  "filter/sharpen:sharpen": canonicalFactory126,
-  "filter/simpleAberration:chromaticAberration": canonicalFactory127,
-  "filter/sine:sine": canonicalFactory128,
-  "filter/skew:skew": canonicalFactory129,
-  "filter/smooth:smoothBlend": canonicalFactory130,
-  "filter/smooth:smoothEdge": canonicalFactory131,
-  "filter/smoothstep:smoothstep": canonicalFactory132,
-  "filter/snow:snow": canonicalFactory133,
-  "filter/sobel:sobel": canonicalFactory134,
-  "filter/spatter:spatter": canonicalFactory135,
-  "filter/spinBlur:spinBlur": canonicalFactory136,
-  "filter/spiral:spiral": canonicalFactory137,
-  "filter/spookyTicker:spookyTicker": canonicalFactory138,
-  "filter/stamp:stBlurH": canonicalFactory139,
-  "filter/stamp:stBlurV": canonicalFactory140,
-  "filter/stamp:stThreshold": canonicalFactory141,
-  "filter/step:step": canonicalFactory142,
-  "filter/stipple:stipple": canonicalFactory143,
-  "filter/strayHair:strayHairBlend": canonicalFactory144,
-  "filter/strokes:stkPost": canonicalFactory145,
-  "filter/strokes:stkSmear": canonicalFactory146,
-  "filter/tetraColorArray:tetraColorArray": canonicalFactory147,
-  "filter/tetraCosine:tetraCosine": canonicalFactory148,
-  "filter/text:text": canonicalFactory149,
-  "filter/texture:texture": canonicalFactory150,
-  "filter/threshold:thresh": canonicalFactory151,
-  "filter/tile:tile": canonicalFactory152,
-  "filter/tint:colorize": canonicalFactory153,
-  "filter/translate:translate": canonicalFactory154,
-  "filter/tunnel:tunnel": canonicalFactory155,
-  "filter/unsharpMask:usmBlurH": canonicalFactory156,
-  "filter/unsharpMask:usmBlurV": canonicalFactory157,
-  "filter/unsharpMask:usmCombine": canonicalFactory158,
-  "filter/vaseline:upsample": canonicalFactory159,
-  "filter/vignette:vignette": canonicalFactory160,
-  "filter/warp:warp": canonicalFactory161,
-  "filter/watercolor:wcComposite": canonicalFactory162,
-  "filter/watercolor:wcSeed": canonicalFactory163,
-  "filter/watercolor:wcSimplify": canonicalFactory164,
-  "filter/waves:waves": canonicalFactory165,
-  "filter/wind:wind": canonicalFactory166,
-  "filter/wobble:wobble": canonicalFactory167,
-  "filter/wormhole:blend": canonicalFactory168,
-  "filter/wormhole:clear": canonicalFactory169,
-  "filter/wormhole:deposit": canonicalFactory170,
-  "filter/zoomBlur:zoomBlur": canonicalFactory171,
-  "mixer/alphaMask:alphaMask": canonicalFactory172,
-  "mixer/applyMode:applyMode": canonicalFactory173,
-  "mixer/blendMode:blendMode": canonicalFactory174,
-  "mixer/cellSplit:cellSplit": canonicalFactory175,
-  "mixer/centerMask:centerMask": canonicalFactory176,
-  "mixer/channelCombine:channelCombine": canonicalFactory177,
-  "mixer/distortion:distortion": canonicalFactory178,
-  "mixer/focusBlur:focusBlur": canonicalFactory179,
-  "mixer/mashup:mashup": canonicalFactory180,
-  "mixer/patternMix:patternMix": canonicalFactory181,
-  "mixer/shadow:shadow": canonicalFactory182,
-  "mixer/shapeMask:shapeMask": canonicalFactory183,
-  "mixer/split:split": canonicalFactory184,
-  "mixer/thresholdMix:thresholdMix": canonicalFactory185,
-  "mixer/uvRemap:uvRemap": canonicalFactory186,
-  "synth/bitwise:bitwise": canonicalFactory187,
-  "synth/cell:cell": canonicalFactory188,
-  "synth/curl:curl": canonicalFactory189,
-  "synth/gabor:gabor": canonicalFactory190,
-  "synth/gradient:gradient": canonicalFactory191,
-  "synth/mandala:mandala": canonicalFactory192,
-  "synth/mandelbrot:mandelbrot": canonicalFactory193,
-  "synth/media:mediaInput": canonicalFactory194,
-  "synth/modPattern:modPattern": canonicalFactory195,
-  "synth/newton:newton": canonicalFactory196,
-  "synth/noise:noise": canonicalFactory197,
-  "synth/osc2d:osc2d": canonicalFactory198,
-  "synth/pattern:pattern": canonicalFactory199,
-  "synth/perlin:perlin": canonicalFactory200,
-  "synth/polygon:shape": canonicalFactory201,
-  "synth/remap:remap": canonicalFactory202,
-  "synth/sacredGeometry:sacredGeometry": canonicalFactory203,
-  "synth/shape:shape": canonicalFactory204,
-  "synth/solid:solid": canonicalFactory205,
-  "synth/subdivide:subdivide": canonicalFactory206,
-  "synth/testPattern:testPattern": canonicalFactory207,
+  "filter/convolutionFeedback:cfBlend": canonicalFactory37,
+  "filter/convolutionFeedback:cfBlur": canonicalFactory38,
+  "filter/convolutionFeedback:cfSharpen": canonicalFactory39,
+  "filter/corrupt:corrupt": canonicalFactory40,
+  "filter/craquelure:craquelure": canonicalFactory41,
+  "filter/crt:crt": canonicalFactory42,
+  "filter/degauss:degauss": canonicalFactory43,
+  "filter/deriv:deriv": canonicalFactory44,
+  "filter/directionalBlur:directionalBlur": canonicalFactory45,
+  "filter/dither:dither": canonicalFactory46,
+  "filter/edge:edge": canonicalFactory47,
+  "filter/emboss:emboss": canonicalFactory48,
+  "filter/extrude:extrude": canonicalFactory49,
+  "filter/feedback:copy": canonicalFactory50,
+  "filter/feedback:feedback": canonicalFactory51,
+  "filter/fibers:fibersBlend": canonicalFactory52,
+  "filter/flipMirror:flipMirror": canonicalFactory53,
+  "filter/fxaa:fxaa": canonicalFactory54,
+  "filter/glowingEdge:glowingEdge": canonicalFactory55,
+  "filter/glyphMap:glyphMap": canonicalFactory56,
+  "filter/grade:creative": canonicalFactory57,
+  "filter/grade:hslSecondary": canonicalFactory58,
+  "filter/grade:lut": canonicalFactory59,
+  "filter/grade:primary": canonicalFactory60,
+  "filter/grade:vignette": canonicalFactory61,
+  "filter/grade:wheels": canonicalFactory62,
+  "filter/grain:grain": canonicalFactory63,
+  "filter/grime:grime": canonicalFactory64,
+  "filter/halftone:halftone": canonicalFactory65,
+  "filter/hatch:hatch": canonicalFactory66,
+  "filter/highPass:hpBlurH": canonicalFactory67,
+  "filter/highPass:hpBlurV": canonicalFactory68,
+  "filter/highPass:hpCombine": canonicalFactory69,
+  "filter/hs:hs": canonicalFactory70,
+  "filter/invert:inv": canonicalFactory71,
+  "filter/lens:lens": canonicalFactory72,
+  "filter/lensFlare:lensFlare": canonicalFactory73,
+  "filter/lensWarp:lensWarp": canonicalFactory74,
+  "filter/lightLeak:lightLeak": canonicalFactory75,
+  "filter/lighting:lighting": canonicalFactory76,
+  "filter/lowPoly:lowPoly": canonicalFactory77,
+  "filter/median:median": canonicalFactory78,
+  "filter/morphology:morphA": canonicalFactory79,
+  "filter/morphology:morphB": canonicalFactory80,
+  "filter/mosaicTiles:mosaicTiles": canonicalFactory81,
+  "filter/motionBlur:copy": canonicalFactory82,
+  "filter/motionBlur:motionBlur": canonicalFactory83,
+  "filter/normalMap:normalMap": canonicalFactory84,
+  "filter/normalize:apply": canonicalFactory85,
+  "filter/normalize:reduce": canonicalFactory86,
+  "filter/normalize:reduceMinmax": canonicalFactory87,
+  "filter/normalize:statsFinal": canonicalFactory88,
+  "filter/octaveWarp:octaveWarp": canonicalFactory89,
+  "filter/oilPaint:oilFlatten": canonicalFactory90,
+  "filter/oilPaint:oilPost": canonicalFactory91,
+  "filter/osd:osd": canonicalFactory92,
+  "filter/outline:outlineBlend": canonicalFactory93,
+  "filter/outline:outlineSobel": canonicalFactory94,
+  "filter/outline:outlineValueMap": canonicalFactory95,
+  "filter/parallax:parallax": canonicalFactory96,
+  "filter/patchwork:patchwork": canonicalFactory97,
+  "filter/photocopy:pcBlurH": canonicalFactory98,
+  "filter/photocopy:pcBlurV": canonicalFactory99,
+  "filter/photocopy:pcCombine": canonicalFactory100,
+  "filter/pinch:pinch": canonicalFactory101,
+  "filter/pixelSort:computeRank": canonicalFactory102,
+  "filter/pixelSort:finalize": canonicalFactory103,
+  "filter/pixelSort:findBrightest": canonicalFactory104,
+  "filter/pixelSort:gatherSorted": canonicalFactory105,
+  "filter/pixelSort:luminance": canonicalFactory106,
+  "filter/pixelSort:prepare": canonicalFactory107,
+  "filter/pixels:pixels": canonicalFactory108,
+  "filter/plasticWrap:pwBlurH": canonicalFactory109,
+  "filter/plasticWrap:pwBlurV": canonicalFactory110,
+  "filter/plasticWrap:pwSpec": canonicalFactory111,
+  "filter/polar:polar": canonicalFactory112,
+  "filter/pondRipples:pondRipples": canonicalFactory113,
+  "filter/posterize:posterize": canonicalFactory114,
+  "filter/prismaticAberration:prismaticAberration": canonicalFactory115,
+  "filter/reindex:nmReindexApply": canonicalFactory116,
+  "filter/reindex:nmReindexReduce": canonicalFactory117,
+  "filter/reindex:nmReindexStats": canonicalFactory118,
+  "filter/relief:rlBlurH": canonicalFactory119,
+  "filter/relief:rlBlurV": canonicalFactory120,
+  "filter/relief:rlShade": canonicalFactory121,
+  "filter/repeat:repeat": canonicalFactory122,
+  "filter/reverb:reverb": canonicalFactory123,
+  "filter/ridge:ridge": canonicalFactory124,
+  "filter/rotate:rot": canonicalFactory125,
+  "filter/scale:scale": canonicalFactory126,
+  "filter/scanlineError:scanlineError": canonicalFactory127,
+  "filter/scatter:scatterJitter": canonicalFactory128,
+  "filter/scatter:scatterSmooth": canonicalFactory129,
+  "filter/scratches:scratchesBlend": canonicalFactory130,
+  "filter/scroll:scroll": canonicalFactory131,
+  "filter/seamless:seamless": canonicalFactory132,
+  "filter/sharpen:sharpen": canonicalFactory133,
+  "filter/simpleAberration:chromaticAberration": canonicalFactory134,
+  "filter/sine:sine": canonicalFactory135,
+  "filter/skew:skew": canonicalFactory136,
+  "filter/smooth:smoothBlend": canonicalFactory137,
+  "filter/smooth:smoothEdge": canonicalFactory138,
+  "filter/smoothstep:smoothstep": canonicalFactory139,
+  "filter/snow:snow": canonicalFactory140,
+  "filter/sobel:sobel": canonicalFactory141,
+  "filter/spatter:spatter": canonicalFactory142,
+  "filter/spinBlur:spinBlur": canonicalFactory143,
+  "filter/spiral:spiral": canonicalFactory144,
+  "filter/spookyTicker:spookyTicker": canonicalFactory145,
+  "filter/stamp:stBlurH": canonicalFactory146,
+  "filter/stamp:stBlurV": canonicalFactory147,
+  "filter/stamp:stThreshold": canonicalFactory148,
+  "filter/step:step": canonicalFactory149,
+  "filter/stipple:stipple": canonicalFactory150,
+  "filter/strayHair:strayHairBlend": canonicalFactory151,
+  "filter/strokes:stkPost": canonicalFactory152,
+  "filter/strokes:stkSmear": canonicalFactory153,
+  "filter/temporalAberration:delayShift": canonicalFactory154,
+  "filter/temporalAberration:temporalAberration": canonicalFactory155,
+  "filter/tetraColorArray:tetraColorArray": canonicalFactory156,
+  "filter/tetraCosine:tetraCosine": canonicalFactory157,
+  "filter/text:text": canonicalFactory158,
+  "filter/texture:texture": canonicalFactory159,
+  "filter/threshold:thresh": canonicalFactory160,
+  "filter/tile:tile": canonicalFactory161,
+  "filter/tint:colorize": canonicalFactory162,
+  "filter/translate:translate": canonicalFactory163,
+  "filter/tunnel:tunnel": canonicalFactory164,
+  "filter/unsharpMask:usmBlurH": canonicalFactory165,
+  "filter/unsharpMask:usmBlurV": canonicalFactory166,
+  "filter/unsharpMask:usmCombine": canonicalFactory167,
+  "filter/vaseline:upsample": canonicalFactory168,
+  "filter/vignette:vignette": canonicalFactory169,
+  "filter/warp:warp": canonicalFactory170,
+  "filter/watercolor:wcComposite": canonicalFactory171,
+  "filter/watercolor:wcSeed": canonicalFactory172,
+  "filter/watercolor:wcSimplify": canonicalFactory173,
+  "filter/waves:waves": canonicalFactory174,
+  "filter/wind:wind": canonicalFactory175,
+  "filter/wobble:wobble": canonicalFactory176,
+  "filter/wormhole:blend": canonicalFactory177,
+  "filter/wormhole:clear": canonicalFactory178,
+  "filter/wormhole:deposit": canonicalFactory179,
+  "filter/zoomBlur:zoomBlur": canonicalFactory180,
+  "mixer/alphaMask:alphaMask": canonicalFactory181,
+  "mixer/applyMode:applyMode": canonicalFactory182,
+  "mixer/blendMode:blendMode": canonicalFactory183,
+  "mixer/cellSplit:cellSplit": canonicalFactory184,
+  "mixer/centerMask:centerMask": canonicalFactory185,
+  "mixer/channelCombine:channelCombine": canonicalFactory186,
+  "mixer/distortion:distortion": canonicalFactory187,
+  "mixer/focusBlur:focusBlur": canonicalFactory188,
+  "mixer/mashup:mashup": canonicalFactory189,
+  "mixer/patternMix:patternMix": canonicalFactory190,
+  "mixer/shadow:shadow": canonicalFactory191,
+  "mixer/shapeMask:shapeMask": canonicalFactory192,
+  "mixer/split:split": canonicalFactory193,
+  "mixer/thresholdMix:thresholdMix": canonicalFactory194,
+  "mixer/uvRemap:uvRemap": canonicalFactory195,
+  "points/attractor:agent": canonicalFactory196,
+  "points/attractor:passthrough": canonicalFactory197,
+  "points/buddhabrot:agent": canonicalFactory198,
+  "points/buddhabrot:passthrough": canonicalFactory199,
+  "points/buddhabrot:zWrite": canonicalFactory200,
+  "points/dla:agent": canonicalFactory201,
+  "points/dla:copyGrid": canonicalFactory202,
+  "points/dla:initGrid": canonicalFactory203,
+  "points/dla:passthrough": canonicalFactory204,
+  "points/flock:agent": canonicalFactory205,
+  "points/flock:passthrough": canonicalFactory206,
+  "points/flow:agent": canonicalFactory207,
+  "points/flow:passthrough": canonicalFactory208,
+  "points/hydraulic:agent": canonicalFactory209,
+  "points/hydraulic:passthrough": canonicalFactory210,
+  "points/lenia:agentField": canonicalFactory211,
+  "points/lenia:clear": canonicalFactory212,
+  "points/lenia:convolve": canonicalFactory213,
+  "points/lenia:passthrough": canonicalFactory214,
+  "points/life:agent": canonicalFactory215,
+  "points/life:matrix": canonicalFactory216,
+  "points/life:passthrough": canonicalFactory217,
+  "points/physarum:agent": canonicalFactory218,
+  "points/physarum:diffuse": canonicalFactory219,
+  "points/physarum:passthrough": canonicalFactory220,
+  "points/physical:agent": canonicalFactory221,
+  "points/physical:passthrough": canonicalFactory222,
+  "render/pointsBillboardRender:blend": canonicalFactory223,
+  "render/pointsBillboardRender:copy": canonicalFactory224,
+  "render/pointsBillboardRender:diffuse": canonicalFactory225,
+  "render/pointsEmit:init": canonicalFactory226,
+  "render/pointsEmit:passthrough": canonicalFactory227,
+  "render/pointsRender:blend": canonicalFactory228,
+  "render/pointsRender:copy": canonicalFactory229,
+  "render/pointsRender:diffuse": canonicalFactory230,
+  "synth/bitwise:bitwise": canonicalFactory231,
+  "synth/cell:cell": canonicalFactory232,
+  "synth/cellularAutomata:ca": canonicalFactory233,
+  "synth/cellularAutomata:caFb": canonicalFactory234,
+  "synth/curl:curl": canonicalFactory235,
+  "synth/gabor:gabor": canonicalFactory236,
+  "synth/gradient:gradient": canonicalFactory237,
+  "synth/mandala:mandala": canonicalFactory238,
+  "synth/mandelbrot:mandelbrot": canonicalFactory239,
+  "synth/media:mediaInput": canonicalFactory240,
+  "synth/mnca:mnca": canonicalFactory241,
+  "synth/mnca:mncaFb": canonicalFactory242,
+  "synth/modPattern:modPattern": canonicalFactory243,
+  "synth/navierStokes:ns": canonicalFactory244,
+  "synth/navierStokes:nsAdvect": canonicalFactory245,
+  "synth/navierStokes:nsDivergence": canonicalFactory246,
+  "synth/navierStokes:nsGradient": canonicalFactory247,
+  "synth/navierStokes:nsPressure": canonicalFactory248,
+  "synth/navierStokes:nsSmooth": canonicalFactory249,
+  "synth/navierStokes:nsSplat": canonicalFactory250,
+  "synth/newton:newton": canonicalFactory251,
+  "synth/noise:noise": canonicalFactory252,
+  "synth/osc2d:osc2d": canonicalFactory253,
+  "synth/pattern:pattern": canonicalFactory254,
+  "synth/perlin:perlin": canonicalFactory255,
+  "synth/polygon:shape": canonicalFactory256,
+  "synth/reactionDiffusion:rd": canonicalFactory257,
+  "synth/reactionDiffusion:rdFb": canonicalFactory258,
+  "synth/remap:remap": canonicalFactory259,
+  "synth/sacredGeometry:sacredGeometry": canonicalFactory260,
+  "synth/shape:shape": canonicalFactory261,
+  "synth/solid:solid": canonicalFactory262,
+  "synth/subdivide:subdivide": canonicalFactory263,
+  "synth/testPattern:testPattern": canonicalFactory264,
 })
