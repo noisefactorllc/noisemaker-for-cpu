@@ -68,7 +68,10 @@ export function compileDsl(source, registry, options = {}) {
   const chains = ast.chains.map((chain) => {
     const steps = []
     let hasInput = false
+    let hasImage = false
+    let hasVolume = false
     let startsWithGenerator = false
+    let openLoop = null
     for (let index = 0; index < chain.calls.length; index += 1) {
       let call = chain.calls[index]
       const partial = bindings.get(call.name)
@@ -81,25 +84,51 @@ export function compileDsl(source, registry, options = {}) {
         if (index !== 0 || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('read(surface) must begin a chain', call.loc)
         steps.push({ kind: 'read', surface: args[0].value.name, loc: call.loc })
         hasInput = true
+        hasImage = true
         continue
       }
       if (call.name === 'write') {
-        if (!hasInput || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('write(surface) requires a current image', call.loc)
+        if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
+        if (!hasImage || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('write(surface) requires a current image', call.loc)
         steps.push({ kind: 'write', surface: args[0].value.name, loc: call.loc })
         continue
       }
       const definition = registry.resolve(call.name, ast.search)
       if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${ast.search.join(', ')}`, call.loc)
-      if (definition.kind === 'generator') {
+      if (definition.domain === 'volume-generator') {
+        if (index !== 0 && !(definition.iterated && hasVolume)) {
+          throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
+        }
+        if (index === 0) startsWithGenerator = true
+        hasInput = true
+        hasVolume = true
+      } else if (definition.domain === 'volume-filter') {
+        if (!hasVolume) throw new DslError(`volume filter ${definition.id} requires a volume input`, call.loc)
+        hasInput = true
+      } else if (definition.domain === 'volume-renderer') {
+        if (!hasVolume) throw new DslError(`volume renderer ${definition.id} requires a volume input`, call.loc)
+        hasInput = true
+        hasImage = true
+      } else if (definition.domain === 'loop-begin') {
+        if (!hasImage) throw new DslError(`${definition.id} requires a current image`, call.loc)
+        if (openLoop) throw new DslError('nested loopBegin regions are not supported', call.loc)
+        openLoop = call.loc
+      } else if (definition.domain === 'loop-end') {
+        if (!openLoop) throw new DslError('loopEnd has no matching loopBegin', call.loc)
+        if (!hasImage) throw new DslError(`${definition.id} requires a current image`, call.loc)
+        openLoop = null
+      } else if (definition.kind === 'generator') {
         if (index !== 0) throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
         startsWithGenerator = true
         hasInput = true
-      } else if (!hasInput) {
+        hasImage = true
+      } else if (!hasImage) {
         const requiresInputTex = definition.passes.some((pass) => Object.values(pass.inputs ?? {}).includes('inputTex'))
         if (requiresInputTex) {
           throw new DslError(`${definition.kind} ${definition.id} requires an input; begin with a generator or read(oN)`, call.loc)
         }
         hasInput = true
+        hasImage = true
       }
       let params
       try {
@@ -113,6 +142,7 @@ export function compileDsl(source, registry, options = {}) {
       }))
       steps.push({ kind: 'effect', definition, params, explicitParams, loc: call.loc })
     }
+    if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before the chain ends', openLoop)
     if (startsWithGenerator && steps.at(-1)?.kind !== 'write') throw new DslError('Generator chain must end with write(oN)', chain.loc)
     return { steps, loc: chain.loc }
   })

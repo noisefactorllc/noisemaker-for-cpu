@@ -1,7 +1,18 @@
+export const MAX_SURFACE_PIXELS = 16_777_216
+
 function assertDimension(value, name) {
-  if (!Number.isInteger(value) || value <= 0) {
-    throw new RangeError(`${name} must be a positive integer`)
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new RangeError(`${name} must be a positive integer within the safe integer range`)
   }
+}
+
+function surfaceLength(width, height) {
+  assertDimension(width, 'width')
+  assertDimension(height, 'height')
+  if (height > Math.floor(MAX_SURFACE_PIXELS / width)) {
+    throw new RangeError(`Surface exceeds the ${MAX_SURFACE_PIXELS.toLocaleString('en-US')} pixel limit`)
+  }
+  return width * height * 4
 }
 
 function byteFromFloat(value) {
@@ -13,10 +24,7 @@ function byteFromFloat(value) {
 
 export class Surface {
   constructor(width, height, data = null) {
-    assertDimension(width, 'width')
-    assertDimension(height, 'height')
-
-    const length = width * height * 4
+    const length = surfaceLength(width, height)
     if (data !== null && (!(data instanceof Float32Array) || data.length !== length)) {
       throw new TypeError(`data must be a Float32Array of length ${length}`)
     }
@@ -27,9 +35,7 @@ export class Surface {
   }
 
   static fromRgba8(width, height, bytes) {
-    assertDimension(width, 'width')
-    assertDimension(height, 'height')
-    const length = width * height * 4
+    const length = surfaceLength(width, height)
     if (!(bytes instanceof Uint8Array) && !(bytes instanceof Uint8ClampedArray)) {
       throw new TypeError('bytes must be a Uint8Array or Uint8ClampedArray')
     }

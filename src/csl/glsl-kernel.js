@@ -5,7 +5,7 @@ export const GLSL_STDLIB_NAMES = Object.freeze([
   'radians', 'degrees', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
   'pow', 'exp', 'log', 'log2', 'exp2', 'sqrt', 'inversesqrt', 'abs',
   'sign', 'floor', 'ceil', 'round', 'fract', 'tanh', 'isnan', 'mod', 'min', 'max',
-  'clamp', 'mix', 'step', 'smoothstep', 'length', 'distance', 'dot',
+  'clamp', 'mix', 'step', 'smoothstep', 'length', 'distance', 'dot', 'cross',
   'normalize', 'reflect', 'refract', 'lessThan', 'lessThanEqual',
   'greaterThan', 'greaterThanEqual', 'equal', 'notEqual', 'any', 'all',
   'add', 'subtract', 'multiply', 'divide', 'matrixMult', 'texture',

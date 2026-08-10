@@ -10,6 +10,8 @@ test('parity fixture normalization makes canonical effect seed defaults explicit
   assert.equal(pinDefaultSeeds('search synth\nperlin(scale: 100).write(o0)'), 'search synth\nperlin(seed: 0, scale: 100).write(o0)')
   assert.equal(pinDefaultSeeds('search synth\nnoise(seed: 9).write(o0)'), 'search synth\nnoise(seed: 9).write(o0)')
   assert.equal(pinDefaultSeeds('search classicNoisedeck\nsplat(splatSeed: 4).write(o0)'), 'search classicNoisedeck\nsplat(splatSeed: 4).write(o0)')
+  assert.equal(pinDefaultSeeds('search classicNoisedeck\nnoise3d().write(o0)'), 'search classicNoisedeck\nnoise3d(seed: 1).write(o0)')
+  assert.equal(pinDefaultSeeds('search synth3d\nnoise3d().write(o0)'), 'search synth3d\nnoise3d(seed: 0).write(o0)')
 })
 
 test('every checked-in upstream parity fixture pins all canonical seed defaults', async () => {

@@ -106,6 +106,40 @@ test('CLI effect command renders a filter-kind effect with a surface param via t
   }
 })
 
+test('CLI effect command auto-wires every volume and loop domain into a renderable program', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    const nonImageEffects = effectCatalog.filter((effect) => effect.domain !== 'image')
+    assert.equal(nonImageEffects.length, 15)
+    for (const effect of nonImageEffects) {
+      const output = join(dir, `${effect.id.replace('/', '__')}.png`)
+      const args = ['effect', effect.id, '--width=2', '--height=2', '--output', output]
+      if (effect.params.volumeSize) args.push('--param', 'volumeSize=2')
+      if (effect.params.iterationCount) args.push('--param', 'iterationCount=1')
+      if (effect.id === 'synth3d/flythrough3d') args.push('--param', 'type=1')
+      const result = run(args)
+      assert.equal(result.status, 0, `${effect.id}: ${result.stderr}`)
+      const decoded = decodePng(await readFile(output))
+      assert.deepEqual([decoded.width, decoded.height], [2, 2], effect.id)
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('CLI apply rejects non-image domains with a direct command-level diagnostic', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    const input = join(dir, 'input.png')
+    await writeFile(input, encodePng({ width: 1, height: 1, data: Uint8Array.of(0, 0, 0, 255) }))
+    const result = run(['apply', 'filter3d/palette3d', input])
+    assert.notEqual(result.status, 0)
+    assert.match(result.stderr, /apply only supports image-domain effects/)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
 test('CLI csl command parses typed uniforms and named sampler textures', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
   try {
@@ -190,7 +224,7 @@ test('CLI generate renders a generator and apply filters an input at its dimensi
   }
 })
 
-test('CLI --effect random pools exclude iterated and external-texture effects', async () => {
+test('CLI --effect random pools exclude iterated, external-texture, and non-image effects', async () => {
   // Deterministic pool check, not a statistical one: an iterated effect defaults iterationCount
   // to 60 and can take tens of seconds to minutes at real canvas sizes (see "CPU iteration
   // divergence" in docs/EFFECTS.md), so `random` must never be ABLE to select one - not just be
@@ -201,15 +235,17 @@ test('CLI --effect random pools exclude iterated and external-texture effects', 
     const excluded = effectCatalog.filter((effect) => effect.kind === kind && effect.iterated === true)
     assert.ok(excluded.length > 0, `expected at least one iterated ${kind} effect to exclude (catalog drift?)`)
     const pool = effectCatalog.filter(
-      (effect) => effect.kind === kind && !effect.iterated && !effect.externalTexture,
+      (effect) => effect.kind === kind && effect.domain === 'image' && !effect.iterated && !effect.externalTexture,
     )
     assert.ok(pool.length > 0, `expected a non-empty random pool for kind "${kind}"`)
     assert.ok(pool.every((effect) => effect.iterated !== true), `random pool for kind "${kind}" must exclude every iterated effect`)
     assert.ok(pool.every((effect) => !effect.externalTexture), `random pool for kind "${kind}" must exclude every external-texture effect`)
+    assert.ok(pool.every((effect) => effect.domain === 'image'), `random pool for kind "${kind}" must only contain image-domain effects`)
   }
   // synth/media is a generator requiring imageTex: it was reachable by `generate random` before
   // this exclusion and exited 1 whenever it came up.
   assert.equal(effectCatalog.find((effect) => effect.id === 'synth/media')?.externalTexture, 'imageTex')
+  assert.equal(effectCatalog.find((effect) => effect.id === 'synth3d/noise3d')?.domain, 'volume-generator')
 
   // End-to-end: exercise the real CLI dispatch (bin/noisemaker-cpu.js's pickEffect), not just the
   // catalog data above. Small canvas keeps this fast; `--effect random` can genuinely land on any

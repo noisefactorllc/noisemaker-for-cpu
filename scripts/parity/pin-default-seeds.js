@@ -5,6 +5,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { tokenizeDsl } from '../../src/dsl/tokenize.js'
+import { parseDsl } from '../../src/dsl/parser.js'
 import { effectCatalog } from '../../src/effects/catalog.js'
 
 const scriptPath = fileURLToPath(import.meta.url)
@@ -15,19 +16,18 @@ for (const effect of effectCatalog) {
   if (!effect.params.seed) continue
   const explicitNames = new Set(['seed'])
   for (const [alias, canonical] of Object.entries(effect.paramAliases)) if (canonical === 'seed') explicitNames.add(alias)
-  const existing = seededCalls.get(effect.func)
-  if (existing && existing.defaultValue !== effect.params.seed.default) {
-    throw new Error(`Ambiguous seed defaults for effect function ${effect.func}`)
-  }
-  seededCalls.set(effect.func, { defaultValue: effect.params.seed.default, explicitNames })
+  seededCalls.set(effect.id, { defaultValue: effect.params.seed.default, explicitNames })
 }
 
 export function pinDefaultSeeds(source, sourceName = '<dsl>') {
   const tokens = tokenizeDsl(source, { sourceName })
+  const search = parseDsl(source, { sourceName }).search
   const insertions = []
   for (let index = 0; index < tokens.length - 1; index += 1) {
     const call = tokens[index]
-    const seed = call.type === 'identifier' ? seededCalls.get(call.lexeme) : null
+    const seed = call.type === 'identifier'
+      ? search.map((namespace) => seededCalls.get(`${namespace}/${call.lexeme}`)).find(Boolean)
+      : null
     if (!seed || tokens[index + 1].lexeme !== '(') continue
     const open = tokens[index + 1]
     let depth = 0

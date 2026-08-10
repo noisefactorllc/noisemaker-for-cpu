@@ -293,8 +293,75 @@ test('generated kernels for the 21 new stateful/points/render effects bind and e
   }
 })
 
+test('generated kernels for the 17 volume and explicit-loop effects bind and emit finite pixels over a 2x2 context', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const volumeAndLoopEffectIds = new Set([
+    'classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d',
+    'filter3d/flow3d', 'filter3d/palette3d',
+    'render/loopBegin', 'render/loopEnd', 'render/render3d', 'render/renderCubemap3d',
+    'render/renderCubemapSurface', 'render/renderLit3d',
+    'synth3d/cell3d', 'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
+    'synth3d/fractal3d', 'synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
+  ])
+  const generatedKeys = Object.keys(canonicalKernelFactories)
+    .filter((key) => volumeAndLoopEffectIds.has(key.split(':')[0]))
+    .sort()
+  assert.equal(generatedKeys.length, 20)
+
+  for (const key of generatedKeys) {
+    const [effectId, program] = key.split(':')
+    const definition = effectCatalog.find((effect) => effect.id === effectId)
+    assert.ok(definition, `${key}: owning effect definition not found in effectCatalog`)
+    const pass = definition.passes.find((candidate) => candidate.program === program)
+    assert.ok(pass, `${key}: owning pass definition not found`)
+
+    const args = definition.params.volumeSize ? [{ name: 'volumeSize', value: 2 }] : []
+    // The canonical Mandelbulb branch has intentional interior singularities
+    // (`acos(z/r)` at r=0); Mandelbox exercises the same generated volume/MRT
+    // path without turning that source behavior into a CPU-port failure.
+    if (effectId === 'synth3d/flythrough3d') args.push({ name: 'type', value: 1 })
+    const params = definition.normalizeArguments(args)
+    const bindings = renderer.buildBindings(definition, params, [], null, new Map(), {
+      width: 2, height: 2, externalTextures: {},
+    })
+    const uniforms = renderer.passUniforms(pass, params, bindings.uniforms)
+    const textures = {}
+    for (const uniformName of Object.keys(pass.inputs ?? {})) {
+      const surface = new Surface(2, 4)
+      surface.clear([0.5, 0.5, 0.5, 1])
+      textures[uniformName] = surface
+    }
+
+    const factory = canonicalKernelFactories[key]
+    assert.equal(typeof factory, 'function', `${key}: missing generated factory`)
+    const outputNames = Array.isArray(factory.outputNames) ? factory.outputNames : null
+    if (outputNames) {
+      assert.equal(outputNames.length, pass.drawBuffers, `${key}: factory.outputNames length must match drawBuffers`)
+    }
+    const outputCount = outputNames ? outputNames.length : 1
+    const kernel = bindCanonicalKernel(factory, {
+      width: 2,
+      height: 4,
+      time: 0.25,
+      frame: 1,
+      deltaTime: 1 / 60,
+      seed: 3,
+      uniforms,
+      textures,
+    })
+
+    const out = new Float32Array(outputCount * 4)
+    kernel({
+      fragCoord: new Float32Array([0.5, 0.5]),
+      uv: new Float32Array([0.25, 0.125]),
+      resolution: new Float32Array([2, 4]),
+    }, out)
+    assert.ok(out.every(Number.isFinite), `${key}: produced non-finite output: ${out}`)
+  }
+})
+
 // Catalog-wide invariant (independent of the 57-key `newEffectIds` slice above): every MRT pass
-// anywhere in all 188 records must resolve to a factory carrying a matching `outputNames` array.
+// anywhere in all 205 records must resolve to a factory carrying a matching `outputNames` array.
 // The `if (outputNames)` check above only fires when `factory.outputNames` already exists; if a
 // future kernel regeneration ever dropped `outputNames` from an MRT factory, that conditional
 // would stay silent while the renderer's own `pass.drawBuffers >= 2 && Array.isArray(factory.
@@ -304,7 +371,7 @@ test('generated kernels for the 21 new stateful/points/render effects bind and e
 // `pass.outputs` must appear in `outputNames`, and vice versa (same count, same name set) - so a
 // catalog-authoring typo (an output added to one but not the other) fails loudly here instead of
 // silently dropping a destination or writing to a name nothing reads.
-test('every MRT pass in the full 188-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
+test('every MRT pass in the full 205-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
   let mrtPassCount = 0
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {
@@ -321,8 +388,8 @@ test('every MRT pass in the full 188-effect catalog has a factory.outputNames ar
       assert.deepEqual(factoryOutputs, declaredOutputs, `${key}: factory.outputNames must exactly cover pass.outputs's keys (no unused declaration, no undeclared name)`)
     }
   }
-  // 10 points/*:agent(Field) + render/pointsEmit:init, per docs/EFFECTS.md and the final review -
+  // 11 points/render passes plus 10 volume passes, per docs/EFFECTS.md and the final review -
   // fails loudly (rather than vacuously passing on zero iterations) if the catalog's MRT set ever
   // shrinks or grows without this test being revisited.
-  assert.equal(mrtPassCount, 11, 'expected exactly 11 MRT (drawBuffers >= 2) passes in the full catalog')
+  assert.equal(mrtPassCount, 21, 'expected exactly 21 MRT (drawBuffers >= 2) passes in the full catalog')
 })

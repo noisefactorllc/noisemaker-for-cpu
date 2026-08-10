@@ -11,6 +11,15 @@ import { compareRgba8 } from './lib.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 
+const NEW_CPU_EFFECT_IDS = new Set([
+  'classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d',
+  'filter3d/flow3d', 'filter3d/palette3d',
+  'render/loopBegin', 'render/loopEnd', 'render/render3d', 'render/renderCubemap3d',
+  'render/renderCubemapSurface', 'render/renderLit3d',
+  'synth3d/cell3d', 'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
+  'synth3d/fractal3d', 'synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
+])
+
 function parseArgs(argv) {
   const options = { suite: 'all', size: 8, time: 0.25, seed: 1, tolerance: 2, writeCpu: false, json: false, only: null }
   for (let index = 0; index < argv.length; index += 1) {
@@ -62,21 +71,20 @@ async function main() {
     if (options.only && options.only !== definition.id && options.only !== definition.id.replace('/', '__')) return false
     return true
   })
-  // The 21 stateful/particle effects have no GPU golden (their CPU-side per-iteration schedule
-  // intentionally diverges from any single upstream frame - see docs/EFFECTS.md's "CPU iteration
-  // divergence" section) and are reported as explicit skips rather than silently dropped from the
-  // candidate set: they still respect --suite/--only, they are still visible in the output, and
-  // they never affect the pass/fail denominator or the exit code.
-  const definitions = candidates.filter((definition) => !definition.iterated)
-  const skipped = candidates.filter((definition) => definition.iterated)
+  // Keep the established 167-golden parity gate unchanged. The 21 pre-existing CPU-divergent
+  // simulation effects and the 17 newly ported volume/loop effects are explicit, preflighted
+  // skips until pinned GPU goldens exist for the latter set.
+  const shouldSkip = (definition) => definition.iterated || NEW_CPU_EFFECT_IDS.has(definition.id)
+  const definitions = candidates.filter((definition) => !shouldSkip(definition))
+  const skipped = candidates.filter(shouldSkip)
 
   // A skip is an explicit claim that a healthy fixture exists with no GPU golden to compare
-  // against - not a way to silently stop looking at these 21 files. Read and compile each one
+  // against - not a way to silently stop looking at these files. Read and compile each one
   // (parse the DSL and resolve every effect call against the registry) before it is ever reported
   // as SKIP, so a missing file, a parse error, or an unresolvable effect call fails this whole
   // command loudly instead of being indistinguishable from "intentionally excluded." This never
   // renders a pixel (`compileDsl` stops short of the pass-execution loop), so it doesn't
-  // reintroduce the iterationCount:60-by-default cost these 21 were skipped specifically to avoid.
+  // reintroduce the iterationCount:60-by-default cost of the iterated subset.
   for (const definition of skipped) {
     const name = definition.id.replace('/', '__')
     const programPath = manifest.get(name) ?? resolve(projectRoot, 'parity/upstream-defaults', `${name}.dsl`)
@@ -140,7 +148,8 @@ async function main() {
       process.stdout.write(`FAIL ${failure.id} max=${failure.maxError} mean=${failure.meanError.toFixed(4)} channels>${summary.tolerance}=${failure.channelsOverTolerance}\n`)
     }
     for (const id of summary.skipped) {
-      process.stdout.write(`SKIP ${id} (cpu-divergent, no GPU golden)\n`)
+      const reason = NEW_CPU_EFFECT_IDS.has(id) ? 'newly ported, no GPU golden' : 'cpu-divergent, no GPU golden'
+      process.stdout.write(`SKIP ${id} (${reason})\n`)
     }
   }
   if (failures.length > 0) process.exitCode = 1

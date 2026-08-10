@@ -20,6 +20,7 @@ import {
   evaluateBillboardFragment,
   isPremultipliedBlend,
 } from '../src/effects/cpu/billboard-deposit.js'
+import { flow3dDepositAdapter } from '../src/effects/cpu/flow3d-deposit.js'
 import { registerScatterAdapter, resolveScatterAdapter, scatterAdapterKeys } from '../src/effects/cpu/scatter-registry.js'
 
 // ---- fixture helpers ------------------------------------------------------------------------
@@ -345,6 +346,94 @@ test('physarum deposit asymmetric position exercises the bottom-left GL row -> t
 })
 
 // =========================================================================================
+// filter3d/flow3d:deposit
+// =========================================================================================
+
+test('flow3d deposit maps a 3D agent position into the flattened volume atlas', () => {
+  const stateTex1 = makeAgentSurface(1, 2)
+  const stateTex2 = makeAgentSurface(1, 2)
+  // Shader row 0 is deliberately off-atlas; shader row 1 is the asserted agent.
+  pokeAgent(stateTex1, 0, 0, [99, 99, 99, 1])
+  pokeAgent(stateTex2, 0, 0, [1, 1, 1, 1])
+  pokeAgent(stateTex1, 0, 1, [1.25, 2.25, 2.9, 0])
+  pokeAgent(stateTex2, 0, 1, [0.25, 0.5, 0.75, 0.1])
+  const destination = new Surface(4, 16)
+
+  const result = flow3dDepositAdapter({
+    uniforms: { density: 100, volumeSize: 4 },
+    inputs: { stateTex1, stateTex2 },
+    destination,
+  })
+
+  assert.equal(result.pixels, 1)
+  // atlasX=1.25 -> col 1; atlasY=2.25+floor(2.9)*4=10.25 -> GL row 10
+  // -> top-down storage row 16-1-10=5. state1.w is intentionally ignored by upstream.
+  assert.deepEqual(pixelAt(destination, 5, 1), [0.25, 0.5, 0.75, 1])
+  assert.deepEqual(pixelAt(destination, 10, 1), [0, 0, 0, 0], 'unflipped row stays untouched')
+})
+
+test('flow3d deposit additively accumulates colliding agent colors with opaque alpha', () => {
+  const stateTex1 = makeAgentSurface(2, 1)
+  const stateTex2 = makeAgentSurface(2, 1)
+  pokeAgent(stateTex1, 0, 0, [2.25, 1.25, 1.1, 1])
+  pokeAgent(stateTex1, 1, 0, [2.25, 1.25, 1.9, 1])
+  pokeAgent(stateTex2, 0, 0, [1, 0.25, 0, 0])
+  pokeAgent(stateTex2, 1, 0, [0, 0.5, 1, 0])
+  const destination = new Surface(4, 16)
+
+  const result = flow3dDepositAdapter({
+    uniforms: { density: 100, volumeSize: 4 },
+    inputs: { stateTex1, stateTex2 },
+    destination,
+  })
+
+  assert.equal(result.pixels, 2)
+  assert.deepEqual(pixelAt(destination, 10, 2), [1, 0.75, 1, 2])
+})
+
+test('flow3d deposit density limits the drawn prefix using max state dimension', () => {
+  const stateTex1 = makeAgentSurface(5, 1)
+  const stateTex2 = makeAgentSurface(5, 1)
+  for (let x = 0; x < 5; x += 1) {
+    pokeAgent(stateTex1, x, 0, [x + 0.25, 0.25, 0.1, 1])
+    pokeAgent(stateTex2, x, 0, [1, 0, 0, 1])
+  }
+  const destination = new Surface(8, 64)
+
+  // int(max(5,1) * 2 * 0.2) = 2: only gl_VertexID 0 and 1 survive.
+  const result = flow3dDepositAdapter({
+    uniforms: { density: 2, volumeSize: 8 },
+    inputs: { stateTex1, stateTex2 },
+    destination,
+  })
+
+  assert.equal(result.pixels, 2)
+  assert.deepEqual(pixelAt(destination, 63, 0), [1, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 63, 1), [1, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 63, 2), [0, 0, 0, 0])
+})
+
+test('flow3d deposit discards non-finite and out-of-atlas positions', () => {
+  const stateTex1 = makeAgentSurface(2, 1)
+  const stateTex2 = makeAgentSurface(2, 1)
+  pokeAgent(stateTex1, 0, 0, [NaN, 0.25, 0.1, 1])
+  pokeAgent(stateTex1, 1, 0, [20, 0.25, 0.1, 1])
+  pokeAgent(stateTex2, 0, 0, [1, 1, 1, 1])
+  pokeAgent(stateTex2, 1, 0, [1, 1, 1, 1])
+  const destination = new Surface(4, 16)
+
+  assert.doesNotThrow(() => {
+    const result = flow3dDepositAdapter({
+      uniforms: { density: 100, volumeSize: 4 },
+      inputs: { stateTex1, stateTex2 },
+      destination,
+    })
+    assert.equal(result.pixels, 0)
+  })
+  assert.ok(destination.data.every((value) => value === 0))
+})
+
+// =========================================================================================
 // Shared 1-px rasterization rule: `scatterPointPixel` (clip -> NDC -> pixel; discard rule)
 // =========================================================================================
 
@@ -664,13 +753,15 @@ test('evaluateBillboardFragment texture mode multiplies sampled sprite by agent 
 // Registry wiring
 // =========================================================================================
 
-test('all five deposit adapters are registered under their exact catalog keys', () => {
+test('all six deposit adapters are registered under their exact catalog keys', () => {
+  assert.equal(resolveScatterAdapter('filter3d/flow3d:deposit'), flow3dDepositAdapter)
   assert.equal(resolveScatterAdapter('points/dla:depositGrid'), dlaDepositGridAdapter)
   assert.equal(resolveScatterAdapter('points/lenia:deposit'), leniaDepositAdapter)
   assert.equal(resolveScatterAdapter('points/physarum:deposit'), physarumDepositAdapter)
   assert.equal(resolveScatterAdapter('render/pointsRender:deposit'), pointsRenderDepositAdapter)
   assert.equal(resolveScatterAdapter('render/pointsBillboardRender:deposit'), pointsBillboardRenderDepositAdapter)
   for (const key of [
+    'filter3d/flow3d:deposit',
     'points/dla:depositGrid',
     'points/lenia:deposit',
     'points/physarum:deposit',

@@ -16,6 +16,12 @@ test('Surface validates dimensions and input length', () => {
   assert.throws(() => new Surface(1, 1, new Float32Array(3)), /length 4/)
 })
 
+test('Surface rejects unsafe and oversized allocations before constructing typed arrays', () => {
+  assert.throws(() => new Surface(Number.MAX_SAFE_INTEGER + 1, 2), /safe integer/)
+  assert.throws(() => new Surface(4097, 4096), /16,777,216 pixel limit/)
+  assert.throws(() => Surface.fromRgba8(4097, 4096, new Uint8Array(4)), /16,777,216 pixel limit/)
+})
+
 test('Surface clone, clear, and RGBA byte conversion are independent', () => {
   const original = Surface.fromRgba8(1, 1, Uint8Array.of(255, 128, 0, 64))
   const copy = original.clone()

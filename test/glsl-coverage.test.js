@@ -11,6 +11,7 @@ const ADAPTER_PROGRAMS = [
   'classicNoisedeck/fractal:fractal',
   'filter/historicPalette:historicPalette',
   'filter/palette:palette',
+  'filter3d/flow3d:deposit',
   'points/dla:depositGrid',
   'points/lenia:deposit',
   'points/physarum:deposit',
@@ -20,13 +21,13 @@ const ADAPTER_PROGRAMS = [
 ]
 
 test('every eligible canonical GLSL program is transpiled or assigned a parity adapter', () => {
-  assert.equal(programCoverage.length, 274)
-  assert.equal(programCoverage.filter((program) => program.status === 'generated').length, 265)
-  assert.equal(programCoverage.filter((program) => program.status === 'adapter').length, 9)
+  assert.equal(programCoverage.length, 295)
+  assert.equal(programCoverage.filter((program) => program.status === 'generated').length, 285)
+  assert.equal(programCoverage.filter((program) => program.status === 'adapter').length, 10)
   assert.deepEqual(
     [...new Set(programCoverage.filter((program) => program.status === 'adapter').map((program) => `${program.effectId}:${program.program}`))].sort(),
     ADAPTER_PROGRAMS,
   )
-  assert.deepEqual([...new Set(programCoverage.map((program) => program.effectId))].length, 188)
+  assert.deepEqual([...new Set(programCoverage.map((program) => program.effectId))].length, 205)
   assert.ok(programCoverage.every((program) => program.sourceBytes > 0 && program.normalizedBytes > 0))
 })

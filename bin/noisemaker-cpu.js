@@ -115,9 +115,26 @@ function effectSearch(effect) {
 
 function effectProgram(effect, assignments) {
   const args = assignments.map(({ name, value }) => `${name}: ${dslValue(value)}`).join(', ')
+  const call = `${effect.func}(${args})`
+  if (effect.domain === 'loop-begin' || effect.domain === 'loop-end') {
+    const begin = effect.domain === 'loop-begin' ? call : 'loopBegin(iterationCount: 1)'
+    const end = effect.domain === 'loop-end' ? call : 'loopEnd()'
+    return `search render, synth\nsolid().${begin}.${end}.write(o0)\nrender(o0)`
+  }
+  if (effect.domain.startsWith('volume-')) {
+    const suppliedSize = assignments.find(({ name }) => name === 'volumeSize')?.value
+    const choiceKey = typeof suppliedSize === 'string' ? suppliedSize.split('.').at(-1) : null
+    const volumeSize = choiceKey
+      ? (effect.params.volumeSize?.choices?.[choiceKey] ?? effect.params.volumeSize?.default ?? 16)
+      : (suppliedSize ?? effect.params.volumeSize?.default ?? 16)
+    const search = 'search synth3d, filter3d, render'
+    if (effect.domain === 'volume-generator') return `${search}\n${call}.render3d().write(o0)\nrender(o0)`
+    if (effect.domain === 'volume-filter') return `${search}\nnoise3d(volumeSize: ${volumeSize}).${call}.render3d().write(o0)\nrender(o0)`
+    return `${search}\nnoise3d(volumeSize: ${volumeSize}).${call}.write(o0)\nrender(o0)`
+  }
   const search = effectSearch(effect)
-  if (effect.kind === 'generator') return `${search}\n${effect.func}(${args}).write(o0)\nrender(o0)`
-  if (effect.kind === 'filter') return `${search}\nsolid().${effect.func}(${args}).write(o0)\nrender(o0)`
+  if (effect.kind === 'generator') return `${search}\n${call}.write(o0)\nrender(o0)`
+  if (effect.kind === 'filter') return `${search}\nsolid().${call}.write(o0)\nrender(o0)`
   const surfaceParams = effect.paramNames
     .filter((name) => effect.params[name].type === 'surface' && !assignments.some((item) => item.name === name))
     .slice(0, 6)
@@ -143,12 +160,13 @@ function resolveEffect(name) {
 // excluded from the random pool: they default `iterationCount` to 60 and can take tens of seconds
 // to minutes at real canvas sizes (see "CPU iteration divergence" in docs/EFFECTS.md) - `--effect
 // random` should never silently hang. Effects requiring an external texture are excluded for the
-// same reason in reverse: `random` has no image to bind, so the render fails outright. An explicit
-// name (for either class) is used as-is regardless.
+// same reason in reverse: `random` has no image to bind, so the render fails outright. Volume and
+// loop-domain effects need a typed chain and are excluded too. An explicit name (for any class) is
+// used as-is regardless.
 function pickEffect(name, kind) {
   if (name !== 'random') return resolveEffect(name)
   const pool = effectCatalog.filter(
-    (effect) => effect.kind === kind && !effect.iterated && !effect.externalTexture,
+    (effect) => effect.kind === kind && effect.domain === 'image' && !effect.iterated && !effect.externalTexture,
   )
   if (pool.length === 0) throw new Error(`No ${kind} effects available`)
   return pool[Math.floor(Math.random() * pool.length)]
@@ -319,6 +337,9 @@ async function main(argv) {
     if (!inputPath) throw new Error('apply requires an input file')
     if (rest.length > 0) throw new Error(`Unexpected argument "${rest[0]}"`)
     const effect = pickEffect(effectName, 'filter')
+    if (effect.domain !== 'image') {
+      throw new Error(`apply only supports image-domain effects; use "effect ${effect.id}" or "render PROGRAM" for typed ${effect.domain} chains`)
+    }
     console.log(effect.id)
     await applyEffect(effect, inputPath, options)
     return

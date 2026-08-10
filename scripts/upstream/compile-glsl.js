@@ -35,6 +35,7 @@ const adapters = new Set([
   'classicNoisedeck/fractal:fractal',
   'filter/historicPalette:historicPalette',
   'filter/palette:palette',
+  'filter3d/flow3d:deposit',
   'synth/julia:julia',
   'points/dla:depositGrid',
   'points/lenia:deposit',
@@ -277,6 +278,38 @@ function preserveScalarFloatDeclarations(source) {
   )
 }
 
+function lowerPaletteStructArray(source) {
+  const declaration = source.match(
+    /const PaletteEntry PALETTES\[PALETTE_COUNT\] = PaletteEntry\[PALETTE_COUNT\]\(([\s\S]*?)\n\);/,
+  )
+  if (!declaration) throw new Error('Unable to locate canonical palette3d struct array')
+  const entries = [...declaration[1].matchAll(
+    /PaletteEntry\(\s*(vec4\([^)]*\))\s*,\s*(vec4\([^)]*\))\s*,\s*(vec4\([^)]*\))\s*,\s*(vec4\([^)]*\))\s*\)/g,
+  )]
+  if (entries.length !== 55) throw new Error(`Expected 55 canonical palette3d entries, found ${entries.length}`)
+  const selectorNames = ['cpuPaletteAmp', 'cpuPaletteFreq', 'cpuPaletteOffset', 'cpuPalettePhase']
+  const selectors = selectorNames.map((name, fieldIndex) =>
+    `vec4 ${name}(int index) {\n` +
+    entries.slice(0, -1).map((entry, index) => `    if (index == ${index}) return ${entry[fieldIndex + 1]};`).join('\n') +
+    `\n    return ${entries.at(-1)[fieldIndex + 1]};\n}`,
+  ).join('\n')
+  return source
+    .replace(/struct PaletteEntry \{[\s\S]*?\n\};\n/, '')
+    .replace(declaration[0], selectors)
+    .replace(
+      'PaletteEntry entry = PALETTES[paletteIndex - 1];',
+      'int cpuPaletteIndex = paletteIndex - 1;\n' +
+      '    vec4 entryAmp = cpuPaletteAmp(cpuPaletteIndex);\n' +
+      '    vec4 entryFreq = cpuPaletteFreq(cpuPaletteIndex);\n' +
+      '    vec4 entryOffset = cpuPaletteOffset(cpuPaletteIndex);\n' +
+      '    vec4 entryPhase = cpuPalettePhase(cpuPaletteIndex);',
+    )
+    .replaceAll('entry.amp', 'entryAmp')
+    .replaceAll('entry.freq', 'entryFreq')
+    .replaceAll('entry.offset', 'entryOffset')
+    .replaceAll('entry.phase', 'entryPhase')
+}
+
 function adaptCanonicalSource(effectId, source) {
   // glsl-transpiler flattens these common hash swizzles into scalar JS inside
   // one typed-array constructor, erasing the float32 operation boundaries
@@ -284,6 +317,10 @@ function adaptCanonicalSource(effectId, source) {
   // result while still compiling to allocation-free Math.fround calls.
   if (effectId !== 'filter/scatter') {
     source = source
+      .replaceAll(
+        'if (hit.dist > 0.0) {',
+        'float cpuVoxelHitDist = hit.dist;\n        if (cpuVoxelHitDist > 0.0) {',
+      )
       .replaceAll(
         'return fract((p3.x + p3.y) * p3.z);',
         'return fract(float(float(p3.x + p3.y) * p3.z));',
@@ -346,6 +383,39 @@ function adaptCanonicalSource(effectId, source) {
       .replace('cHi = p.center.xy + vec2(centerHiX, centerHiY);', 'cHi = vec2(p.center.x, p.center.y) + vec2(centerHiX, centerHiY);')
       .replace('cLo = p.center.zw + vec2(centerLoX, centerLoY);', 'cLo = vec2(p.center.z, p.center.w) + vec2(centerLoX, centerLoY);')
   }
+  if (effectId === 'classicNoisedeck/shapes3d') {
+    // glsl-transpiler resolves `data.repeatSpacing` as the owning TransformData
+    // struct when it participates directly in vector division. Copying the
+    // scalar member to a local preserves the GLSL operation and its type.
+    source = source.replaceAll(
+      'p -= data.repeatSpacing * round(p / data.repeatSpacing);',
+      'float cpuRepeatSpacing = data.repeatSpacing;\n        p -= cpuRepeatSpacing * round(p / cpuRepeatSpacing);',
+    )
+  }
+  if (effectId === 'filter3d/palette3d') {
+    // glsl-transpiler cannot lower a constant array of structs and silently
+    // emits constant vec4 arrays as empty arrays. Selector functions retain
+    // the same dynamic lookup and every canonical field value.
+    source = lowerPaletteStructArray(source)
+  }
+  if (['render/render3d', 'render/renderCubemap3d', 'render/renderLit3d'].includes(effectId)) {
+    // As with TransformData above, glsl-transpiler assigns the owning hit
+    // struct's type to a scalar member used inside arithmetic. Typed locals
+    // make the scalar boundary explicit without changing the raymarch.
+    source = source
+      .replaceAll(
+        'result.dist = (tLo + tHi) * 0.5;\n            result.pos = ro + rd * result.dist;',
+        'float cpuResultDist = (tLo + tHi) * 0.5;\n            result.dist = cpuResultDist;\n            result.pos = ro + rd * cpuResultDist;',
+      )
+      .replaceAll(
+        'vec3 p = ro + rd * hit.dist;',
+        'float cpuHitDist = hit.dist;\n            vec3 p = ro + rd * cpuHitDist;',
+      )
+      .replaceAll(
+        'depth = hit.dist / MAX_DIST;',
+        'float cpuHitDepth = hit.dist;\n            depth = cpuHitDepth / MAX_DIST;',
+      )
+  }
   if (effectId === 'synth/noise') {
     source = source
       .replace('float base = map(75.0, 1.0, 100.0, 40.0, 1.0);', 'float base = 10.84848403930664;')
@@ -386,6 +456,26 @@ function adaptCanonicalSource(effectId, source) {
     // helper also declares a local `b2`; renaming it too is free insurance against the same
     // landmine. Renaming is a pure syntactic dodge — every read and write moves together.
     source = source.replace(/\ba2\b/g, 'aNext').replace(/\bb2\b/g, 'bNext')
+  }
+  if (effectId === 'synth3d/cell3d') {
+    // The same optimizer bug described above for reactionDiffusion folds the
+    // h1/h2/h3 color locals to NaN. Descriptive names avoid its type-suffix
+    // heuristic while preserving every expression and use.
+    source = source
+      .replace(/\bh1\b/g, 'cellHueOne')
+      .replace(/\bh2\b/g, 'cellHueTwo')
+      .replace(/\bh3\b/g, 'cellHueThree')
+  }
+  if (effectId === 'synth3d/flythrough3d') {
+    // FractalResult contains exactly three floats. Lower it to a vec3 because
+    // glsl-transpiler treats scalar struct members as the whole struct in
+    // comparisons/arithmetic and corrupts struct-member assignments.
+    source = source
+      .replace(/struct FractalResult \{[\s\S]*?\n\};\n/, '')
+      .replace(/\bFractalResult\b/g, 'vec3')
+      .replace(/\.dist\b/g, '.x')
+      .replace(/\.trap\b/g, '.y')
+      .replace(/\.iterRatio\b/g, '.z')
   }
   return preserveFloatCasts(preserveTextureScalarSwizzles(preserveVectorAssignmentReads(preserveMatrixSelfAssignments(source))))
 }

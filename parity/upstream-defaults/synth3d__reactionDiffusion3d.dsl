@@ -1,10 +1,8 @@
 search synth3d, filter3d, render
 
-noise3d(volumeSize: x32)
-  .write3d(vol0, geo0)
-
-reactionDiffusion3d(source: read3d(vol0), geoSource: read3d(geo0))
-  .render3d()
+noise3d(seed: 0, volumeSize: x32)
+  .reactionDiffusion3d(seed: 1, volumeSize: x32)
+  .render3d(volumeSize: v32)
   .write(o0)
 
 render(o0)

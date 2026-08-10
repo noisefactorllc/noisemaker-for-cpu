@@ -1,6 +1,6 @@
 search synth3d, filter3d, render
 
-noise3d(volumeSize: x64)
+noise3d(seed: 0, volumeSize: x64)
   .palette3d()
   .render3d()
   .write(o0)

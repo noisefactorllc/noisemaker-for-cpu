@@ -255,6 +255,13 @@ export class GlslCpuRuntime {
       for (let index = 0; index < left.length; index += 1) sum += left[index] * right[index]
       return F32(sum)
     }
+    const cross = (left, right) => {
+      const out = this.alloc(3)
+      out[0] = F32(left[1] * right[2] - left[2] * right[1])
+      out[1] = F32(left[2] * right[0] - left[0] * right[2])
+      out[2] = F32(left[0] * right[1] - left[1] * right[0])
+      return out
+    }
     const length = (value) => F32(Math.sqrt(dot(value, value)))
     const normalize = (value) => {
       const magnitude = length(value)
@@ -357,6 +364,7 @@ export class GlslCpuRuntime {
       length,
       distance: (left, right) => length(subtract(left, right)),
       dot,
+      cross,
       normalize,
       reflect: (incident, normal) => subtract(incident, multiply(normal, 2 * dot(normal, incident))),
       refract: (incident, normal, eta) => {

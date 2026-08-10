@@ -171,3 +171,81 @@ test('DSL compiles a program combining a render-namespace search entry, chained 
     ['synth/perlin', 'render/pointsEmit', 'points/physical', 'render/pointsRender', 'write'],
   )
 })
+
+test('DSL compiles a volume generator, volume filter, and volume renderer as one typed chain', () => {
+  // Break caught: treating a volume-only generator as an ordinary image generator lets it be
+  // written directly and loses the volume/geometry channels before render3d consumes them.
+  const plan = compileDsl(`
+    search synth3d, filter3d, render
+    noise3d(volumeSize: 16).palette3d(volumeSize: 16).render3d(volumeSize: 16).write(o0)
+    render(o0)
+  `, createDefaultRegistry())
+
+  assert.deepEqual(
+    plan.chains[0].steps.filter((step) => step.kind === 'effect').map((step) => step.definition.domain),
+    ['volume-generator', 'volume-filter', 'volume-renderer'],
+  )
+})
+
+test('DSL lets an iterated volume generator consume an upstream volume without relaxing ordinary generator placement', () => {
+  const registry = createDefaultRegistry()
+  const plan = compileDsl(`
+    search synth3d, render
+    noise3d(volumeSize: x32)
+      .reactionDiffusion3d(volumeSize: x32, iterationCount: 1)
+      .render3d(volumeSize: v32)
+      .write(o0)
+    render(o0)
+  `, registry)
+
+  assert.deepEqual(
+    plan.chains[0].steps.filter((step) => step.kind === 'effect').map((step) => step.definition.id),
+    ['synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'render/render3d'],
+  )
+  assert.throws(
+    () => compileDsl('search synth3d\nnoise3d().shape3d().write(o0)', registry),
+    /Generator synth3d\/shape3d must begin a chain/,
+  )
+})
+
+test('DSL rejects missing volume inputs and writing a volume-only chain', () => {
+  const registry = createDefaultRegistry()
+  assert.throws(
+    () => compileDsl('search synth, filter3d\nsolid().palette3d().write(o0)', registry),
+    /volume filter filter3d\/palette3d requires a volume input/,
+  )
+  assert.throws(
+    () => compileDsl('search synth, render\nsolid().render3d().write(o0)', registry),
+    /volume renderer render\/render3d requires a volume input/,
+  )
+  assert.throws(
+    () => compileDsl('search synth3d\nnoise3d(volumeSize: 16).write(o0)', registry),
+    /write\(surface\) requires a current image/,
+  )
+})
+
+test('DSL accepts one balanced accumulator loop and rejects malformed loop markers', () => {
+  const registry = createDefaultRegistry()
+  const plan = compileDsl(`
+    search synth, filter, render
+    solid().loopBegin(iterationCount: 3).blur().loopEnd().write(o0)
+    render(o0)
+  `, registry)
+  assert.deepEqual(
+    plan.chains[0].steps.filter((step) => step.kind === 'effect').map((step) => step.definition.loopRole ?? null),
+    [null, 'begin', null, 'end'],
+  )
+
+  assert.throws(
+    () => compileDsl('search synth, render\nsolid().loopEnd().write(o0)', registry),
+    /loopEnd has no matching loopBegin/,
+  )
+  assert.throws(
+    () => compileDsl('search synth, render\nsolid().loopBegin().write(o0)', registry),
+    /loopBegin must be closed by loopEnd before write/,
+  )
+  assert.throws(
+    () => compileDsl('search synth, render\nsolid().loopBegin().loopBegin().loopEnd().loopEnd().write(o0)', registry),
+    /nested loopBegin regions are not supported/,
+  )
+})

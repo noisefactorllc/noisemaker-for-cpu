@@ -59,6 +59,27 @@ test('computeIterationGroups leaves a chain with no particle/stateful steps as o
   assert.deepEqual(groups.map((g) => [g.iterated, g.steps.length]), [[false, 1], [false, 1]])
 })
 
+test('computeIterationGroups makes a balanced loop region one iteration-owned group', () => {
+  // Break caught: leaving loopBegin/loopEnd as independent groups runs the enclosed blur once
+  // instead of once per accumulator iteration.
+  const solid = step('synth/solid')
+  const begin = step('render/loopBegin', {}, [], true, { iterationCount: 3 })
+  begin.definition.loopRole = 'begin'
+  const blur = step('filter/blur')
+  const end = step('render/loopEnd')
+  end.definition.loopRole = 'end'
+  const invert = step('filter/invert')
+
+  const groups = computeIterationGroups([solid, begin, blur, end, invert])
+  assert.deepEqual(groups.map((group) => [group.iterated, group.loop === true, group.steps.length]), [
+    [false, false, 1],
+    [true, true, 3],
+    [false, false, 1],
+  ])
+  assert.equal(groups[1].steps[0], begin)
+  assert.equal(groups[1].steps[2], end)
+})
+
 // ---------------------------------------------------------------------------------------------
 // Step 1b: renderer-level fixtures (hand-built registry, same style as canonical-render-graph.test.js)
 // ---------------------------------------------------------------------------------------------
@@ -252,6 +273,23 @@ function copyFromLifeDataFactory($bindings, runtime) {
   return copyFactory($bindings, runtime, 'lifeTex')
 }
 
+function loopBeginFactory($bindings, runtime) {
+  const sample = runtime.stdlib.texture
+  return function loopBeginKernel(context, out) {
+    runtime.beginPixel(context)
+    const input = sample($bindings.inputTex, context.uv)
+    const accum = sample($bindings.accumTex, context.uv)
+    out[0] = input[0] + accum[0]
+    out[1] = 0
+    out[2] = 0
+    out[3] = 1
+  }
+}
+
+function loopCopyFactory($bindings, runtime) {
+  return copyFactory($bindings, runtime, 'inputTex')
+}
+
 // Registers into scatter-registry.js's shared, process-global `adapters` Map at import time, under
 // a synthetic key ('filter/customScatter:deposit') no shipped effect uses. Safe only because
 // `node --test` runs each test file in its own process, so this registration never leaks into
@@ -303,6 +341,24 @@ function fixture() {
       namespace: 'filter', func: 'iterZero', kind: 'filter', iterated: true,
       params: { iterationCount: { type: 'int', default: 60, min: 0, max: 10000 } },
       passes: [{ name: 'bump', program: 'addConst', inputs: { inputTex: 'inputTex' }, outputs: { fragColor: 'outputTex' } }],
+    }),
+    new EffectDefinition({
+      namespace: 'render', func: 'loopBegin', kind: 'filter', domain: 'loop-begin', loopRole: 'begin', iterated: true,
+      params: { iterationCount: { type: 'int', default: 60, min: 0, max: 10000 } },
+      passes: [{ name: 'begin', program: 'loopBegin', inputs: { inputTex: 'inputTex', accumTex: 'global_accum' }, outputs: { fragColor: 'outputTex' } }],
+    }),
+    new EffectDefinition({
+      namespace: 'filter', func: 'loopAdd', kind: 'filter',
+      params: {},
+      passes: [{ name: 'add', program: 'addConst', inputs: { inputTex: 'inputTex' }, outputs: { fragColor: 'outputTex' } }],
+    }),
+    new EffectDefinition({
+      namespace: 'render', func: 'loopEnd', kind: 'filter', domain: 'loop-end', loopRole: 'end',
+      params: {},
+      passes: [
+        { name: 'feedback', program: 'copy', inputs: { inputTex: 'inputTex' }, outputs: { fragColor: 'global_accum' } },
+        { name: 'output', program: 'copy', inputs: { inputTex: 'inputTex' }, outputs: { fragColor: 'outputTex' } },
+      ],
     }),
     // Two-step particle group: proves per-iteration interleaving (respawn/move/deposit style).
     new EffectDefinition({
@@ -415,6 +471,9 @@ function fixture() {
       ['filter/selfTexProbe:selfTexProbe', selfTexProbeFactory],
       ['filter/selfTexSizeMismatch:mismatchWrite', selfTexMismatchFactory],
       ['filter/iterZero:addConst', addConstFactory],
+      ['render/loopBegin:loopBegin', loopBeginFactory],
+      ['filter/loopAdd:addConst', addConstFactory],
+      ['render/loopEnd:copy', loopCopyFactory],
       ['points/testEmit:moveState', moveStateFactory],
       ['points/testEmit:constOutput', constOutputFactory],
       ['points/testDeposit:depositState', depositStateFactory],
@@ -464,6 +523,23 @@ test('iterationCount: 0 produces a byte-exact clone of the group input and runs 
   )
   assert.deepEqual([...after.surface.data], [...before.surface.data])
   assert.equal(after.stats.passes, before.stats.passes, 'the N=0 group must not run its pass at all')
+})
+
+test('loop regions reuse one accumulator while freezing the pre-loop input across iterations', async () => {
+  // Break caught: feeding the previous loop output back as the next iteration's input double
+  // counts it; only global_accum should advance while the pre-loop input stays fixed.
+  const program = `
+    search synth, filter, render
+    fill(value: 0.2).loopBegin(iterationCount: 3).loopAdd().loopEnd().write(o0)
+    render(o0)
+  `
+  const sync = fixture().render(program, { width: 1, height: 1 })
+  assert.ok(Math.abs(sync.surface.data[0] - 0.9) < 0.002, `expected 0.9, received ${sync.surface.data[0]}`)
+  const asyncResult = await fixture().renderAsync(program, { width: 1, height: 1 })
+  assert.deepEqual([...asyncResult.surface.data], [...sync.surface.data])
+
+  const bypass = fixture().render(program.replace('iterationCount: 3', 'iterationCount: 0'), { width: 1, height: 1 })
+  assert.ok(Math.abs(bypass.surface.data[0] - 0.2) < 0.002)
 })
 
 test('selfTex resolves to the same step\'s previous-iteration output, zero on iteration 0', () => {

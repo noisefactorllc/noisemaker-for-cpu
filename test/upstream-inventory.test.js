@@ -1,12 +1,15 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-import {
+import * as snapshot from '../src/effects/generated/upstream-snapshot.js'
+
+const {
   UPSTREAM_REVISION,
   effectRecords,
   eligibleEffectIds,
   excludedEffects,
-} from '../src/effects/generated/upstream-snapshot.js'
+  sourceEffectIds,
+} = snapshot
 
 const EXPECTED_IDS = [
   'classicNoisedeck/bitEffects',
@@ -23,9 +26,11 @@ const EXPECTED_IDS = [
   'classicNoisedeck/lensDistortion',
   'classicNoisedeck/moodscape',
   'classicNoisedeck/noise',
+  'classicNoisedeck/noise3d',
   'classicNoisedeck/refract',
   'classicNoisedeck/shapeMixer',
   'classicNoisedeck/shapes',
+  'classicNoisedeck/shapes3d',
   'classicNoisedeck/splat',
   'filter/adjust',
   'filter/bc',
@@ -143,6 +148,8 @@ const EXPECTED_IDS = [
   'filter/wobble',
   'filter/wormhole',
   'filter/zoomBlur',
+  'filter3d/flow3d',
+  'filter3d/palette3d',
   'mixer/alphaMask',
   'mixer/applyMode',
   'mixer/blendMode',
@@ -168,9 +175,15 @@ const EXPECTED_IDS = [
   'points/life',
   'points/physarum',
   'points/physical',
+  'render/loopBegin',
+  'render/loopEnd',
   'render/pointsBillboardRender',
   'render/pointsEmit',
   'render/pointsRender',
+  'render/render3d',
+  'render/renderCubemap3d',
+  'render/renderCubemapSurface',
+  'render/renderLit3d',
   'synth/bitwise',
   'synth/cell',
   'synth/cellularAutomata',
@@ -197,6 +210,13 @@ const EXPECTED_IDS = [
   'synth/solid',
   'synth/subdivide',
   'synth/testPattern',
+  'synth3d/cell3d',
+  'synth3d/cellularAutomata3d',
+  'synth3d/flythrough3d',
+  'synth3d/fractal3d',
+  'synth3d/noise3d',
+  'synth3d/reactionDiffusion3d',
+  'synth3d/shape3d',
 ]
 
 const EXPECTED_ITERATED = [
@@ -204,6 +224,7 @@ const EXPECTED_ITERATED = [
   'filter/feedback',
   'filter/motionBlur',
   'filter/temporalAberration',
+  'filter3d/flow3d',
   'points/attractor',
   'points/buddhabrot',
   'points/dla',
@@ -214,6 +235,7 @@ const EXPECTED_ITERATED = [
   'points/life',
   'points/physarum',
   'points/physical',
+  'render/loopBegin',
   'render/pointsBillboardRender',
   'render/pointsEmit',
   'render/pointsRender',
@@ -221,6 +243,8 @@ const EXPECTED_ITERATED = [
   'synth/mnca',
   'synth/navierStokes',
   'synth/reactionDiffusion',
+  'synth3d/cellularAutomata3d',
+  'synth3d/reactionDiffusion3d',
 ]
 
 const REACTIVE = [
@@ -229,17 +253,28 @@ const REACTIVE = [
   'synth/spectrum',
 ]
 
-test('upstream snapshot pins the exact 188-effect standalone-frame 2D inventory', () => {
+const EXCLUDED = [
+  'render/meshLoader',
+  'render/meshRender',
+  ...REACTIVE,
+].sort()
+
+test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
   assert.equal(UPSTREAM_REVISION, 'a024dc3a960cc44af454abc7aebce50456c194e6')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
-    Object.fromEntries(['classicNoisedeck', 'filter', 'mixer', 'points', 'render', 'synth'].map((namespace) => [
+    Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
       namespace,
       eligibleEffectIds.filter((id) => id.startsWith(`${namespace}/`)).length,
     ])),
-    { classicNoisedeck: 18, filter: 116, mixer: 15, points: 10, render: 3, synth: 26 },
+    { classicNoisedeck: 20, filter: 116, filter3d: 2, mixer: 15, points: 10, render: 9, synth: 26, synth3d: 7 },
   )
   assert.deepEqual(excludedEffects.reactive, REACTIVE)
+  const excludedIds = Object.values(excludedEffects).flat().sort()
+  assert.deepEqual(excludedIds, EXCLUDED)
+  assert.equal(sourceEffectIds.length, 210)
+  assert.equal(new Set([...eligibleEffectIds, ...excludedIds]).size, 210)
+  assert.deepEqual([...eligibleEffectIds, ...excludedIds].sort(), [...sourceEffectIds].sort())
 })
 
 test('upstream snapshot preserves parity-critical definition metadata', () => {
@@ -278,12 +313,27 @@ test('upstream snapshot preserves parity-critical definition metadata', () => {
   assert.equal(pondRipples.params.speed.uniform, 'speed')
   assert.equal(pondRipples.params.speed.min, -5)
   assert.equal(pondRipples.params.speed.max, 5)
+
+  const volumeNoise = byId.get('synth3d/noise3d')
+  assert.equal(volumeNoise.domain, 'volume-generator')
+  assert.equal(volumeNoise.outputTex3d, 'volumeCache')
+  assert.equal(volumeNoise.outputGeo, 'geoBuffer')
+  assert.deepEqual(volumeNoise.passes[0].viewport.height,
+    { param: 'volumeSize', power: 2, default: 4096 })
+
+  const volumeRenderer = byId.get('render/render3d')
+  assert.equal(volumeRenderer.domain, 'volume-renderer')
+  assert.equal(volumeRenderer.outputTex3d, 'inputTex3d')
+  assert.equal(volumeRenderer.outputGeo, 'screenGeoBuffer')
+
+  assert.equal(byId.get('render/loopBegin').loopRole, 'begin')
+  assert.equal(byId.get('render/loopEnd').loopRole, 'end')
 })
 
 test('stateful and particle records carry CPU iteration metadata', () => {
   const byId = new Map(effectRecords.map((record) => [record.id, record]))
   const iterated = effectRecords.filter((record) => record.iterated === true).map((record) => record.id)
-  assert.deepEqual(iterated, EXPECTED_ITERATED) // the 21-id literal, sorted
+  assert.deepEqual(iterated, EXPECTED_ITERATED)
   for (const id of EXPECTED_ITERATED) {
     const param = byId.get(id).params.iterationCount
     assert.deepEqual(param, { type: 'int', default: 60, min: 0, max: 10000, cpuOnly: true })
@@ -329,5 +379,6 @@ test('stateful and particle records carry CPU iteration metadata', () => {
   }
   assert.equal('stateful' in excludedEffects, false)
   assert.equal('particles' in excludedEffects, false)
-  assert.deepEqual(excludedEffects.control, ['render/loopBegin', 'render/loopEnd'])
+  assert.equal('control' in excludedEffects, false)
+  assert.deepEqual(excludedEffects.mesh, ['render/meshLoader', 'render/meshRender'])
 })

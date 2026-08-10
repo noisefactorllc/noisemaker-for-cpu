@@ -24,6 +24,10 @@ test('pooled vector and matrix helpers implement GLSL component operations', () 
   assert.deepEqual([...runtime.stdlib.mod(new Float32Array([-1, 7]), 3)], [2, 1])
   assert.deepEqual([...runtime.stdlib.mix(new Float32Array([0, 2]), new Float32Array([2, 4]), 0.25)], [0.5, 2.5])
   assert.equal(runtime.stdlib.dot(new Float32Array([1, 2, 3]), new Float32Array([4, 5, 6])), 32)
+  assert.deepEqual(
+    [...runtime.stdlib.cross(new Float32Array([1, 0, 0]), new Float32Array([0, 1, 0]))],
+    [0, 0, 1],
+  )
   assert.deepEqual([...runtime.stdlib.ivec2(1.9, -2.9)], [1, -2])
   assert.deepEqual(
     [...runtime.stdlib.matrixMult(new Float32Array([1, 0, 0, 1]), new Float32Array([3, 4]))],

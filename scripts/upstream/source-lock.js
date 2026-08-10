@@ -1,22 +1,46 @@
-import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import { readdirSync, readFileSync } from 'node:fs'
+import { join, relative } from 'node:path'
 
 export const PINNED_UPSTREAM_REVISION = 'a024dc3a960cc44af454abc7aebce50456c194e6'
 export const PINNED_SOURCE_PATHS = Object.freeze(['shaders/effects', 'shaders/src'])
+export const PINNED_SOURCE_DIGEST = '580a546934e98d37c182f8168c7ad7ab0d7a863144a52036a5bd564972aae4bb'
 
-export function assertPinnedSource(referenceRoot, run = execFileSync) {
-  let head
+function sourceFiles(path, files) {
+  for (const entry of readdirSync(path, { withFileTypes: true })) {
+    const entryPath = join(path, entry.name)
+    if (entry.isDirectory()) sourceFiles(entryPath, files)
+    else if (entry.isFile()) files.push(entryPath)
+  }
+}
+
+export function computePinnedSourceDigest(referenceRoot) {
+  const files = []
+  for (const sourcePath of PINNED_SOURCE_PATHS) sourceFiles(join(referenceRoot, sourcePath), files)
+  files.sort((left, right) => relative(referenceRoot, left).localeCompare(relative(referenceRoot, right)))
+
+  const hash = createHash('sha256')
+  for (const file of files) {
+    const path = relative(referenceRoot, file).split('\\').join('/')
+    const bytes = readFileSync(file)
+    hash.update(path)
+    hash.update('\0')
+    hash.update(String(bytes.length))
+    hash.update('\0')
+    hash.update(bytes)
+  }
+  return hash.digest('hex')
+}
+
+export function assertPinnedSource(referenceRoot, expectedDigest = PINNED_SOURCE_DIGEST) {
+  let digest
   try {
-    head = run('git', ['rev-parse', 'HEAD'], { cwd: referenceRoot, encoding: 'utf8' }).trim()
+    digest = computePinnedSourceDigest(referenceRoot)
   } catch (error) {
-    throw new Error(`Unable to verify Noisemaker source revision at ${referenceRoot}: ${error.message}`, { cause: error })
+    throw new Error(`Unable to hash Noisemaker source at ${referenceRoot}: ${error.message}`, { cause: error })
   }
-  if (head !== PINNED_UPSTREAM_REVISION) {
-    throw new Error(`Noisemaker source revision mismatch: expected ${PINNED_UPSTREAM_REVISION}, received ${head}`)
+  if (digest !== expectedDigest) {
+    throw new Error(`Noisemaker source content digest mismatch: expected ${expectedDigest}, received ${digest}`)
   }
-  const dirty = run('git', ['status', '--porcelain', '--untracked-files=all', '--', ...PINNED_SOURCE_PATHS], {
-    cwd: referenceRoot,
-    encoding: 'utf8',
-  }).trim()
-  if (dirty) throw new Error(`Noisemaker pinned source paths are dirty; refusing generation:\n${dirty}`)
-  return head
+  return PINNED_UPSTREAM_REVISION
 }

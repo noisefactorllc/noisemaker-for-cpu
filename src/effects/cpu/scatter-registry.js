@@ -31,6 +31,7 @@ import {
   pointsRenderDepositAdapter,
 } from './points-deposit.js'
 import { pointsBillboardRenderDepositAdapter } from './billboard-deposit.js'
+import { flow3dDepositAdapter } from './flow3d-deposit.js'
 
 const adapters = new Map()
 
@@ -59,13 +60,14 @@ function wormholeDepositAdapter({ inputs, destination, uniforms }) {
 
 registerScatterAdapter('filter/wormhole:deposit', wormholeDepositAdapter)
 
-// The five vertex-stage scatter programs carry `status: 'adapter'` coverage entries
+// The six vertex-stage scatter programs carry `status: 'adapter'` coverage entries
 // (glsl-coverage.js) so their `.frag` halves are never sent through the fragment-kernel
 // transpiler. Hand-ported in `points-deposit.js` (the four 1-px `GL_POINTS` deposits) and
 // `billboard-deposit.js` (the billboard quad deposit) — see those files for the port itself.
 // `render/pointsBillboardRender`'s two pass records (`deposit`, `deposit_alpha`) share
 // `program: "deposit"`, so both key to this same single registration; the adapter reads
 // `pass.blend` per invocation to pick additive vs. premultiplied-over.
+registerScatterAdapter('filter3d/flow3d:deposit', flow3dDepositAdapter)
 registerScatterAdapter('points/dla:depositGrid', dlaDepositGridAdapter)
 registerScatterAdapter('points/lenia:deposit', leniaDepositAdapter)
 registerScatterAdapter('points/physarum:deposit', physarumDepositAdapter)

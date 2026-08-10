@@ -91,12 +91,41 @@ function assertRenderOptions(options) {
   }
 }
 
+function isChainBundle(value) {
+  return value !== null && typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, 'image')
+}
+
+function chainBundle(value) {
+  return isChainBundle(value)
+    ? value
+    : { image: value ?? null, volume: null, geometry: null, volumeSize: null }
+}
+
+function inheritVolumeSize(definition, params, inputBundle) {
+  const volume = inputBundle.volume
+  if (!volume || !Object.hasOwn(params, 'volumeSize')) return params
+  if (definition.domain !== 'volume-generator' && definition.domain !== 'volume-filter' && definition.domain !== 'volume-renderer') return params
+  const volumeSize = volume.width
+  if (volume.height !== volumeSize ** 2) {
+    throw new Error(`${definition.id} input volume atlas expected ${volumeSize}x${volumeSize ** 2}, received ${volume.width}x${volume.height}`)
+  }
+  return params.volumeSize === volumeSize ? params : { ...params, volumeSize }
+}
+
+function bundleOutput(name, input, resources) {
+  if (!name) return input
+  if (name === 'inputTex') return input
+  if (name === 'inputTex3d') return input
+  if (name === 'inputGeo') return input
+  return resources.get(name) ?? null
+}
+
 // `axis` selects which of `ctx.width`/`ctx.height` is this dimension's own screen-relative
 // fallback; `ctx.params` are the invocation's normalized effect params (used by the
 // `{ param }`/`{ screenDivide }` object forms below).
 function textureDimension(spec, axis, ctx) {
   const fallback = ctx[axis]
-  if (spec === undefined || spec === 'input' || spec === 'screen' || spec === '100%') return fallback
+  if (spec === undefined || spec === 'input' || spec === 'screen' || spec === 'resolution' || spec === '100%') return fallback
   if (typeof spec === 'number') return Math.max(1, Math.round(spec))
   if (typeof spec === 'string') {
     const percent = spec.match(/^(\d+(?:\.\d+)?)%$/)
@@ -104,9 +133,14 @@ function textureDimension(spec, axis, ctx) {
     throw new TypeError(`Unsupported canonical texture dimension ${JSON.stringify(spec)}`)
   }
   if (spec && typeof spec === 'object') {
+    if (spec.inputOverride) {
+      const input = ctx.resources?.get(spec.inputOverride)
+      if (input?.data) return axis === 'width' ? input.width : input.height
+    }
     if ('param' in spec) {
       const value = ctx.params?.[spec.param] ?? spec.paramDefault ?? spec.default
-      return Math.max(1, Math.round(value))
+      const resolved = spec.power === undefined ? value : value ** spec.power
+      return Math.max(1, Math.round(resolved))
     }
     if ('screenDivide' in spec) {
       const divisor = Math.max(1, ctx.params?.[spec.screenDivide] ?? spec.default)
@@ -294,11 +328,11 @@ export class CpuRenderer {
     return uniforms
   }
 
-  canonicalDestination(definition, outputName, params, renderOptions) {
+  canonicalDestination(definition, outputName, params, renderOptions, pass = null, resources = null) {
     const texture = definition.textures[outputName] ?? {}
-    const ctx = { params, width: renderOptions.width, height: renderOptions.height }
-    const width = textureDimension(texture.width, 'width', ctx)
-    const height = textureDimension(texture.height, 'height', ctx)
+    const ctx = { params, width: renderOptions.width, height: renderOptions.height, resources }
+    const width = textureDimension(pass?.viewport?.width ?? texture.width, 'width', ctx)
+    const height = textureDimension(pass?.viewport?.height ?? texture.height, 'height', ctx)
     const surface = this.pool.acquire(width, height)
     surface.format = texture.format ?? 'rgba16f'
     return surface
@@ -343,7 +377,7 @@ export class CpuRenderer {
         resources.set(name, surface)
         continue
       }
-      const surface = this.canonicalDestination(definition, name, params, renderOptions)
+      const surface = this.canonicalDestination(definition, name, params, renderOptions, null, resources)
       surface.clear()
       owned.add(surface)
       resources.set(name, surface)
@@ -455,13 +489,13 @@ export class CpuRenderer {
   // `runCanonicalMrtPass`/`Async`), so they MUST share identical width/height. Enforced here with
   // a descriptive throw naming every output's resolved size, rather than letting a mismatched
   // record silently scramble whichever destination is smaller. Shared by the sync/async pass loops.
-  canonicalMrtDestinations(definition, pass, factory, params, renderOptions, owned) {
+  canonicalMrtDestinations(definition, pass, factory, params, renderOptions, owned, resources = null) {
     const destinations = factory.outputNames.map((outputVariable) => {
       const destinationName = pass.outputs?.[outputVariable]
       if (!destinationName) {
         throw new Error(`${definition.id} pass "${pass.name}" has no destination for output "${outputVariable}"`)
       }
-      const surface = this.canonicalDestination(definition, destinationName, params, renderOptions)
+      const surface = this.canonicalDestination(definition, destinationName, params, renderOptions, pass, resources)
       owned.add(surface)
       return { name: destinationName, surface }
     })
@@ -508,13 +542,39 @@ export class CpuRenderer {
   // `iterationCount: 0` → group output is a clone of the group's input surface, or (when the
   // group starts the chain, i.e. has no input — a `kind: 'generator'` owning step) a zeroed
   // screen-sized surface. No pass runs; nothing is mutated. Shared by sync/async (no pixel loop).
-  zeroIterationGroupOutput(groupInput, renderOptions, owned) {
-    if (groupInput) {
-      const surface = this.pool.acquire(groupInput.width, groupInput.height)
-      surface.format = groupInput.format
-      surface.data.set(groupInput.data)
+  zeroIterationGroupOutput(group, groupInput, renderOptions, owned) {
+    const cloneSurface = (input) => {
+      if (!input) return null
+      const surface = this.pool.acquire(input.width, input.height)
+      surface.format = input.format
+      surface.data.set(input.data)
       owned.add(surface)
       return surface
+    }
+    if (groupInput) {
+      if (isChainBundle(groupInput)) {
+        return {
+          image: cloneSurface(groupInput.image),
+          volume: cloneSurface(groupInput.volume),
+          geometry: cloneSurface(groupInput.geometry),
+          volumeSize: groupInput.volumeSize,
+        }
+      }
+      return cloneSurface(groupInput)
+    }
+    const owner = group.steps[0]
+    if (owner.definition.domain === 'volume-generator') {
+      const params = this.effectParams(owner, renderOptions)
+      const volume = this.canonicalDestination(owner.definition, owner.definition.outputTex3d, params, renderOptions)
+      volume.clear()
+      owned.add(volume)
+      let geometry = null
+      if (owner.definition.outputGeo && owner.definition.outputGeo !== 'inputGeo') {
+        geometry = this.canonicalDestination(owner.definition, owner.definition.outputGeo, params, renderOptions)
+        geometry.clear()
+        owned.add(geometry)
+      }
+      return { image: null, volume, geometry, volumeSize: params.volumeSize ?? volume.width }
     }
     const surface = this.pool.acquire(renderOptions.width, renderOptions.height)
     surface.format = 'rgba16f'
@@ -547,11 +607,11 @@ export class CpuRenderer {
   // `replaceCanonicalResource`) — its contents are copied (memcpy, not reference swap) from each
   // iteration's real result at the end of that iteration, so a later pass within the SAME
   // iteration that also reads selfTex can never observe a pool-recycled buffer.
-  initializeGroupStepState(step, ownerStateSize, renderOptions, owned) {
+  initializeGroupStepState(step, ownerStateSize, inputBundle, renderOptions, owned) {
     const definition = step.definition
     const inheritsStateSize = ownerStateSize !== undefined && Object.hasOwn(step.params, 'stateSize')
     const sourceStep = inheritsStateSize ? { params: { ...step.params, stateSize: ownerStateSize }, explicitParams: step.explicitParams } : step
-    const params = this.effectParams(sourceStep, renderOptions)
+    const params = inheritVolumeSize(definition, this.effectParams(sourceStep, renderOptions), inputBundle)
     const usesSelfTex = (definition.passes ?? []).some((pass) =>
       Object.values(pass.inputs ?? {}).some((value) => value === 'selfTex' || value === 'feedback'))
     const resources = new Map()
@@ -620,6 +680,10 @@ export class CpuRenderer {
         textures[uniformName] = this.resolveGroupParticleTexture(resourceName, stepStates, state, groupResources, renderOptions, owned)
         continue
       }
+      if (resourceName === 'global_accum' && groupResources.has(resourceName)) {
+        textures[uniformName] = groupResources.get(resourceName)
+        continue
+      }
       let surface = state.resources.get(resourceName)
       if (!surface?.data && (resourceName === 'selfTex' || resourceName === 'feedback')) surface = this.emptySurface
       if (!surface?.data) throw new Error(`${definition.id} pass "${pass.name}" requires texture "${resourceName}"`)
@@ -633,20 +697,20 @@ export class CpuRenderer {
   // the non-iterated path's `canonicalDestination`. Always a brand-new pool surface (never
   // reused in place) — the old value under this name is released by `storeGroupOutput` below,
   // same lifecycle as every other canonical pass output.
-  groupOutputDestination(name, state, stepStates, renderOptions, owned) {
+  groupOutputDestination(name, state, stepStates, renderOptions, owned, pass = null) {
     if (isParticleStateName(name)) {
       const { definition, params } = this.groupTextureSpec(name, stepStates, state)
       const surface = this.canonicalDestination(definition, name, params, renderOptions)
       owned.add(surface)
       return surface
     }
-    const surface = this.canonicalDestination(state.definition, name, state.params, renderOptions)
+    const surface = this.canonicalDestination(state.definition, name, state.params, renderOptions, pass, state.resources)
     owned.add(surface)
     return surface
   }
 
   storeGroupOutput(name, surface, state, groupResources, surfaces, owned) {
-    if (isParticleStateName(name)) this.replaceCanonicalResource(name, surface, groupResources, surfaces, owned)
+    if (isParticleStateName(name) || name === 'global_accum') this.replaceCanonicalResource(name, surface, groupResources, surfaces, owned)
     else this.replaceCanonicalResource(name, surface, state.resources, surfaces, owned)
   }
 
@@ -668,11 +732,32 @@ export class CpuRenderer {
     }
   }
 
+  seedTypedChainResources(definition, params, inputBundle, resources, renderOptions, owned) {
+    for (const name of definition.paramNames) {
+      const type = definition.params[name].type
+      if (type !== 'volume' && type !== 'geometry') continue
+      const input = type === 'volume' ? inputBundle.volume : inputBundle.geometry
+      if (input) {
+        resources.set(name, input)
+        continue
+      }
+      if (resources.has(name)) continue
+      const outputName = type === 'volume' ? definition.outputTex3d : definition.outputGeo
+      if (!outputName || !definition.textures?.[outputName]) {
+        throw new Error(`${definition.id} parameter "${name}" requires a ${type} input`)
+      }
+      const surface = this.canonicalDestination(definition, outputName, params, renderOptions)
+      surface.clear()
+      owned.add(surface)
+      resources.set(name, surface)
+    }
+  }
+
   groupMrtDestinations(definition, pass, factory, state, stepStates, renderOptions, owned) {
     const destinations = factory.outputNames.map((outputVariable) => {
       const destinationName = pass.outputs?.[outputVariable]
       if (!destinationName) throw new Error(`${definition.id} pass "${pass.name}" has no destination for output "${outputVariable}"`)
-      return { name: destinationName, surface: this.groupOutputDestination(destinationName, state, stepStates, renderOptions, owned) }
+      return { name: destinationName, surface: this.groupOutputDestination(destinationName, state, stepStates, renderOptions, owned, pass) }
     })
     assertMrtDestinationsShareDimensions(definition.id, pass.name, destinations)
     return destinations
@@ -701,25 +786,37 @@ export class CpuRenderer {
   // (never retained past one render() call) — particle state never survives beyond the group run
   // that owns it, matching the determinism/statelessness constraint.
   finishGroupResources(stepStates, groupResources, result, surfaces, owned) {
+    const retained = new Set(isChainBundle(result)
+      ? [result.image, result.volume, result.geometry].filter(Boolean)
+      : [result].filter(Boolean))
     for (const state of stepStates) {
       for (const resource of new Set(state.resources.values())) {
-        if (resource !== result) this.releaseTransient(resource, surfaces, owned)
+        if (!retained.has(resource)) this.releaseTransient(resource, surfaces, owned)
       }
     }
     for (const resource of new Set(groupResources.values())) {
-      if (resource !== result) this.releaseTransient(resource, surfaces, owned)
+      if (!retained.has(resource)) this.releaseTransient(resource, surfaces, owned)
     }
   }
 
   runIteratedGroupSync(group, groupInput, surfaces, owned, renderOptions, stats) {
     const iterationCount = group.steps[0].params.iterationCount
     const N = Number.isFinite(iterationCount) ? iterationCount : 60
-    if (!(N > 0)) return this.zeroIterationGroupOutput(groupInput, renderOptions, owned)
+    if (!(N > 0)) return this.zeroIterationGroupOutput(group, groupInput, renderOptions, owned)
 
     const groupResources = new Map()
+    if (group.loop) {
+      const inputImage = chainBundle(groupInput).image
+      const accum = this.pool.acquire(inputImage.width, inputImage.height)
+      accum.format = inputImage.format ?? 'rgba16f'
+      accum.clear()
+      owned.add(accum)
+      groupResources.set('global_accum', accum)
+    }
     const ownerStateSize = groupOwnerStateSize(group)
+    const inputBundle = chainBundle(groupInput)
     const stepStates = group.steps.map((step, index) =>
-      this.initializeGroupStepState(step, index === 0 ? undefined : ownerStateSize, renderOptions, owned))
+      this.initializeGroupStepState(step, index === 0 ? undefined : ownerStateSize, inputBundle, renderOptions, owned))
 
     let lastGroupOutput = null
     for (let i = 0; i < N; i += 1) {
@@ -737,19 +834,32 @@ export class CpuRenderer {
     }
 
     this.finishGroupResources(stepStates, groupResources, lastGroupOutput, surfaces, owned)
-    if (groupInput && groupInput !== lastGroupOutput) this.releaseTransient(groupInput, surfaces, owned)
+    const retained = new Set(isChainBundle(lastGroupOutput)
+      ? [lastGroupOutput.image, lastGroupOutput.volume, lastGroupOutput.geometry].filter(Boolean)
+      : [lastGroupOutput].filter(Boolean))
+    const inputs = chainBundle(groupInput)
+    for (const input of [inputs.image, inputs.volume, inputs.geometry]) if (input && !retained.has(input)) this.releaseTransient(input, surfaces, owned)
     return lastGroupOutput
   }
 
   async runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler) {
     const iterationCount = group.steps[0].params.iterationCount
     const N = Number.isFinite(iterationCount) ? iterationCount : 60
-    if (!(N > 0)) return this.zeroIterationGroupOutput(groupInput, renderOptions, owned)
+    if (!(N > 0)) return this.zeroIterationGroupOutput(group, groupInput, renderOptions, owned)
 
     const groupResources = new Map()
+    if (group.loop) {
+      const inputImage = chainBundle(groupInput).image
+      const accum = this.pool.acquire(inputImage.width, inputImage.height)
+      accum.format = inputImage.format ?? 'rgba16f'
+      accum.clear()
+      owned.add(accum)
+      groupResources.set('global_accum', accum)
+    }
     const ownerStateSize = groupOwnerStateSize(group)
+    const inputBundle = chainBundle(groupInput)
     const stepStates = group.steps.map((step, index) =>
-      this.initializeGroupStepState(step, index === 0 ? undefined : ownerStateSize, renderOptions, owned))
+      this.initializeGroupStepState(step, index === 0 ? undefined : ownerStateSize, inputBundle, renderOptions, owned))
 
     let lastGroupOutput = null
     for (let i = 0; i < N; i += 1) {
@@ -767,7 +877,11 @@ export class CpuRenderer {
     }
 
     this.finishGroupResources(stepStates, groupResources, lastGroupOutput, surfaces, owned)
-    if (groupInput && groupInput !== lastGroupOutput) this.releaseTransient(groupInput, surfaces, owned)
+    const retained = new Set(isChainBundle(lastGroupOutput)
+      ? [lastGroupOutput.image, lastGroupOutput.volume, lastGroupOutput.geometry].filter(Boolean)
+      : [lastGroupOutput].filter(Boolean))
+    const inputs = chainBundle(groupInput)
+    for (const input of [inputs.image, inputs.volume, inputs.geometry]) if (input && !retained.has(input)) this.releaseTransient(input, surfaces, owned)
     return lastGroupOutput
   }
 
@@ -778,8 +892,13 @@ export class CpuRenderer {
   // are exactly the persistent-resources, group-routing, and selfTex bookkeeping described above.
   runGroupStepIterationSync(state, iterationInput, stepStates, groupResources, surfaces, owned, iterationOptions, stats) {
     const definition = state.definition
-    const bindings = this.buildBindings(definition, state.params, state.step.explicitParams, iterationInput, surfaces, iterationOptions)
+    const inputWasBundle = isChainBundle(iterationInput)
+    const inputBundle = chainBundle(iterationInput)
+    const bindings = this.buildBindings(definition, state.params, state.step.explicitParams, inputBundle.image, surfaces, iterationOptions)
     for (const [name, surface] of Object.entries(bindings.textures)) state.resources.set(name, surface)
+    if (inputBundle.volume) state.resources.set('inputTex3d', inputBundle.volume)
+    if (inputBundle.geometry) state.resources.set('inputGeo', inputBundle.geometry)
+    this.seedTypedChainResources(definition, state.params, inputBundle, state.resources, iterationOptions, owned)
     this.ensureGroupScratchResources(definition, state.params, state.resources, iterationOptions, owned)
     let lastOutput = null
 
@@ -795,7 +914,7 @@ export class CpuRenderer {
         const adapter = resolveScatterAdapter(scatterKey)
         if (typeof adapter !== 'function') throw new Error(`Missing CPU scatter adapter "${scatterKey}"`)
         for (let iteration = 0; iteration < repeat; iteration += 1) {
-          const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned)
+          const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned, pass)
           const inputs = this.groupInputTextures(definition, pass, state, stepStates, groupResources, iterationOptions, owned)
           const previous = isParticleStateName(outputName) ? groupResources.get(outputName) : state.resources.get(outputName)
           if (previous?.data && previous.data.length === destination.data.length) destination.data.set(previous.data)
@@ -853,7 +972,7 @@ export class CpuRenderer {
       const outputName = Object.values(pass.outputs ?? {})[0]
       if (!outputName) throw new Error(`${definition.id} pass "${pass.name}" has no fragment output`)
       for (let iteration = 0; iteration < repeat; iteration += 1) {
-        const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned)
+        const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned, pass)
         const inputs = this.groupInputTextures(definition, pass, state, stepStates, groupResources, iterationOptions, owned)
         const kernel = bindCanonicalKernel(factory, {
           width: destination.width,
@@ -875,19 +994,44 @@ export class CpuRenderer {
       }
     }
 
-    const result = state.resources.get('outputTex') ?? lastOutput
-    if (!result) throw new Error(`${definition.id} did not produce outputTex`)
+    const isVolumeDomain = definition.domain !== 'image' && definition.domain !== 'loop-begin' && definition.domain !== 'loop-end'
+    const image = definition.outputTex
+      ? bundleOutput(definition.outputTex, inputBundle.image, state.resources)
+      : (state.resources.get('outputTex') ?? (isVolumeDomain ? inputBundle.image : lastOutput))
+    const volume = bundleOutput(definition.outputTex3d, inputBundle.volume, state.resources)
+    const geometry = bundleOutput(definition.outputGeo, inputBundle.geometry, state.resources)
+    const volumeSize = definition.domain === 'volume-generator'
+      ? (state.params.volumeSize ?? volume?.width ?? null)
+      : (inputBundle.volumeSize ?? state.params.volumeSize ?? volume?.width ?? null)
+    if (isVolumeDomain && !volume && definition.domain !== 'volume-renderer') throw new Error(`${definition.id} did not produce outputTex3d`)
+    if (volume && (definition.domain === 'volume-generator' || definition.domain === 'volume-filter')) {
+      const expectedWidth = volumeSize
+      const expectedHeight = volumeSize ** 2
+      if (volume.width !== expectedWidth || volume.height !== expectedHeight) {
+        throw new Error(`${definition.id} volume atlas expected ${expectedWidth}x${expectedHeight}, received ${volume.width}x${volume.height}`)
+      }
+    }
+    const result = (inputWasBundle || isVolumeDomain)
+      ? { image, volume, geometry, volumeSize }
+      : image
+    if (!image && definition.domain !== 'volume-generator' && definition.domain !== 'volume-filter') throw new Error(`${definition.id} did not produce outputTex`)
     if (state.selfTexSurface) {
-      assertSelfTexMatchesOutput(definition.id, result, state.selfTexSurface)
-      state.selfTexSurface.data.set(result.data)
+      const resultImage = chainBundle(result).image
+      assertSelfTexMatchesOutput(definition.id, resultImage, state.selfTexSurface)
+      state.selfTexSurface.data.set(resultImage.data)
     }
     return result
   }
 
   async runGroupStepIterationAsync(state, iterationInput, stepStates, groupResources, surfaces, owned, iterationOptions, stats, scheduler) {
     const definition = state.definition
-    const bindings = this.buildBindings(definition, state.params, state.step.explicitParams, iterationInput, surfaces, iterationOptions)
+    const inputWasBundle = isChainBundle(iterationInput)
+    const inputBundle = chainBundle(iterationInput)
+    const bindings = this.buildBindings(definition, state.params, state.step.explicitParams, inputBundle.image, surfaces, iterationOptions)
     for (const [name, surface] of Object.entries(bindings.textures)) state.resources.set(name, surface)
+    if (inputBundle.volume) state.resources.set('inputTex3d', inputBundle.volume)
+    if (inputBundle.geometry) state.resources.set('inputGeo', inputBundle.geometry)
+    this.seedTypedChainResources(definition, state.params, inputBundle, state.resources, iterationOptions, owned)
     this.ensureGroupScratchResources(definition, state.params, state.resources, iterationOptions, owned)
     let lastOutput = null
 
@@ -903,7 +1047,7 @@ export class CpuRenderer {
         const adapter = resolveScatterAdapter(scatterKey)
         if (typeof adapter !== 'function') throw new Error(`Missing CPU scatter adapter "${scatterKey}"`)
         for (let iteration = 0; iteration < repeat; iteration += 1) {
-          const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned)
+          const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned, pass)
           const inputs = this.groupInputTextures(definition, pass, state, stepStates, groupResources, iterationOptions, owned)
           const previous = isParticleStateName(outputName) ? groupResources.get(outputName) : state.resources.get(outputName)
           if (previous?.data && previous.data.length === destination.data.length) destination.data.set(previous.data)
@@ -962,7 +1106,7 @@ export class CpuRenderer {
       const outputName = Object.values(pass.outputs ?? {})[0]
       if (!outputName) throw new Error(`${definition.id} pass "${pass.name}" has no fragment output`)
       for (let iteration = 0; iteration < repeat; iteration += 1) {
-        const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned)
+        const destination = this.groupOutputDestination(outputName, state, stepStates, iterationOptions, owned, pass)
         const inputs = this.groupInputTextures(definition, pass, state, stepStates, groupResources, iterationOptions, owned)
         const kernel = bindCanonicalKernel(factory, {
           width: destination.width,
@@ -984,20 +1128,46 @@ export class CpuRenderer {
       }
     }
 
-    const result = state.resources.get('outputTex') ?? lastOutput
-    if (!result) throw new Error(`${definition.id} did not produce outputTex`)
+    const isVolumeDomain = definition.domain !== 'image' && definition.domain !== 'loop-begin' && definition.domain !== 'loop-end'
+    const image = definition.outputTex
+      ? bundleOutput(definition.outputTex, inputBundle.image, state.resources)
+      : (state.resources.get('outputTex') ?? (isVolumeDomain ? inputBundle.image : lastOutput))
+    const volume = bundleOutput(definition.outputTex3d, inputBundle.volume, state.resources)
+    const geometry = bundleOutput(definition.outputGeo, inputBundle.geometry, state.resources)
+    const volumeSize = definition.domain === 'volume-generator'
+      ? (state.params.volumeSize ?? volume?.width ?? null)
+      : (inputBundle.volumeSize ?? state.params.volumeSize ?? volume?.width ?? null)
+    if (isVolumeDomain && !volume && definition.domain !== 'volume-renderer') throw new Error(`${definition.id} did not produce outputTex3d`)
+    if (volume && (definition.domain === 'volume-generator' || definition.domain === 'volume-filter')) {
+      const expectedWidth = volumeSize
+      const expectedHeight = volumeSize ** 2
+      if (volume.width !== expectedWidth || volume.height !== expectedHeight) {
+        throw new Error(`${definition.id} volume atlas expected ${expectedWidth}x${expectedHeight}, received ${volume.width}x${volume.height}`)
+      }
+    }
+    const result = (inputWasBundle || isVolumeDomain)
+      ? { image, volume, geometry, volumeSize }
+      : image
+    if (!image && definition.domain !== 'volume-generator' && definition.domain !== 'volume-filter') throw new Error(`${definition.id} did not produce outputTex`)
     if (state.selfTexSurface) {
-      assertSelfTexMatchesOutput(definition.id, result, state.selfTexSurface)
-      state.selfTexSurface.data.set(result.data)
+      const resultImage = chainBundle(result).image
+      assertSelfTexMatchesOutput(definition.id, resultImage, state.selfTexSurface)
+      state.selfTexSurface.data.set(resultImage.data)
     }
     return result
   }
 
   runCanonicalEffectSync(step, current, surfaces, owned, renderOptions, stats) {
-    const params = this.effectParams(step, renderOptions)
-    const bindings = this.buildBindings(step.definition, params, step.explicitParams, current, surfaces, renderOptions)
+    const inputWasBundle = isChainBundle(current)
+    const inputBundle = chainBundle(current)
+    const currentImage = inputBundle.image
+    const params = inheritVolumeSize(step.definition, this.effectParams(step, renderOptions), inputBundle)
+    const bindings = this.buildBindings(step.definition, params, step.explicitParams, currentImage, surfaces, renderOptions)
     const resources = new Map(Object.entries(bindings.textures))
-    if (current) resources.set('inputTex', current)
+    if (currentImage) resources.set('inputTex', currentImage)
+    if (inputBundle.volume) resources.set('inputTex3d', inputBundle.volume)
+    if (inputBundle.geometry) resources.set('inputGeo', inputBundle.geometry)
+    this.seedTypedChainResources(step.definition, params, inputBundle, resources, renderOptions, owned)
     this.initializeCanonicalResources(step.definition, params, resources, renderOptions, owned)
     let lastOutput = null
 
@@ -1013,7 +1183,7 @@ export class CpuRenderer {
         const adapter = resolveScatterAdapter(scatterKey)
         if (typeof adapter !== 'function') throw new Error(`Missing CPU scatter adapter "${scatterKey}"`)
         for (let iteration = 0; iteration < repeat; iteration += 1) {
-          const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions)
+          const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions, pass, resources)
           owned.add(destination)
           const textures = this.canonicalTextures(step.definition, pass, resources)
           const previous = resources.get(outputName)
@@ -1036,7 +1206,7 @@ export class CpuRenderer {
         for (let iteration = 0; iteration < repeat; iteration += 1) {
           const textures = this.canonicalTextures(step.definition, pass, resources)
           const passUniformValues = this.passUniforms(pass, params, bindings.uniforms)
-          const destinations = this.canonicalMrtDestinations(step.definition, pass, factory, params, renderOptions, owned)
+          const destinations = this.canonicalMrtDestinations(step.definition, pass, factory, params, renderOptions, owned, resources)
           const surfaceList = destinations.map((entry) => entry.surface)
           const kernel = bindCanonicalKernel(factory, {
             width: surfaceList[0].width,
@@ -1071,7 +1241,7 @@ export class CpuRenderer {
       const outputName = Object.values(pass.outputs ?? {})[0]
       if (!outputName) throw new Error(`${step.definition.id} pass "${pass.name}" has no fragment output`)
       for (let iteration = 0; iteration < repeat; iteration += 1) {
-        const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions)
+        const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions, pass, resources)
         owned.add(destination)
         const textures = this.canonicalTextures(step.definition, pass, resources)
         const kernel = bindCanonicalKernel(factory, {
@@ -1093,20 +1263,56 @@ export class CpuRenderer {
       }
     }
 
-    const result = resources.get('outputTex') ?? lastOutput
-    if (!result) throw new Error(`${step.definition.id} did not produce outputTex`)
-    for (const resource of new Set(resources.values())) {
-      if (resource !== result && resource !== current) this.releaseTransient(resource, surfaces, owned)
+    const isVolumeDomain = step.definition.domain !== 'image' && step.definition.domain !== 'loop-begin' && step.definition.domain !== 'loop-end'
+    const image = step.definition.outputTex
+      ? bundleOutput(step.definition.outputTex, currentImage, resources)
+      : (resources.get('outputTex') ?? (isVolumeDomain ? currentImage : lastOutput))
+    const volume = bundleOutput(step.definition.outputTex3d, inputBundle.volume, resources)
+    const geometry = bundleOutput(step.definition.outputGeo, inputBundle.geometry, resources)
+    const volumeSize = step.definition.domain === 'volume-generator'
+      ? (params.volumeSize ?? volume?.width ?? null)
+      : (inputBundle.volumeSize ?? params.volumeSize ?? volume?.width ?? null)
+    if (isVolumeDomain && !volume && step.definition.domain !== 'volume-renderer') {
+      throw new Error(`${step.definition.id} did not produce outputTex3d`)
     }
-    if (current && current !== result) this.releaseTransient(current, surfaces, owned)
+    if (volume && (step.definition.domain === 'volume-generator' || step.definition.domain === 'volume-filter')) {
+      const expectedWidth = volumeSize
+      const expectedHeight = volumeSize ** 2
+      if (volume.width !== expectedWidth || volume.height !== expectedHeight) {
+        throw new Error(`${step.definition.id} volume atlas expected ${expectedWidth}x${expectedHeight}, received ${volume.width}x${volume.height}`)
+      }
+    }
+    const result = (inputWasBundle || isVolumeDomain)
+      ? { image, volume, geometry, volumeSize }
+      : image
+    const retained = new Set(isChainBundle(result)
+      ? [result.image, result.volume, result.geometry].filter(Boolean)
+      : [result].filter(Boolean))
+    if (!image && step.definition.domain !== 'volume-generator' && step.definition.domain !== 'volume-filter') {
+      throw new Error(`${step.definition.id} did not produce outputTex`)
+    }
+    for (const resource of new Set(resources.values())) {
+      if (!retained.has(resource) && resource !== currentImage && resource !== inputBundle.volume && resource !== inputBundle.geometry) {
+        this.releaseTransient(resource, surfaces, owned)
+      }
+    }
+    for (const input of [currentImage, inputBundle.volume, inputBundle.geometry]) {
+      if (input && !retained.has(input)) this.releaseTransient(input, surfaces, owned)
+    }
     return result
   }
 
   async runCanonicalEffectAsync(step, current, surfaces, owned, renderOptions, stats, scheduler) {
-    const params = this.effectParams(step, renderOptions)
-    const bindings = this.buildBindings(step.definition, params, step.explicitParams, current, surfaces, renderOptions)
+    const inputWasBundle = isChainBundle(current)
+    const inputBundle = chainBundle(current)
+    const currentImage = inputBundle.image
+    const params = inheritVolumeSize(step.definition, this.effectParams(step, renderOptions), inputBundle)
+    const bindings = this.buildBindings(step.definition, params, step.explicitParams, currentImage, surfaces, renderOptions)
     const resources = new Map(Object.entries(bindings.textures))
-    if (current) resources.set('inputTex', current)
+    if (currentImage) resources.set('inputTex', currentImage)
+    if (inputBundle.volume) resources.set('inputTex3d', inputBundle.volume)
+    if (inputBundle.geometry) resources.set('inputGeo', inputBundle.geometry)
+    this.seedTypedChainResources(step.definition, params, inputBundle, resources, renderOptions, owned)
     this.initializeCanonicalResources(step.definition, params, resources, renderOptions, owned)
     let lastOutput = null
 
@@ -1122,7 +1328,7 @@ export class CpuRenderer {
         const adapter = resolveScatterAdapter(scatterKey)
         if (typeof adapter !== 'function') throw new Error(`Missing CPU scatter adapter "${scatterKey}"`)
         for (let iteration = 0; iteration < repeat; iteration += 1) {
-          const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions)
+          const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions, pass, resources)
           owned.add(destination)
           const textures = this.canonicalTextures(step.definition, pass, resources)
           const previous = resources.get(outputName)
@@ -1145,7 +1351,7 @@ export class CpuRenderer {
         for (let iteration = 0; iteration < repeat; iteration += 1) {
           const textures = this.canonicalTextures(step.definition, pass, resources)
           const passUniformValues = this.passUniforms(pass, params, bindings.uniforms)
-          const destinations = this.canonicalMrtDestinations(step.definition, pass, factory, params, renderOptions, owned)
+          const destinations = this.canonicalMrtDestinations(step.definition, pass, factory, params, renderOptions, owned, resources)
           const surfaceList = destinations.map((entry) => entry.surface)
           const kernel = bindCanonicalKernel(factory, {
             width: surfaceList[0].width,
@@ -1181,7 +1387,7 @@ export class CpuRenderer {
       const outputName = Object.values(pass.outputs ?? {})[0]
       if (!outputName) throw new Error(`${step.definition.id} pass "${pass.name}" has no fragment output`)
       for (let iteration = 0; iteration < repeat; iteration += 1) {
-        const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions)
+        const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions, pass, resources)
         owned.add(destination)
         const textures = this.canonicalTextures(step.definition, pass, resources)
         const kernel = bindCanonicalKernel(factory, {
@@ -1203,12 +1409,42 @@ export class CpuRenderer {
       }
     }
 
-    const result = resources.get('outputTex') ?? lastOutput
-    if (!result) throw new Error(`${step.definition.id} did not produce outputTex`)
-    for (const resource of new Set(resources.values())) {
-      if (resource !== result && resource !== current) this.releaseTransient(resource, surfaces, owned)
+    const isVolumeDomain = step.definition.domain !== 'image' && step.definition.domain !== 'loop-begin' && step.definition.domain !== 'loop-end'
+    const image = step.definition.outputTex
+      ? bundleOutput(step.definition.outputTex, currentImage, resources)
+      : (resources.get('outputTex') ?? (isVolumeDomain ? currentImage : lastOutput))
+    const volume = bundleOutput(step.definition.outputTex3d, inputBundle.volume, resources)
+    const geometry = bundleOutput(step.definition.outputGeo, inputBundle.geometry, resources)
+    const volumeSize = step.definition.domain === 'volume-generator'
+      ? (params.volumeSize ?? volume?.width ?? null)
+      : (inputBundle.volumeSize ?? params.volumeSize ?? volume?.width ?? null)
+    if (isVolumeDomain && !volume && step.definition.domain !== 'volume-renderer') {
+      throw new Error(`${step.definition.id} did not produce outputTex3d`)
     }
-    if (current && current !== result) this.releaseTransient(current, surfaces, owned)
+    if (volume && (step.definition.domain === 'volume-generator' || step.definition.domain === 'volume-filter')) {
+      const expectedWidth = volumeSize
+      const expectedHeight = volumeSize ** 2
+      if (volume.width !== expectedWidth || volume.height !== expectedHeight) {
+        throw new Error(`${step.definition.id} volume atlas expected ${expectedWidth}x${expectedHeight}, received ${volume.width}x${volume.height}`)
+      }
+    }
+    const result = (inputWasBundle || isVolumeDomain)
+      ? { image, volume, geometry, volumeSize }
+      : image
+    const retained = new Set(isChainBundle(result)
+      ? [result.image, result.volume, result.geometry].filter(Boolean)
+      : [result].filter(Boolean))
+    if (!image && step.definition.domain !== 'volume-generator' && step.definition.domain !== 'volume-filter') {
+      throw new Error(`${step.definition.id} did not produce outputTex`)
+    }
+    for (const resource of new Set(resources.values())) {
+      if (!retained.has(resource) && resource !== currentImage && resource !== inputBundle.volume && resource !== inputBundle.geometry) {
+        this.releaseTransient(resource, surfaces, owned)
+      }
+    }
+    for (const input of [currentImage, inputBundle.volume, inputBundle.geometry]) {
+      if (input && !retained.has(input)) this.releaseTransient(input, surfaces, owned)
+    }
     return result
   }
 
@@ -1234,9 +1470,12 @@ export class CpuRenderer {
 
   runEffectSync(step, current, surfaces, owned, renderOptions, stats) {
     if (step.definition.passes[0].program) return this.runCanonicalEffectSync(step, current, surfaces, owned, renderOptions, stats)
+    const inputWasBundle = isChainBundle(current)
+    const inputBundle = chainBundle(current)
+    const currentImage = inputBundle.image
     const params = this.effectParams(step, renderOptions)
-    const bindings = this.buildBindings(step.definition, params, step.explicitParams, current, surfaces, renderOptions)
-    let passInput = current
+    const bindings = this.buildBindings(step.definition, params, step.explicitParams, currentImage, surfaces, renderOptions)
+    let passInput = currentImage
     for (const pass of step.definition.passes) {
       const destination = this.pool.acquire(renderOptions.width, renderOptions.height)
       owned.add(destination)
@@ -1257,18 +1496,21 @@ export class CpuRenderer {
       })
       stats.passes += 1
       stats.pixels += passStats.pixels
-      if (passInput !== current) this.releaseTransient(passInput, surfaces, owned)
+      if (passInput !== currentImage) this.releaseTransient(passInput, surfaces, owned)
       passInput = destination
     }
-    if (current && current !== passInput) this.releaseTransient(current, surfaces, owned)
-    return passInput
+    if (currentImage && currentImage !== passInput) this.releaseTransient(currentImage, surfaces, owned)
+    return inputWasBundle ? { ...inputBundle, image: passInput } : passInput
   }
 
   async runEffectAsync(step, current, surfaces, owned, renderOptions, stats, scheduler) {
     if (step.definition.passes[0].program) return this.runCanonicalEffectAsync(step, current, surfaces, owned, renderOptions, stats, scheduler)
+    const inputWasBundle = isChainBundle(current)
+    const inputBundle = chainBundle(current)
+    const currentImage = inputBundle.image
     const params = this.effectParams(step, renderOptions)
-    const bindings = this.buildBindings(step.definition, params, step.explicitParams, current, surfaces, renderOptions)
-    let passInput = current
+    const bindings = this.buildBindings(step.definition, params, step.explicitParams, currentImage, surfaces, renderOptions)
+    let passInput = currentImage
     for (const pass of step.definition.passes) {
       const destination = this.pool.acquire(renderOptions.width, renderOptions.height)
       owned.add(destination)
@@ -1290,11 +1532,11 @@ export class CpuRenderer {
       })
       stats.passes += 1
       stats.pixels += passStats.pixels
-      if (passInput !== current) this.releaseTransient(passInput, surfaces, owned)
+      if (passInput !== currentImage) this.releaseTransient(passInput, surfaces, owned)
       passInput = destination
     }
-    if (current && current !== passInput) this.releaseTransient(current, surfaces, owned)
-    return passInput
+    if (currentImage && currentImage !== passInput) this.releaseTransient(currentImage, surfaces, owned)
+    return inputWasBundle ? { ...inputBundle, image: passInput } : passInput
   }
 
   finish(plan, surfaces, owned, renderOptions, stats, startedAt) {
@@ -1337,7 +1579,7 @@ export class CpuRenderer {
             current = surfaces.get(only.surface)
             if (!current) throw new Error(`Surface ${only.surface} has not been written`)
           } else if (only?.kind === 'write') {
-            this.writeSurface(only.surface, current, surfaces, owned)
+            this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
           } else {
             current = this.runIterationGroupSync(group, current, surfaces, owned, renderOptions, stats)
           }
@@ -1366,7 +1608,7 @@ export class CpuRenderer {
             current = surfaces.get(only.surface)
             if (!current) throw new Error(`Surface ${only.surface} has not been written`)
           } else if (only?.kind === 'write') {
-            this.writeSurface(only.surface, current, surfaces, owned)
+            this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
           } else {
             current = await this.runIterationGroupAsync(group, current, surfaces, owned, renderOptions, stats, scheduler)
           }

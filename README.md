@@ -46,6 +46,8 @@ printf 'search synth\nsolid(color: #f80).write(o0)\nrender(o0)\n' |
 
 `node bin/noisemaker-cpu.js effects` lists the complete catalog. `npm test` verifies the engine, `npm run compile:upstream` deterministically rebuilds the canonical kernels, `npm run parity` compares all default frames with GPU goldens, and `npm run bench -- --size 128` measures local throughput.
 
+`noisemaker-cpu effect EFFECT` auto-wires every catalog domain: volume generators receive a renderer, volume filters/renderers receive a deterministic `noise3d` source, and either loop marker receives its balanced partner. `apply` remains image-only and reports a direct error for typed volume/loop domains; use `effect` or `render` for those chains.
+
 ## Browser API
 
 The main entry has no Node imports:
@@ -114,7 +116,7 @@ read(o0).blendMode(tex: o1, mode: screen).write(o2)
 render(o2)
 ```
 
-The frontend preserves the canonical effect schemas, aliases, defaults, compile-time choices, pass graphs, named surfaces, generators, filters, and mixers. It supports explicit search order, positional or named arguments, value/effect partial bindings, `read(oN)`, chainable `.write(oN)`, and `render(oN)`. Stateful and particle operations compile and render like any other effect (see "CPU iteration divergence" in [docs/EFFECTS.md](docs/EFFECTS.md)); only reactive, 3D, and render-loop operations are rejected with diagnostics. `render` doubles as both the `render(oN)` directive keyword and the namespace owning `pointsEmit`/`pointsRender`/`pointsBillboardRender` — `search ..., render` resolves the namespace without disturbing the directive.
+The frontend preserves the canonical effect schemas, aliases, defaults, compile-time choices, pass graphs, named surfaces, generators, filters, and mixers. It supports explicit search order, positional or named arguments, value/effect partial bindings, `read(oN)`, chainable `.write(oN)`, and `render(oN)`. Stateful, particle, flattened-volume, and balanced `loopBegin`/`loopEnd` operations compile and render through the same DSL (see [docs/EFFECTS.md](docs/EFFECTS.md)). `render` doubles as both the `render(oN)` directive keyword and the namespace owning render effects — `search ..., render` resolves the namespace without disturbing the directive.
 
 One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initialized overlay on the first requested frame. Pass `oneShot: 'initial'` to reproduce the upstream pre-initialization first frame used by the parity fixtures.
 
@@ -122,14 +124,14 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 The catalog is the exact eligible collection from Noisemaker revision `a024dc3a960cc44af454abc7aebce50456c194e6`:
 
-- 188 effects: 18 `classicNoisedeck`, 116 `filter`, 15 `mixer`, 10 `points`, 3 `render`, and 26 `synth`
-- 274 canonical fragment programs: 265 generated from canonical GLSL, plus 9 full CPU adapters (4 fragment-kernel replacements and 5 vertex+fragment scatter-pass pairs, not plain fragment programs — see [docs/CSL.md](docs/CSL.md))
-- all 410 compile-time shader choices execute through the CPU backend
-- all 188 default programs render finite output
+- 205 effects: 20 `classicNoisedeck`, 116 `filter`, 2 `filter3d`, 15 `mixer`, 10 `points`, 9 `render`, 26 `synth`, and 7 `synth3d`
+- 295 canonical programs: 285 generated from canonical GLSL, plus 10 full CPU adapters (4 fragment-kernel replacements and 6 vertex+fragment scatter-pass pairs — see [docs/CSL.md](docs/CSL.md))
+- all 456 non-null compile-time shader choices execute through the CPU backend
+- all 205 effects execute through finite catalog smoke programs
 
-Only the requested classes are excluded: the explicitly removed reactive effects `synth/roll`, `synth/scope`, and `synth/spectrum`, 3D/mesh/cubemap effects, and render-loop control nodes. `filter/text` and `synth/media` are included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory and exclusions.
+Exactly five source effects remain excluded: reactive `synth/roll`, `synth/scope`, and `synth/spectrum`, plus `render/meshLoader` and `render/meshRender`. `filter/text` and `synth/media` remain included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory and exclusions.
 
-Parity claims are enforced, not inferred. `npm run parity` compares every eligible default at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'` against GPU PNG goldens. The fixtures make each canonical effect seed default explicit so the render-level seed API cannot silently change the reference frame. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact, plus 21 skipped. `filter/crt` remains red because JavaScript and ANGLE/Metal fast-math still diverge in its hash-sensitive pipeline. The gate remains failing until CRT matches. The 21 skipped are the CPU-only stateful/particle effects, which re-run their pass graph `iterationCount` times per frame on a schedule with no single-GPU-frame equivalent, so they are reported (`SKIP <id> (cpu-divergent, no GPU golden)`) rather than compared; see "CPU iteration divergence" in [docs/EFFECTS.md](docs/EFFECTS.md). The tolerance and the 167-effect pixel-parity denominator are unchanged; skips never affect the pass/fail count or exit code.
+Parity claims are enforced, not inferred. `npm run parity` keeps the existing 167-golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact; `filter/crt` remains red because JavaScript and ANGLE/Metal fast-math still diverge in its hash-sensitive pipeline. There are 38 explicit, compile-preflighted skips: the prior 21 CPU-divergent simulations and the 17 newly ported volume/loop effects awaiting pinned GPU goldens. The tolerance and denominator are unchanged; skips never affect the pass/fail count or exit code.
 
 ## Performance model
 
@@ -140,7 +142,9 @@ Parity claims are enforced, not inferred. `npm run parity` compares every eligib
 - Signed/unsigned integer registers and PCG outputs are pooled per pixel; generated constructors use fixed arity in hot paths.
 - Render graphs hoist bindings and traverse top-down storage in cache-friendly scanline tiles.
 - The async renderer yields only at tile boundaries and does not change output bytes.
-- Iterated (stateful/particle) effects re-run their entire pass graph `iterationCount` times per rendered frame, so cost scales with `iterationCount × passes`; `synth/navierStokes` is the worst case in the catalog. See "CPU iteration divergence" in [docs/EFFECTS.md](docs/EFFECTS.md) for concrete timings.
+- Iterated effects and explicit loop regions re-run their pass graph `iterationCount` times, so cost scales with `iterationCount × passes`; `synth/navierStokes` is the worst 2D case.
+- A volume atlas stores `N³` voxels as an `N × N²` float surface. Each live CPU atlas costs `16N³` bytes before pool reuse (about 0.5 MiB at 32³, 4 MiB at 64³, and 32 MiB at 128³), and several effects retain multiple state/trail/geometry atlases per iteration.
+- Every image or atlas surface is capped at 16,777,216 pixels (256 MiB of float RGBA storage), with safe-integer checks before allocation.
 
 The renderer is CPU-bound by design. `npm run bench -- --size 128` reports local MP/s for a fill, sampled filter, blur, and representative chain. Throughput varies substantially by JavaScript engine and effect complexity.
 

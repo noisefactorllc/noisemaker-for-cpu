@@ -4,8 +4,8 @@ import test from 'node:test'
 import { effectCatalog } from '../src/effects/catalog.js'
 import { eligibleEffectIds, effectRecords } from '../src/effects/generated/upstream-snapshot.js'
 
-test('runtime catalog is the exact 188-effect canonical inventory', () => {
-  assert.equal(effectCatalog.length, 188)
+test('runtime catalog is the exact 205-effect canonical inventory', () => {
+  assert.equal(effectCatalog.length, 205)
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
   assert.equal(effectCatalog.some((effect) => ['synth/scope', 'synth/spectrum', 'synth/roll'].includes(effect.id)), false)
 })
@@ -23,6 +23,19 @@ test('runtime definitions preserve canonical metadata and pass schemas', () => {
     assert.deepEqual(definition.textures, record.textures)
     assert.equal(definition.externalTexture, record.externalTexture)
   }
+
+  const volumeNoise = catalog.get('synth3d/noise3d')
+  assert.equal(volumeNoise.domain, 'volume-generator')
+  assert.equal(volumeNoise.outputTex3d, 'volumeCache')
+  assert.equal(volumeNoise.outputGeo, 'geoBuffer')
+  const palette3d = catalog.get('filter3d/palette3d')
+  assert.equal(palette3d.domain, 'volume-filter')
+  assert.equal(palette3d.outputGeo, 'inputGeo')
+  const render3d = catalog.get('render/render3d')
+  assert.equal(render3d.domain, 'volume-renderer')
+  assert.equal(render3d.outputTex3d, 'inputTex3d')
+  assert.equal(catalog.get('render/loopBegin').loopRole, 'begin')
+  assert.equal(catalog.get('render/loopEnd').loopRole, 'end')
 })
 
 test('runtime definitions deeply freeze shared catalog metadata', () => {
@@ -63,4 +76,13 @@ test('canonical aliases, member enums, strings, booleans, and hex colors normali
 test('input-free classic programs are generators, including fractal', () => {
   const fractal = effectCatalog.find((effect) => effect.id === 'classicNoisedeck/fractal')
   assert.equal(fractal.kind, 'generator')
+})
+
+test('volume, geometry, and mat3 defaults normalize through runtime definitions', () => {
+  const catalog = new Map(effectCatalog.map((effect) => [effect.id, effect]))
+  const cellular = catalog.get('synth3d/cellularAutomata3d').normalizeArguments([])
+  assert.equal(cellular.source, 'vol0')
+  assert.equal(cellular.geoSource, 'geo0')
+  const cubemap = catalog.get('render/renderCubemap3d').normalizeArguments([])
+  assert.deepEqual(cubemap.cubeBasis, [1, 0, 0, 0, 1, 0, 0, 0, 1])
 })

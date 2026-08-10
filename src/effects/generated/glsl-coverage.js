@@ -127,6 +127,15 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 30817
   },
   {
+    "effectId": "classicNoisedeck/noise3d",
+    "program": "noise3d",
+    "file": "noise3d.glsl",
+    "status": "generated",
+    "sourceBytes": 19654,
+    "normalizedBytes": 20394,
+    "generatedBytes": 29764
+  },
+  {
     "effectId": "classicNoisedeck/refract",
     "program": "refract",
     "file": "refract.glsl",
@@ -152,6 +161,15 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 21289,
     "normalizedBytes": 21795,
     "generatedBytes": 23156
+  },
+  {
+    "effectId": "classicNoisedeck/shapes3d",
+    "program": "shapes3d",
+    "file": "shapes3d.glsl",
+    "status": "generated",
+    "sourceBytes": 16152,
+    "normalizedBytes": 16442,
+    "generatedBytes": 18035
   },
   {
     "effectId": "classicNoisedeck/splat",
@@ -1454,9 +1472,9 @@ export const programCoverage = Object.freeze([
     "program": "text",
     "file": "text.glsl",
     "status": "generated",
-    "sourceBytes": 1327,
-    "normalizedBytes": 1305,
-    "generatedBytes": 1519
+    "sourceBytes": 2058,
+    "normalizedBytes": 2036,
+    "generatedBytes": 1427
   },
   {
     "effectId": "filter/texture",
@@ -1655,6 +1673,60 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 1496,
     "normalizedBytes": 1790,
     "generatedBytes": 2440
+  },
+  {
+    "effectId": "filter3d/flow3d",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 9859,
+    "normalizedBytes": 10250,
+    "generatedBytes": 7496
+  },
+  {
+    "effectId": "filter3d/flow3d",
+    "program": "blend",
+    "file": "blend.glsl",
+    "status": "generated",
+    "sourceBytes": 1154,
+    "normalizedBytes": 1314,
+    "generatedBytes": 1299
+  },
+  {
+    "effectId": "filter3d/flow3d",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceBytes": 466,
+    "normalizedBytes": 626,
+    "generatedBytes": 587
+  },
+  {
+    "effectId": "filter3d/flow3d",
+    "program": "deposit",
+    "file": "deposit.frag",
+    "status": "adapter",
+    "sourceBytes": 191,
+    "normalizedBytes": 191,
+    "generatedBytes": 0
+  },
+  {
+    "effectId": "filter3d/flow3d",
+    "program": "diffuse",
+    "file": "diffuse.glsl",
+    "status": "generated",
+    "sourceBytes": 725,
+    "normalizedBytes": 885,
+    "generatedBytes": 809
+  },
+  {
+    "effectId": "filter3d/palette3d",
+    "program": "palette3d",
+    "file": "palette3d.glsl",
+    "status": "generated",
+    "sourceBytes": 15170,
+    "normalizedBytes": 16799,
+    "generatedBytes": 19937
   },
   {
     "effectId": "mixer/alphaMask",
@@ -2062,6 +2134,24 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 320
   },
   {
+    "effectId": "render/loopBegin",
+    "program": "loopBegin",
+    "file": "loopBegin.glsl",
+    "status": "generated",
+    "sourceBytes": 1064,
+    "normalizedBytes": 1045,
+    "generatedBytes": 797
+  },
+  {
+    "effectId": "render/loopEnd",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceBytes": 351,
+    "normalizedBytes": 486,
+    "generatedBytes": 545
+  },
+  {
     "effectId": "render/pointsBillboardRender",
     "program": "blend",
     "file": "blend.glsl",
@@ -2150,6 +2240,42 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 620,
     "normalizedBytes": 601,
     "generatedBytes": 556
+  },
+  {
+    "effectId": "render/render3d",
+    "program": "render3d",
+    "file": "render3d.glsl",
+    "status": "generated",
+    "sourceBytes": 14169,
+    "normalizedBytes": 14725,
+    "generatedBytes": 14433
+  },
+  {
+    "effectId": "render/renderCubemap3d",
+    "program": "renderCubemap3d",
+    "file": "renderCubemap3d.glsl",
+    "status": "generated",
+    "sourceBytes": 14026,
+    "normalizedBytes": 14587,
+    "generatedBytes": 14042
+  },
+  {
+    "effectId": "render/renderCubemapSurface",
+    "program": "renderCubemapSurface",
+    "file": "renderCubemapSurface.glsl",
+    "status": "generated",
+    "sourceBytes": 4410,
+    "normalizedBytes": 4703,
+    "generatedBytes": 5049
+  },
+  {
+    "effectId": "render/renderLit3d",
+    "program": "renderLit3d",
+    "file": "renderLit3d.glsl",
+    "status": "generated",
+    "sourceBytes": 12143,
+    "normalizedBytes": 12586,
+    "generatedBytes": 12956
   },
   {
     "effectId": "synth/bitwise",
@@ -2465,5 +2591,68 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 5919,
     "normalizedBytes": 5897,
     "generatedBytes": 4956
+  },
+  {
+    "effectId": "synth3d/cell3d",
+    "program": "precompute",
+    "file": "precompute.glsl",
+    "status": "generated",
+    "sourceBytes": 5081,
+    "normalizedBytes": 5533,
+    "generatedBytes": 5165
+  },
+  {
+    "effectId": "synth3d/cellularAutomata3d",
+    "program": "simulate",
+    "file": "simulate.glsl",
+    "status": "generated",
+    "sourceBytes": 8843,
+    "normalizedBytes": 9171,
+    "generatedBytes": 6738
+  },
+  {
+    "effectId": "synth3d/flythrough3d",
+    "program": "precompute",
+    "file": "precompute.glsl",
+    "status": "generated",
+    "sourceBytes": 11404,
+    "normalizedBytes": 11328,
+    "generatedBytes": 9283
+  },
+  {
+    "effectId": "synth3d/fractal3d",
+    "program": "precompute",
+    "file": "precompute.glsl",
+    "status": "generated",
+    "sourceBytes": 6912,
+    "normalizedBytes": 6959,
+    "generatedBytes": 6937
+  },
+  {
+    "effectId": "synth3d/noise3d",
+    "program": "precompute",
+    "file": "precompute.glsl",
+    "status": "generated",
+    "sourceBytes": 7667,
+    "normalizedBytes": 8228,
+    "generatedBytes": 7991
+  },
+  {
+    "effectId": "synth3d/reactionDiffusion3d",
+    "program": "simulate",
+    "file": "simulate.glsl",
+    "status": "generated",
+    "sourceBytes": 6257,
+    "normalizedBytes": 6581,
+    "generatedBytes": 5114
+  },
+  {
+    "effectId": "synth3d/shape3d",
+    "program": "precompute",
+    "file": "precompute.glsl",
+    "status": "generated",
+    "sourceBytes": 6508,
+    "normalizedBytes": 6424,
+    "generatedBytes": 5290
   }
 ])

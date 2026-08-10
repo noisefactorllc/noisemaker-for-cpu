@@ -12,10 +12,21 @@ const referenceRoot = resolve(process.env.NM_REFERENCE_ROOT ?? resolve(projectRo
 const effectsRoot = resolve(referenceRoot, 'shaders', 'effects')
 const outputPath = resolve(projectRoot, 'src', 'effects', 'generated', 'upstream-snapshot.js')
 
-const namespaces = ['classicNoisedeck', 'filter', 'mixer', 'points', 'render', 'synth']
+const namespaces = ['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d']
 const reactive = Object.freeze(['synth/roll', 'synth/scope', 'synth/spectrum'])
-const classic3d = new Set(['classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d'])
-const renderAllowlist = new Set(['pointsEmit', 'pointsRender', 'pointsBillboardRender'])
+const mesh = Object.freeze(['render/meshLoader', 'render/meshRender'])
+const excluded = new Set([...reactive, ...mesh])
+const renderAllowlist = new Set([
+  'loopBegin',
+  'loopEnd',
+  'pointsEmit',
+  'pointsRender',
+  'pointsBillboardRender',
+  'render3d',
+  'renderCubemap3d',
+  'renderCubemapSurface',
+  'renderLit3d',
+])
 
 // Stateful/particle effects (formerly excluded) now import with `iterated: true`.
 // The CPU renderer re-runs their passes `iterationCount` times per frame (default 60);
@@ -25,6 +36,7 @@ const ITERATED = new Set([
   'filter/feedback',
   'filter/motionBlur',
   'filter/temporalAberration',
+  'filter3d/flow3d',
   'points/attractor',
   'points/buddhabrot',
   'points/dla',
@@ -35,6 +47,7 @@ const ITERATED = new Set([
   'points/life',
   'points/physarum',
   'points/physical',
+  'render/loopBegin',
   'render/pointsBillboardRender',
   'render/pointsEmit',
   'render/pointsRender',
@@ -42,6 +55,8 @@ const ITERATED = new Set([
   'synth/mnca',
   'synth/navierStokes',
   'synth/reactionDiffusion',
+  'synth3d/cellularAutomata3d',
+  'synth3d/reactionDiffusion3d',
 ])
 
 function projectParam(param, stdEnums) {
@@ -56,13 +71,20 @@ function projectParam(param, stdEnums) {
 }
 
 function projectPass(pass) {
+  // The volume MRT definitions call location 0 `color`, while all nine GLSL
+  // programs declare it as `fragColor`. WebGL binds by location; the CPU
+  // renderer binds by output name, so retain the shader name in the snapshot.
+  const outputs = Object.fromEntries(Object.entries(pass.outputs ?? {}).map(([name, texture]) => [
+    pass.drawBuffers >= 2 && name === 'color' ? 'fragColor' : name,
+    texture,
+  ]))
   const projected = {
     name: pass.name,
     program: pass.program,
     inputs: pass.inputs ?? {},
-    outputs: pass.outputs ?? {},
+    outputs,
   }
-  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions']) {
+  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport']) {
     if (pass[key] !== undefined) projected[key] = pass[key]
   }
   return projected
@@ -75,7 +97,8 @@ function projectTextures(textures = {}) {
 }
 
 function inferKind(namespace, definition) {
-  if (namespace === 'synth') return 'generator'
+  if (namespace === 'synth' || namespace === 'synth3d') return 'generator'
+  if (namespace === 'filter3d') return 'filter'
   if (namespace === 'mixer') return 'mixer'
   // points/render effects thread the 2D chain through while mutating agent state, so they are
   // chain-position filters regardless of an optional sprite input (e.g.
@@ -112,7 +135,16 @@ function inferKind(namespace, definition) {
   return external ? 'mixer' : 'filter'
 }
 
-const AGENT_OUTPUT_KEYS = ['outputXyz', 'outputVel', 'outputRgba']
+function inferDomain(id, namespace) {
+  if (id === 'render/loopBegin') return 'loop-begin'
+  if (id === 'render/loopEnd') return 'loop-end'
+  if (namespace === 'synth3d') return 'volume-generator'
+  if (namespace === 'filter3d') return 'volume-filter'
+  if (id.startsWith('render/render')) return 'volume-renderer'
+  return 'image'
+}
+
+const OUTPUT_KEYS = ['outputTex', 'outputTex3d', 'outputGeo', 'outputXyz', 'outputVel', 'outputRgba']
 
 async function loadDefinition(namespace, directoryName) {
   const path = resolve(effectsRoot, namespace, directoryName, 'definition.js')
@@ -125,15 +157,25 @@ async function loadDefinition(namespace, directoryName) {
   // fields used by points/render particle definitions, so they are silently dropped rather
   // than thrown. The pinned file itself must not be modified, so recover the (plain string)
   // values directly from source text when the constructed instance is missing them.
-  if ((namespace === 'points' || namespace === 'render') && AGENT_OUTPUT_KEYS.some((key) => definition[key] === undefined)) {
+  if (OUTPUT_KEYS.some((key) => definition[key] === undefined)) {
     const source = await readFile(path, 'utf8')
-    for (const key of AGENT_OUTPUT_KEYS) {
+    for (const key of OUTPUT_KEYS) {
       if (definition[key] !== undefined) continue
-      const match = source.match(new RegExp(`\\b${key}:\\s*["']([^"']+)["']`))
+      const match = source.match(new RegExp(`\\b${key}\\s*[:=]\\s*["']([^"']+)["']`))
       if (match) definition[key] = match[1]
     }
   }
   return definition
+}
+
+async function sourceInventory() {
+  const ids = []
+  for (const namespace of namespaces) {
+    for (const directoryName of (await readdir(resolve(effectsRoot, namespace))).sort()) {
+      if (existsSync(resolve(effectsRoot, namespace, directoryName, 'definition.js'))) ids.push(`${namespace}/${directoryName}`)
+    }
+  }
+  return ids.sort()
 }
 
 async function inventory() {
@@ -145,7 +187,7 @@ async function inventory() {
       if (namespace === 'render' && !renderAllowlist.has(directoryName)) continue
       const id = `${namespace}/${directoryName}`
       const definitionPath = resolve(effectsRoot, id, 'definition.js')
-      if (!existsSync(definitionPath) || reactive.includes(id) || classic3d.has(id)) continue
+      if (!existsSync(definitionPath) || excluded.has(id)) continue
       const definition = await loadDefinition(namespace, directoryName)
       const record = {
         id,
@@ -154,6 +196,7 @@ async function inventory() {
         namespace: definition.namespace ?? namespace,
         func: definition.func ?? directoryName,
         kind: inferKind(namespace, definition),
+        domain: inferDomain(id, namespace),
         tags: definition.tags ?? [],
         description: definition.description ?? '',
         paramAliases: definition.paramAliases ?? {},
@@ -162,9 +205,11 @@ async function inventory() {
         textures: projectTextures(definition.textures),
         externalTexture: definition.externalTexture ?? null,
       }
-      for (const key of ['outputXyz', 'outputVel', 'outputRgba']) {
+      for (const key of OUTPUT_KEYS) {
         if (definition[key] !== undefined) record[key] = definition[key]
       }
+      if (id === 'render/loopBegin') record.loopRole = 'begin'
+      if (id === 'render/loopEnd') record.loopRole = 'end'
       if (ITERATED.has(id)) {
         record.iterated = true
         record.params.iterationCount = { type: 'int', default: 60, min: 0, max: 10000, cpuOnly: true }
@@ -177,22 +222,15 @@ async function inventory() {
 }
 
 const upstreamRevision = assertPinnedSource(referenceRoot)
+const sourceEffectIds = await sourceInventory()
 const effectRecords = await inventory()
 const excludedEffects = {
   reactive: [...reactive],
-  threeD: [
-    'classicNoisedeck/noise3d',
-    'classicNoisedeck/shapes3d',
-    'filter3d/*',
-    'synth3d/*',
-    'render/*3d',
-    'render/*Cubemap*',
-    'render/mesh*',
-  ],
-  control: ['render/loopBegin', 'render/loopEnd'],
+  mesh: [...mesh],
 }
 const source = `// Generated by scripts/upstream/inventory.js. Do not edit.\n` +
   `export const UPSTREAM_REVISION = ${JSON.stringify(upstreamRevision)}\n` +
+  `export const sourceEffectIds = Object.freeze(${JSON.stringify(sourceEffectIds, null, 2)})\n` +
   `export const excludedEffects = Object.freeze(${JSON.stringify(excludedEffects, null, 2)})\n` +
   `export const effectRecords = Object.freeze(${JSON.stringify(effectRecords, null, 2)})\n` +
   `export const eligibleEffectIds = Object.freeze(effectRecords.map((effect) => effect.id))\n`

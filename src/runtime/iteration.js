@@ -57,6 +57,7 @@ function referencesParticleState(step) {
 export function computeIterationGroups(steps) {
   const groups = []
   let openGroup = null
+  let openLoop = null
 
   const closeOpenGroup = () => {
     if (!openGroup) return
@@ -65,9 +66,25 @@ export function computeIterationGroups(steps) {
   }
 
   for (const step of steps) {
+    if (openLoop) {
+      if (step.kind === 'read' || step.kind === 'write') throw new Error('Loop iteration group cannot cross a read/write boundary')
+      if (step.definition?.loopRole === 'begin') throw new Error('Nested loop iteration groups are not supported')
+      openLoop.steps.push(step)
+      if (step.definition?.loopRole === 'end') {
+        groups.push({ steps: openLoop.steps, iterated: true, loop: true })
+        openLoop = null
+      }
+      continue
+    }
     if (step.kind === 'read' || step.kind === 'write') {
       closeOpenGroup()
       groups.push({ steps: [step], iterated: false })
+      continue
+    }
+    if (step.definition?.loopRole === 'end') throw new Error('loopEnd has no matching loopBegin')
+    if (step.definition?.loopRole === 'begin') {
+      closeOpenGroup()
+      openLoop = { steps: [step] }
       continue
     }
     if (declaresXyz(step)) {
@@ -82,6 +99,7 @@ export function computeIterationGroups(steps) {
     closeOpenGroup()
     groups.push({ steps: [step], iterated: step.definition.iterated === true })
   }
+  if (openLoop) throw new Error('loopBegin has no matching loopEnd')
   closeOpenGroup()
   return groups
 }
