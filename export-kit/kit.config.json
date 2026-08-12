@@ -1,0 +1,26 @@
+{
+  "configVersion": 1,
+  "id": "cpu",
+  "series": "0.1",
+  "shaderSource": "kit",
+  "engineSource": "kit",
+  "pageTemplate": false,
+  "subtrees": [
+    { "from": "src", "to": "engine/src" },
+    { "from": "bin/noisemaker-cpu.js", "to": "engine/bin/noisemaker-cpu.js" }
+  ],
+  "licenses": [
+    { "from": "LICENSE", "to": "LICENSES/noisemaker-for-cpu-LICENSE.txt" }
+  ],
+  "requireFiles": ["engine/bin/noisemaker-cpu.js", "engine/src/index.js"],
+  "forbidDirs": ["shaders"],
+  "inject": {
+    "type": "dsl-file",
+    "target": "program.dsl"
+  },
+  "compat": {
+    "mode": "list",
+    "fromJsonList": "export-kit/compat-effects.json"
+  },
+  "engineBytesFrom": ["engine/"]
+}
