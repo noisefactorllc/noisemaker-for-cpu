@@ -201,6 +201,32 @@ function poolLocalVectors(transpiled) {
   }).join('\n')
 }
 
+function preserveMedianUnsignedSemantics(transpiled) {
+  // These helpers only read their uvec2 arguments. The transpiler's default
+  // vec2 parameter copies would coerce the normalized unsigned arrays through
+  // Float32Array and round their packed 32-bit ordering keys.
+  const patterns = [
+    /(function lessRecord \([^)]*\) \{\s*)a = a\.slice\(\);\s*b = b\.slice\(\);/,
+    /(function unpackRecordRgb \([^)]*\) \{\s*)major = major\.slice\(\);/,
+  ]
+  let output = transpiled
+  for (const pattern of patterns) {
+    if (!pattern.test(output)) throw new Error('Unable to preserve median unsigned parameter values')
+    output = output.replace(pattern, '$1')
+  }
+  // Both 16-bit half-word rotations operate on GLSL uint values. JavaScript's
+  // arithmetic right shift sign-extends packed words whose high bit is set.
+  for (const helper of ['packRecordMajor', 'unpackRecordRgb']) {
+    const pattern = new RegExp(`function ${helper} \\([^)]*\\) \\{[\\s\\S]*?\\n\\};`)
+    const match = output.match(pattern)
+    if (!match) throw new Error(`Unable to find median ${helper} helper`)
+    const shiftCount = [...match[0].matchAll(/ >> 16/g)].length
+    if (shiftCount !== 1) throw new Error(`Expected one packed-word shift in median ${helper}, found ${shiftCount}`)
+    output = output.replace(pattern, match[0].replace(' >> 16', ' >>> 16'))
+  }
+  return output
+}
+
 function preserveVectorAssignmentReads(source) {
   let assignmentIndex = 0
   return source.replace(
@@ -335,7 +361,15 @@ function adaptCanonicalSource(effectId, source) {
     '$1if (x0.x > x0.y) { i1 = vec2(1.0, 0.0); } else { i1 = vec2(0.0, 1.0); }',
   )
   if (effectId === 'filter/median') {
+    // Canonical normalization represents uvec2 declarations as vec2 plus
+    // unsigned constructor helpers. Initialize the fixed record array through
+    // that helper so packed uint keys do not get rounded by Float32Array.
+    const majorRecordInitializer = Array.from({ length: 49 }, () => 'cpu_uvec2(0.0)').join(', ')
     source = source
+      .replace(
+        'vec2 majorRecords[49];',
+        `vec2 majorRecords[49] = vec2[49](${majorRecordInitializer});`,
+      )
       .replace(
         /float b = unpackHalf2x16\(blue\)\.x;/,
         'vec2 unpackedBlue = unpackHalf2x16(blue);\n    float b = unpackedBlue.x;',
@@ -343,6 +377,14 @@ function adaptCanonicalSource(effectId, source) {
       .replace(
         /int medianIndex = 49 \/ 2;\s*int left = 0;\s*int right = 49 - 1;/,
         'int activeCount = (RADIUS * 2 + 1) * (RADIUS * 2 + 1);\n    int medianIndex = (activeCount - 1) >> 1;\n    int left = 0;\n    int right = activeCount - 1;',
+      )
+      .replace(
+        'vec2 pivotMajor = majorRecords[medianIndex];',
+        'vec2 pivotMajor = cpu_uvec2(majorRecords[medianIndex].x, majorRecords[medianIndex].y);',
+      )
+      .replace(
+        'vec2 temporaryMajor = majorRecords[scanLeft];',
+        'vec2 temporaryMajor = cpu_uvec2(majorRecords[scanLeft].x, majorRecords[scanLeft].y);',
       )
   }
   if (effectId === 'filter/outline') {
@@ -429,7 +471,18 @@ function adaptCanonicalSource(effectId, source) {
     )
   }
   if (effectId === 'filter/dither') {
+    // The pinned shader constants make FS_ERR_W exactly 18. glsl-transpiler
+    // otherwise lowers this uninitialized fixed-size array to an empty JS array.
+    const errorRowInitializer = Array.from({ length: 18 }, () => 'vec3(0.0)').join(', ')
     source = source
+      .replace(
+        'vec3 errRow[FS_ERR_W];',
+        `vec3 errRow[18] = vec3[18](${errorRowInitializer});`,
+      )
+      .replace(
+        'ivec2 blockOrigin = (cell / FS_BLOCK) * FS_BLOCK;',
+        'ivec2 blockOrigin = ivec2(int(float(cell.x) / float(FS_BLOCK)) * FS_BLOCK, int(float(cell.y) / float(FS_BLOCK)) * FS_BLOCK);',
+      )
       .replace('return bayer2x2[y & 1][x & 1];', 'return cpu_bayer2[(y & 1) * 2 + (x & 1)];')
       .replace('return bayer4x4[y & 3][x & 3];', 'return cpu_bayer4[(y & 3) * 4 + (x & 3)];')
     source = `const float cpu_bayer2[4] = float[4](0.0, 0.5, 0.75, 0.25);\n` +
@@ -481,6 +534,7 @@ function adaptCanonicalSource(effectId, source) {
 }
 
 function factorySource(index, effectId, transpiled, normalized, originalSource) {
+  if (effectId === 'filter/median') transpiled = preserveMedianUnsignedSemantics(transpiled)
   transpiled = lowerUnsignedJavaScript(transpiled, originalSource)
   // ANGLE's optimized scatter hash straddles a nearest-sampling boundary in
   // the canonical default. Its original scalar lowering matches that backend;

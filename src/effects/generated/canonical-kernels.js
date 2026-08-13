@@ -10623,8 +10623,8 @@ function canonicalFactory47($bindings, $runtime) {
 function canonicalFactory48($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, abs, floor, fract, min, clamp, mix, smoothstep, length, dot, add, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
-  function cpu_float (value) { return $runtime.stdlib.float(value); };
   
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
   var cpu_bayer2 = [0, 0.5, 0.75, 0.25];
   var cpu_bayer4 = [0, 0.5, 0.125, 0.625, 0.75, 0.25, 0.875, 0.375, 0.1875, 0.6875, 0.0625, 0.5625, 0.9375, 0.4375, 0.8125, 0.3125];
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -11060,7 +11060,7 @@ function canonicalFactory48($bindings, $runtime) {
   function errorDiffusion (globalCoord, cellSize, texSize) {
   	globalCoord = $runtime.copy(globalCoord);
   	var cell = cpu_ivec2_vec2(floor(new $runtime.PooledFloat32Array([globalCoord[0] / cellSize, globalCoord[1] / cellSize])));
-  	var blockOrigin = new $runtime.PooledFloat32Array([(cell[0] / FS_BLOCK) * FS_BLOCK, (cell[1] / FS_BLOCK) * FS_BLOCK]);
+  	var blockOrigin = new $runtime.PooledFloat32Array([(cpu_float(cell[0]) / cpu_float(FS_BLOCK)|0) * FS_BLOCK|0, (cpu_float(cell[1]) / cpu_float(FS_BLOCK)|0) * FS_BLOCK|0]);
   	var lx = cell[0] - blockOrigin[0];
   	var ly = cell[1] - blockOrigin[1];
   	var jitterHash = pcg(cpu_uvec3(blockOrigin[0] + 1|0, blockOrigin[1] + 1|0, 1367130551));
@@ -11068,7 +11068,7 @@ function canonicalFactory48($bindings, $runtime) {
   	var apronY = FS_APRON_MIN + jitterHash[1] % (FS_APRON_MAX - FS_APRON_MIN + 1|0)|0;
   	var stepScale = fsScale();
   	var bias = new $runtime.PooledFloat32Array([threshold * stepScale, threshold * stepScale, threshold * stepScale]);
-  	var errRow = [];
+  	var errRow = [new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0])];
   	for (var i = 0; i < FS_ERR_W; i++) {
   	fsSeedNoise(blockOrigin, i).map(function (_) {return _ * stepScale;}).reduce((res,el,i)=>(res[i] = el, res), errRow[i]);
   	};
@@ -15296,8 +15296,7 @@ function canonicalFactory80($bindings, $runtime) {
   var threshold = $bindings["threshold"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function lessRecord (a, blueA, b, blueB) {
-  	a = $runtime.copy(a);
-  	b = $runtime.copy(b);
+  	
   	if (a[0] != b[0]) {
   	return a[0] < b[0];
   	};
@@ -15310,7 +15309,7 @@ function canonicalFactory80($bindings, $runtime) {
   	sampleColor = $runtime.copy(sampleColor);
   	var brightness = dot(new $runtime.PooledFloat32Array([sampleColor[0], sampleColor[1], sampleColor[2]]), new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   	var packedRg = packHalf2x16(new $runtime.PooledFloat32Array([sampleColor[0], sampleColor[1]]));
-  	var orderedRg = ((packedRg & 65535) << 16) | (packedRg >> 16);
+  	var orderedRg = ((packedRg & 65535) << 16) | (packedRg >>> 16);
   	return cpu_uvec2(floatBitsToUint(brightness), orderedRg);
   };
   function packRecordBlue (sampleColor) {
@@ -15318,8 +15317,8 @@ function canonicalFactory80($bindings, $runtime) {
   	return (packHalf2x16(new $runtime.PooledFloat32Array([sampleColor[2], 0]))) & 65535;
   };
   function unpackRecordRgb (major, blue) {
-  	major = $runtime.copy(major);
-  	var packedRg = (major[1] << 16) | (major[1] >> 16);
+  	
+  	var packedRg = (major[1] << 16) | (major[1] >>> 16);
   	var rg = unpackHalf2x16(packedRg);
   	var unpackedBlue = unpackHalf2x16(blue);
   	var b = unpackedBlue[0];
@@ -15330,7 +15329,7 @@ function canonicalFactory80($bindings, $runtime) {
   	return texelFetch(inputTex, coord, 0);
   };
   function main () {
-  	var majorRecords = [new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0])];
+  	var majorRecords = [cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0), cpu_uvec2(0)];
   	var blueRecords = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   	var dimensions = textureSize(inputTex, 0);
   	var center = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
@@ -15354,7 +15353,7 @@ function canonicalFactory80($bindings, $runtime) {
   	var left = 0;
   	var right = activeCount - 1;
   	while (left < right) {
-  	var pivotMajor = majorRecords[medianIndex];
+  	var pivotMajor = cpu_uvec2_float_float(majorRecords[medianIndex][0], majorRecords[medianIndex][1]);
   	var pivotBlue = blueRecords[medianIndex];
   	var scanLeft = left;
   	var scanRight = right;
@@ -15366,7 +15365,7 @@ function canonicalFactory80($bindings, $runtime) {
   	scanRight--;
   	};
   	if (scanLeft <= scanRight) {
-  	var temporaryMajor = majorRecords[scanLeft];
+  	var temporaryMajor = cpu_uvec2_float_float(majorRecords[scanLeft][0], majorRecords[scanLeft][1]);
   	(majorRecords[scanLeft][0] = majorRecords[scanRight][0], majorRecords[scanLeft][1] = majorRecords[scanRight][1], majorRecords[scanLeft]);
   	(majorRecords[scanRight][0] = temporaryMajor[0], majorRecords[scanRight][1] = temporaryMajor[1], majorRecords[scanRight]);
   	var temporaryBlue = blueRecords[scanLeft];

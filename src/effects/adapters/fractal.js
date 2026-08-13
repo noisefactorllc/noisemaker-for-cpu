@@ -1,3 +1,6 @@
+// Direct CPU translation of the pinned canonical fractal.glsl Julia, Newton,
+// Mandelbrot, and color-mapping paths. This explicit compatibility adapter is
+// an implementation route for the same effect, not a different algorithm.
 const PI = 3.14159265359
 const TAU = 6.28318530718
 

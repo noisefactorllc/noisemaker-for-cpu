@@ -447,8 +447,8 @@ export const programCoverage = Object.freeze([
     "file": "dither.glsl",
     "status": "generated",
     "sourceBytes": 19391,
-    "normalizedBytes": 19918,
-    "generatedBytes": 18393
+    "normalizedBytes": 20259,
+    "generatedBytes": 19012
   },
   {
     "effectId": "filter/edge",
@@ -744,8 +744,8 @@ export const programCoverage = Object.freeze([
     "file": "median.glsl",
     "status": "generated",
     "sourceBytes": 3846,
-    "normalizedBytes": 4145,
-    "generatedBytes": 5741
+    "normalizedBytes": 5021,
+    "generatedBytes": 5360
   },
   {
     "effectId": "filter/morphology",

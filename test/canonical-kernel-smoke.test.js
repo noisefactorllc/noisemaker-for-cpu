@@ -1,10 +1,38 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import test from 'node:test'
 
-import { canonicalKernelFactories, createDefaultRegistry, effectCatalog, kernelFactories, kernels } from '../src/effects/catalog.js'
+import { canonicalAdapterFactories, canonicalKernelFactories, createDefaultRegistry, effectCatalog, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { bindCanonicalKernel, createCanonicalBindings } from '../src/csl/glsl-kernel.js'
+import { runPass } from '../src/runtime/pass-runner.js'
 import { Surface } from '../src/runtime/surface.js'
+
+function patternedSurface(width, height) {
+  const data = new Float32Array(width * height * 4)
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const index = (y * width + x) * 4
+      data[index] = (((31 * x + 17 * y + 7) % 97) + 1) / 101
+      data[index + 1] = (((13 * x + 37 * y + 11) % 89) + 2) / 97
+      data[index + 2] = (((43 * x + 5 * y + 3) % 83) + 3) / 91
+      data[index + 3] = 1
+    }
+  }
+  return new Surface(width, height, data)
+}
+
+function renderMedianFactory(factory, input) {
+  const kernel = bindCanonicalKernel(factory, {
+    width: input.width,
+    height: input.height,
+    uniforms: { RADIUS: 3, threshold: 0 },
+    textures: { inputTex: input },
+  })
+  const destination = new Surface(input.width, input.height)
+  runPass({ kernel, destination })
+  return destination
+}
 
 test('classic palette parameters expand to canonical shader uniforms', () => {
   const registry = createDefaultRegistry()
@@ -118,10 +146,56 @@ test('dynamic Bayer matrix indexing preserves the canonical dither threshold', (
   assert.deepEqual([...result.toRgba8().slice(0, 8)], [255, 255, 85, 255, 255, 170, 170, 255])
 })
 
+test('error-diffusion dither matches the pinned WebGL2 frame', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const result = renderer.render(
+    'search synth, filter\nnoise(seed: 1, ridges: true).dither(type: errorDiffusion).write(o0)\nrender(o0)',
+    { width: 8, height: 8, time: 0.25, oneShot: 'initial' },
+  )
+  const hash = createHash('sha256').update(result.toRgba8()).digest('hex')
+  assert.equal(hash, '0665d7edb18d3e61a4e6731369c881b045145ca6d0a709ccf070319b0a6f8dc7')
+})
+
 test('generated canonical median kernel binds scalar conversion callbacks', () => {
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
   const result = renderer.render('search synth, filter\nsolid(color: #369).median().write(o0)\nrender(o0)', { width: 2, height: 2 })
   assert.ok(result.surface.data.every(Number.isFinite))
+})
+
+test('generated median factory preserves vector value semantics for patterned inputs', () => {
+  const generatedFactory = canonicalKernelFactories['filter/median:median']
+  const adapterFactory = canonicalAdapterFactories['filter/median:median']
+
+  for (const size of [4, 5, 6]) {
+    const generated = renderMedianFactory(generatedFactory, patternedSurface(size, size))
+    const adapter = renderMedianFactory(adapterFactory, patternedSurface(size, size))
+    assert.deepEqual(
+      new Uint32Array(generated.data.buffer, generated.data.byteOffset, generated.data.length),
+      new Uint32Array(adapter.data.buffer, adapter.data.byteOffset, adapter.data.length),
+      `${size}x${size} generated median output must match the routed adapter bit-for-bit`,
+    )
+  }
+})
+
+test('generated median factory preserves negative packed channels', () => {
+  const input = new Surface(3, 3)
+  input.clear([-0.5, 0.25, 0.5, 1])
+  const generated = renderMedianFactory(canonicalKernelFactories['filter/median:median'], input)
+  const adapter = renderMedianFactory(canonicalAdapterFactories['filter/median:median'], input)
+
+  assert.ok(generated.data.every(Number.isFinite), 'generated median output must remain finite')
+  assert.deepEqual([...generated.data.slice(0, 4)], [-0.5, 0.25, 0.5, 1])
+  assert.deepEqual(
+    new Uint32Array(generated.data.buffer, generated.data.byteOffset, generated.data.length),
+    new Uint32Array(adapter.data.buffer, adapter.data.byteOffset, adapter.data.length),
+  )
+})
+
+test('median public route remains the optimized compatibility adapter', () => {
+  assert.equal(
+    kernelFactories.get('filter/median:median'),
+    canonicalAdapterFactories['filter/median:median'],
+  )
 })
 
 for (const [name, source, options] of [
@@ -154,6 +228,12 @@ for (const [name, source] of [
   ['Julia', 'search synth\njulia(iterations: 50).write(o0)\nrender(o0)'],
 ]) {
   test(`canonical ${name} compatibility adapter emits finite pixels`, () => {
+    if (name === 'classic fractal') {
+      assert.equal(
+        kernelFactories.get('classicNoisedeck/fractal:fractal'),
+        canonicalAdapterFactories['classicNoisedeck/fractal:fractal'],
+      )
+    }
     const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
     const result = renderer.render(source, { width: 2, height: 2, seed: 3, time: 0.25 })
     assert.ok(result.surface.data.every(Number.isFinite))
