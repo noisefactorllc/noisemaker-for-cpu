@@ -137,7 +137,7 @@ test('CpuRenderer configures and submits successful sync and async frames to reg
   assert.deepEqual(events[1], ['submit', sync, 100])
   assert.deepEqual(events[2], ['configure', { width: 3, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 }])
   assert.deepEqual(events[3], ['submit', asyncResult, 200])
-  assert.deepEqual(renderer.sinkStats.get(sink), { accepted: 2, dropped: 0, failed: 0 })
+  assert.deepEqual(renderer.sinkManager.stats.get(sink), { accepted: 2, dropped: 0, failed: 0 })
   remove()
   assert.deepEqual(events.at(-1), ['close'])
 })

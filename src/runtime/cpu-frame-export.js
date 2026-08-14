@@ -1,5 +1,11 @@
 const ALPHA_MODES = new Set(['straight', 'opaque', 'premultiplied'])
 
+function byteFromFloat(value) {
+  if (!Number.isFinite(value) || value <= 0) return 0
+  if (value >= 1) return 255
+  return Math.round(value * 255)
+}
+
 function validateDescriptor(descriptor) {
   if (!descriptor || typeof descriptor !== 'object') throw new TypeError('Frame export descriptor must be an object')
   if (!Number.isSafeInteger(descriptor.width) || descriptor.width <= 0) throw new RangeError('Frame export width must be a positive integer')
@@ -36,22 +42,20 @@ export class CpuFrameExportAdapter {
   begin(slot, result) {
     this._assertUsable(slot)
     if (slot.ready) throw new Error('CPU frame export slot is already pending')
-    if (!result || typeof result.toRgba8 !== 'function' || !Number.isInteger(result.width) || !Number.isInteger(result.height)) {
+    if (!result || !(result.surface?.data instanceof Float32Array) || !Number.isInteger(result.width) || !Number.isInteger(result.height)) {
       throw new TypeError('CPU frame export requires a RenderResult-compatible frame')
     }
     if (result.width !== slot.width || result.height !== slot.height) {
       throw new Error(`CPU frame export source extent ${result.width}x${result.height} does not match configured extent ${slot.width}x${slot.height}`)
     }
-    slot.data.set(result.toRgba8())
-    if (slot.alphaMode === 'opaque') {
-      for (let index = 3; index < slot.data.length; index += 4) slot.data[index] = 255
-    } else if (slot.alphaMode === 'premultiplied') {
-      for (let index = 0; index < slot.data.length; index += 4) {
-        const alpha = slot.data[index + 3] / 255
-        slot.data[index] = Math.round(slot.data[index] * alpha)
-        slot.data[index + 1] = Math.round(slot.data[index + 1] * alpha)
-        slot.data[index + 2] = Math.round(slot.data[index + 2] * alpha)
-      }
+    const source = result.surface.data
+    for (let index = 0; index < source.length; index += 4) {
+      const alpha = source[index + 3]
+      const colorScale = slot.alphaMode === 'premultiplied' ? alpha : 1
+      slot.data[index] = byteFromFloat(source[index] * colorScale)
+      slot.data[index + 1] = byteFromFloat(source[index + 1] * colorScale)
+      slot.data[index + 2] = byteFromFloat(source[index + 2] * colorScale)
+      slot.data[index + 3] = byteFromFloat(slot.alphaMode === 'opaque' ? 1 : alpha)
     }
     slot.ready = true
   }

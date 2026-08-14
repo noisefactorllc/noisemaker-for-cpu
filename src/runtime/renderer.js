@@ -224,10 +224,6 @@ export class CpuRenderer {
     this._sinksConfigured = false
   }
 
-  get sinkStats() {
-    return this.sinkManager.stats
-  }
-
   addSink(sink) {
     return this.sinkManager.add(sink)
   }
@@ -236,7 +232,7 @@ export class CpuRenderer {
     return new FrameExportQueue(new CpuFrameExportAdapter(), options)
   }
 
-  configureSinks(width, height) {
+  _configureSinks(width, height) {
     if (this._sinksConfigured && this._sinkDescriptor.width === width && this._sinkDescriptor.height === height) return
     this._sinkDescriptor.width = width
     this._sinkDescriptor.height = height
@@ -244,7 +240,7 @@ export class CpuRenderer {
     this.sinkManager.configure(this._sinkDescriptor)
   }
 
-  submitToSinks(result, timestamp) {
+  _submitToSinks(result, timestamp) {
     const presentationTimestamp = timestamp ?? (typeof performance !== 'undefined' && typeof performance.now === 'function'
       ? performance.now()
       : Date.now())
@@ -1607,7 +1603,7 @@ export class CpuRenderer {
   render(source, options = {}) {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
-    this.configureSinks(renderOptions.width, renderOptions.height)
+    this._configureSinks(renderOptions.width, renderOptions.height)
     const plan = compileDsl(source, this.registry, options)
     const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
@@ -1628,7 +1624,7 @@ export class CpuRenderer {
         }
       }
       const result = this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
-      this.submitToSinks(result, options.presentationTimestamp)
+      this._submitToSinks(result, options.presentationTimestamp)
       return result
     } finally {
       this.cleanup(owned)
@@ -1638,7 +1634,7 @@ export class CpuRenderer {
   async renderAsync(source, options = {}) {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
-    this.configureSinks(renderOptions.width, renderOptions.height)
+    this._configureSinks(renderOptions.width, renderOptions.height)
     const plan = compileDsl(source, this.registry, options)
     const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
@@ -1660,7 +1656,7 @@ export class CpuRenderer {
         }
       }
       const result = this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
-      this.submitToSinks(result, options.presentationTimestamp)
+      this._submitToSinks(result, options.presentationTimestamp)
       return result
     } finally {
       this.cleanup(owned)

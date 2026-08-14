@@ -40,6 +40,20 @@ function result(bytes) {
   return new api.RenderResult(api.Surface.fromRgba8(1, 1, new Uint8Array(bytes)))
 }
 
+function floatResult(width, height, values) {
+  return new api.RenderResult(new api.Surface(width, height, new Float32Array(values)))
+}
+
+function exportBytes(renderer, frame, alphaMode) {
+  const queue = renderer.createFrameExportQueue({ slots: 2 })
+  let bytes
+  queue.configure({ width: frame.width, height: frame.height, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode, fps: 60 })
+  assert.equal(queue.enqueue(frame, 42, (exported) => { bytes = [...exported.data] }), true)
+  queue.poll()
+  queue.close()
+  return bytes
+}
+
 test('FrameExportQueue validates adapters and enforces a bounded slot count', () => {
   assert.throws(() => new api.FrameExportQueue({}), /adapter/)
   assert.throws(() => new api.FrameExportQueue(new FakeAdapter(), { slots: 1 }), /2 through 8/)
@@ -93,20 +107,35 @@ test('FrameExportQueue closes every slot once and becomes terminal after a destr
   assert.equal(queue.enqueue('late', 0, () => {}), false)
 })
 
-test('CpuRenderer frame export copies top-down RGBA8 bytes into reusable frames', () => {
+test('CpuRenderer frame export copies distinct rows in top-down order into reusable frames', () => {
   const renderer = new api.CpuRenderer({ registry: api.createDefaultRegistry(), kernels: api.kernels, kernelFactories: api.kernelFactories })
   const queue = renderer.createFrameExportQueue({ slots: 2 })
   const frames = []
-  queue.configure({ width: 1, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 })
-  const first = result([255, 0, 128, 255])
+  queue.configure({ width: 1, height: 2, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 })
+  const first = floatResult(1, 2, [1, 0, 0.5, 1, 0, 0.25, 1, 1])
 
   assert.equal(queue.enqueue(first, 42, (frame) => frames.push([...frame.data])), true)
   first.surface.clear([0, 1, 0, 1])
   queue.poll()
 
-  assert.deepEqual(frames, [[255, 0, 128, 255]])
+  assert.deepEqual(frames, [[255, 0, 128, 255, 0, 64, 255, 255]])
   assert.deepEqual(queue.stats, { accepted: 1, dropped: 0, completed: 1, failed: 0 })
   queue.close()
+})
+
+test('CpuRenderer frame export applies straight and opaque alpha modes without reordering rows', () => {
+  const renderer = new api.CpuRenderer({ registry: api.createDefaultRegistry(), kernels: api.kernels, kernelFactories: api.kernelFactories })
+  const frame = floatResult(1, 2, [2, 0.002, 0.5, 0.25, -1, 0.5, 1.5, 0.5])
+
+  assert.deepEqual(exportBytes(renderer, frame, 'straight'), [255, 1, 128, 64, 0, 128, 255, 128])
+  assert.deepEqual(exportBytes(renderer, frame, 'opaque'), [255, 1, 128, 255, 0, 128, 255, 255])
+})
+
+test('CpuRenderer frame export premultiplies float RGB before its single RGBA8 conversion', () => {
+  const renderer = new api.CpuRenderer({ registry: api.createDefaultRegistry(), kernels: api.kernels, kernelFactories: api.kernelFactories })
+  const frame = floatResult(1, 2, [2, 0.002, 0.5, 0.25, -1, 0.5, 1.5, 0.5])
+
+  assert.deepEqual(exportBytes(renderer, frame, 'premultiplied'), [128, 0, 32, 64, 0, 64, 191, 128])
 })
 
 test('CpuRenderer frame export rejects a result whose extent differs from its descriptor', () => {

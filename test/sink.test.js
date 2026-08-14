@@ -3,12 +3,12 @@ import assert from 'node:assert/strict'
 
 import * as api from '../src/index.js'
 
-function frame(bytes = [255, 128, 0, 255]) {
-  const surface = api.Surface.fromRgba8(1, 1, new Uint8Array(bytes))
+function frame(bytes = [255, 128, 0, 255], width = 1, height = 1) {
+  const surface = api.Surface.fromRgba8(width, height, new Uint8Array(bytes))
   return new api.RenderResult(surface, { time: 0.25 })
 }
 
-test('CanvasSink presents a real RenderResult into a Canvas 2D host', () => {
+test('CanvasSink presents distinct RenderResult rows in top-down order into a Canvas 2D host', () => {
   const presented = {}
   const context = {
     createImageData(width, height) {
@@ -21,14 +21,14 @@ test('CanvasSink presents a real RenderResult into a Canvas 2D host', () => {
   const canvas = { width: 0, height: 0, getContext: () => context }
   const sink = new api.CanvasSink(canvas)
 
-  sink.configure({ width: 1, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 })
-  assert.equal(sink.submit(frame(), 1234), true)
+  sink.configure({ width: 1, height: 2, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 })
+  assert.equal(sink.submit(frame([255, 128, 0, 255, 0, 64, 255, 255], 1, 2), 1234), true)
   sink.close()
   sink.close()
 
   assert.equal(canvas.width, 1)
-  assert.equal(canvas.height, 1)
-  assert.deepEqual([...presented.image.data], [255, 128, 0, 255])
+  assert.equal(canvas.height, 2)
+  assert.deepEqual([...presented.image.data], [255, 128, 0, 255, 0, 64, 255, 255])
   assert.deepEqual([presented.x, presented.y], [0, 0])
 })
 
