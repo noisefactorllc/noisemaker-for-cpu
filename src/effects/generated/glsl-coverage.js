@@ -5,8 +5,8 @@ export const programCoverage = Object.freeze([
     "program": "bitEffects",
     "file": "bitEffects.glsl",
     "status": "generated",
-    "sourceBytes": 12745,
-    "normalizedBytes": 13269,
+    "sourceBytes": 12748,
+    "normalizedBytes": 13272,
     "generatedBytes": 13422
   },
   {
@@ -50,8 +50,8 @@ export const programCoverage = Object.freeze([
     "program": "colorLab",
     "file": "colorLab.glsl",
     "status": "generated",
-    "sourceBytes": 9273,
-    "normalizedBytes": 9329,
+    "sourceBytes": 9276,
+    "normalizedBytes": 9332,
     "generatedBytes": 13676
   },
   {
@@ -95,8 +95,8 @@ export const programCoverage = Object.freeze([
     "program": "kaleido",
     "file": "kaleido.glsl",
     "status": "generated",
-    "sourceBytes": 27567,
-    "normalizedBytes": 28386,
+    "sourceBytes": 27570,
+    "normalizedBytes": 28389,
     "generatedBytes": 29015
   },
   {
@@ -122,8 +122,8 @@ export const programCoverage = Object.freeze([
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
-    "sourceBytes": 31255,
-    "normalizedBytes": 32175,
+    "sourceBytes": 31258,
+    "normalizedBytes": 32178,
     "generatedBytes": 30817
   },
   {
@@ -149,8 +149,8 @@ export const programCoverage = Object.freeze([
     "program": "shapeMixer",
     "file": "shapeMixer.glsl",
     "status": "generated",
-    "sourceBytes": 21718,
-    "normalizedBytes": 22324,
+    "sourceBytes": 21721,
+    "normalizedBytes": 22327,
     "generatedBytes": 22775
   },
   {
@@ -158,8 +158,8 @@ export const programCoverage = Object.freeze([
     "program": "shapes",
     "file": "shapes.glsl",
     "status": "generated",
-    "sourceBytes": 21289,
-    "normalizedBytes": 21795,
+    "sourceBytes": 21292,
+    "normalizedBytes": 21798,
     "generatedBytes": 23156
   },
   {

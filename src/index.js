@@ -17,5 +17,7 @@ export { BufferPool } from './runtime/buffer-pool.js'
 export { CpuRenderer } from './runtime/renderer.js'
 export { RenderResult } from './runtime/render-result.js'
 export { sampleBilinear, sampleNearest } from './runtime/sampler.js'
+export { CanvasSink, SinkManager } from './runtime/sink.js'
+export { FrameExportQueue } from './runtime/frame-export.js'
 
 export { renderToCanvas, renderToCanvasAsync } from './browser/canvas.js'

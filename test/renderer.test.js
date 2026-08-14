@@ -117,3 +117,48 @@ test('CpuRenderer reports reads of unwritten surfaces', () => {
     /Surface o4 has not been written/,
   )
 })
+
+test('CpuRenderer configures and submits successful sync and async frames to registered sinks', async () => {
+  const renderer = fixture()
+  const events = []
+  const sink = {
+    configure(descriptor) { events.push(['configure', { ...descriptor }]) },
+    submit(result, timestamp) { events.push(['submit', result, timestamp]); return true },
+    close() { events.push(['close']) },
+  }
+  const remove = renderer.addSink(sink)
+  const source = 'search synth\nsolid(color: [0.2, 0.4, 0.6]).write(o0)\nrender(o0)'
+
+  const sync = renderer.render(source, { width: 2, height: 1, presentationTimestamp: 100 })
+  const asyncResult = await renderer.renderAsync(source, { width: 3, height: 1, presentationTimestamp: 200, scheduler: async () => {} })
+
+  assert.equal(events.length, 4)
+  assert.deepEqual(events[0], ['configure', { width: 2, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 }])
+  assert.deepEqual(events[1], ['submit', sync, 100])
+  assert.deepEqual(events[2], ['configure', { width: 3, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 60 }])
+  assert.deepEqual(events[3], ['submit', asyncResult, 200])
+  assert.deepEqual(renderer.sinkStats.get(sink), { accepted: 2, dropped: 0, failed: 0 })
+  remove()
+  assert.deepEqual(events.at(-1), ['close'])
+})
+
+test('CpuRenderer does not submit failed renders to sinks', () => {
+  const renderer = fixture()
+  let submissions = 0
+  renderer.addSink({ configure() {}, submit() { submissions += 1; return true }, close() {} })
+
+  assert.throws(() => renderer.render('search filter\nread(o4).invert().write(o0)\nrender(o0)', { width: 1, height: 1 }))
+  assert.equal(submissions, 0)
+})
+
+test('CpuRenderer disposal closes sinks once while preserving existing render disposal behavior', () => {
+  const renderer = fixture()
+  let closes = 0
+  renderer.addSink({ configure() {}, submit() { return true }, close() { closes += 1 } })
+
+  renderer.dispose()
+  renderer.dispose()
+
+  assert.equal(closes, 1)
+  assert.throws(() => renderer.addSink({ configure() {}, submit() { return true }, close() {} }), /closed/)
+})

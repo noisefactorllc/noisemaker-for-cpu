@@ -2,9 +2,9 @@ import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
-export const PINNED_UPSTREAM_REVISION = 'c51037ad9e60850b74490c01a9eecf08c7d28e8c'
+export const PINNED_UPSTREAM_REVISION = '117a236679d1db3ab8f0e278230ece277b57564c'
 export const PINNED_SOURCE_PATHS = Object.freeze(['shaders/effects', 'shaders/src'])
-export const PINNED_SOURCE_DIGEST = '580a546934e98d37c182f8168c7ad7ab0d7a863144a52036a5bd564972aae4bb'
+export const PINNED_SOURCE_DIGEST = '66f4e9337810ca839dddaba047dadc0c15e903e0f662f189ee6d08ff84fb62c4'
 
 function sourceFiles(path, files) {
   for (const entry of readdirSync(path, { withFileTypes: true })) {

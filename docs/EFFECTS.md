@@ -1,6 +1,6 @@
 # Effect coverage
 
-This is the exact CPU-eligible target imported from Noisemaker revision `c51037ad9e60850b74490c01a9eecf08c7d28e8c`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact CPU-eligible target imported from Noisemaker revision `117a236679d1db3ab8f0e278230ece277b57564c`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
 The runtime contains 205 effects and 295 canonical programs (285 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 456 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 

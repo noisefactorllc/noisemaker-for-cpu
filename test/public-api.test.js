@@ -22,9 +22,9 @@ async function browserImportGraph(entry) {
   return visited
 }
 
-test('browser entry exports the CPU renderer, CSL, DSL, catalog, and canvas adapter', async () => {
+test('browser entry exports the CPU renderer, CSL, DSL, catalog, sinks, frame export, and canvas adapter', async () => {
   const api = await import(pathToFileURL(resolve(root, 'src/index.js')))
-  for (const name of ['CslCompiler', 'compileCsl', 'Surface', 'parseDsl', 'EffectRegistry', 'createDefaultRegistry', 'CpuRenderer', 'renderToCanvas']) {
+  for (const name of ['CslCompiler', 'compileCsl', 'Surface', 'parseDsl', 'EffectRegistry', 'createDefaultRegistry', 'CpuRenderer', 'CanvasSink', 'SinkManager', 'FrameExportQueue', 'renderToCanvas']) {
     assert.ok(name in api, `missing export ${name}`)
   }
 })

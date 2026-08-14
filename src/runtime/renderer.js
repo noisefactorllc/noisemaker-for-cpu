@@ -3,6 +3,9 @@ import { bindCanonicalKernel } from '../csl/glsl-kernel.js'
 import { BufferPool } from './buffer-pool.js'
 import { runPass, runPassAsync } from './pass-runner.js'
 import { RenderResult } from './render-result.js'
+import { FrameExportQueue } from './frame-export.js'
+import { CpuFrameExportAdapter } from './cpu-frame-export.js'
+import { SinkManager } from './sink.js'
 import { Surface } from './surface.js'
 import { quantizeTexture } from './texture-format.js'
 import { renderCanonicalWormOverlay } from '../effects/cpu/worm-overlay.js'
@@ -209,6 +212,43 @@ export class CpuRenderer {
     }
     this.cpuTextureCache = new Map()
     this.cpuTextureCacheBytes = 0
+    this.sinkManager = new SinkManager()
+    this._sinkDescriptor = {
+      width: 0,
+      height: 0,
+      format: 'rgba8unorm',
+      colorSpace: 'srgb',
+      alphaMode: 'straight',
+      fps: 60,
+    }
+    this._sinksConfigured = false
+  }
+
+  get sinkStats() {
+    return this.sinkManager.stats
+  }
+
+  addSink(sink) {
+    return this.sinkManager.add(sink)
+  }
+
+  createFrameExportQueue(options = {}) {
+    return new FrameExportQueue(new CpuFrameExportAdapter(), options)
+  }
+
+  configureSinks(width, height) {
+    if (this._sinksConfigured && this._sinkDescriptor.width === width && this._sinkDescriptor.height === height) return
+    this._sinkDescriptor.width = width
+    this._sinkDescriptor.height = height
+    this._sinksConfigured = true
+    this.sinkManager.configure(this._sinkDescriptor)
+  }
+
+  submitToSinks(result, timestamp) {
+    const presentationTimestamp = timestamp ?? (typeof performance !== 'undefined' && typeof performance.now === 'function'
+      ? performance.now()
+      : Date.now())
+    this.sinkManager.submit(result, presentationTimestamp)
   }
 
   resolveKernel(key) {
@@ -309,6 +349,7 @@ export class CpuRenderer {
 
   dispose() {
     this.clearCpuTextureCache()
+    this.sinkManager.close()
   }
 
   resolveCanonicalFactory(definition, pass) {
@@ -1566,6 +1607,7 @@ export class CpuRenderer {
   render(source, options = {}) {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
+    this.configureSinks(renderOptions.width, renderOptions.height)
     const plan = compileDsl(source, this.registry, options)
     const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
@@ -1585,7 +1627,9 @@ export class CpuRenderer {
           }
         }
       }
-      return this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
+      const result = this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
+      this.submitToSinks(result, options.presentationTimestamp)
+      return result
     } finally {
       this.cleanup(owned)
     }
@@ -1594,6 +1638,7 @@ export class CpuRenderer {
   async renderAsync(source, options = {}) {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
+    this.configureSinks(renderOptions.width, renderOptions.height)
     const plan = compileDsl(source, this.registry, options)
     const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
@@ -1614,7 +1659,9 @@ export class CpuRenderer {
           }
         }
       }
-      return this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
+      const result = this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
+      this.submitToSinks(result, options.presentationTimestamp)
+      return result
     } finally {
       this.cleanup(owned)
     }
