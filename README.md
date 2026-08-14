@@ -122,7 +122,7 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 ## Collection parity
 
-The catalog is the exact eligible collection from Noisemaker revision `117a236679d1db3ab8f0e278230ece277b57564c`:
+The catalog is the exact eligible collection from Noisemaker revision `712ac2cf84967ec19cb3f900f3a6b10bcc315afc`:
 
 - 205 effects: 20 `classicNoisedeck`, 116 `filter`, 2 `filter3d`, 15 `mixer`, 10 `points`, 9 `render`, 26 `synth`, and 7 `synth3d`
 - 295 canonical programs: 285 generated from canonical GLSL, plus 10 full CPU adapters (4 fragment-kernel replacements and 6 vertex+fragment scatter-pass pairs — see [docs/CSL.md](docs/CSL.md))
