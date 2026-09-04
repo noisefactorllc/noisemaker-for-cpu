@@ -260,7 +260,7 @@ const EXCLUDED = [
 ].sort()
 
 test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
-  assert.equal(UPSTREAM_REVISION, 'c38316a172a1e8d834975dcde57b05be2aeb7aa3')
+  assert.equal(UPSTREAM_REVISION, '4f0b2448d2be1a57cb48fadb70fc85e849cda49a')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
@@ -279,6 +279,7 @@ test('upstream snapshot partitions the exact source tree into 205 eligible and f
 
 test('upstream snapshot preserves parity-critical definition metadata', () => {
   const byId = new Map(effectRecords.map((record) => [record.id, record]))
+  assert.equal(byId.get('synth/cell').description, 'Cellular/Voronoi noise with selectable cell shapes')
   const adjust = byId.get('filter/adjust')
   assert.equal(adjust.params.mode.default, 0)
   assert.deepEqual(adjust.params.mode.choices, { rgb: 0, hsv: 1, oklab: 2, oklch: 3 })
