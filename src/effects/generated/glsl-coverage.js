@@ -1472,8 +1472,8 @@ export const programCoverage = Object.freeze([
     "program": "text",
     "file": "text.glsl",
     "status": "generated",
-    "sourceBytes": 2058,
-    "normalizedBytes": 2036,
+    "sourceBytes": 1978,
+    "normalizedBytes": 1956,
     "generatedBytes": 1427
   },
   {
