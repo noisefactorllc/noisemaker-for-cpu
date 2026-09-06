@@ -1,26 +1,21 @@
 # export-kit/ — how `compat-effects.json` is made
 
-`kit.config.json` builds this repo's Noisedeck export kit (kit id `cpu`). It
-declares `compat: {"mode": "list", "fromJsonList": "export-kit/compat-effects.json"}`,
-so the shipped `compat.json` — the list the export dialog reads to decide which
-effects this kit can render — is exactly the array in `compat-effects.json`.
+`kit.config.json` builds this repo's Noisedeck export kit (kit id `cpu`). It declares `compat: {"mode": "list", "fromJsonList": "export-kit/compat-effects.json"}`. The shipped `compat.json` is therefore exactly the array in `compat-effects.json`. The export dialog reads this list to determine which effects the kit can render.
 
 JSON carries no comments, so the header comment that file would otherwise hold
 lives here.
 
 ## What `compat-effects.json` is
 
-A sorted JSON array of the catalog ids this port renders: the 210
-`sourceEffectIds` of `src/effects/generated/upstream-snapshot.js`, minus that
-same snapshot's five `excludedEffects` (reactive `synth/roll`, `synth/scope`,
-`synth/spectrum`; mesh `render/meshLoader`, `render/meshRender`), which is 205
-today. The exclusions are documented in `docs/EFFECTS.md`; listing them here
-would tell a user the kit renders effects it refuses.
+This is a sorted JSON array of the catalog ids this port renders. Start with the 210 `sourceEffectIds` in `src/effects/generated/upstream-snapshot.js`. Subtract the same snapshot's five `excludedEffects`:
+
+- Reactive effects: `synth/roll`, `synth/scope`, `synth/spectrum`.
+- Mesh effects: `render/meshLoader`, `render/meshRender`.
+
+The result is 205 today. `docs/EFFECTS.md` documents the exclusions. Including these effects in the compatibility list would tell users that the kit renders effects it refuses.
 
 The other three CPU ports derive the same claim with `fromBundleMetadata` over
-their generated `bundle/metadata.json`. This port ships no such file, so the
-list is generated and committed instead — which means it is a checked-in
-derivative and can go stale. Regenerate it whenever
+their generated `bundle/metadata.json`. This port ships no such file. The repository instead contains a generated, committed list, which can become outdated. Regenerate it whenever
 `src/effects/generated/upstream-snapshot.js` changes, in the same commit as the
 upstream sync.
 
@@ -43,11 +38,6 @@ import("./src/effects/generated/upstream-snapshot.js").then(async ({ sourceEffec
 '
 ```
 
-The equality check is the point of running it this way rather than dumping
-`eligibleEffectIds` straight out: the snapshot states the exclusions twice, once
-as a rule and once as a result, and a sync that moved one without the other
-would otherwise be published as a silently different compat claim.
+The equality check compares the snapshot's exclusions as a rule against its exclusions as a result. This is why the command does not simply copy `eligibleEffectIds`. Without this check, an upstream sync could change only one representation and silently publish a different compatibility claim.
 
-The builder sorts what it derives before writing `compat.json`, and reads this
-file through the git index, so an unstaged regeneration fails the build rather
-than shipping a list CI could not reproduce.
+The builder sorts its result before writing `compat.json`. It reads the source list through the git index. An unstaged regeneration therefore fails the build instead of publishing a list that CI could not reproduce.

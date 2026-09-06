@@ -1,66 +1,54 @@
 # {{NM_PROGRAM_NAME}}
 
-Your program, exported from Noisedeck as a package that renders it **on the CPU**. No GPU, no
-WebGL, no native addon, and no `npm install`: `engine/` is the whole engine, and Node executes what
-would normally be shader code as ordinary JavaScript, one pixel at a time. It fetches nothing at
-runtime.
+This package exports your Noisedeck program to render **on the CPU**. It requires no GPU, WebGL, native addon, or `npm install`. `engine/` contains the whole engine. Node executes the shader code as ordinary JavaScript, one pixel at a time. It fetches nothing at runtime.
 
-That makes this the export that runs anywhere Node runs — a server, a container, a CI job, a machine
-with no display at all — and the slowest one. A GPU draws a frame in milliseconds because it colors
-thousands of pixels at once; this walks them.
+This export runs anywhere Node runs: a server, container, CI job, or machine without a display. It is the slowest export. A GPU draws a frame in milliseconds because it colors thousands of pixels at once. This renderer processes them one at a time.
 
 ## Run it
 
-You need **Node 22 or newer**. Nothing else. Unzip this folder, open a terminal in it, and start
-small:
+You need **Node 22 or newer** and no other dependencies. Unzip this folder. Open a terminal in it. Start with a small image:
 
 ```sh
 node engine/bin/noisemaker-cpu.js render program.dsl --width 64 --height 64 --output out.png
 ```
 
-That writes a 64×64 `out.png` beside your program, which is enough to prove the export works. Then
-scale up:
+The command writes a 64×64 `out.png` beside your program. This checks that the export works. Then increase the output size:
 
 ```sh
 node engine/bin/noisemaker-cpu.js render program.dsl --width 512 --height 512 --output art.png
 ```
 
-Time grows with the pixel count, and how far it grows depends entirely on what your program does, so
-raise the size in steps rather than jumping to a poster.
+Rendering time increases with the pixel count. The amount of increase depends entirely on the program. Increase the size gradually.
 
-Useful options: `--seed N` picks the deterministic seed, `--time N` the normalized time (some
-effects animate), and `--input file.png` binds an image for programs that sample one.
+Useful options:
+
+- `--seed N` selects the deterministic seed.
+- `--time N` sets the normalized time for effects that animate.
+- `--input file.png` binds an image for programs that sample one.
+
 `node engine/bin/noisemaker-cpu.js --help` lists the rest.
 
 ## What's inside
 
 | Path | What it is |
 | --- | --- |
-| `program.dsl` | Your program's source, exactly as Noisedeck had it. |
+| `program.dsl` | Your program's source, exactly as it was in Noisedeck. |
 | `engine/bin/noisemaker-cpu.js` | The port's command line renderer. This is the file you run. |
 | `engine/src/` | The engine: DSL parser, effect catalog, and the pixel kernels. |
-| `noisedeck-export.json` | What was exported, when, against which engine build. |
+| `noisedeck-export.json` | The exported content, export time, and engine build. |
 | `LICENSES/` | Licenses for everything shipped here. |
 
-`engine/bin/noisemaker-cpu.js` resolves `engine/src/` relative to itself, so the pair moves together:
-copy `engine/` somewhere else and the same command works from there.
+`engine/bin/noisemaker-cpu.js` resolves `engine/src/` relative to itself. If you copy the whole `engine/` directory elsewhere, the same command works from that location.
 
 ## The engine
 
-The port ships inside this export, so it runs offline as it stands. It is also a normal package —
-`import { CpuRenderer } from './engine/src/index.js'` gives you the same renderer from your own code,
-in Node or in a browser, and <https://github.com/noisefactorllc/noisemaker-for-cpu> documents that
-API.
+The export includes the port and runs offline without changes. It is also a normal package for your own Node or browser code. `import { CpuRenderer } from './engine/src/index.js'` imports the same renderer. <https://github.com/noisefactorllc/noisemaker-for-cpu> documents that API.
 
-Noisedeck exported this program against Noisemaker `{{NM_ENGINE_VERSION}}`. The CPU port is a second
-implementation of that engine rather than the same code, so expect small differences from what the
-app showed you.
+Noisedeck exported this program against Noisemaker `{{NM_ENGINE_VERSION}}`. The CPU port is a separate implementation of that engine. Expect small differences from the app output.
 
 ## Editing it
 
-Replace `program.dsl` with anything the Noisemaker language accepts, as long as its effects are in
-the supported set below, and run the same command again. To render several variations, call
-`CpuRenderer` in a loop of your own rather than paying process startup each time.
+Replace `program.dsl` with a Noisemaker program that uses only the supported effects listed below. Run the same command again. To render several variations, call `CpuRenderer` in a loop in your own code. This avoids process startup for each variation.
 
 ## Effects used by this program
 
@@ -68,16 +56,23 @@ the supported set below, and run the same command again. To render several varia
 
 ## What this port cannot render
 
-Five effects from the upstream catalog: `synth/roll`, `synth/scope` and `synth/spectrum`, which react
-to live audio, and `render/meshLoader` and `render/meshRender`, which need a mesh pipeline. Everything
-else in the catalog renders here, and `node engine/bin/noisemaker-cpu.js effects` lists exactly what
-the engine in this folder carries.
+This port cannot render five effects from the upstream catalog:
 
-To check an edited `program.dsl` against a different build of this port, put it back into Noisedeck
-and open the export dialog with JavaScript selected: it marks any effect the port cannot render
-before you export again.
+- `synth/roll`, `synth/scope` and `synth/spectrum` react to live audio.
+- `render/meshLoader` and `render/meshRender` need a mesh pipeline.
+
+Everything else in the catalog renders here.
+`node engine/bin/noisemaker-cpu.js effects` lists exactly which effects this engine contains.
+
+To check an edited `program.dsl` against a different build of this port:
+
+1. Import the program into Noisedeck.
+2. Open the export dialog.
+3. Select JavaScript.
+
+Before you export again, the dialog marks any effect the port cannot render.
 
 ## License
 
-The Noisemaker engine and the CPU port are MIT licensed; see `LICENSES/`. Your program and the
+The Noisemaker engine and the CPU port are MIT licensed. See `LICENSES/`. Your program and the
 imagery it renders are yours.
