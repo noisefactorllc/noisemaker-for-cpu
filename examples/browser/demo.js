@@ -353,7 +353,7 @@ function wireMobileDivider() {
 
 async function init() {
   try {
-    await import('https://handfish.noisefactor.io/0.9.0/handfish.esm.js')
+    await import('https://handfish.noisefactor.io/0/handfish.esm.js')
   } catch (err) {
     console.warn('[demo] handfish CDN unavailable; using native fallbacks', err)
   }
