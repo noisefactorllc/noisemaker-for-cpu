@@ -5,6 +5,8 @@
 
 # noisemaker-cpu
 
+> This package supports the "Export Shader Pipeline" feature in Noisedeck.app. The feature runs shader compositions on other platforms. Noise Factor derives this package from the upstream Noisemaker Engine project and tests it for pixel-level parity.
+
 This is not the classic JS Noisemaker (Composer) library. This is a new
 effort centered around software shader execution.
 
