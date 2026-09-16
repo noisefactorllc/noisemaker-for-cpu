@@ -113,9 +113,27 @@ function effectSearch(effect) {
   return effect.namespace === 'synth' ? 'search synth' : `search ${effect.namespace}, synth`
 }
 
+// Detects an effect (points/heightGrid, reference 0ed489ec) that reads a particle-state global
+// (global_xyz/vel/rgba/points_trail) as an input before any of its OWN passes writes it - unlike
+// the self-sufficient agent sims (physarum, flock, ...), it can only run chained after an
+// upstream render/pointsEmit() that already created that state.
+function needsParticlePipeline(effect) {
+  const written = new Set()
+  for (const pass of effect.passes) {
+    for (const input of Object.values(pass.inputs ?? {})) {
+      if (/^global_(xyz|vel|rgba|points_trail)$/.test(input) && !written.has(input)) return true
+    }
+    for (const output of Object.values(pass.outputs ?? {})) written.add(output)
+  }
+  return false
+}
+
 function effectProgram(effect, assignments) {
   const args = assignments.map(({ name, value }) => `${name}: ${dslValue(value)}`).join(', ')
   const call = `${effect.func}(${args})`
+  if (needsParticlePipeline(effect)) {
+    return `search points, render, synth\nsolid().pointsEmit(stateSize: x64).${call}.write(o0)\nrender(o0)`
+  }
   if (effect.domain === 'loop-begin' || effect.domain === 'loop-end') {
     const begin = effect.domain === 'loop-begin' ? call : 'loopBegin(iterationCount: 1)'
     const end = effect.domain === 'loop-end' ? call : 'loopEnd()'

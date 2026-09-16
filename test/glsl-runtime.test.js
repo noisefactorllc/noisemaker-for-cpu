@@ -132,6 +132,11 @@ test('factory-bound kernels expose GLSL registers without per-pixel setup closur
 })
 
 test('AOT canonical factories execute transpiled GLSL without runtime evaluation', () => {
+  // Reference 0ed489ec made invert premultiplied-alpha-aware: `color.rgb = color.a - color.rgb`
+  // (was `1.0 - color.rgb`), so it retains premultiplied coverage instead of assuming alpha 1.
+  // For this fixture's [0.2, 0.4, 0.8, 0.5] input that's [0.5-0.2, 0.5-0.4, 0.5-0.8] = [0.3, 0.1, -0.3] -
+  // the negative blue channel is expected: this synthetic input isn't a valid premultiplied color
+  // (0.8 > 0.5 alpha), it's just exercising the new formula directly.
   const input = new Surface(1, 1, new Float32Array([0.2, 0.4, 0.8, 0.5]))
   const factory = canonicalKernelFactories['filter/invert:inv']
   assert.equal(typeof factory, 'function')
@@ -145,7 +150,7 @@ test('AOT canonical factories execute transpiled GLSL without runtime evaluation
 
   kernel({ fragCoord: new Float32Array([0.5, 0.5]), uv: new Float32Array([0.5, 0.5]) }, out)
 
-  assert.deepEqual([...out], [0.800000011920929, 0.6000000238418579, 0.19999998807907104, 0.5])
+  assert.deepEqual([...out], [0.30000001192092896, 0.09999999403953552, -0.30000001192092896, 0.5])
   assert.doesNotMatch(factory.toString(), /new Function|eval\s*\(/)
 })
 

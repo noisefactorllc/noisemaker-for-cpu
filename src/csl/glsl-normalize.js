@@ -95,6 +95,24 @@ function normalizeSignedIntegerVectors(source) {
   return `${helpers}\n${normalized}`
 }
 
+// glsl-transpiler crashes on a single-component swizzle applied directly to a texelFetch(...)
+// call used as a nested expression (e.g. a vec4() constructor argument, reference 0ed489ec's
+// points/heightGrid/glsl/agent.glsl: `vec4(0.0, 0.0, 0.0, texelFetch(velTex, coord, 0).w)`) --
+// deep inside its vec4 type-descriptor handling (node_modules/glsl-transpiler/lib/types.js:
+// `x.components[0].type` on an undefined `.components`). Assigning the call to a variable
+// first avoids it, and so does bracket component access, which is semantically identical for a
+// single component -- so rewrite the swizzle into an index rather than hoisting a statement
+// (simpler, and safe in every syntactic position: assignment, return, ternary, or nested call).
+// Applied unconditionally (not just where it crashes) since it's a no-op transform everywhere
+// else in the catalog that already uses `texelFetch(...).<swizzle>` in a plain assignment.
+const TEXEL_FETCH_SWIZZLE_INDEX = { a: 3, b: 2, g: 1, r: 0, w: 3, x: 0, y: 1, z: 2 }
+function normalizeTexelFetchSwizzle(source) {
+  return source.replace(
+    /\btexelFetch\(((?:[^()]|\([^()]*\))*)\)\s*\.\s*([xyzwrgba])(?![A-Za-z0-9_])/g,
+    (match, args, swizzle) => `texelFetch(${args})[${TEXEL_FETCH_SWIZZLE_INDEX[swizzle]}]`,
+  )
+}
+
 function renameUniformShadows(source) {
   const uniforms = new Set([...source.matchAll(/\buniform\s+\w+\s+([A-Za-z_]\w*)/g)].map((match) => match[1]))
   if (uniforms.size === 0) return source
@@ -235,7 +253,7 @@ export function normalizeCanonicalGlsl(source, options = {}) {
     if (/^\s*precision\b/.test(normalizedLines[index])) declarationIndex = index + 1
   }
   normalizedLines.splice(declarationIndex, 0, ...declarations)
-  let normalizedSource = renameUniformShadows(normalizeSignedIntegerVectors(normalizeUnsigned(expandMacros(normalizedLines.join('\n'), macros)))
+  let normalizedSource = renameUniformShadows(normalizeSignedIntegerVectors(normalizeUnsigned(normalizeTexelFetchSwizzle(expandMacros(normalizedLines.join('\n'), macros))))
     .replace(/\b([biu]?vec[234]|mat[234]|float|int|bool)\s+([A-Za-z_]\w*)\s*\[(\d+)\]\s*=\s*\1\s*\[\]\s*\(/g, '$1 $2[$3] = $1[$3](')
     .replace(/\bfloat\s*\(\s*([A-Za-z_]\w*(?:\.[xyzwrgba])?)\s*\)/g, '($1)')
     .replace(/\bpacked\b/g, '_packed'))

@@ -170,6 +170,7 @@ const EXPECTED_IDS = [
   'points/dla',
   'points/flock',
   'points/flow',
+  'points/heightGrid',
   'points/hydraulic',
   'points/lenia',
   'points/life',
@@ -183,6 +184,7 @@ const EXPECTED_IDS = [
   'render/render3d',
   'render/renderCubemap3d',
   'render/renderCubemapSurface',
+  'render/renderLandscape3d',
   'render/renderLit3d',
   'synth/bitwise',
   'synth/cell',
@@ -214,6 +216,7 @@ const EXPECTED_IDS = [
   'synth3d/cellularAutomata3d',
   'synth3d/flythrough3d',
   'synth3d/fractal3d',
+  'synth3d/heightmap3d',
   'synth3d/noise3d',
   'synth3d/reactionDiffusion3d',
   'synth3d/shape3d',
@@ -259,21 +262,21 @@ const EXCLUDED = [
   ...REACTIVE,
 ].sort()
 
-test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
-  assert.equal(UPSTREAM_REVISION, '246ff57f43ccb4c9ebb377ef383ed9f9dff1b424')
+test('upstream snapshot partitions the exact source tree into 208 eligible and five excluded effects', () => {
+  assert.equal(UPSTREAM_REVISION, '0ed489ec46842bffba33ee2ec65a218b6dda51f5')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
       namespace,
       eligibleEffectIds.filter((id) => id.startsWith(`${namespace}/`)).length,
     ])),
-    { classicNoisedeck: 20, filter: 116, filter3d: 2, mixer: 15, points: 10, render: 9, synth: 26, synth3d: 7 },
+    { classicNoisedeck: 20, filter: 116, filter3d: 2, mixer: 15, points: 11, render: 10, synth: 26, synth3d: 8 },
   )
   assert.deepEqual(excludedEffects.reactive, REACTIVE)
   const excludedIds = Object.values(excludedEffects).flat().sort()
   assert.deepEqual(excludedIds, EXCLUDED)
-  assert.equal(sourceEffectIds.length, 210)
-  assert.equal(new Set([...eligibleEffectIds, ...excludedIds]).size, 210)
+  assert.equal(sourceEffectIds.length, 213)
+  assert.equal(new Set([...eligibleEffectIds, ...excludedIds]).size, 213)
   assert.deepEqual([...eligibleEffectIds, ...excludedIds].sort(), [...sourceEffectIds].sort())
 })
 
@@ -343,8 +346,11 @@ test('stateful and particle records carry CPU iteration metadata', () => {
   assert.equal(byId.get('synth/navierStokes').passes[3].repeat, 'iterations')
   assert.equal(byId.get('render/pointsEmit').passes[0].drawBuffers, 3)
   assert.equal(byId.get('points/life').passes[1].drawBuffers, 4)
-  assert.deepEqual(byId.get('render/pointsBillboardRender').passes[2].conditions,
-    { runIf: [{ uniform: 'blendMode', equals: 0 }] })
+  // Reference 0ed489ec split `deposit` into per-viewMode clones (deposit_0/1/2) alongside the
+  // new depthKeys/depthMerge/spriteMean(Tiles)/clearDefocus/depositDefocus passes that precede
+  // it in the list, so the additive-blend deposit pass is found by name, not position.
+  assert.deepEqual(byId.get('render/pointsBillboardRender').passes.find((pass) => pass.name === 'deposit_0').conditions,
+    { runIf: [{ uniform: 'blendMode', equals: 0 }, { uniform: 'viewMode', equals: 0 }] })
   assert.deepEqual(byId.get('synth/cellularAutomata').textures.global_ca_state.width,
     { screenDivide: 'zoom', default: 32 })
   assert.deepEqual(byId.get('render/pointsEmit').textures.global_xyz,

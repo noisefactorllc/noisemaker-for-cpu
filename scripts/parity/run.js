@@ -18,6 +18,12 @@ const NEW_CPU_EFFECT_IDS = new Set([
   'render/renderCubemapSurface', 'render/renderLit3d',
   'synth3d/cell3d', 'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
   'synth3d/fractal3d', 'synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
+  // Reference 0ed489ec's landscape/heightfield release: no pinned GPU golden yet, same as the
+  // 17 above when they were first ported. Fixtures exist and compile (see the skip-fixture
+  // discipline above); a GPU session needs to render and commit parity/goldens/defaults/
+  // {points__heightGrid,render__renderLandscape3d,synth3d__heightmap3d}.golden.png before these
+  // can move into the graded set.
+  'points/heightGrid', 'render/renderLandscape3d', 'synth3d/heightmap3d',
 ])
 
 function parseArgs(argv) {

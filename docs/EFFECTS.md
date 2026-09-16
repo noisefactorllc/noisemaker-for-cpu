@@ -1,8 +1,8 @@
 # Effect coverage
 
-This is the exact CPU-eligible target imported from Noisemaker revision `246ff57f43ccb4c9ebb377ef383ed9f9dff1b424`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact CPU-eligible target imported from Noisemaker revision `0ed489ec46842bffba33ee2ec65a218b6dda51f5`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
-The runtime contains 205 effects and 295 canonical programs (285 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 456 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
+The runtime contains 208 effects and 304 canonical programs (294 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 458 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 
 ## `classicNoisedeck` — 20
 
@@ -22,25 +22,31 @@ Twelve of these (`bloom`, `chrome`, `highPass`, `oilPaint`, `photocopy`, `plasti
 
 `alphaMask`, `applyMode`, `blendMode`, `cellSplit`, `centerMask`, `channelCombine`, `distortion`, `focusBlur`, `mashup`, `patternMix`, `shadow`, `shapeMask`, `split`, `thresholdMix`, `uvRemap`
 
-## `points` — 10
+## `points` — 11
 
-`attractor`, `buddhabrot`, `dla`, `flock`, `flow`, `hydraulic`, `lenia`, `life`, `physarum`, `physical`
+`attractor`, `buddhabrot`, `dla`, `flock`, `flow`, `heightGrid`, `hydraulic`, `lenia`, `life`, `physarum`, `physical`
 
-All 10 are stateful/particle effects (see "CPU iteration divergence"). Each reads and writes the `global_xyz`/`global_vel`/`global_rgba` agent-state textures a preceding `render/pointsEmit` call declares; used standalone (no `pointsEmit` ahead of it in the chain), it falls back to a fresh, zeroed 256×256 state (or its own `stateSize` default, for the effects that expose one) rather than throwing.
+10 of the 11 are stateful/particle effects (see "CPU iteration divergence"). Each reads and writes the `global_xyz`/`global_vel`/`global_rgba` agent-state textures a preceding `render/pointsEmit` call declares; used standalone (no `pointsEmit` ahead of it in the chain), it falls back to a fresh, zeroed 256×256 state (or its own `stateSize` default, for the effects that expose one) rather than throwing.
 
-## `render` — 9
+`heightGrid` (new in revision `0ed489ec4684`) is different: it has no fallback. Its one pass reads `global_xyz`/`global_vel` as inputs without any pass of its own writing them first (it arranges the existing agent grid into an XZ plane with height-mapped Y, it doesn't spawn agents), so it genuinely requires an upstream `pointsEmit()` — used standalone it throws `"points/heightGrid pass \"agent\" requires texture \"global_xyz\""` rather than silently falling back. `smokeProgram()`/`effectProgram()` (test/catalog-smoke.test.js, bin/noisemaker-cpu.js) detect this from the pass graph itself (a read of a particle-state global with no preceding write in the same effect) and prepend `pointsEmit()` automatically.
 
-`loopBegin`, `loopEnd`, `pointsBillboardRender`, `pointsEmit`, `pointsRender`, `render3d`, `renderCubemap3d`, `renderCubemapSurface`, `renderLit3d`
+## `render` — 10
 
-The three `points*` render effects are stateful/particle effects. `pointsEmit` is the only definition in the whole catalog that declares `global_xyz`; it opens and owns an iteration group, seeding agent positions/velocities/colors from its own input image. `pointsRender` and `pointsBillboardRender` rasterize the current agent state into a trail texture (point sprites and billboard quads respectively) composited over the input.
+`loopBegin`, `loopEnd`, `pointsBillboardRender`, `pointsEmit`, `pointsRender`, `render3d`, `renderCubemap3d`, `renderCubemapSurface`, `renderLandscape3d`, `renderLit3d`
+
+The three `points*` render effects are stateful/particle effects. `pointsEmit` is the only definition in the whole catalog that declares `global_xyz`; it opens and owns an iteration group, seeding agent positions/velocities/colors from its own input image. `pointsRender` and `pointsBillboardRender` rasterize the current agent state into a trail texture (point sprites and billboard quads respectively) composited over the input. `pointsRender`/`pointsBillboardRender` also gained a `perspective` view mode this round (alongside the existing flat/ortho), and `pointsBillboardRender` gained depth-sorted alpha blending and aperture defocus — see [CSL.md](CSL.md) for how the per-viewMode `defines` those introduce are handled.
+
+`renderLandscape3d` (new) is a `volume-renderer`-domain effect (like `render3d`/`renderLit3d`): an isometric/perspective voxel raymarch with face lighting, consuming a `synth3d` generator's volume+geometry bundle — its own companion generator is `synth3d/heightmap3d`, below.
 
 ## `synth` — 26
 
 `bitwise`, `cell`, `cellularAutomata`, `curl`, `gabor`, `gradient`, `julia`, `mandala`, `mandelbrot`, `media`, `mnca`, `modPattern`, `navierStokes`, `newton`, `noise`, `osc2d`, `pattern`, `perlin`, `polygon`, `reactionDiffusion`, `remap`, `sacredGeometry`, `shape`, `solid`, `subdivide`, `testPattern`
 
-## `synth3d` — 7
+## `synth3d` — 8
 
-`cell3d`, `cellularAutomata3d`, `flythrough3d`, `fractal3d`, `noise3d`, `reactionDiffusion3d`, `shape3d`
+`cell3d`, `cellularAutomata3d`, `flythrough3d`, `fractal3d`, `heightmap3d`, `noise3d`, `reactionDiffusion3d`, `shape3d`
+
+`heightmap3d` (new) is a voxel heightfield generator: it bakes separate height and diffuse-color 2D surfaces into the volume atlas, for `render/renderLandscape3d` to raymarch.
 
 ## Intentional exclusions
 
@@ -79,4 +85,4 @@ An RGBA CPU atlas costs `16N³` bytes because storage is float32 even for a decl
 
 ## Parity status
 
-`npm run parity` keeps the established 167 pinned GPU goldens and unchanged ±2-byte RGBA threshold. Current result: 166/167 pass and 117 are byte-exact. `filter/crt` remains failing, so the strict command intentionally exits nonzero; see [CRT-PARITY.md](CRT-PARITY.md) for the failure analysis. The union of 21 prior CPU-divergent effects and 17 newly ported effects is 38 explicit skips; each skip fixture is still parsed and resolved before reporting. Catalog, schema, graph, compile-time-choice, and execution coverage are exact for the full 205-effect target while the pixel-parity denominator remains an active, unchanged gate.
+`npm run parity` keeps the established 167 pinned GPU goldens and unchanged ±2-byte RGBA threshold. Current result: 166/167 pass and 117 are byte-exact. `filter/crt` remains failing, so the strict command intentionally exits nonzero; see [CRT-PARITY.md](CRT-PARITY.md) for the failure analysis. The union of 21 prior CPU-divergent effects, 17 previously-ported effects, and 3 more from this round's landscape/heightfield release (`synth3d/heightmap3d`, `render/renderLandscape3d`, `points/heightGrid`) is 41 explicit skips; each skip fixture is still parsed and resolved before reporting. Catalog, schema, graph, compile-time-choice, and execution coverage are exact for the full 208-effect target while the pixel-parity denominator remains an active, unchanged gate.

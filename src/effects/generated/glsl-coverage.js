@@ -185,9 +185,9 @@ export const programCoverage = Object.freeze([
     "program": "adjust",
     "file": "adjust.glsl",
     "status": "generated",
-    "sourceBytes": 3786,
-    "normalizedBytes": 3921,
-    "generatedBytes": 5165
+    "sourceBytes": 3955,
+    "normalizedBytes": 4090,
+    "generatedBytes": 5424
   },
   {
     "effectId": "filter/bc",
@@ -329,9 +329,9 @@ export const programCoverage = Object.freeze([
     "program": "chMap",
     "file": "chMap.glsl",
     "status": "generated",
-    "sourceBytes": 4069,
-    "normalizedBytes": 4047,
-    "generatedBytes": 1803
+    "sourceBytes": 5009,
+    "normalizedBytes": 4987,
+    "generatedBytes": 1855
   },
   {
     "effectId": "filter/clouds",
@@ -572,18 +572,18 @@ export const programCoverage = Object.freeze([
     "program": "primary",
     "file": "primary.glsl",
     "status": "generated",
-    "sourceBytes": 5839,
-    "normalizedBytes": 5978,
-    "generatedBytes": 5335
+    "sourceBytes": 6013,
+    "normalizedBytes": 6152,
+    "generatedBytes": 5441
   },
   {
     "effectId": "filter/grade",
     "program": "vignette",
     "file": "vignette.glsl",
     "status": "generated",
-    "sourceBytes": 4133,
-    "normalizedBytes": 4272,
-    "generatedBytes": 4190
+    "sourceBytes": 4172,
+    "normalizedBytes": 4311,
+    "generatedBytes": 4256
   },
   {
     "effectId": "filter/grade",
@@ -680,9 +680,9 @@ export const programCoverage = Object.freeze([
     "program": "inv",
     "file": "inv.glsl",
     "status": "generated",
-    "sourceBytes": 658,
-    "normalizedBytes": 793,
-    "generatedBytes": 989
+    "sourceBytes": 736,
+    "normalizedBytes": 871,
+    "generatedBytes": 1019
   },
   {
     "effectId": "filter/lens",
@@ -888,8 +888,8 @@ export const programCoverage = Object.freeze([
     "file": "outlineSobel.glsl",
     "status": "generated",
     "sourceBytes": 2380,
-    "normalizedBytes": 2699,
-    "generatedBytes": 2481
+    "normalizedBytes": 2527,
+    "generatedBytes": 2323
   },
   {
     "effectId": "filter/outline",
@@ -969,8 +969,8 @@ export const programCoverage = Object.freeze([
     "file": "computeRank.glsl",
     "status": "generated",
     "sourceBytes": 1417,
-    "normalizedBytes": 1808,
-    "generatedBytes": 1309
+    "normalizedBytes": 1633,
+    "generatedBytes": 1148
   },
   {
     "effectId": "filter/pixelSort",
@@ -987,8 +987,8 @@ export const programCoverage = Object.freeze([
     "file": "findBrightest.glsl",
     "status": "generated",
     "sourceBytes": 1045,
-    "normalizedBytes": 1442,
-    "generatedBytes": 1135
+    "normalizedBytes": 1270,
+    "generatedBytes": 977
   },
   {
     "effectId": "filter/pixelSort",
@@ -996,8 +996,8 @@ export const programCoverage = Object.freeze([
     "file": "gatherSorted.glsl",
     "status": "generated",
     "sourceBytes": 1896,
-    "normalizedBytes": 2305,
-    "generatedBytes": 1625
+    "normalizedBytes": 2133,
+    "generatedBytes": 1467
   },
   {
     "effectId": "filter/pixelSort",
@@ -1284,8 +1284,8 @@ export const programCoverage = Object.freeze([
     "file": "smoothBlend.glsl",
     "status": "generated",
     "sourceBytes": 6858,
-    "normalizedBytes": 7632,
-    "generatedBytes": 8403
+    "normalizedBytes": 7288,
+    "generatedBytes": 8087
   },
   {
     "effectId": "filter/smooth",
@@ -1508,9 +1508,9 @@ export const programCoverage = Object.freeze([
     "program": "colorize",
     "file": "colorize.glsl",
     "status": "generated",
-    "sourceBytes": 2000,
-    "normalizedBytes": 2142,
-    "generatedBytes": 2545
+    "sourceBytes": 2045,
+    "normalizedBytes": 2187,
+    "generatedBytes": 2651
   },
   {
     "effectId": "filter/translate",
@@ -1733,9 +1733,9 @@ export const programCoverage = Object.freeze([
     "program": "alphaMask",
     "file": "alphaMask.glsl",
     "status": "generated",
-    "sourceBytes": 1522,
-    "normalizedBytes": 1503,
-    "generatedBytes": 2147
+    "sourceBytes": 1475,
+    "normalizedBytes": 1456,
+    "generatedBytes": 1764
   },
   {
     "effectId": "mixer/applyMode",
@@ -1751,9 +1751,9 @@ export const programCoverage = Object.freeze([
     "program": "blendMode",
     "file": "blendMode.glsl",
     "status": "generated",
-    "sourceBytes": 4155,
-    "normalizedBytes": 4136,
-    "generatedBytes": 4797
+    "sourceBytes": 4279,
+    "normalizedBytes": 4260,
+    "generatedBytes": 5443
   },
   {
     "effectId": "mixer/cellSplit",
@@ -1914,8 +1914,8 @@ export const programCoverage = Object.freeze([
     "file": "agent.glsl",
     "status": "generated",
     "sourceBytes": 5928,
-    "normalizedBytes": 6277,
-    "generatedBytes": 6102
+    "normalizedBytes": 6105,
+    "generatedBytes": 5944
   },
   {
     "effectId": "points/dla",
@@ -1982,6 +1982,24 @@ export const programCoverage = Object.freeze([
   },
   {
     "effectId": "points/flow",
+    "program": "passthrough",
+    "file": "passthrough.glsl",
+    "status": "generated",
+    "sourceBytes": 214,
+    "normalizedBytes": 195,
+    "generatedBytes": 320
+  },
+  {
+    "effectId": "points/heightGrid",
+    "program": "agent",
+    "file": "agent.glsl",
+    "status": "generated",
+    "sourceBytes": 1037,
+    "normalizedBytes": 1109,
+    "generatedBytes": 1427
+  },
+  {
+    "effectId": "points/heightGrid",
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
@@ -2157,8 +2175,17 @@ export const programCoverage = Object.freeze([
     "file": "blend.glsl",
     "status": "generated",
     "sourceBytes": 1302,
-    "normalizedBytes": 1283,
-    "generatedBytes": 1747
+    "normalizedBytes": 1354,
+    "generatedBytes": 1871
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "clearDefocus",
+    "file": "clearDefocus.glsl",
+    "status": "generated",
+    "sourceBytes": 135,
+    "normalizedBytes": 187,
+    "generatedBytes": 358
   },
   {
     "effectId": "render/pointsBillboardRender",
@@ -2166,26 +2193,62 @@ export const programCoverage = Object.freeze([
     "file": "copy.glsl",
     "status": "generated",
     "sourceBytes": 286,
-    "normalizedBytes": 267,
-    "generatedBytes": 323
+    "normalizedBytes": 338,
+    "generatedBytes": 447
   },
   {
     "effectId": "render/pointsBillboardRender",
     "program": "deposit",
     "file": "deposit.frag",
     "status": "adapter",
-    "sourceBytes": 2455,
-    "normalizedBytes": 2430,
+    "sourceBytes": 4271,
+    "normalizedBytes": 4483,
     "generatedBytes": 0
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "depthKeys",
+    "file": "depthKeys.glsl",
+    "status": "generated",
+    "sourceBytes": 1134,
+    "normalizedBytes": 1518,
+    "generatedBytes": 1791
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "depthMerge",
+    "file": "depthMerge.glsl",
+    "status": "generated",
+    "sourceBytes": 1570,
+    "normalizedBytes": 1787,
+    "generatedBytes": 2023
   },
   {
     "effectId": "render/pointsBillboardRender",
     "program": "diffuse",
     "file": "diffuse.glsl",
     "status": "generated",
-    "sourceBytes": 564,
-    "normalizedBytes": 545,
-    "generatedBytes": 556
+    "sourceBytes": 1358,
+    "normalizedBytes": 1587,
+    "generatedBytes": 1853
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "spriteMean",
+    "file": "spriteMean.glsl",
+    "status": "generated",
+    "sourceBytes": 1203,
+    "normalizedBytes": 1420,
+    "generatedBytes": 1734
+  },
+  {
+    "effectId": "render/pointsBillboardRender",
+    "program": "spriteMeanTiles",
+    "file": "spriteMeanTiles.glsl",
+    "status": "generated",
+    "sourceBytes": 1125,
+    "normalizedBytes": 1393,
+    "generatedBytes": 2147
   },
   {
     "effectId": "render/pointsEmit",
@@ -2211,8 +2274,8 @@ export const programCoverage = Object.freeze([
     "file": "blend.glsl",
     "status": "generated",
     "sourceBytes": 1055,
-    "normalizedBytes": 1036,
-    "generatedBytes": 948
+    "normalizedBytes": 1059,
+    "generatedBytes": 988
   },
   {
     "effectId": "render/pointsRender",
@@ -2220,8 +2283,8 @@ export const programCoverage = Object.freeze([
     "file": "copy.glsl",
     "status": "generated",
     "sourceBytes": 286,
-    "normalizedBytes": 267,
-    "generatedBytes": 323
+    "normalizedBytes": 290,
+    "generatedBytes": 363
   },
   {
     "effectId": "render/pointsRender",
@@ -2229,7 +2292,7 @@ export const programCoverage = Object.freeze([
     "file": "deposit.frag",
     "status": "adapter",
     "sourceBytes": 175,
-    "normalizedBytes": 153,
+    "normalizedBytes": 176,
     "generatedBytes": 0
   },
   {
@@ -2238,8 +2301,8 @@ export const programCoverage = Object.freeze([
     "file": "diffuse.glsl",
     "status": "generated",
     "sourceBytes": 620,
-    "normalizedBytes": 601,
-    "generatedBytes": 556
+    "normalizedBytes": 624,
+    "generatedBytes": 596
   },
   {
     "effectId": "render/render3d",
@@ -2267,6 +2330,15 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 4410,
     "normalizedBytes": 4703,
     "generatedBytes": 5049
+  },
+  {
+    "effectId": "render/renderLandscape3d",
+    "program": "landscape",
+    "file": "landscape.glsl",
+    "status": "generated",
+    "sourceBytes": 7781,
+    "normalizedBytes": 8311,
+    "generatedBytes": 11114
   },
   {
     "effectId": "render/renderLit3d",
@@ -2372,9 +2444,9 @@ export const programCoverage = Object.freeze([
     "program": "mediaInput",
     "file": "mediaInput.glsl",
     "status": "generated",
-    "sourceBytes": 6074,
-    "normalizedBytes": 6073,
-    "generatedBytes": 5295
+    "sourceBytes": 6598,
+    "normalizedBytes": 6774,
+    "generatedBytes": 6113
   },
   {
     "effectId": "synth/mnca",
@@ -2409,8 +2481,8 @@ export const programCoverage = Object.freeze([
     "file": "ns.glsl",
     "status": "generated",
     "sourceBytes": 1719,
-    "normalizedBytes": 2066,
-    "generatedBytes": 2232
+    "normalizedBytes": 2063,
+    "generatedBytes": 2229
   },
   {
     "effectId": "synth/navierStokes",
@@ -2526,8 +2598,8 @@ export const programCoverage = Object.freeze([
     "file": "rd.glsl",
     "status": "generated",
     "sourceBytes": 12782,
-    "normalizedBytes": 13224,
-    "generatedBytes": 16268
+    "normalizedBytes": 13031,
+    "generatedBytes": 16089
   },
   {
     "effectId": "synth/reactionDiffusion",
@@ -2543,9 +2615,9 @@ export const programCoverage = Object.freeze([
     "program": "remap",
     "file": "remap.glsl",
     "status": "generated",
-    "sourceBytes": 5117,
-    "normalizedBytes": 4835,
-    "generatedBytes": 4279
+    "sourceBytes": 7225,
+    "normalizedBytes": 6844,
+    "generatedBytes": 4805
   },
   {
     "effectId": "synth/sacredGeometry",
@@ -2627,6 +2699,15 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 6912,
     "normalizedBytes": 6959,
     "generatedBytes": 6937
+  },
+  {
+    "effectId": "synth3d/heightmap3d",
+    "program": "precompute",
+    "file": "precompute.glsl",
+    "status": "generated",
+    "sourceBytes": 1777,
+    "normalizedBytes": 2125,
+    "generatedBytes": 2932
   },
   {
     "effectId": "synth3d/noise3d",

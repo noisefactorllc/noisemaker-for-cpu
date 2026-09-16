@@ -141,16 +141,16 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 ## Collection parity
 
-The catalog is the exact eligible collection from Noisemaker revision `246ff57f43ccb4c9ebb377ef383ed9f9dff1b424`:
+The catalog is the exact eligible collection from Noisemaker revision `0ed489ec46842bffba33ee2ec65a218b6dda51f5`:
 
-- 205 effects: 20 `classicNoisedeck`, 116 `filter`, 2 `filter3d`, 15 `mixer`, 10 `points`, 9 `render`, 26 `synth`, and 7 `synth3d`
-- 295 canonical programs: 285 generated from canonical GLSL, plus 10 full CPU adapters (4 fragment-kernel replacements and 6 vertex+fragment scatter-pass pairs — see [docs/CSL.md](docs/CSL.md))
-- all 456 non-null compile-time shader choices execute through the CPU backend
-- all 205 effects execute through finite catalog smoke programs
+- 208 effects: 20 `classicNoisedeck`, 116 `filter`, 2 `filter3d`, 15 `mixer`, 11 `points`, 10 `render`, 26 `synth`, and 8 `synth3d`
+- 304 canonical programs: 294 generated from canonical GLSL, plus 10 full CPU adapters (4 fragment-kernel replacements, 5 vertex+fragment scatter-pass pairs, and 1 struct-typed program `glsl-transpiler` can't represent — see [docs/CSL.md](docs/CSL.md))
+- all 458 non-null compile-time shader choices execute through the CPU backend
+- all 208 effects execute through finite catalog smoke programs
 
 Exactly five source effects remain excluded: reactive `synth/roll`, `synth/scope`, and `synth/spectrum`, plus `render/meshLoader` and `render/meshRender`. `filter/text` and `synth/media` remain included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory and exclusions.
 
-Parity claims are enforced, not inferred. `npm run parity` keeps the existing 167-golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact. `filter/crt` still fails because JavaScript and ANGLE/Metal fast-math diverge in its hash-sensitive pipeline; [docs/CRT-PARITY.md](docs/CRT-PARITY.md) records the failure analysis and fix constraints. There are 38 explicit, compile-preflighted skips: the prior 21 CPU-divergent simulations and the 17 newly ported volume/loop effects awaiting pinned GPU goldens. The tolerance and denominator are unchanged. Skips never affect the pass/fail count or exit code.
+Parity claims are enforced, not inferred. `npm run parity` keeps the existing 167-golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current strict result is 166/167 within ±2 RGBA bytes, with 117 byte-exact. `filter/crt` still fails because JavaScript and ANGLE/Metal fast-math diverge in its hash-sensitive pipeline; [docs/CRT-PARITY.md](docs/CRT-PARITY.md) records the failure analysis and fix constraints. There are 41 explicit, compile-preflighted skips: the prior 21 CPU-divergent simulations, the 17 previously-ported volume/loop effects, and 3 more from this round's landscape/heightfield release (`synth3d/heightmap3d`, `render/renderLandscape3d`, `points/heightGrid`) — all awaiting pinned GPU goldens. The tolerance and denominator are unchanged. Skips never affect the pass/fail count or exit code.
 
 ## Performance model
 

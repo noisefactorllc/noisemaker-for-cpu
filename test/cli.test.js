@@ -110,7 +110,7 @@ test('CLI effect command auto-wires every volume and loop domain into a renderab
   const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
   try {
     const nonImageEffects = effectCatalog.filter((effect) => effect.domain !== 'image')
-    assert.equal(nonImageEffects.length, 15)
+    assert.equal(nonImageEffects.length, 17)
     for (const effect of nonImageEffects) {
       const output = join(dir, `${effect.id.replace('/', '__')}.png`)
       const args = ['effect', effect.id, '--width=2', '--height=2', '--output', output]

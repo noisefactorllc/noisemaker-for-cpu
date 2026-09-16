@@ -176,8 +176,14 @@ function passIsActive(pass, uniforms) {
   return true
 }
 
+// Layout mirrors reference synth/remap/definition.js (275 vec4 slots, reference 0ed489ec):
+// slot 0 bgColor/bgAlpha, slot 1 zoneCount/smoothEdge/_/time, slots 2-9 zone meta, slots
+// 10-265 packed zone vertex pairs, slot 266 resolution (unchanged position), slots 267-274
+// zone{N}_bounds (new: per-zone bounding box the shader uses to skip a zone outside it -
+// default [0,0,1,1] never rejects, so maps without bounds render exactly as before).
+const REMAP_BOUNDS_SLOT = 267
 function remapUniformData(uniforms, width, height) {
-  const data = Array.from({ length: 267 }, () => new Float32Array(4))
+  const data = Array.from({ length: 275 }, () => new Float32Array(4))
   const bg = uniforms.bgColor ?? [0, 0, 0]
   data[0].set([bg[0], bg[1], bg[2], uniforms.bgAlpha ?? 1])
   data[1].set([uniforms.zoneCount ?? 0, uniforms.smoothEdge ?? 0.04, 0, uniforms.time ?? 0])
@@ -191,6 +197,7 @@ function remapUniformData(uniforms, width, height) {
     for (let pair = 0; pair < 32; pair += 1) {
       data[10 + zone * 32 + pair].set(uniforms[`zone${zone}_v${pair}`] ?? [0, 0, 0, 0])
     }
+    data[REMAP_BOUNDS_SLOT + zone].set(uniforms[`zone${zone}_bounds`] ?? [0, 0, 1, 1])
   }
   data[266][0] = width
   data[266][1] = height
@@ -362,6 +369,12 @@ export class CpuRenderer {
       else if (typeof source === 'string' && source in baseUniforms) uniforms[uniformName] = baseUniforms[source]
       else if (!(typeof source === 'string' && source === uniformName && uniformName in uniforms)) uniforms[uniformName] = source
     }
+    // Pass-level compile-time defines (pointsRender/pointsBillboardRender's per-viewMode deposit
+    // variants, reference 0ed489ec: `defines: {VIEW_MODE: viewMode, ...}` from the definition's
+    // own `.flatMap()`). The reference bakes these in as #defines; this port declares them as
+    // ordinary uniforms instead (see compile-glsl.js's runtimeDefines) and binds the literal
+    // value here, at the same precedence as a pass.uniforms literal.
+    for (const [name, value] of Object.entries(pass.defines ?? {})) uniforms[name] = value
     return uniforms
   }
 

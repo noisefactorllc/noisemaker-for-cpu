@@ -5,6 +5,7 @@ import { juliaFactory } from './julia.js'
 import { historicPaletteFactory, paletteFactory } from './palette.js'
 import { medianFactory } from './median.js'
 import { pixelSortLuminanceFactory, reindexApplyFactory, reindexStatsFactory } from './f32-color.js'
+import { remapFactory } from './remap.js'
 import { snowFactory } from './snow.js'
 
 export const canonicalAdapterFactories = Object.freeze({
@@ -19,4 +20,5 @@ export const canonicalAdapterFactories = Object.freeze({
   'filter/reindex:nmReindexStats': reindexStatsFactory,
   'filter/snow:snow': snowFactory,
   'synth/julia:julia': juliaFactory,
+  'synth/remap:remap': remapFactory,
 })

@@ -25,6 +25,7 @@ const renderAllowlist = new Set([
   'render3d',
   'renderCubemap3d',
   'renderCubemapSurface',
+  'renderLandscape3d',
   'renderLit3d',
 ])
 
@@ -84,7 +85,7 @@ function projectPass(pass) {
     inputs: pass.inputs ?? {},
     outputs,
   }
-  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport']) {
+  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport', 'defines']) {
     if (pass[key] !== undefined) projected[key] = pass[key]
   }
   return projected

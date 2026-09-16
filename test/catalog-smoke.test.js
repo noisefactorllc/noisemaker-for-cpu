@@ -15,11 +15,30 @@ function hasArg(args, name) {
   return args.some(([candidate]) => candidate === name)
 }
 
+// Detects an effect (points/heightGrid, reference 0ed489ec) that reads a particle-state global
+// (global_xyz/vel/rgba/points_trail) as an input before any of its OWN passes writes it - unlike
+// the self-sufficient agent sims (physarum, flock, ...), it can only run chained after an
+// upstream render/pointsEmit() that already created that state.
+function needsParticlePipeline(effect) {
+  const written = new Set()
+  for (const pass of effect.passes) {
+    for (const input of Object.values(pass.inputs ?? {})) {
+      if (/^global_(xyz|vel|rgba|points_trail)$/.test(input) && !written.has(input)) return true
+    }
+    for (const output of Object.values(pass.outputs ?? {})) written.add(output)
+  }
+  return false
+}
+
 function smokeProgram(effect, suppliedArgs = []) {
   const args = [...suppliedArgs]
   if (effect.iterated && !hasArg(args, 'iterationCount')) args.push(['iterationCount', effect.domain === 'image' ? 4 : 1])
   if (effect.params.volumeSize && !hasArg(args, 'volumeSize')) args.push(['volumeSize', 2])
   if (effect.id === 'synth3d/flythrough3d' && !hasArg(args, 'type')) args.push(['type', 1])
+
+  if (needsParticlePipeline(effect)) {
+    return `search points, render, synth\nsolid(color: #58c).pointsEmit(stateSize: x64).${call(effect, args)}.write(o0)\nrender(o0)`
+  }
 
   if (effect.domain === 'loop-begin' || effect.domain === 'loop-end') {
     const beginArgs = effect.domain === 'loop-begin' ? args : [['iterationCount', 2]]
@@ -49,10 +68,10 @@ function choiceProgram(effect, name, value) {
   return smokeProgram(effect, [[name, value]])
 }
 
-test('default catalog contains the exact canonical 205-effect coverage set', () => {
+test('default catalog contains the exact canonical 208-effect coverage set', () => {
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
-  assert.equal(createDefaultRegistry().list().length, 205)
-  assert.equal(kernelFactories.size, 289)
+  assert.equal(createDefaultRegistry().list().length, 208)
+  assert.equal(kernelFactories.size, 298)
   assert.ok(kernels.size >= 33)
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {

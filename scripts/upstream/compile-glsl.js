@@ -49,11 +49,27 @@ if (UPSTREAM_REVISION !== PINNED_UPSTREAM_REVISION) {
   throw new Error(`Generated effect snapshot revision mismatch: expected ${PINNED_UPSTREAM_REVISION}, received ${UPSTREAM_REVISION}`)
 }
 
+// Names (not values) of every #define a program's body reads as an ordinary identifier: from
+// effect-level globals declaring `define: 'MACRO'` (NOISE_TYPE, renderLandscape3d's own
+// VIEW_MODE, ...) AND, as of reference 0ed489ec, from a pass's own `defines` override
+// (pointsRender/pointsBillboardRender's per-viewMode deposit/depthKeys/depositDefocus variants -
+// `defines: {VIEW_MODE: n, ...}` from the definition's `.flatMap()`, never on a global). Each
+// gets declared as an ordinary `uniform` below (see normalizeCanonicalGlsl's `runtimeDefines`
+// option), not resolved to a literal: a bare `#if MACRO == N` with no matching `#define` isn't
+// eliminated by glsl-transpiler, it's carried through as a normal runtime `if` - so binding the
+// value through $bindings at call time (see src/runtime/renderer.js) reproduces the reference's
+// per-pass-variant selection without needing a separate compiled kernel per combination.
 function runtimeDefines(record) {
-  return Object.fromEntries(Object.values(record.params).filter((param) => param.define).map((param) => [
+  const defines = Object.fromEntries(Object.values(record.params).filter((param) => param.define).map((param) => [
     param.define,
     param.type === 'float' ? 'float' : 'int',
   ]))
+  for (const pass of record.passes ?? []) {
+    for (const [name, value] of Object.entries(pass.defines ?? {})) {
+      if (!(name in defines)) defines[name] = Number.isInteger(value) ? 'int' : 'float'
+    }
+  }
+  return defines
 }
 
 function parseVectorList(body, type, width) {

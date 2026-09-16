@@ -298,13 +298,16 @@ test('median compatibility kernel preserves unsigned packed whole-color ordering
 })
 
 // Each of the 21 stateful/particle effects has generated canonical kernels for its non-scatter
-// passes (57 factories total; the five vertex-stage scatter passes route through hand-written
-// adapters instead - see scatter-registry.js). This test binds every one of those 57 factories
-// directly and calls it over a minimal 2x2 context, independent of the renderer's iteration-group/
+// passes (62 factories total, up from 57: reference 0ed489ec gave render/pointsBillboardRender
+// five new non-scatter passes - clearDefocus, depthKeys, depthMerge, spriteMean, spriteMeanTiles
+// - for its depth-sorted alpha blend and aperture defocus; the five vertex-stage scatter passes,
+// including its viewMode-split deposit/deposit_alpha, still route through hand-written adapters
+// instead - see scatter-registry.js). This test binds every one of those 62 factories directly
+// and calls it over a minimal 2x2 context, independent of the renderer's iteration-group/
 // pooling machinery - dedicated, per-factory coverage that catalog-smoke.test.js's end-to-end
 // program-rendering sweep doesn't provide on its own. Keys are derived from
 // canonicalKernelFactories rather than hand-listed so a drift between this set and the
-// generator's actual output fails loudly (via the `newKeys.length === 57` assertion) instead
+// generator's actual output fails loudly (via the `newKeys.length === 62` assertion) instead
 // of silently under-testing.
 test('generated kernels for the 21 new stateful/points/render effects bind and emit finite pixels over a 2x2 context', () => {
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
@@ -316,7 +319,7 @@ test('generated kernels for the 21 new stateful/points/render effects bind and e
     'render/pointsEmit', 'render/pointsRender', 'render/pointsBillboardRender',
   ])
   const newKeys = Object.keys(canonicalKernelFactories).filter((key) => newEffectIds.has(key.split(':')[0])).sort()
-  assert.equal(newKeys.length, 57)
+  assert.equal(newKeys.length, 62)
 
   for (const key of newKeys) {
     const [effectId, program] = key.split(':')
@@ -440,8 +443,8 @@ test('generated kernels for the 17 volume and explicit-loop effects bind and emi
   }
 })
 
-// Catalog-wide invariant (independent of the 57-key `newEffectIds` slice above): every MRT pass
-// anywhere in all 205 records must resolve to a factory carrying a matching `outputNames` array.
+// Catalog-wide invariant (independent of the 62-key `newEffectIds` slice above): every MRT pass
+// anywhere in all 208 records must resolve to a factory carrying a matching `outputNames` array.
 // The `if (outputNames)` check above only fires when `factory.outputNames` already exists; if a
 // future kernel regeneration ever dropped `outputNames` from an MRT factory, that conditional
 // would stay silent while the renderer's own `pass.drawBuffers >= 2 && Array.isArray(factory.
@@ -451,7 +454,7 @@ test('generated kernels for the 17 volume and explicit-loop effects bind and emi
 // `pass.outputs` must appear in `outputNames`, and vice versa (same count, same name set) - so a
 // catalog-authoring typo (an output added to one but not the other) fails loudly here instead of
 // silently dropping a destination or writing to a name nothing reads.
-test('every MRT pass in the full 205-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
+test('every MRT pass in the full 208-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
   let mrtPassCount = 0
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {
@@ -468,8 +471,10 @@ test('every MRT pass in the full 205-effect catalog has a factory.outputNames ar
       assert.deepEqual(factoryOutputs, declaredOutputs, `${key}: factory.outputNames must exactly cover pass.outputs's keys (no unused declaration, no undeclared name)`)
     }
   }
-  // 11 points/render passes plus 10 volume passes, per docs/EFFECTS.md and the final review -
-  // fails loudly (rather than vacuously passing on zero iterations) if the catalog's MRT set ever
-  // shrinks or grows without this test being revisited.
-  assert.equal(mrtPassCount, 21, 'expected exactly 21 MRT (drawBuffers >= 2) passes in the full catalog')
+  // 11 points/render passes plus 10 volume passes, per docs/EFFECTS.md and the final review,
+  // plus 3 more from reference 0ed489ec's landscape/heightfield release (synth3d/heightmap3d's
+  // precompute, render/renderLandscape3d's render, points/heightGrid's agent - each drawBuffers
+  // 2 or 3) - fails loudly (rather than vacuously passing on zero iterations) if the catalog's
+  // MRT set ever shrinks or grows without this test being revisited.
+  assert.equal(mrtPassCount, 24, 'expected exactly 24 MRT (drawBuffers >= 2) passes in the full catalog')
 })
