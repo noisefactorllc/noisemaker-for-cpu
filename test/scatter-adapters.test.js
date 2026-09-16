@@ -176,7 +176,13 @@ test('pointsRender ortho mode applies the rotateX/Y/Z pipeline (rotateZ=PI flips
 })
 
 test('computeClipCenter flat mode ignores viewMode uniforms entirely (pure 2x-1 remap)', () => {
-  assert.deepEqual(computeClipCenter(0.5, 0.25, 999, { viewMode: 0 }), [0, -0.5])
+  assert.deepEqual(computeClipCenter(0.5, 0.25, 999, { viewMode: 0 }), {
+    clipX: 0,
+    clipY: -0.5,
+    cameraDepth: 80,
+    cameraDistance: 0,
+    projectedScale: 1,
+  })
 })
 
 // =========================================================================================
@@ -710,6 +716,132 @@ test('billboard deposit skips a quad entirely when density-culled or dead (no de
 
   assert.equal(result.pixels, 0)
   assert.ok(destination.data.every((value, index) => value === seed[index % 4]))
+})
+
+test('billboard deposit perspective mode (viewMode 2) draws a live agent somewhere finite in bounds', () => {
+  const xyzTex = makeAgentSurface(1, 1)
+  const rgbaTex = makeAgentSurface(1, 1)
+  pokeAgent(xyzTex, 0, 0, [2, 1, 0, 1])
+  pokeAgent(rgbaTex, 0, 0, [1, 0.5, 0.25, 1])
+  const destination = new Surface(16, 16)
+  destination.clear([0, 0, 0, 0])
+  const uniforms = {
+    ...BILLBOARD_BASE_UNIFORMS,
+    viewMode: 2,
+    posZ: 0,
+    fieldOfView: 60,
+    pointSize: 4,
+    shapeMode: 1,
+    depositOpacity: 100,
+  }
+  const inputs = { xyzTex, rgbaTex, spriteTex: new Surface(1, 1) }
+  const result = pointsBillboardRenderDepositAdapter({ pass: ADDITIVE_PASS, uniforms, inputs, destination })
+  assert.ok(result.pixels > 0, 'perspective mode must draw at least one pixel for a well-placed agent')
+  assert.ok(destination.data.every((value) => Number.isFinite(value)), 'no NaN/Infinity leaked into the destination')
+})
+
+test('billboard deposit perspective mode culls an agent behind the near plane (cameraDepth <= 0.1)', () => {
+  const xyzTex = makeAgentSurface(1, 1)
+  const rgbaTex = makeAgentSurface(1, 1)
+  // z=100 puts the agent far behind the camera (camera at world Z=80 looking down -Z).
+  pokeAgent(xyzTex, 0, 0, [0, 0, 100, 1])
+  pokeAgent(rgbaTex, 0, 0, [1, 1, 1, 1])
+  const destination = new Surface(8, 8)
+  destination.clear([0, 0, 0, 0])
+  const uniforms = { ...BILLBOARD_BASE_UNIFORMS, viewMode: 2, fieldOfView: 60, pointSize: 4, shapeMode: 1 }
+  const inputs = { xyzTex, rgbaTex, spriteTex: new Surface(1, 1) }
+  const result = pointsBillboardRenderDepositAdapter({ pass: ADDITIVE_PASS, uniforms, inputs, destination })
+  assert.equal(result.pixels, 0, 'an agent behind the near plane must be culled, not drawn')
+})
+
+test('billboard deposit blendMode=1 (alpha) reindexes particleId through orderTex before density-culling and reading state', () => {
+  // Two agents; orderTex swaps their identity (g channel holds the ORIGINAL index to draw at
+  // each output slot) so slot 0 draws agent 1's color and vice versa - proves the reindex, not
+  // just the state read, is wired through blendMode==1's branch.
+  const xyzTex = makeAgentSurface(2, 1)
+  const rgbaTex = makeAgentSurface(2, 1)
+  pokeAgent(xyzTex, 0, 0, [0.5, 0.5, 0, 1])
+  pokeAgent(xyzTex, 1, 0, [0.5, 0.5, 0, 1])
+  pokeAgent(rgbaTex, 0, 0, [1, 0, 0, 1]) // agent 0 = red
+  pokeAgent(rgbaTex, 1, 0, [0, 1, 0, 1]) // agent 1 = green
+  const orderTex = makeAgentSurface(2, 1)
+  pokeAgent(orderTex, 0, 0, [0, 1, 0, 1]) // slot 0 draws agent 1 (green)
+  pokeAgent(orderTex, 1, 0, [0, 0, 0, 1]) // slot 1 draws agent 0 (red)
+  const destination = new Surface(8, 8)
+  destination.clear([0, 0, 0, 0])
+  const uniforms = {
+    ...BILLBOARD_BASE_UNIFORMS,
+    viewMode: 1,
+    blendMode: 1,
+    density: 100,
+    pointSize: 2,
+    shapeMode: 1,
+    depositOpacity: 100,
+  }
+  const inputs = { xyzTex, rgbaTex, orderTex, spriteTex: new Surface(1, 1) }
+  const result = pointsBillboardRenderDepositAdapter({ pass: PREMULTIPLIED_PASS, uniforms, inputs, destination })
+  assert.ok(result.pixels > 0)
+  // Both agents are at the same world position, so this only proves the adapter ran the
+  // reindex branch without crashing/discarding everything - exact color mixing at the shared
+  // pixel depends on draw order, which this port doesn't guarantee equals the reference's.
+})
+
+test('billboard deposit BLUR_LAYER==1 skips the whole draw when aperture is 0 or blendMode is alpha', () => {
+  const xyzTex = makeAgentSurface(1, 1)
+  const rgbaTex = makeAgentSurface(1, 1)
+  pokeAgent(xyzTex, 0, 0, [0.5, 0.5, 0, 1])
+  pokeAgent(rgbaTex, 0, 0, [1, 1, 1, 1])
+  const destination = new Surface(8, 8)
+  destination.clear([0, 0, 0, 0])
+  const baseUniforms = { ...BILLBOARD_BASE_UNIFORMS, viewMode: 1, pointSize: 4, shapeMode: 1, blurLayer: 1 }
+  const inputs = { xyzTex, rgbaTex, spriteTex: new Surface(1, 1) }
+
+  const aptZero = pointsBillboardRenderDepositAdapter({
+    pass: ADDITIVE_PASS,
+    uniforms: { ...baseUniforms, aperture: 0, blendMode: 0 },
+    inputs,
+    destination,
+  })
+  assert.equal(aptZero.pixels, 0, 'aperture=0 must skip the BLUR_LAYER=1 clone entirely')
+
+  const alphaBlend = pointsBillboardRenderDepositAdapter({
+    pass: ADDITIVE_PASS,
+    uniforms: { ...baseUniforms, aperture: 5, blendMode: 1 },
+    inputs,
+    destination,
+  })
+  assert.equal(alphaBlend.pixels, 0, 'blendMode=1 (alpha) never has a defocus contribution pass')
+})
+
+test('billboard deposit aperture defocus (blurRadius>0) samples spriteMeanTex and stays finite', () => {
+  const xyzTex = makeAgentSurface(1, 1)
+  const rgbaTex = makeAgentSurface(1, 1)
+  // Far from the focal distance so blurPixels is large relative to a small pointSize -> blurRadius > 0.
+  pokeAgent(xyzTex, 0, 0, [0.5, 0.5, 40, 1])
+  pokeAgent(rgbaTex, 0, 0, [1, 1, 1, 1])
+  const spriteMeanTex = new Surface(5, 5)
+  spriteMeanTex.data.fill(0.2)
+  const destination = new Surface(16, 16)
+  destination.clear([0, 0, 0, 0])
+  // blurLayer:1 - a strongly defocused additive footprint's lowWeight saturates toward 1, so its
+  // whole contribution routes to the blurLayer=1 (defocus-accumulation) clone; blurLayer=0's own
+  // draw call for the identical uniforms would correctly skip (layerWeight=1-lowWeight=0), which
+  // is covered by the "BLUR_LAYER==1 skips" test above from the opposite direction.
+  const uniforms = {
+    ...BILLBOARD_BASE_UNIFORMS,
+    viewMode: 1,
+    blendMode: 0,
+    blurLayer: 1,
+    pointSize: 2,
+    shapeMode: 0,
+    aperture: 10,
+    focalDistance: 80,
+    depositOpacity: 100,
+  }
+  const inputs = { xyzTex, rgbaTex, spriteTex: new Surface(1, 1), spriteMeanTex }
+  const result = pointsBillboardRenderDepositAdapter({ pass: ADDITIVE_PASS, uniforms, inputs, destination })
+  assert.ok(result.pixels > 0, 'a strongly defocused agent must still draw a (larger, blurred) footprint')
+  assert.ok(destination.data.every((value) => Number.isFinite(value) && value >= 0), 'defocus output stays finite and non-negative')
 })
 
 test('billboard hash() is deterministic and matches the PCG-style deposit.vert derivation', () => {

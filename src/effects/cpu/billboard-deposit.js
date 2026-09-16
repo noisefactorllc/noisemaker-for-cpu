@@ -194,6 +194,83 @@ export function isPremultipliedBlend(pass) {
   return String(src).toUpperCase() === 'ONE' && String(dst).toUpperCase() === 'ONE_MINUS_SRC_ALPHA'
 }
 
+// deposit.wgsl's blurWeight: a tapered radial gaussian, normalized so the source-grid
+// contributions retain RGBA mass and spatial centers under defocus.
+function blurWeight(u, v, cu, cv, expansion) {
+  const px = (u - cu) / expansion
+  const py = (v - cv) / expansion
+  const p2 = px * px + py * py
+  const gaussian = Math.exp(-p2 / 0.0648) * (1 - smoothstep(0.45, 0.5, Math.sqrt(p2)))
+  const normalization = 1 / (0.19724318 * expansion * expansion)
+  return gaussian * normalization
+}
+
+// deposit.wgsl's blurSample: shadeSprite, but transparent outside the sprite's own [0,1] UV range
+// (the aperture-padded quad can sample past it).
+function evaluateBlurSample(shapeMode, spriteTex, u, v, agentColor, opacity, out) {
+  if (u < 0 || u > 1 || v < 0 || v > 1) {
+    out[0] = 0
+    out[1] = 0
+    out[2] = 0
+    out[3] = 0
+    return out
+  }
+  return evaluateBillboardFragment(shapeMode, spriteTex, u, v, agentColor, opacity, out)
+}
+
+const blurredScratch = [0, 0, 0, 0]
+const sharpScratch = [0, 0, 0, 0]
+
+// deposit.wgsl's shadeParticle (the viewMode!=0, blurRadius>0 case; the caller already handles
+// the two early-outs that return shadeSprite/evaluateBillboardFragment directly).
+function shadeParticle(shapeMode, spriteTex, spriteMeanTex, u, v, agentColor, opacity, blurRadius, out) {
+  const expansion = Math.max(1 + 2 * blurRadius, 2.2516403)
+  const blurred = blurredScratch
+  if (shapeMode === 0) {
+    blurred[0] = 0
+    blurred[1] = 0
+    blurred[2] = 0
+    blurred[3] = 0
+    for (let yy = 0; yy < 5; yy += 1) {
+      for (let xx = 0; xx < 5; xx += 1) {
+        const source = texelFetchAgent(spriteMeanTex, xx, yy)
+        const weight = blurWeight(u, v, xx / 4, yy / 4, expansion)
+        blurred[0] += source[0] * weight
+        blurred[1] += source[1] * weight
+        blurred[2] += source[2] * weight
+        blurred[3] += source[3] * weight
+      }
+    }
+    blurred[0] *= agentColor[0] * opacity
+    blurred[1] *= agentColor[1] * opacity
+    blurred[2] *= agentColor[2] * opacity
+    blurred[3] *= agentColor[3] * opacity
+  } else {
+    const meanSample = texelFetchAgent(spriteMeanTex, 0, 0)
+    const cu = shapeMode === 5 ? 0.5 : 0.5
+    const cv = shapeMode === 5 ? 0.54 : 0.5
+    const weight = blurWeight(u, v, cu, cv, expansion)
+    blurred[0] = meanSample[0] * agentColor[0] * opacity * weight
+    blurred[1] = meanSample[1] * agentColor[1] * opacity * weight
+    blurred[2] = meanSample[2] * agentColor[2] * opacity * weight
+    blurred[3] = meanSample[3] * agentColor[3] * opacity * weight
+  }
+  if (blurRadius >= 0.5) {
+    out[0] = blurred[0]
+    out[1] = blurred[1]
+    out[2] = blurred[2]
+    out[3] = blurred[3]
+    return out
+  }
+  const sharp = evaluateBlurSample(shapeMode, spriteTex, u, v, agentColor, opacity, sharpScratch)
+  const t = smoothstep(0.0, 0.5, blurRadius)
+  out[0] = sharp[0] * (1 - t) + blurred[0] * t
+  out[1] = sharp[1] * (1 - t) + blurred[1] * t
+  out[2] = sharp[2] * (1 - t) + blurred[2] * t
+  out[3] = sharp[3] * (1 - t) + blurred[3] * t
+  return out
+}
+
 // Unbound-uniform note: like the other four ported shaders,
 // deposit.vert declares `uniform vec2 resolution` with no entry in the pass's own `uniforms`
 // map - but UNLIKE the other four (where it's simply dead code), billboard's copy IS read
@@ -205,7 +282,9 @@ export function isPremultipliedBlend(pass) {
 export function pointsBillboardRenderDepositAdapter({ pass, uniforms, inputs, destination }) {
   const xyzTex = inputs.xyzTex
   const rgbaTex = inputs.rgbaTex
+  const orderTex = inputs.orderTex
   const spriteTex = inputs.spriteTex
+  const spriteMeanTex = inputs.spriteMeanTex
   const width = xyzTex.width
   const height = xyzTex.height
   // Same square-state-texture assumption as points-deposit.js's adapters (every particle-state
@@ -219,35 +298,77 @@ export function pointsBillboardRenderDepositAdapter({ pass, uniforms, inputs, de
 
   const cullThreshold = uniforms.density / 100.0
   const shapeMode = uniforms.shapeMode | 0
+  const viewMode = uniforms.viewMode | 0
+  const blendMode = uniforms.blendMode | 0
+  const blurLayer = (uniforms.blurLayer ?? 0) | 0
   const opacity = uniforms.depositOpacity / 100.0
   const seed = uniforms.seed
   const sizeVariationFraction = uniforms.sizeVariation / 100.0
   const rotationVarFraction = uniforms.rotationVar / 100.0
   const pointSize = uniforms.pointSize
+  const sizeDistance = uniforms.sizeDistance ?? 0
+  const brightnessDistance = uniforms.brightnessDistance ?? 0
+  const aperture = uniforms.aperture ?? 0
+  const focalDistance = uniforms.focalDistance ?? 80
 
   const src = [0, 0, 0, 0]
+  const pixelColor = [0, 0, 0, 0]
   let pixels = 0
 
+  // Whole-draw gate for the BLUR_LAYER==1 (additive defocus contribution) clone: a uniform-only
+  // condition, so it is equivalent to skipping the entire pass rather than re-checking it per
+  // vertex like deposit.wgsl does.
+  if (blurLayer === 1 && (viewMode === 0 || aperture <= 0 || blendMode !== 0)) return { pixels: 0 }
+
   for (let v = 0; v < count; v += 1) {
-    // Density cull first, using the raw particle index - matches deposit.vert's order exactly
-    // (culled particles never even reach the xyzTex/rgbaTex reads below).
-    const particleRandom = fract(v * GOLDEN_RATIO_CONJUGATE)
+    let particleId = v
+    if (blendMode === 1 && viewMode !== 0) {
+      const orderSx = particleId % width
+      const orderSy = Math.floor(particleId / width)
+      particleId = texelFetchAgent(orderTex, orderSx, orderSy)[1] | 0
+    }
+
+    // Density cull, using the (possibly depth-sort-reindexed) particle index - matches
+    // deposit.wgsl's order exactly (culled particles never even reach the xyzTex/rgbaTex reads).
+    const particleRandom = fract(particleId * GOLDEN_RATIO_CONJUGATE)
     if (particleRandom > cullThreshold) continue
 
-    const sx = v % width
-    const sy = Math.floor(v / width)
+    const sx = particleId % width
+    const sy = Math.floor(particleId / width)
     const pos = texelFetchAgent(xyzTex, sx, sy)
     if (pos[3] < 0.5) continue // alive = pos.w
 
     const agentColor = texelFetchAgent(rgbaTex, sx, sy)
-    const [clipCenterX, clipCenterY] = computeClipCenter(pos[0], pos[1], pos[2], uniforms)
+    const clip = computeClipCenter(pos[0], pos[1], pos[2], uniforms, destWidth, destHeight)
+    if (clip === null) continue
+    const { clipX: clipCenterX, clipY: clipCenterY, cameraDepth, cameraDistance, projectedScale } = clip
 
-    const sizeNoise = hash(v, seed)
+    const sizeNoise = hash(particleId, seed)
     const sizeMultiplier = 1.0 - sizeVariationFraction * (sizeNoise - 0.5)
-    const finalSize = pointSize * sizeMultiplier
-    if (!(finalSize > 0)) continue // degenerate/zero-area quad draws nothing
+    let sizeFade = 1
+    let brightnessFade = 1
+    let blurPixels = 0
+    if (viewMode !== 0) {
+      if (sizeDistance > 0) sizeFade = 1 - smoothstep(0, sizeDistance, cameraDistance)
+      if (brightnessDistance > 0) brightnessFade = 1 - smoothstep(0, brightnessDistance, cameraDistance)
+      blurPixels = Math.min(32, (aperture * Math.abs(cameraDepth - focalDistance)) / Math.max(Math.abs(cameraDepth), 0.1))
+    }
+    const baseSize = pointSize * sizeMultiplier * projectedScale
+    const blurRadius = blurPixels / Math.max(baseSize, 0.001)
+    const supportRadius = blurPixels > 0 ? Math.max(blurRadius, 0.62582015) : 0
+    const supportPixels = blurPixels > 0 ? Math.max(blurPixels, baseSize * 0.62582015) : 0
+    const lowWeight = blendMode === 0 ? smoothstep(4, 8, blurPixels * sizeFade) * smoothstep(0.5, 1, blurRadius) : 0
+    const layerWeight = blurLayer === 1 ? lowWeight : 1 - lowWeight
+    const proceduralPadding = shapeMode === 5 ? 0.04 : 0
+    const blurPadding = blurPixels > 0 ? (shapeMode === 0 ? 0.5 : proceduralPadding) : 0
+    const finalSize = (baseSize * (1 + 2 * blurPadding) + 2 * supportPixels) * sizeFade
+    if (!(finalSize > 0) || !(brightnessFade > 0) || !(layerWeight > 0)) continue // draws nothing
+    pixelColor[0] = agentColor[0] * brightnessFade * layerWeight
+    pixelColor[1] = agentColor[1] * brightnessFade * layerWeight
+    pixelColor[2] = agentColor[2] * brightnessFade * layerWeight
+    pixelColor[3] = agentColor[3] * brightnessFade * layerWeight
 
-    const rotationNoise = hash(v + 1234.5, seed)
+    const rotationNoise = hash(particleId + 1234.5, seed)
     const rotation = rotationVarFraction * rotationNoise * TAU_APPROX
     const cosR = Math.cos(rotation)
     const sinR = Math.sin(rotation)
@@ -255,6 +376,7 @@ export function pointsBillboardRenderDepositAdapter({ pass, uniforms, inputs, de
     const halfSize = finalSize * 0.5
     const sizeClipX = halfSize * (2.0 / destWidth)
     const sizeClipY = halfSize * (2.0 / destHeight)
+    const uvScale = 0.5 + blurPadding + supportRadius
 
     // AABB (in destination GL-pixel space, bottom-up) over the 4 rotated+scaled corners.
     let minPxf = Infinity
@@ -298,9 +420,13 @@ export function pointsBillboardRenderDepositAdapter({ pass, uniforms, inputs, de
         // the half-open rule GPU rasterization uses on two of its four edges.
         if (offsetX < -1 || offsetX > 1 || offsetY < -1 || offsetY > 1) continue
 
-        const u = offsetX * 0.5 + 0.5
-        const spriteV = offsetY * 0.5 + 0.5
-        evaluateBillboardFragment(shapeMode, spriteTex, u, spriteV, agentColor, opacity, src)
+        const u = offsetX * uvScale + 0.5
+        const spriteV = offsetY * uvScale + 0.5
+        if (viewMode === 0 || blurRadius <= 0) {
+          evaluateBillboardFragment(shapeMode, spriteTex, u, spriteV, pixelColor, opacity, src)
+        } else {
+          shadeParticle(shapeMode, spriteTex, spriteMeanTex, u, spriteV, pixelColor, opacity, blurRadius, src)
+        }
 
         const offset = (storageRow * destWidth + col) * 4
         if (premultiplied) {

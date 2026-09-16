@@ -86,20 +86,36 @@ export function scatterPointPixel(clipX, clipY, clipW, destWidth, destHeight) {
 // Shared clip-space CENTER computation, byte-identical between `render/pointsRender/glsl/
 // deposit.vert` and `render/pointsBillboardRender/glsl/deposit.vert` (the two sources carry this
 // exact block verbatim). `x`/`y`/`z` is the agent's raw `xyz.xyz` (pre-transform); returns
-// `[clipX, clipY]` (clip.w is always 1 for both shaders, so NDC === clip here).
+// `{clipX, clipY, cameraDepth, cameraDistance, projectedScale}`, or `null` when the point is
+// behind the near plane in perspective view (viewMode 2) -- the caller must cull on `null`.
+// clip.w is always 1 for both shaders, so NDC === clip here. cameraDepth/cameraDistance/
+// projectedScale are only meaningful for viewMode != 0 (ortho/perspective); flat view returns the
+// reference's fixed cameraDepth=80, cameraDistance=0, projectedScale=1.
 //
 // Note: `deposit.vert` never converts degrees to radians — `rotateX`/`rotateY`/`rotateZ` feed
 // `cos()`/`sin()` directly, and both effects' own param specs already range them
 // `[0, 6.283185]` (~[0, 2*PI]), i.e. authored in radians already. Ported literally: no conversion.
-export function computeClipCenter(x, y, z, uniforms) {
-  if ((uniforms.viewMode | 0) === 0) {
+//
+// Y orientation: the WGSL reference flips clip.y (`1.0 - pos.y*2.0` in flat mode; an explicit
+// `clipPos.y = -clipPos.y` for ortho/perspective), but this adapter never has — some other stage
+// of this CPU pipeline already compensates (this convention predates the perspective addition
+// below and is shared with the sibling noisemaker-for-python port). Preserved into the new
+// perspective branch for consistency rather than matched literally against the WGSL.
+// destWidth/destHeight: the perspective branch's aspect correction reads `resolution`, which -
+// like every other uniform this file's header note documents - is never reliably bound on
+// `uniforms` for this CPU adapter path; pass the deposit destination's own pixel dimensions
+// explicitly instead (the actual value a real renderer would bind `resolution` to).
+export function computeClipCenter(x, y, z, uniforms, destWidth, destHeight) {
+  const viewMode = uniforms.viewMode | 0
+  if (viewMode === 0) {
     // Flat / 2D: positions are normalized [0,1].
-    return [x * 2 - 1, y * 2 - 1]
+    return { clipX: x * 2 - 1, clipY: y * 2 - 1, cameraDepth: 80, cameraDistance: 0, projectedScale: 1 }
   }
 
   // Ortho / 3D. `is2DSystem` auto-detects a 2D agent system (z near 0, x/y in [0,1]) versus a 3D
   // attractor (coords roughly +/-40) purely from the position values, exactly as upstream does.
-  const is2DSystem = Math.abs(z) < 1.0 && x >= 0.0 && x <= 1.0 && y >= 0.0 && y <= 1.0
+  // Perspective (viewMode 2) never auto-detects a 2D system — only ortho (viewMode 1) does.
+  const is2DSystem = viewMode === 1 && Math.abs(z) < 1.0 && x >= 0.0 && x <= 1.0 && y >= 0.0 && y <= 1.0
   let px = x
   let py = y
   let pz = z
@@ -121,19 +137,36 @@ export function computeClipCenter(x, y, z, uniforms) {
   const sinY = Math.sin(uniforms.rotateY)
   const x2 = x1 * cosY + z1 * sinY
   const y2 = y1
-  // z2 (= -x1*sinY + z1*cosY) is carried in the source but never read again after Z-rotation
-  // (Z-rotation passes p.z through unchanged, and only p.xy is read from then on) - not computed.
+  const z2 = -x1 * sinY + z1 * cosY
 
   const cosZ = Math.cos(uniforms.rotateZ)
   const sinZ = Math.sin(uniforms.rotateZ)
   let fx = x2 * cosZ - y2 * sinZ
   let fy = x2 * sinZ + y2 * cosZ
+  const fz = z2 + (uniforms.posZ ?? 0)
 
   fx += uniforms.posX
   fy += uniforms.posY
 
-  if (is2DSystem) return [fx * 3.5 * uniforms.viewScale, fy * 3.5 * uniforms.viewScale]
-  return [(fx / 40.0) * uniforms.viewScale, (fy / 40.0) * uniforms.viewScale]
+  const cameraDepth = 80 - fz
+  const cameraDistance = Math.sqrt(fx * fx + fy * fy + cameraDepth * cameraDepth)
+  let projectedScale = 1
+  let clipX
+  let clipY
+  if (viewMode === 2) {
+    if (cameraDepth <= 0.1) return null
+    const focalLength = 1 / Math.tan(Math.min(Math.max(uniforms.fieldOfView, 10), 150) * 0.00872664626)
+    clipX = ((fx * focalLength * uniforms.viewScale) / cameraDepth) * (destHeight / destWidth)
+    clipY = (fy * focalLength * uniforms.viewScale) / cameraDepth
+    projectedScale = (80 * focalLength * uniforms.viewScale) / (1.732050808 * cameraDepth)
+  } else if (is2DSystem) {
+    clipX = fx * 3.5 * uniforms.viewScale
+    clipY = fy * 3.5 * uniforms.viewScale
+  } else {
+    clipX = (fx / 40.0) * uniforms.viewScale
+    clipY = (fy / 40.0) * uniforms.viewScale
+  }
+  return { clipX, clipY, cameraDepth, cameraDistance, projectedScale }
 }
 
 // `points/dla:depositGrid` <- depositGrid.vert + depositGrid.frag.
@@ -293,8 +326,9 @@ export function pointsRenderDepositAdapter({ uniforms, inputs, destination }) {
     const pos = texelFetchAgent(xyzTex, sx, sy)
     if (pos[3] < 0.5) continue // alive = pos.w
 
-    const [clipX, clipY] = computeClipCenter(pos[0], pos[1], pos[2], uniforms)
-    const offset = scatterPointPixel(clipX, clipY, 1, destWidth, destHeight)
+    const clip = computeClipCenter(pos[0], pos[1], pos[2], uniforms, destWidth, destHeight)
+    if (clip === null) continue
+    const offset = scatterPointPixel(clip.clipX, clip.clipY, 1, destWidth, destHeight)
     if (offset === null) continue
 
     const col = texelFetchAgent(rgbaTex, sx, sy)
