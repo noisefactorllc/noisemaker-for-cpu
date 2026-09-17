@@ -157,6 +157,7 @@
   "points/dla",
   "points/flock",
   "points/flow",
+  "points/heightGrid",
   "points/hydraulic",
   "points/lenia",
   "points/life",
@@ -170,6 +171,7 @@
   "render/render3d",
   "render/renderCubemap3d",
   "render/renderCubemapSurface",
+  "render/renderLandscape3d",
   "render/renderLit3d",
   "synth/bitwise",
   "synth/cell",
@@ -201,6 +203,7 @@
   "synth3d/cellularAutomata3d",
   "synth3d/flythrough3d",
   "synth3d/fractal3d",
+  "synth3d/heightmap3d",
   "synth3d/noise3d",
   "synth3d/reactionDiffusion3d",
   "synth3d/shape3d"
