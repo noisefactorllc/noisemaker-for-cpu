@@ -24,7 +24,7 @@ async function browserImportGraph(entry) {
 
 test('browser entry exports the CPU renderer, CSL, DSL, catalog, sinks, frame export, and canvas adapter', async () => {
   const api = await import(pathToFileURL(resolve(root, 'src/index.js')))
-  for (const name of ['CslCompiler', 'compileCsl', 'Surface', 'parseDsl', 'EffectRegistry', 'createDefaultRegistry', 'CpuRenderer', 'CanvasSink', 'SinkManager', 'FrameExportQueue', 'renderToCanvas']) {
+  for (const name of ['CslCompiler', 'compileCsl', 'Surface', 'parseDsl', 'EffectRegistry', 'createDefaultRegistry', 'CpuRenderer', 'CanvasSink', 'SinkManager', 'FrameExportQueue', 'CpuFrameExportAdapter', 'renderToCanvas']) {
     assert.ok(name in api, `missing export ${name}`)
   }
 })

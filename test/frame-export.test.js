@@ -148,3 +148,35 @@ test('CpuRenderer frame export rejects a result whose extent differs from its de
   assert.match(errors[0], /extent 1x1 does not match configured extent 2x1/)
   assert.deepEqual(queue.stats, { accepted: 0, dropped: 0, completed: 0, failed: 1 })
 })
+
+test('CpuFrameExportAdapter directly handles createSlot, begin, poll, read, and destroySlot across alpha modes', () => {
+  const adapter = new api.CpuFrameExportAdapter()
+  const slot = adapter.createSlot(0, { width: 2, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'straight', fps: 30 })
+  assert.equal(slot.index, 0)
+  assert.equal(slot.ready, false)
+  assert.equal(adapter.poll(slot), false)
+
+  const frame = floatResult(2, 1, [0.5, 0.2, 0.8, 1, 0, 1, 0, 0.5])
+  adapter.begin(slot, frame)
+  assert.equal(adapter.poll(slot), true)
+
+  const readFrame = adapter.read(slot)
+  assert.equal(readFrame.width, 2)
+  assert.equal(readFrame.height, 1)
+  assert.deepEqual([...readFrame.data], [128, 51, 204, 255, 0, 255, 0, 128])
+  assert.equal(adapter.poll(slot), false)
+
+  const opaqueSlot = adapter.createSlot(1, { width: 1, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'opaque', fps: 30 })
+  adapter.begin(opaqueSlot, floatResult(1, 1, [0.25, 0.5, 0.75, 0.1]))
+  assert.deepEqual([...adapter.read(opaqueSlot).data], [64, 128, 191, 255])
+
+  const premulSlot = adapter.createSlot(2, { width: 1, height: 1, format: 'rgba8unorm', colorSpace: 'srgb', alphaMode: 'premultiplied', fps: 30 })
+  adapter.begin(premulSlot, floatResult(1, 1, [0.5, 1, 0.25, 0.5]))
+  assert.deepEqual([...adapter.read(premulSlot).data], [64, 128, 32, 128])
+
+  adapter.destroySlot(slot)
+  assert.throws(() => adapter.begin(slot, frame), /not usable/)
+  assert.throws(() => adapter.poll(slot), /not usable/)
+  assert.throws(() => adapter.read(slot), /not usable/)
+})
+

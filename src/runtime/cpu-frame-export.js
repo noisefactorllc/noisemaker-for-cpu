@@ -49,13 +49,31 @@ export class CpuFrameExportAdapter {
       throw new Error(`CPU frame export source extent ${result.width}x${result.height} does not match configured extent ${slot.width}x${slot.height}`)
     }
     const source = result.surface.data
-    for (let index = 0; index < source.length; index += 4) {
-      const alpha = source[index + 3]
-      const colorScale = slot.alphaMode === 'premultiplied' ? alpha : 1
-      slot.data[index] = byteFromFloat(source[index] * colorScale)
-      slot.data[index + 1] = byteFromFloat(source[index + 1] * colorScale)
-      slot.data[index + 2] = byteFromFloat(source[index + 2] * colorScale)
-      slot.data[index + 3] = byteFromFloat(slot.alphaMode === 'opaque' ? 1 : alpha)
+    const data = slot.data
+    const alphaMode = slot.alphaMode
+    if (alphaMode === 'premultiplied') {
+      for (let index = 0; index < source.length; index += 4) {
+        const alpha = source[index + 3]
+        data[index] = byteFromFloat(source[index] * alpha)
+        data[index + 1] = byteFromFloat(source[index + 1] * alpha)
+        data[index + 2] = byteFromFloat(source[index + 2] * alpha)
+        data[index + 3] = byteFromFloat(alpha)
+      }
+    } else if (alphaMode === 'opaque') {
+      for (let index = 0; index < source.length; index += 4) {
+        data[index] = byteFromFloat(source[index])
+        data[index + 1] = byteFromFloat(source[index + 1])
+        data[index + 2] = byteFromFloat(source[index + 2])
+        data[index + 3] = 255
+      }
+    } else {
+      // straight mode (guaranteed by validateDescriptor in createSlot)
+      for (let index = 0; index < source.length; index += 4) {
+        data[index] = byteFromFloat(source[index])
+        data[index + 1] = byteFromFloat(source[index + 1])
+        data[index + 2] = byteFromFloat(source[index + 2])
+        data[index + 3] = byteFromFloat(source[index + 3])
+      }
     }
     slot.ready = true
   }
