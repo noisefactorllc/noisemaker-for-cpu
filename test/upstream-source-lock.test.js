@@ -31,3 +31,7 @@ test('upstream source lock hashes pinned paths deterministically without requiri
     /source content digest mismatch/,
   )
 })
+
+test('PINNED_UPSTREAM_REVISION is a valid 40-character hexadecimal git commit SHA', () => {
+  assert.match(sourceLock.PINNED_UPSTREAM_REVISION, /^[0-9a-f]{40}$/)
+})
