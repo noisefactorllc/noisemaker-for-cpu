@@ -11,6 +11,7 @@ on:
     branches: [main]
     paths:
       - "export-kit/**"
+      - "!export-kit/README-generation.md"
       - ".github/workflows/export-kit.yml"
       # LICENSE is shipped kit content (vendored into LICENSES/): a relicense must auto-publish.
       - "LICENSE"
