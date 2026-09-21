@@ -29,7 +29,9 @@ const $ = (id) => document.getElementById(id)
 
 const registry = createDefaultRegistry()
 const renderer = new CpuRenderer({ registry, kernels, kernelFactories })
-const effects = registry.list()
+// Retain legacy runtime support without generating new programs with retired effects.
+const retiredEffects = new Set(['filter/bc', 'filter/hs', 'filter/colorspace'])
+const effects = registry.list().filter(effect => !retiredEffects.has(effect.id))
 const generators = effects.filter((e) => e.kind === 'generator')
 const filterEffects = effects.filter((e) => e.kind === 'filter')
 
