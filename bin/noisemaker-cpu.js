@@ -234,7 +234,9 @@ async function applyEffect(effect, inputPath, options) {
   const image = await readPng(resolve(inputPath))
   const surface = Surface.fromRgba8(image.width, image.height, image.data)
   const args = withSeed(effect, options).map(({ name, value }) => `${name}: ${dslValue(value)}`).join(', ')
-  const program = `${effectSearch(effect)}\nread(o0).${effect.func}(${args}).write(o7)\nrender(o7)`
+  const search = needsParticlePipeline(effect) ? 'search points, render, synth' : effectSearch(effect)
+  const emit = needsParticlePipeline(effect) ? '.pointsEmit(stateSize: x64)' : ''
+  const program = `${search}\nread(o0)${emit}.${effect.func}(${args}).write(o7)\nrender(o7)`
   await renderDsl(program, { ...options, width: image.width, height: image.height }, {
     externalTextures: { imageTex: surface, textTex: surface },
     seedSurfaces: { o0: surface },

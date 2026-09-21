@@ -33,7 +33,6 @@ const EXPECTED_IDS = [
   'classicNoisedeck/shapes3d',
   'classicNoisedeck/splat',
   'filter/adjust',
-  'filter/bc',
   'filter/bloom',
   'filter/blur',
   'filter/bulge',
@@ -44,7 +43,6 @@ const EXPECTED_IDS = [
   'filter/chrome',
   'filter/clouds',
   'filter/colorReplace',
-  'filter/colorspace',
   'filter/convolutionFeedback',
   'filter/corrupt',
   'filter/craquelure',
@@ -69,7 +67,6 @@ const EXPECTED_IDS = [
   'filter/hatch',
   'filter/highPass',
   'filter/historicPalette',
-  'filter/hs',
   'filter/invert',
   'filter/lens',
   'filter/lensFlare',
@@ -262,21 +259,21 @@ const EXCLUDED = [
   ...REACTIVE,
 ].sort()
 
-test('upstream snapshot partitions the exact source tree into 208 eligible and five excluded effects', () => {
-  assert.equal(UPSTREAM_REVISION, 'beabda385253a3461d2ee5ee2f1b032cbe9a2832')
+test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
+  assert.equal(UPSTREAM_REVISION, 'f61ac07320888732594689258c6f7042cde0303b')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
       namespace,
       eligibleEffectIds.filter((id) => id.startsWith(`${namespace}/`)).length,
     ])),
-    { classicNoisedeck: 20, filter: 116, filter3d: 2, mixer: 15, points: 11, render: 10, synth: 26, synth3d: 8 },
+    { classicNoisedeck: 20, filter: 113, filter3d: 2, mixer: 15, points: 11, render: 10, synth: 26, synth3d: 8 },
   )
   assert.deepEqual(excludedEffects.reactive, REACTIVE)
   const excludedIds = Object.values(excludedEffects).flat().sort()
   assert.deepEqual(excludedIds, EXCLUDED)
-  assert.equal(sourceEffectIds.length, 213)
-  assert.equal(new Set([...eligibleEffectIds, ...excludedIds]).size, 213)
+  assert.equal(sourceEffectIds.length, 210)
+  assert.equal(new Set([...eligibleEffectIds, ...excludedIds]).size, 210)
   assert.deepEqual([...eligibleEffectIds, ...excludedIds].sort(), [...sourceEffectIds].sort())
 })
 

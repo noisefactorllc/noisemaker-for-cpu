@@ -190,15 +190,6 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 5424
   },
   {
-    "effectId": "filter/bc",
-    "program": "bc",
-    "file": "bc.glsl",
-    "status": "generated",
-    "sourceBytes": 681,
-    "normalizedBytes": 816,
-    "generatedBytes": 1206
-  },
-  {
     "effectId": "filter/bloom",
     "program": "brightPass",
     "file": "brightPass.glsl",
@@ -350,15 +341,6 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 1221,
     "normalizedBytes": 1363,
     "generatedBytes": 1560
-  },
-  {
-    "effectId": "filter/colorspace",
-    "program": "colorspace",
-    "file": "colorspace.glsl",
-    "status": "generated",
-    "sourceBytes": 2711,
-    "normalizedBytes": 2846,
-    "generatedBytes": 3743
   },
   {
     "effectId": "filter/convolutionFeedback",
@@ -665,15 +647,6 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 12528,
     "normalizedBytes": 12506,
     "generatedBytes": 0
-  },
-  {
-    "effectId": "filter/hs",
-    "program": "hs",
-    "file": "hs.glsl",
-    "status": "generated",
-    "sourceBytes": 1981,
-    "normalizedBytes": 2116,
-    "generatedBytes": 2598
   },
   {
     "effectId": "filter/invert",

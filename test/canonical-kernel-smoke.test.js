@@ -444,7 +444,7 @@ test('generated kernels for the 17 volume and explicit-loop effects bind and emi
 })
 
 // Catalog-wide invariant (independent of the 62-key `newEffectIds` slice above): every MRT pass
-// anywhere in all 208 records must resolve to a factory carrying a matching `outputNames` array.
+// anywhere in all 205 records must resolve to a factory carrying a matching `outputNames` array.
 // The `if (outputNames)` check above only fires when `factory.outputNames` already exists; if a
 // future kernel regeneration ever dropped `outputNames` from an MRT factory, that conditional
 // would stay silent while the renderer's own `pass.drawBuffers >= 2 && Array.isArray(factory.
@@ -454,7 +454,7 @@ test('generated kernels for the 17 volume and explicit-loop effects bind and emi
 // `pass.outputs` must appear in `outputNames`, and vice versa (same count, same name set) - so a
 // catalog-authoring typo (an output added to one but not the other) fails loudly here instead of
 // silently dropping a destination or writing to a name nothing reads.
-test('every MRT pass in the full 208-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
+test('every MRT pass in the full 205-effect catalog has a factory.outputNames array matching drawBuffers and pass.outputs', () => {
   let mrtPassCount = 0
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {

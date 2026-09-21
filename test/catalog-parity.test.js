@@ -4,8 +4,8 @@ import test from 'node:test'
 import { effectCatalog } from '../src/effects/catalog.js'
 import { eligibleEffectIds, effectRecords } from '../src/effects/generated/upstream-snapshot.js'
 
-test('runtime catalog is the exact 208-effect canonical inventory', () => {
-  assert.equal(effectCatalog.length, 208)
+test('runtime catalog is the exact 205-effect canonical inventory', () => {
+  assert.equal(effectCatalog.length, 205)
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
   assert.equal(effectCatalog.some((effect) => ['synth/scope', 'synth/spectrum', 'synth/roll'].includes(effect.id)), false)
 })

@@ -8418,37 +8418,6 @@ function canonicalFactory19($bindings, $runtime) {
 }
 
 function canonicalFactory20($bindings, $runtime) {
-  const { ivec2, texture, textureSize } = $runtime.stdlib
-  const gl_FragCoord = $runtime.fragCoord
-  
-  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  
-  var tileOffset = $bindings["tileOffset"];
-  var fullResolution = $bindings["fullResolution"];
-  var inputTex = $bindings["inputTex"];
-  var brightness = $bindings["brightness"];
-  var contrast = $bindings["contrast"];
-  var fragColor = new Float32Array([0, 0, 0, 0]);
-  function main () {
-  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var color = texture(inputTex, uv);
-  	color = new $runtime.PooledFloat32Array([color[0] * brightness, color[1] * brightness, color[2] * brightness, color[3]]);
-  	var contrastFactor = contrast * 2;
-  	color = new $runtime.PooledFloat32Array([(color[0] - 0.5) * contrastFactor + 0.5, (color[1] - 0.5) * contrastFactor + 0.5, (color[2] - 0.5) * contrastFactor + 0.5, color[3]]);
-  	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
-  };
-  return function canonicalKernel(context, out) {
-    $runtime.beginPixel(context)
-    main()
-    $runtime.writeColor(fragColor, out)
-  }
-}
-
-function canonicalFactory21($bindings, $runtime) {
   const { ivec2, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8491,7 +8460,7 @@ function canonicalFactory21($bindings, $runtime) {
   }
 }
 
-function canonicalFactory22($bindings, $runtime) {
+function canonicalFactory21($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8522,7 +8491,7 @@ function canonicalFactory22($bindings, $runtime) {
   }
 }
 
-function canonicalFactory23($bindings, $runtime) {
+function canonicalFactory22($bindings, $runtime) {
   const { sin, cos, exp, sqrt, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8572,7 +8541,7 @@ function canonicalFactory23($bindings, $runtime) {
   }
 }
 
-function canonicalFactory24($bindings, $runtime) {
+function canonicalFactory23($bindings, $runtime) {
   const { ivec2, exp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8617,7 +8586,7 @@ function canonicalFactory24($bindings, $runtime) {
   }
 }
 
-function canonicalFactory25($bindings, $runtime) {
+function canonicalFactory24($bindings, $runtime) {
   const { ivec2, exp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8662,7 +8631,7 @@ function canonicalFactory25($bindings, $runtime) {
   }
 }
 
-function canonicalFactory26($bindings, $runtime) {
+function canonicalFactory25($bindings, $runtime) {
   const { sin, cos, pow, abs, fract, mod, clamp, length, normalize, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8734,9 +8703,9 @@ function canonicalFactory26($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory26.usesDerivatives = true
+canonicalFactory25.usesDerivatives = true
 
-function canonicalFactory27($bindings, $runtime) {
+function canonicalFactory26($bindings, $runtime) {
   const { ivec2, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8775,7 +8744,7 @@ function canonicalFactory27($bindings, $runtime) {
   }
 }
 
-function canonicalFactory28($bindings, $runtime) {
+function canonicalFactory27($bindings, $runtime) {
   const { vec3, ivec2, pow, floor, fract, max, clamp, mix, smoothstep, dot, normalize, add, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8854,9 +8823,9 @@ function canonicalFactory28($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory28.usesDerivatives = true
+canonicalFactory27.usesDerivatives = true
 
-function canonicalFactory29($bindings, $runtime) {
+function canonicalFactory28($bindings, $runtime) {
   const { ivec2, sqrt, max, smoothstep, dot, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8918,7 +8887,7 @@ function canonicalFactory29($bindings, $runtime) {
   }
 }
 
-function canonicalFactory30($bindings, $runtime) {
+function canonicalFactory29($bindings, $runtime) {
   const { vec2, fract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -8957,7 +8926,7 @@ function canonicalFactory30($bindings, $runtime) {
   }
 }
 
-function canonicalFactory31($bindings, $runtime) {
+function canonicalFactory30($bindings, $runtime) {
   const { ivec2, abs, min, mix, step, smoothstep, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9007,7 +8976,7 @@ function canonicalFactory31($bindings, $runtime) {
   }
 }
 
-function canonicalFactory32($bindings, $runtime) {
+function canonicalFactory31($bindings, $runtime) {
   const { vec2, min, clamp, mix, length, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9047,7 +9016,7 @@ function canonicalFactory32($bindings, $runtime) {
   }
 }
 
-function canonicalFactory33($bindings, $runtime) {
+function canonicalFactory32($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9083,7 +9052,7 @@ function canonicalFactory33($bindings, $runtime) {
   }
 }
 
-function canonicalFactory34($bindings, $runtime) {
+function canonicalFactory33($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9119,7 +9088,7 @@ function canonicalFactory34($bindings, $runtime) {
   }
 }
 
-function canonicalFactory35($bindings, $runtime) {
+function canonicalFactory34($bindings, $runtime) {
   const { sin, pow, clamp, mix, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9158,7 +9127,7 @@ function canonicalFactory35($bindings, $runtime) {
   }
 }
 
-function canonicalFactory36($bindings, $runtime) {
+function canonicalFactory35($bindings, $runtime) {
   const { vec2, vec3, ivec2, sin, cos, pow, abs, floor, fract, min, max, mix, smoothstep, dot, add, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9264,7 +9233,7 @@ function canonicalFactory36($bindings, $runtime) {
   }
 }
 
-function canonicalFactory37($bindings, $runtime) {
+function canonicalFactory36($bindings, $runtime) {
   const { vec2, ivec2, max, mix, smoothstep, length, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9303,104 +9272,7 @@ function canonicalFactory37($bindings, $runtime) {
   }
 }
 
-function canonicalFactory38($bindings, $runtime) {
-  const { ivec2, sin, cos, pow, abs, fract, mod, texture, textureSize } = $runtime.stdlib
-  const gl_FragCoord = $runtime.fragCoord
-  
-  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  
-  var tileOffset = $bindings["tileOffset"];
-  var fullResolution = $bindings["fullResolution"];
-  var inputTex = $bindings["inputTex"];
-  var mode = $bindings["mode"];
-  var fragColor = new Float32Array([0, 0, 0, 0]);
-  var TAU = 6.2831854820251465;
-  function hsv2rgb (hsv) {
-  	hsv = $runtime.copy(hsv);
-  	var h = fract(hsv[0]);
-  	var s = hsv[1];
-  	var v = hsv[2];
-  	var c = v * s;
-  	var x = c * (1 - abs(mod(h * 6, 2) - 1));
-  	var m = v - c;
-  	var rgb = new $runtime.PooledFloat32Array([0, 0, 0]);
-  	if (h < 0.1666666716337204) {
-  	(rgb[0] = c, rgb[1] = x, rgb[2] = 0, rgb);
-  	} else {
-  	if (h < 0.3333333432674408) {
-  	(rgb[0] = x, rgb[1] = c, rgb[2] = 0, rgb);
-  	} else {
-  	if (h < 0.5) {
-  	(rgb[0] = 0, rgb[1] = c, rgb[2] = x, rgb);
-  	} else {
-  	if (h < 0.6666666865348816) {
-  	(rgb[0] = 0, rgb[1] = x, rgb[2] = c, rgb);
-  	} else {
-  	if (h < 0.8333333134651184) {
-  	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
-  	} else {
-  	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	};
-  	};
-  	};
-  	};
-  	};
-  	return new $runtime.PooledFloat32Array([rgb[0] + m, rgb[1] + m, rgb[2] + m]);
-  };
-  var fwdA = new Float32Array([1, 1, 1, 0.3963377773761749, -0.10556134581565857, -0.08948417752981186, 0.21580375730991364, -0.0638541728258133, -1.2914855480194092]);
-  var fwdB = new Float32Array([4.076724529266357, -1.2681437730789185, -0.004111988469958305, -3.3072168827056885, 2.609332323074341, -0.7034763097763062, 0.23075905442237854, -0.3411344289779663, 1.7068625688552856]);
-  function linear_srgb_from_oklab (c) {
-  	c = $runtime.copy(c);
-  	var lms = new $runtime.PooledFloat32Array([fwdA[0] * c[0] + fwdA[3] * c[1] + fwdA[6] * c[2], fwdA[1] * c[0] + fwdA[4] * c[1] + fwdA[7] * c[2], fwdA[2] * c[0] + fwdA[5] * c[1] + fwdA[8] * c[2]]);
-  	return (new $runtime.PooledFloat32Array([(lms[0] * lms[0]) * lms[0], (lms[1] * lms[1]) * lms[1], (lms[2] * lms[2]) * lms[2]])).map(function (x, i, v) { var sum = 0; for (var j = 0; j < 3; j++) {sum += this[j*3+i] * v[j]} return sum; }, fwdB);
-  };
-  function linearToSrgb (linear) {
-  	linear = $runtime.copy(linear);
-  	var srgb = new $runtime.PooledFloat32Array([0, 0, 0]);
-  	for (var i = 0; i < 3; ++i) {
-  	if (linear[i] <= 0.0031308000907301903) {
-  	srgb[i] = linear[i] * 12.920000076293945;
-  	} else {
-  	srgb[i] = 1.0549999475479126 * (pow(linear[i], 0.4166666567325592)) - 0.054999999701976776;
-  	};
-  	};
-  	return srgb;
-  };
-  function main () {
-  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var color = texture(inputTex, uv);
-  	if (mode == 0) {
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, hsv2rgb(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
-  	} else {
-  	if (mode == 1) {
-  	color[1] = color[1] * -0.5090000033378601 + 0.2759999930858612;
-  	color[2] = color[2] * -0.5090000033378601 + 0.1979999989271164;
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, linear_srgb_from_oklab(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, linearToSrgb(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
-  	} else {
-  	var L = color[0];
-  	var C = color[1] * 0.4000000059604645;
-  	var H = color[2] * TAU;
-  	var a = C * cos(H);
-  	var b = C * sin(H);
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, linear_srgb_from_oklab(new $runtime.PooledFloat32Array([L, a, b])));
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, linearToSrgb(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
-  	};
-  	};
-  	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
-  };
-  return function canonicalKernel(context, out) {
-    $runtime.beginPixel(context)
-    main()
-    $runtime.writeColor(fragColor, out)
-  }
-}
-
-function canonicalFactory39($bindings, $runtime) {
+function canonicalFactory37($bindings, $runtime) {
   const { ivec2, mix, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9432,7 +9304,7 @@ function canonicalFactory39($bindings, $runtime) {
   }
 }
 
-function canonicalFactory40($bindings, $runtime) {
+function canonicalFactory38($bindings, $runtime) {
   const { float, ivec2, exp, clamp, mix, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9482,7 +9354,7 @@ function canonicalFactory40($bindings, $runtime) {
   }
 }
 
-function canonicalFactory41($bindings, $runtime) {
+function canonicalFactory39($bindings, $runtime) {
   const { float, ivec2, exp, clamp, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9533,7 +9405,7 @@ function canonicalFactory41($bindings, $runtime) {
   }
 }
 
-function canonicalFactory42($bindings, $runtime) {
+function canonicalFactory40($bindings, $runtime) {
   const { float, sin, pow, floor, fract, max, clamp, mix, step, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -9721,7 +9593,7 @@ function canonicalFactory42($bindings, $runtime) {
   }
 }
 
-function canonicalFactory43($bindings, $runtime) {
+function canonicalFactory41($bindings, $runtime) {
   const { float, vec2, radians, sin, cos, sqrt, floor, fract, clamp, mix, smoothstep, length, dot, normalize, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -9823,7 +9695,7 @@ function canonicalFactory43($bindings, $runtime) {
   }
 }
 
-function canonicalFactory44($bindings, $runtime) {
+function canonicalFactory42($bindings, $runtime) {
   const { vec3, vec4, ivec2, ivec3, sin, cos, pow, sqrt, abs, floor, fract, min, max, clamp, mix, step, length, dot, add, subtract, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10259,7 +10131,7 @@ function canonicalFactory44($bindings, $runtime) {
   }
 }
 
-function canonicalFactory45($bindings, $runtime) {
+function canonicalFactory43($bindings, $runtime) {
   const { vec3, vec4, ivec2, sin, cos, pow, sqrt, abs, floor, min, max, clamp, mix, step, length, dot, add, subtract, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10543,7 +10415,7 @@ function canonicalFactory45($bindings, $runtime) {
   }
 }
 
-function canonicalFactory46($bindings, $runtime) {
+function canonicalFactory44($bindings, $runtime) {
   const { ivec2, min, clamp, distance, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10584,7 +10456,7 @@ function canonicalFactory46($bindings, $runtime) {
   }
 }
 
-function canonicalFactory47($bindings, $runtime) {
+function canonicalFactory45($bindings, $runtime) {
   const { float, radians, sin, cos, fract, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -10621,7 +10493,7 @@ function canonicalFactory47($bindings, $runtime) {
   }
 }
 
-function canonicalFactory48($bindings, $runtime) {
+function canonicalFactory46($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, abs, floor, fract, min, clamp, mix, smoothstep, length, dot, add, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11136,7 +11008,7 @@ function canonicalFactory48($bindings, $runtime) {
   }
 }
 
-function canonicalFactory49($bindings, $runtime) {
+function canonicalFactory47($bindings, $runtime) {
   const { bool, vec4, ivec2, abs, min, max, clamp, mix, smoothstep, dot, lessThan, greaterThanEqual, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11295,7 +11167,7 @@ function canonicalFactory49($bindings, $runtime) {
   }
 }
 
-function canonicalFactory50($bindings, $runtime) {
+function canonicalFactory48($bindings, $runtime) {
   const { vec2, radians, sin, cos, abs, clamp, dot, equal, all, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11424,7 +11296,7 @@ function canonicalFactory50($bindings, $runtime) {
   }
 }
 
-function canonicalFactory51($bindings, $runtime) {
+function canonicalFactory49($bindings, $runtime) {
   const { float, vec2, abs, floor, fract, min, clamp, mix, length, dot, lessThanEqual, all, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11667,7 +11539,7 @@ function canonicalFactory51($bindings, $runtime) {
   }
 }
 
-function canonicalFactory52($bindings, $runtime) {
+function canonicalFactory50($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -11689,7 +11561,7 @@ function canonicalFactory52($bindings, $runtime) {
   }
 }
 
-function canonicalFactory53($bindings, $runtime) {
+function canonicalFactory51($bindings, $runtime) {
   const { vec4, sin, cos, sqrt, abs, fract, mod, min, max, clamp, mix, length, add, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12000,7 +11872,7 @@ function canonicalFactory53($bindings, $runtime) {
   }
 }
 
-function canonicalFactory54($bindings, $runtime) {
+function canonicalFactory52($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12027,7 +11899,7 @@ function canonicalFactory54($bindings, $runtime) {
   }
 }
 
-function canonicalFactory55($bindings, $runtime) {
+function canonicalFactory53($bindings, $runtime) {
   const { ivec2, fract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12127,7 +11999,7 @@ function canonicalFactory55($bindings, $runtime) {
   }
 }
 
-function canonicalFactory56($bindings, $runtime) {
+function canonicalFactory54($bindings, $runtime) {
   const { ivec2, exp, abs, round, max, mix, dot, add, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12262,7 +12134,7 @@ function canonicalFactory56($bindings, $runtime) {
   }
 }
 
-function canonicalFactory57($bindings, $runtime) {
+function canonicalFactory55($bindings, $runtime) {
   const { vec2, sqrt, abs, max, clamp, mix, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12324,7 +12196,7 @@ function canonicalFactory57($bindings, $runtime) {
   }
 }
 
-function canonicalFactory58($bindings, $runtime) {
+function canonicalFactory56($bindings, $runtime) {
   const { float, ivec2, floor, fract, min, max, clamp, length, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -12625,7 +12497,7 @@ function canonicalFactory58($bindings, $runtime) {
   }
 }
 
-function canonicalFactory59($bindings, $runtime) {
+function canonicalFactory57($bindings, $runtime) {
   const { ivec2, pow, abs, min, max, mix, smoothstep, length, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12735,7 +12607,7 @@ function canonicalFactory59($bindings, $runtime) {
   }
 }
 
-function canonicalFactory60($bindings, $runtime) {
+function canonicalFactory58($bindings, $runtime) {
   const { ivec2, pow, abs, fract, min, max, clamp, mix, smoothstep, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -12878,7 +12750,7 @@ function canonicalFactory60($bindings, $runtime) {
   }
 }
 
-function canonicalFactory61($bindings, $runtime) {
+function canonicalFactory59($bindings, $runtime) {
   const { vec3, ivec2, pow, abs, floor, mod, min, max, clamp, mix, smoothstep, dot, multiply, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13309,7 +13181,7 @@ function canonicalFactory61($bindings, $runtime) {
   }
 }
 
-function canonicalFactory62($bindings, $runtime) {
+function canonicalFactory60($bindings, $runtime) {
   const { ivec2, pow, abs, max, clamp, smoothstep, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13451,7 +13323,7 @@ function canonicalFactory62($bindings, $runtime) {
   }
 }
 
-function canonicalFactory63($bindings, $runtime) {
+function canonicalFactory61($bindings, $runtime) {
   const { ivec2, pow, abs, max, mix, smoothstep, length, dot, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13557,7 +13429,7 @@ function canonicalFactory63($bindings, $runtime) {
   }
 }
 
-function canonicalFactory64($bindings, $runtime) {
+function canonicalFactory62($bindings, $runtime) {
   const { ivec2, pow, abs, max, smoothstep, length, dot, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13657,7 +13529,7 @@ function canonicalFactory64($bindings, $runtime) {
   }
 }
 
-function canonicalFactory65($bindings, $runtime) {
+function canonicalFactory63($bindings, $runtime) {
   const { ivec2, ivec3, sin, cos, floor, round, fract, max, clamp, mix, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -13835,7 +13707,7 @@ function canonicalFactory65($bindings, $runtime) {
   }
 }
 
-function canonicalFactory66($bindings, $runtime) {
+function canonicalFactory64($bindings, $runtime) {
   const { float, vec2, sin, cos, pow, sqrt, abs, floor, fract, max, clamp, mix, divide, texture, textureSize, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -13989,7 +13861,7 @@ function canonicalFactory66($bindings, $runtime) {
   }
 }
 
-function canonicalFactory67($bindings, $runtime) {
+function canonicalFactory65($bindings, $runtime) {
   const { radians, sin, cos, sqrt, abs, floor, fract, min, max, clamp, mix, smoothstep, length, dot, texture, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14136,9 +14008,9 @@ function canonicalFactory67($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory67.usesDerivatives = true
+canonicalFactory65.usesDerivatives = true
 
-function canonicalFactory68($bindings, $runtime) {
+function canonicalFactory66($bindings, $runtime) {
   const { float, vec2, radians, degrees, sin, cos, atan, abs, floor, fract, clamp, mix, step, smoothstep, length, dot, add, multiply, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14303,7 +14175,7 @@ function canonicalFactory68($bindings, $runtime) {
   }
 }
 
-function canonicalFactory69($bindings, $runtime) {
+function canonicalFactory67($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14339,7 +14211,7 @@ function canonicalFactory69($bindings, $runtime) {
   }
 }
 
-function canonicalFactory70($bindings, $runtime) {
+function canonicalFactory68($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14375,7 +14247,7 @@ function canonicalFactory70($bindings, $runtime) {
   }
 }
 
-function canonicalFactory71($bindings, $runtime) {
+function canonicalFactory69($bindings, $runtime) {
   const { clamp, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14403,96 +14275,7 @@ function canonicalFactory71($bindings, $runtime) {
   }
 }
 
-function canonicalFactory72($bindings, $runtime) {
-  const { ivec2, abs, fract, mod, min, max, texture, textureSize } = $runtime.stdlib
-  const gl_FragCoord = $runtime.fragCoord
-  
-  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
-  
-  var tileOffset = $bindings["tileOffset"];
-  var fullResolution = $bindings["fullResolution"];
-  var inputTex = $bindings["inputTex"];
-  var rotation = $bindings["rotation"];
-  var hueRange = $bindings["hueRange"];
-  var saturation = $bindings["saturation"];
-  var fragColor = new Float32Array([0, 0, 0, 0]);
-  function map (value, inMin, inMax, outMin, outMax) {
-  	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
-  };
-  function rgb2hsv (rgb) {
-  	rgb = $runtime.copy(rgb);
-  	var r = rgb[0], g = rgb[1], b = rgb[2];
-  	var maxC = max(r, max(g, b));
-  	var minC = min(r, min(g, b));
-  	var delta = maxC - minC;
-  	var h = 0;
-  	if (delta != 0) {
-  	if (maxC == r) {
-  	h = (mod((g - b) / delta, 6)) / 6;
-  	} else {
-  	if (maxC == g) {
-  	h = ((b - r) / delta + 2) / 6;
-  	} else {
-  	h = ((r - g) / delta + 4) / 6;
-  	};
-  	};
-  	};
-  	var s = (maxC == 0) ? 0 : delta / maxC;
-  	return new $runtime.PooledFloat32Array([h, s, maxC]);
-  };
-  function hsv2rgb (hsv) {
-  	hsv = $runtime.copy(hsv);
-  	var h = fract(hsv[0]);
-  	var s = hsv[1];
-  	var v = hsv[2];
-  	var c = v * s;
-  	var x = c * (1 - abs(mod(h * 6, 2) - 1));
-  	var m = v - c;
-  	var rgb = new $runtime.PooledFloat32Array([0, 0, 0]);
-  	if (h < 0.1666666716337204) {
-  	(rgb[0] = c, rgb[1] = x, rgb[2] = 0, rgb);
-  	} else {
-  	if (h < 0.3333333432674408) {
-  	(rgb[0] = x, rgb[1] = c, rgb[2] = 0, rgb);
-  	} else {
-  	if (h < 0.5) {
-  	(rgb[0] = 0, rgb[1] = c, rgb[2] = x, rgb);
-  	} else {
-  	if (h < 0.6666666865348816) {
-  	(rgb[0] = 0, rgb[1] = x, rgb[2] = c, rgb);
-  	} else {
-  	if (h < 0.8333333134651184) {
-  	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
-  	} else {
-  	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	};
-  	};
-  	};
-  	};
-  	};
-  	return new $runtime.PooledFloat32Array([rgb[0] + m, rgb[1] + m, rgb[2] + m]);
-  };
-  function main () {
-  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var color = texture(inputTex, uv);
-  	var hsv = rgb2hsv(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]));
-  	hsv[0] = fract(hsv[0] * (map(hueRange, 0, 200, 0, 2)) + (rotation / 360));
-  	hsv[1] *= saturation;
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, hsv2rgb(hsv));
-  	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
-  };
-  return function canonicalKernel(context, out) {
-    $runtime.beginPixel(context)
-    main()
-    $runtime.writeColor(fragColor, out)
-  }
-}
-
-function canonicalFactory73($bindings, $runtime) {
+function canonicalFactory70($bindings, $runtime) {
   const { ivec2, min, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14521,7 +14304,7 @@ function canonicalFactory73($bindings, $runtime) {
   }
 }
 
-function canonicalFactory74($bindings, $runtime) {
+function canonicalFactory71($bindings, $runtime) {
   const { ivec2, fract, clamp, length, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14589,9 +14372,9 @@ function canonicalFactory74($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory74.usesDerivatives = true
+canonicalFactory71.usesDerivatives = true
 
-function canonicalFactory75($bindings, $runtime) {
+function canonicalFactory72($bindings, $runtime) {
   const { cos, atan, pow, exp, abs, max, clamp, mix, smoothstep, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14727,7 +14510,7 @@ function canonicalFactory75($bindings, $runtime) {
   }
 }
 
-function canonicalFactory76($bindings, $runtime) {
+function canonicalFactory73($bindings, $runtime) {
   const { float, sin, cos, pow, abs, floor, mod, clamp, length, dot, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -14824,9 +14607,9 @@ function canonicalFactory76($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory76.usesDerivatives = true
+canonicalFactory73.usesDerivatives = true
 
-function canonicalFactory77($bindings, $runtime) {
+function canonicalFactory74($bindings, $runtime) {
   const { float, ivec2, sin, cos, pow, exp, sqrt, abs, fract, min, max, clamp, mix, dot, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -14947,7 +14730,7 @@ function canonicalFactory77($bindings, $runtime) {
   }
 }
 
-function canonicalFactory78($bindings, $runtime) {
+function canonicalFactory75($bindings, $runtime) {
   const { vec2, ivec2, pow, max, mix, dot, normalize, reflect, add, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15108,7 +14891,7 @@ function canonicalFactory78($bindings, $runtime) {
   }
 }
 
-function canonicalFactory79($bindings, $runtime) {
+function canonicalFactory76($bindings, $runtime) {
   const { ivec2, sin, cos, pow, floor, min, max, clamp, mix, smoothstep, length, distance, dot, notEqual, any, add, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15280,9 +15063,9 @@ function canonicalFactory79($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory79.usesDerivatives = true
+canonicalFactory76.usesDerivatives = true
 
-function canonicalFactory80($bindings, $runtime) {
+function canonicalFactory77($bindings, $runtime) {
   const { ivec2, abs, max, clamp, dot, add, subtract, textureSize, texelFetch, floatBitsToUint, packHalf2x16, unpackHalf2x16 } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15397,7 +15180,7 @@ function canonicalFactory80($bindings, $runtime) {
   }
 }
 
-function canonicalFactory81($bindings, $runtime) {
+function canonicalFactory78($bindings, $runtime) {
   const { min, max, mix, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15452,7 +15235,7 @@ function canonicalFactory81($bindings, $runtime) {
   }
 }
 
-function canonicalFactory82($bindings, $runtime) {
+function canonicalFactory79($bindings, $runtime) {
   const { min, max, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15489,7 +15272,7 @@ function canonicalFactory82($bindings, $runtime) {
   }
 }
 
-function canonicalFactory83($bindings, $runtime) {
+function canonicalFactory80($bindings, $runtime) {
   const { float, radians, sin, cos, floor, fract, min, clamp, mix, smoothstep, dot, normalize, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15613,7 +15396,7 @@ function canonicalFactory83($bindings, $runtime) {
   }
 }
 
-function canonicalFactory84($bindings, $runtime) {
+function canonicalFactory81($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15635,7 +15418,7 @@ function canonicalFactory84($bindings, $runtime) {
   }
 }
 
-function canonicalFactory85($bindings, $runtime) {
+function canonicalFactory82($bindings, $runtime) {
   const { clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15663,7 +15446,7 @@ function canonicalFactory85($bindings, $runtime) {
   }
 }
 
-function canonicalFactory86($bindings, $runtime) {
+function canonicalFactory83($bindings, $runtime) {
   const { ivec2, pow, abs, round, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15796,7 +15579,7 @@ function canonicalFactory86($bindings, $runtime) {
   }
 }
 
-function canonicalFactory87($bindings, $runtime) {
+function canonicalFactory84($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15831,7 +15614,7 @@ function canonicalFactory87($bindings, $runtime) {
   }
 }
 
-function canonicalFactory88($bindings, $runtime) {
+function canonicalFactory85($bindings, $runtime) {
   const { ivec2, min, max, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15873,7 +15656,7 @@ function canonicalFactory88($bindings, $runtime) {
   }
 }
 
-function canonicalFactory89($bindings, $runtime) {
+function canonicalFactory86($bindings, $runtime) {
   const { ivec2, min, max, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15913,7 +15696,7 @@ function canonicalFactory89($bindings, $runtime) {
   }
 }
 
-function canonicalFactory90($bindings, $runtime) {
+function canonicalFactory87($bindings, $runtime) {
   const { ivec2, min, max, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -15944,7 +15727,7 @@ function canonicalFactory90($bindings, $runtime) {
   }
 }
 
-function canonicalFactory91($bindings, $runtime) {
+function canonicalFactory88($bindings, $runtime) {
   const { float, sin, cos, pow, sqrt, abs, floor, fract, mod, max, clamp, mix, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16072,9 +15855,9 @@ function canonicalFactory91($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory91.usesDerivatives = true
+canonicalFactory88.usesDerivatives = true
 
-function canonicalFactory92($bindings, $runtime) {
+function canonicalFactory89($bindings, $runtime) {
   const { ivec2, abs, ceil, min, clamp, dot, add, subtract, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16251,7 +16034,7 @@ function canonicalFactory92($bindings, $runtime) {
   }
 }
 
-function canonicalFactory93($bindings, $runtime) {
+function canonicalFactory90($bindings, $runtime) {
   const { float, vec2, floor, fract, clamp, mix, length, dot, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16379,7 +16162,7 @@ function canonicalFactory93($bindings, $runtime) {
   }
 }
 
-function canonicalFactory94($bindings, $runtime) {
+function canonicalFactory91($bindings, $runtime) {
   const { float, ivec2, floor, max, clamp, mix, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16517,7 +16300,7 @@ function canonicalFactory94($bindings, $runtime) {
   }
 }
 
-function canonicalFactory95($bindings, $runtime) {
+function canonicalFactory92($bindings, $runtime) {
   const { ivec2, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16554,7 +16337,7 @@ function canonicalFactory95($bindings, $runtime) {
   }
 }
 
-function canonicalFactory96($bindings, $runtime) {
+function canonicalFactory93($bindings, $runtime) {
   const { ivec2, sqrt, abs, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16631,7 +16414,7 @@ function canonicalFactory96($bindings, $runtime) {
   }
 }
 
-function canonicalFactory97($bindings, $runtime) {
+function canonicalFactory94($bindings, $runtime) {
   const { ivec2, pow, abs, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16688,7 +16471,7 @@ function canonicalFactory97($bindings, $runtime) {
   }
 }
 
-function canonicalFactory98($bindings, $runtime) {
+function canonicalFactory95($bindings, $runtime) {
   const { mix, length, dot, normalize, textureLod, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16757,7 +16540,7 @@ function canonicalFactory98($bindings, $runtime) {
   }
 }
 
-function canonicalFactory99($bindings, $runtime) {
+function canonicalFactory96($bindings, $runtime) {
   const { radians, sin, cos, sign, floor, min, clamp, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16846,7 +16629,7 @@ function canonicalFactory99($bindings, $runtime) {
   }
 }
 
-function canonicalFactory100($bindings, $runtime) {
+function canonicalFactory97($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16882,7 +16665,7 @@ function canonicalFactory100($bindings, $runtime) {
   }
 }
 
-function canonicalFactory101($bindings, $runtime) {
+function canonicalFactory98($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16918,7 +16701,7 @@ function canonicalFactory101($bindings, $runtime) {
   }
 }
 
-function canonicalFactory102($bindings, $runtime) {
+function canonicalFactory99($bindings, $runtime) {
   const { abs, max, clamp, mix, smoothstep, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -16961,7 +16744,7 @@ function canonicalFactory102($bindings, $runtime) {
   }
 }
 
-function canonicalFactory103($bindings, $runtime) {
+function canonicalFactory100($bindings, $runtime) {
   const { sin, cos, pow, abs, mod, clamp, length, normalize, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17033,9 +16816,9 @@ function canonicalFactory103($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory103.usesDerivatives = true
+canonicalFactory100.usesDerivatives = true
 
-function canonicalFactory104($bindings, $runtime) {
+function canonicalFactory101($bindings, $runtime) {
   const { float, ivec2, floor, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17076,7 +16859,7 @@ function canonicalFactory104($bindings, $runtime) {
   }
 }
 
-function canonicalFactory105($bindings, $runtime) {
+function canonicalFactory102($bindings, $runtime) {
   const { sin, cos, abs, fract, mod, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17146,7 +16929,7 @@ function canonicalFactory105($bindings, $runtime) {
   }
 }
 
-function canonicalFactory106($bindings, $runtime) {
+function canonicalFactory103($bindings, $runtime) {
   const { float, ivec2, floor, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17183,7 +16966,7 @@ function canonicalFactory106($bindings, $runtime) {
   }
 }
 
-function canonicalFactory107($bindings, $runtime) {
+function canonicalFactory104($bindings, $runtime) {
   const { float, ivec2, abs, floor, round, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17230,7 +17013,7 @@ function canonicalFactory107($bindings, $runtime) {
   }
 }
 
-function canonicalFactory108($bindings, $runtime) {
+function canonicalFactory105($bindings, $runtime) {
   const { float, ivec2, pow, abs, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17272,7 +17055,7 @@ function canonicalFactory108($bindings, $runtime) {
   }
 }
 
-function canonicalFactory109($bindings, $runtime) {
+function canonicalFactory106($bindings, $runtime) {
   const { sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17327,7 +17110,7 @@ function canonicalFactory109($bindings, $runtime) {
   }
 }
 
-function canonicalFactory110($bindings, $runtime) {
+function canonicalFactory107($bindings, $runtime) {
   const { ivec2, floor, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17366,7 +17149,7 @@ function canonicalFactory110($bindings, $runtime) {
   }
 }
 
-function canonicalFactory111($bindings, $runtime) {
+function canonicalFactory108($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17402,7 +17185,7 @@ function canonicalFactory111($bindings, $runtime) {
   }
 }
 
-function canonicalFactory112($bindings, $runtime) {
+function canonicalFactory109($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17438,7 +17221,7 @@ function canonicalFactory112($bindings, $runtime) {
   }
 }
 
-function canonicalFactory113($bindings, $runtime) {
+function canonicalFactory110($bindings, $runtime) {
   const { pow, max, clamp, mix, dot, normalize, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17493,7 +17276,7 @@ function canonicalFactory113($bindings, $runtime) {
   }
 }
 
-function canonicalFactory114($bindings, $runtime) {
+function canonicalFactory111($bindings, $runtime) {
   const { ivec2, atan, abs, fract, length, dot, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17574,9 +17357,9 @@ function canonicalFactory114($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory114.usesDerivatives = true
+canonicalFactory111.usesDerivatives = true
 
-function canonicalFactory115($bindings, $runtime) {
+function canonicalFactory112($bindings, $runtime) {
   const { sin, cos, abs, mod, max, clamp, length, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17658,9 +17441,9 @@ function canonicalFactory115($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory115.usesDerivatives = true
+canonicalFactory112.usesDerivatives = true
 
-function canonicalFactory116($bindings, $runtime) {
+function canonicalFactory113($bindings, $runtime) {
   const { vec2, vec3, pow, floor, round, fract, max, clamp, smoothstep, add, divide, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17737,9 +17520,9 @@ function canonicalFactory116($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory116.usesDerivatives = true
+canonicalFactory113.usesDerivatives = true
 
-function canonicalFactory117($bindings, $runtime) {
+function canonicalFactory114($bindings, $runtime) {
   const { vec3, vec4, abs, fract, mod, min, max, clamp, mix, length, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17868,7 +17651,7 @@ function canonicalFactory117($bindings, $runtime) {
   }
 }
 
-function canonicalFactory118($bindings, $runtime) {
+function canonicalFactory115($bindings, $runtime) {
   const { float, ivec2, pow, abs, fract, min, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17950,7 +17733,7 @@ function canonicalFactory118($bindings, $runtime) {
   }
 }
 
-function canonicalFactory119($bindings, $runtime) {
+function canonicalFactory116($bindings, $runtime) {
   const { ivec2, min, max, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -17997,7 +17780,7 @@ function canonicalFactory119($bindings, $runtime) {
   }
 }
 
-function canonicalFactory120($bindings, $runtime) {
+function canonicalFactory117($bindings, $runtime) {
   const { ivec2, pow, abs, min, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18082,7 +17865,7 @@ function canonicalFactory120($bindings, $runtime) {
   }
 }
 
-function canonicalFactory121($bindings, $runtime) {
+function canonicalFactory118($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18119,7 +17902,7 @@ function canonicalFactory121($bindings, $runtime) {
   }
 }
 
-function canonicalFactory122($bindings, $runtime) {
+function canonicalFactory119($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18156,7 +17939,7 @@ function canonicalFactory122($bindings, $runtime) {
   }
 }
 
-function canonicalFactory123($bindings, $runtime) {
+function canonicalFactory120($bindings, $runtime) {
   const { float, radians, sin, cos, pow, abs, floor, fract, max, clamp, mix, step, smoothstep, length, dot, normalize, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18242,7 +18025,7 @@ function canonicalFactory123($bindings, $runtime) {
   }
 }
 
-function canonicalFactory124($bindings, $runtime) {
+function canonicalFactory121($bindings, $runtime) {
   const { vec2, abs, fract, mod, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18292,7 +18075,7 @@ function canonicalFactory124($bindings, $runtime) {
   }
 }
 
-function canonicalFactory125($bindings, $runtime) {
+function canonicalFactory122($bindings, $runtime) {
   const { vec4, ivec2, abs, fract, mod, clamp, mix, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18363,7 +18146,7 @@ function canonicalFactory125($bindings, $runtime) {
   }
 }
 
-function canonicalFactory126($bindings, $runtime) {
+function canonicalFactory123($bindings, $runtime) {
   const { vec4, ivec2, abs, max, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18399,7 +18182,7 @@ function canonicalFactory126($bindings, $runtime) {
   }
 }
 
-function canonicalFactory127($bindings, $runtime) {
+function canonicalFactory124($bindings, $runtime) {
   const { ivec2, sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18451,7 +18234,7 @@ function canonicalFactory127($bindings, $runtime) {
   }
 }
 
-function canonicalFactory128($bindings, $runtime) {
+function canonicalFactory125($bindings, $runtime) {
   const { abs, fract, mod, clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18494,7 +18277,7 @@ function canonicalFactory128($bindings, $runtime) {
   }
 }
 
-function canonicalFactory129($bindings, $runtime) {
+function canonicalFactory126($bindings, $runtime) {
   const { float, vec3, vec4, ivec2, sin, cos, pow, abs, floor, fract, min, max, clamp, mix, step, dot, add, subtract, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18782,7 +18565,7 @@ function canonicalFactory129($bindings, $runtime) {
   }
 }
 
-function canonicalFactory130($bindings, $runtime) {
+function canonicalFactory127($bindings, $runtime) {
   const { floor, fract, min, max, clamp, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18853,7 +18636,7 @@ function canonicalFactory130($bindings, $runtime) {
   }
 }
 
-function canonicalFactory131($bindings, $runtime) {
+function canonicalFactory128($bindings, $runtime) {
   const { abs, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18885,7 +18668,7 @@ function canonicalFactory131($bindings, $runtime) {
   }
 }
 
-function canonicalFactory132($bindings, $runtime) {
+function canonicalFactory129($bindings, $runtime) {
   const { ivec2, max, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18912,7 +18695,7 @@ function canonicalFactory132($bindings, $runtime) {
   }
 }
 
-function canonicalFactory133($bindings, $runtime) {
+function canonicalFactory130($bindings, $runtime) {
   const { vec2, abs, fract, mod, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -18955,7 +18738,7 @@ function canonicalFactory133($bindings, $runtime) {
   }
 }
 
-function canonicalFactory134($bindings, $runtime) {
+function canonicalFactory131($bindings, $runtime) {
   const { ivec2, fract, min, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19006,7 +18789,7 @@ function canonicalFactory134($bindings, $runtime) {
   }
 }
 
-function canonicalFactory135($bindings, $runtime) {
+function canonicalFactory132($bindings, $runtime) {
   const { vec2, ivec2, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19061,7 +18844,7 @@ function canonicalFactory135($bindings, $runtime) {
   }
 }
 
-function canonicalFactory136($bindings, $runtime) {
+function canonicalFactory133($bindings, $runtime) {
   const { vec2, clamp, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19093,7 +18876,7 @@ function canonicalFactory136($bindings, $runtime) {
   }
 }
 
-function canonicalFactory137($bindings, $runtime) {
+function canonicalFactory134($bindings, $runtime) {
   const { ivec2, sin, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19134,7 +18917,7 @@ function canonicalFactory137($bindings, $runtime) {
   }
 }
 
-function canonicalFactory138($bindings, $runtime) {
+function canonicalFactory135($bindings, $runtime) {
   const { ivec2, sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19190,7 +18973,7 @@ function canonicalFactory138($bindings, $runtime) {
   }
 }
 
-function canonicalFactory139($bindings, $runtime) {
+function canonicalFactory136($bindings, $runtime) {
   const { float, ivec2, exp, sqrt, abs, floor, ceil, max, clamp, mix, dot, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19401,7 +19184,7 @@ function canonicalFactory139($bindings, $runtime) {
   }
 }
 
-function canonicalFactory140($bindings, $runtime) {
+function canonicalFactory137($bindings, $runtime) {
   const { ivec2, abs, max, clamp, step, dot, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19445,7 +19228,7 @@ function canonicalFactory140($bindings, $runtime) {
   }
 }
 
-function canonicalFactory141($bindings, $runtime) {
+function canonicalFactory138($bindings, $runtime) {
   const { ivec2, smoothstep, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19474,7 +19257,7 @@ function canonicalFactory141($bindings, $runtime) {
   }
 }
 
-function canonicalFactory142($bindings, $runtime) {
+function canonicalFactory139($bindings, $runtime) {
   const { float, vec3, ivec2, sin, cos, pow, abs, floor, round, min, max, clamp, mix, subtract, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19568,7 +19351,7 @@ function canonicalFactory142($bindings, $runtime) {
   }
 }
 
-function canonicalFactory143($bindings, $runtime) {
+function canonicalFactory140($bindings, $runtime) {
   const { vec2, ivec2, mix, distance, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19639,7 +19422,7 @@ function canonicalFactory143($bindings, $runtime) {
   }
 }
 
-function canonicalFactory144($bindings, $runtime) {
+function canonicalFactory141($bindings, $runtime) {
   const { float, ivec2, cos, pow, abs, floor, fract, max, clamp, mix, step, add, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19783,7 +19566,7 @@ function canonicalFactory144($bindings, $runtime) {
   }
 }
 
-function canonicalFactory145($bindings, $runtime) {
+function canonicalFactory142($bindings, $runtime) {
   const { float, radians, sin, cos, abs, fract, clamp, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19845,7 +19628,7 @@ function canonicalFactory145($bindings, $runtime) {
   }
 }
 
-function canonicalFactory146($bindings, $runtime) {
+function canonicalFactory143($bindings, $runtime) {
   const { sin, cos, atan, abs, sign, mod, clamp, length, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -19920,9 +19703,9 @@ function canonicalFactory146($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory146.usesDerivatives = true
+canonicalFactory143.usesDerivatives = true
 
-function canonicalFactory147($bindings, $runtime) {
+function canonicalFactory144($bindings, $runtime) {
   const { float, floor, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20015,7 +19798,7 @@ function canonicalFactory147($bindings, $runtime) {
   }
 }
 
-function canonicalFactory148($bindings, $runtime) {
+function canonicalFactory145($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20051,7 +19834,7 @@ function canonicalFactory148($bindings, $runtime) {
   }
 }
 
-function canonicalFactory149($bindings, $runtime) {
+function canonicalFactory146($bindings, $runtime) {
   const { float, vec4, exp, min, max, mix, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20087,7 +19870,7 @@ function canonicalFactory149($bindings, $runtime) {
   }
 }
 
-function canonicalFactory150($bindings, $runtime) {
+function canonicalFactory147($bindings, $runtime) {
   const { float, vec2, floor, fract, max, clamp, mix, smoothstep, dot, add, texture, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20155,9 +19938,9 @@ function canonicalFactory150($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory150.usesDerivatives = true
+canonicalFactory147.usesDerivatives = true
 
-function canonicalFactory151($bindings, $runtime) {
+function canonicalFactory148($bindings, $runtime) {
   const { ivec2, step, smoothstep, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20190,9 +19973,9 @@ function canonicalFactory151($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory151.usesDerivatives = true
+canonicalFactory148.usesDerivatives = true
 
-function canonicalFactory152($bindings, $runtime) {
+function canonicalFactory149($bindings, $runtime) {
   const { float, vec2, radians, sin, cos, floor, fract, max, clamp, mix, step, smoothstep, length, dot, add, texture, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20326,9 +20109,9 @@ function canonicalFactory152($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory152.usesDerivatives = true
+canonicalFactory149.usesDerivatives = true
 
-function canonicalFactory153($bindings, $runtime) {
+function canonicalFactory150($bindings, $runtime) {
   const { ivec2, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20360,7 +20143,7 @@ function canonicalFactory153($bindings, $runtime) {
   }
 }
 
-function canonicalFactory154($bindings, $runtime) {
+function canonicalFactory151($bindings, $runtime) {
   const { clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20399,7 +20182,7 @@ function canonicalFactory154($bindings, $runtime) {
   }
 }
 
-function canonicalFactory155($bindings, $runtime) {
+function canonicalFactory152($bindings, $runtime) {
   const { float, vec4, radians, degrees, sin, cos, atan, pow, exp, abs, floor, fract, min, max, clamp, mix, smoothstep, length, dot, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20622,7 +20405,7 @@ function canonicalFactory155($bindings, $runtime) {
   }
 }
 
-function canonicalFactory156($bindings, $runtime) {
+function canonicalFactory153($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20645,7 +20428,7 @@ function canonicalFactory156($bindings, $runtime) {
   }
 }
 
-function canonicalFactory157($bindings, $runtime) {
+function canonicalFactory154($bindings, $runtime) {
   const { ivec2, floor, min, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -20711,7 +20494,7 @@ function canonicalFactory157($bindings, $runtime) {
   }
 }
 
-function canonicalFactory158($bindings, $runtime) {
+function canonicalFactory155($bindings, $runtime) {
   const { float, sin, cos, atan, pow, abs, fract, mod, min, max, clamp, mix, step, smoothstep, length, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21023,7 +20806,7 @@ function canonicalFactory158($bindings, $runtime) {
   }
 }
 
-function canonicalFactory159($bindings, $runtime) {
+function canonicalFactory156($bindings, $runtime) {
   const { vec3, sin, cos, pow, abs, fract, mod, max, clamp, mix, step, dot, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21171,7 +20954,7 @@ function canonicalFactory159($bindings, $runtime) {
   }
 }
 
-function canonicalFactory160($bindings, $runtime) {
+function canonicalFactory157($bindings, $runtime) {
   const { vec2, max, mix, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21201,7 +20984,7 @@ function canonicalFactory160($bindings, $runtime) {
   }
 }
 
-function canonicalFactory161($bindings, $runtime) {
+function canonicalFactory158($bindings, $runtime) {
   const { float, vec2, ivec2, ivec3, sin, sqrt, inversesqrt, abs, floor, fract, min, max, clamp, mix, step, smoothstep, length, dot, add, multiply, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21570,7 +21353,7 @@ function canonicalFactory161($bindings, $runtime) {
   }
 }
 
-function canonicalFactory162($bindings, $runtime) {
+function canonicalFactory159($bindings, $runtime) {
   const { vec2, smoothstep, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21595,7 +21378,7 @@ function canonicalFactory162($bindings, $runtime) {
   }
 }
 
-function canonicalFactory163($bindings, $runtime) {
+function canonicalFactory160($bindings, $runtime) {
   const { vec2, sin, cos, atan, abs, fract, mod, length, dot, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21687,7 +21470,7 @@ function canonicalFactory163($bindings, $runtime) {
   }
 }
 
-function canonicalFactory164($bindings, $runtime) {
+function canonicalFactory161($bindings, $runtime) {
   const { vec2, ivec2, abs, floor, min, max, clamp, mix, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21770,7 +21553,7 @@ function canonicalFactory164($bindings, $runtime) {
   }
 }
 
-function canonicalFactory165($bindings, $runtime) {
+function canonicalFactory162($bindings, $runtime) {
   const { ivec2, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21809,7 +21592,7 @@ function canonicalFactory165($bindings, $runtime) {
   }
 }
 
-function canonicalFactory166($bindings, $runtime) {
+function canonicalFactory163($bindings, $runtime) {
   const { ivec2, cos, atan, pow, abs, floor, fract, mix, smoothstep, length, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21907,9 +21690,9 @@ function canonicalFactory166($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory166.usesDerivatives = true
+canonicalFactory163.usesDerivatives = true
 
-function canonicalFactory167($bindings, $runtime) {
+function canonicalFactory164($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21944,7 +21727,7 @@ function canonicalFactory167($bindings, $runtime) {
   }
 }
 
-function canonicalFactory168($bindings, $runtime) {
+function canonicalFactory165($bindings, $runtime) {
   const { float, vec4, exp, min, max, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -21979,7 +21762,7 @@ function canonicalFactory168($bindings, $runtime) {
   }
 }
 
-function canonicalFactory169($bindings, $runtime) {
+function canonicalFactory166($bindings, $runtime) {
   const { abs, max, clamp, smoothstep, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22007,7 +21790,7 @@ function canonicalFactory169($bindings, $runtime) {
   }
 }
 
-function canonicalFactory170($bindings, $runtime) {
+function canonicalFactory167($bindings, $runtime) {
   const { vec2, ivec2, sin, cos, exp, sqrt, abs, max, clamp, mix, smoothstep, divide, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22079,7 +21862,7 @@ function canonicalFactory170($bindings, $runtime) {
   }
 }
 
-function canonicalFactory171($bindings, $runtime) {
+function canonicalFactory168($bindings, $runtime) {
   const { ivec2, abs, max, clamp, mix, length, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22130,7 +21913,7 @@ function canonicalFactory171($bindings, $runtime) {
   }
 }
 
-function canonicalFactory172($bindings, $runtime) {
+function canonicalFactory169($bindings, $runtime) {
   const { float, sin, cos, abs, floor, mod, clamp, dot, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -22227,9 +22010,9 @@ function canonicalFactory172($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory172.usesDerivatives = true
+canonicalFactory169.usesDerivatives = true
 
-function canonicalFactory173($bindings, $runtime) {
+function canonicalFactory170($bindings, $runtime) {
   const { float, vec2, floor, fract, clamp, mix, smoothstep, length, dot, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22294,7 +22077,7 @@ function canonicalFactory173($bindings, $runtime) {
   }
 }
 
-function canonicalFactory174($bindings, $runtime) {
+function canonicalFactory171($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22312,7 +22095,7 @@ function canonicalFactory174($bindings, $runtime) {
   }
 }
 
-function canonicalFactory175($bindings, $runtime) {
+function canonicalFactory172($bindings, $runtime) {
   const { min, max, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22379,7 +22162,7 @@ function canonicalFactory175($bindings, $runtime) {
   }
 }
 
-function canonicalFactory176($bindings, $runtime) {
+function canonicalFactory173($bindings, $runtime) {
   const { vec2, sin, cos, abs, fract, mod, clamp, notEqual, any, divide, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22448,9 +22231,9 @@ function canonicalFactory176($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory176.usesDerivatives = true
+canonicalFactory173.usesDerivatives = true
 
-function canonicalFactory177($bindings, $runtime) {
+function canonicalFactory174($bindings, $runtime) {
   const { sin, exp, min, max, clamp, mix, smoothstep, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22541,7 +22324,7 @@ function canonicalFactory177($bindings, $runtime) {
   }
 }
 
-function canonicalFactory178($bindings, $runtime) {
+function canonicalFactory175($bindings, $runtime) {
   const { float, sin, cos, abs, floor, fract, mod, max, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22628,7 +22411,7 @@ function canonicalFactory178($bindings, $runtime) {
   }
 }
 
-function canonicalFactory179($bindings, $runtime) {
+function canonicalFactory176($bindings, $runtime) {
   const { vec2, sqrt, clamp, mix, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22672,7 +22455,7 @@ function canonicalFactory179($bindings, $runtime) {
   }
 }
 
-function canonicalFactory180($bindings, $runtime) {
+function canonicalFactory177($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var fragColor = new Float32Array([0, 0, 0, 0]);
@@ -22686,7 +22469,7 @@ function canonicalFactory180($bindings, $runtime) {
   }
 }
 
-function canonicalFactory181($bindings, $runtime) {
+function canonicalFactory178($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var vColor = new Float32Array([0, 0, 0, 0]);
@@ -22702,7 +22485,7 @@ function canonicalFactory181($bindings, $runtime) {
   }
 }
 
-function canonicalFactory182($bindings, $runtime) {
+function canonicalFactory179($bindings, $runtime) {
   const { float, ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -22752,7 +22535,7 @@ function canonicalFactory182($bindings, $runtime) {
   }
 }
 
-function canonicalFactory183($bindings, $runtime) {
+function canonicalFactory180($bindings, $runtime) {
   const { float, ivec2, ivec3, sin, cos, pow, abs, floor, max, clamp, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -22993,9 +22776,9 @@ function canonicalFactory183($bindings, $runtime) {
     out[11] = outState3[3]
   }
 }
-canonicalFactory183.outputNames = ["outState1","outState2","outState3"]
+canonicalFactory180.outputNames = ["outState1","outState2","outState3"]
 
-function canonicalFactory184($bindings, $runtime) {
+function canonicalFactory181($bindings, $runtime) {
   const { ivec2, max, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23026,7 +22809,7 @@ function canonicalFactory184($bindings, $runtime) {
   }
 }
 
-function canonicalFactory185($bindings, $runtime) {
+function canonicalFactory182($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23049,7 +22832,7 @@ function canonicalFactory185($bindings, $runtime) {
   }
 }
 
-function canonicalFactory186($bindings, $runtime) {
+function canonicalFactory183($bindings, $runtime) {
   const { ivec2, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23075,7 +22858,7 @@ function canonicalFactory186($bindings, $runtime) {
   }
 }
 
-function canonicalFactory187($bindings, $runtime) {
+function canonicalFactory184($bindings, $runtime) {
   const { vec3, cos, pow, abs, mod, clamp, mix, step, dot, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23862,7 +23645,7 @@ function canonicalFactory187($bindings, $runtime) {
   }
 }
 
-function canonicalFactory188($bindings, $runtime) {
+function canonicalFactory185($bindings, $runtime) {
   const { vec2, mix, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23905,7 +23688,7 @@ function canonicalFactory188($bindings, $runtime) {
   }
 }
 
-function canonicalFactory189($bindings, $runtime) {
+function canonicalFactory186($bindings, $runtime) {
   const { vec2, vec3, abs, fract, min, max, clamp, mix, step, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -23972,7 +23755,7 @@ function canonicalFactory189($bindings, $runtime) {
   }
 }
 
-function canonicalFactory190($bindings, $runtime) {
+function canonicalFactory187($bindings, $runtime) {
   const { vec2, vec4, sqrt, abs, min, max, mix, add, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24068,7 +23851,7 @@ function canonicalFactory190($bindings, $runtime) {
   }
 }
 
-function canonicalFactory191($bindings, $runtime) {
+function canonicalFactory188($bindings, $runtime) {
   const { float, vec2, sin, abs, floor, fract, min, max, mix, step, dot, normalize, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -24175,7 +23958,7 @@ function canonicalFactory191($bindings, $runtime) {
   }
 }
 
-function canonicalFactory192($bindings, $runtime) {
+function canonicalFactory189($bindings, $runtime) {
   const { vec4, pow, sqrt, abs, min, max, clamp, mix, smoothstep, length, add, subtract, divide, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24300,7 +24083,7 @@ function canonicalFactory192($bindings, $runtime) {
   }
 }
 
-function canonicalFactory193($bindings, $runtime) {
+function canonicalFactory190($bindings, $runtime) {
   const { vec2, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24333,7 +24116,7 @@ function canonicalFactory193($bindings, $runtime) {
   }
 }
 
-function canonicalFactory194($bindings, $runtime) {
+function canonicalFactory191($bindings, $runtime) {
   const { vec2, sin, cos, abs, fract, mod, clamp, length, dot, normalize, reflect, add, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24564,9 +24347,9 @@ function canonicalFactory194($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory194.usesDerivatives = true
+canonicalFactory191.usesDerivatives = true
 
-function canonicalFactory195($bindings, $runtime) {
+function canonicalFactory192($bindings, $runtime) {
   const { vec2, sin, cos, sqrt, abs, max, clamp, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24629,7 +24412,7 @@ function canonicalFactory195($bindings, $runtime) {
   }
 }
 
-function canonicalFactory196($bindings, $runtime) {
+function canonicalFactory193($bindings, $runtime) {
   const { clamp, mix, step, smoothstep, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24737,7 +24520,7 @@ function canonicalFactory196($bindings, $runtime) {
   }
 }
 
-function canonicalFactory197($bindings, $runtime) {
+function canonicalFactory194($bindings, $runtime) {
   const { vec2, sin, cos, atan, abs, floor, fract, mod, min, max, mix, smoothstep, length, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24907,7 +24690,7 @@ function canonicalFactory197($bindings, $runtime) {
   }
 }
 
-function canonicalFactory198($bindings, $runtime) {
+function canonicalFactory195($bindings, $runtime) {
   const { float, vec2, exp, abs, fract, mod, min, max, clamp, mix, step, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -24998,7 +24781,7 @@ function canonicalFactory198($bindings, $runtime) {
   }
 }
 
-function canonicalFactory199($bindings, $runtime) {
+function canonicalFactory196($bindings, $runtime) {
   const { vec2, sin, cos, atan, abs, sign, floor, mod, max, clamp, mix, smoothstep, length, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25139,7 +24922,7 @@ function canonicalFactory199($bindings, $runtime) {
   }
 }
 
-function canonicalFactory200($bindings, $runtime) {
+function canonicalFactory197($bindings, $runtime) {
   const { vec2, sin, cos, abs, floor, fract, mod, max, mix, smoothstep, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25195,7 +24978,7 @@ function canonicalFactory200($bindings, $runtime) {
   }
 }
 
-function canonicalFactory201($bindings, $runtime) {
+function canonicalFactory198($bindings, $runtime) {
   const { vec2, floor, mix, step, smoothstep, dot, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25275,7 +25058,7 @@ function canonicalFactory201($bindings, $runtime) {
   }
 }
 
-function canonicalFactory202($bindings, $runtime) {
+function canonicalFactory199($bindings, $runtime) {
   const { fract, mod, clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25342,7 +25125,7 @@ function canonicalFactory202($bindings, $runtime) {
   }
 }
 
-function canonicalFactory203($bindings, $runtime) {
+function canonicalFactory200($bindings, $runtime) {
   const { float, ivec2, sin, isnan, length, any, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25501,9 +25284,9 @@ function canonicalFactory203($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory203.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory200.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory204($bindings, $runtime) {
+function canonicalFactory201($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25521,7 +25304,7 @@ function canonicalFactory204($bindings, $runtime) {
   }
 }
 
-function canonicalFactory205($bindings, $runtime) {
+function canonicalFactory202($bindings, $runtime) {
   const { float, ivec2, min, dot, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25675,9 +25458,9 @@ function canonicalFactory205($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory205.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory202.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory206($bindings, $runtime) {
+function canonicalFactory203($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25695,7 +25478,7 @@ function canonicalFactory206($bindings, $runtime) {
   }
 }
 
-function canonicalFactory207($bindings, $runtime) {
+function canonicalFactory204($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25738,7 +25521,7 @@ function canonicalFactory207($bindings, $runtime) {
   }
 }
 
-function canonicalFactory208($bindings, $runtime) {
+function canonicalFactory205($bindings, $runtime) {
   const { float, vec2, ivec2, sin, cos, fract, max, mix, smoothstep, length, normalize, multiply, textureSize, texelFetch, floatBitsToUint, uintBitsToFloat } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25893,9 +25676,9 @@ function canonicalFactory208($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory208.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory205.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory209($bindings, $runtime) {
+function canonicalFactory206($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25913,7 +25696,7 @@ function canonicalFactory209($bindings, $runtime) {
   }
 }
 
-function canonicalFactory210($bindings, $runtime) {
+function canonicalFactory207($bindings, $runtime) {
   const { float, fract, min, max, mix, step, smoothstep, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25963,7 +25746,7 @@ function canonicalFactory210($bindings, $runtime) {
   }
 }
 
-function canonicalFactory211($bindings, $runtime) {
+function canonicalFactory208($bindings, $runtime) {
   const { max, clamp, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -25990,7 +25773,7 @@ function canonicalFactory211($bindings, $runtime) {
   }
 }
 
-function canonicalFactory212($bindings, $runtime) {
+function canonicalFactory209($bindings, $runtime) {
   const { float, ivec2, sin, cos, sqrt, floor, fract, mod, clamp, mix, length, dot, add, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26245,9 +26028,9 @@ function canonicalFactory212($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory212.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory209.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory213($bindings, $runtime) {
+function canonicalFactory210($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26265,7 +26048,7 @@ function canonicalFactory213($bindings, $runtime) {
   }
 }
 
-function canonicalFactory214($bindings, $runtime) {
+function canonicalFactory211($bindings, $runtime) {
   const { float, ivec2, sin, cos, pow, abs, floor, round, fract, max, clamp, mix, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26430,9 +26213,9 @@ function canonicalFactory214($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory214.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory211.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory215($bindings, $runtime) {
+function canonicalFactory212($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26450,7 +26233,7 @@ function canonicalFactory215($bindings, $runtime) {
   }
 }
 
-function canonicalFactory216($bindings, $runtime) {
+function canonicalFactory213($bindings, $runtime) {
   const { ivec2, dot, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26496,9 +26279,9 @@ function canonicalFactory216($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory216.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory213.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory217($bindings, $runtime) {
+function canonicalFactory214($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26516,7 +26299,7 @@ function canonicalFactory217($bindings, $runtime) {
   }
 }
 
-function canonicalFactory218($bindings, $runtime) {
+function canonicalFactory215($bindings, $runtime) {
   const { ivec2, pow, abs, floor, clamp, mix, length, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26688,9 +26471,9 @@ function canonicalFactory218($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory218.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory215.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory219($bindings, $runtime) {
+function canonicalFactory216($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26708,7 +26491,7 @@ function canonicalFactory219($bindings, $runtime) {
   }
 }
 
-function canonicalFactory220($bindings, $runtime) {
+function canonicalFactory217($bindings, $runtime) {
   const { ivec2, exp, fract, min, length, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26799,9 +26582,9 @@ function canonicalFactory220($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory220.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory217.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory221($bindings, $runtime) {
+function canonicalFactory218($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var fragColor = new Float32Array([0, 0, 0, 0]);
@@ -26815,7 +26598,7 @@ function canonicalFactory221($bindings, $runtime) {
   }
 }
 
-function canonicalFactory222($bindings, $runtime) {
+function canonicalFactory219($bindings, $runtime) {
   const { exp, ceil, fract, max, length, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26872,7 +26655,7 @@ function canonicalFactory222($bindings, $runtime) {
   }
 }
 
-function canonicalFactory223($bindings, $runtime) {
+function canonicalFactory220($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -26893,7 +26676,7 @@ function canonicalFactory223($bindings, $runtime) {
   }
 }
 
-function canonicalFactory224($bindings, $runtime) {
+function canonicalFactory221($bindings, $runtime) {
   const { float, ivec2, sin, cos, pow, abs, sign, floor, mod, max, clamp, length, add, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27151,9 +26934,9 @@ function canonicalFactory224($bindings, $runtime) {
     out[15] = outData[3]
   }
 }
-canonicalFactory224.outputNames = ["outXYZ","outVel","outRGBA","outData"]
+canonicalFactory221.outputNames = ["outXYZ","outVel","outRGBA","outData"]
 
-function canonicalFactory225($bindings, $runtime) {
+function canonicalFactory222($bindings, $runtime) {
   const { float, ivec2 } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27201,7 +26984,7 @@ function canonicalFactory225($bindings, $runtime) {
   }
 }
 
-function canonicalFactory226($bindings, $runtime) {
+function canonicalFactory223($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27222,7 +27005,7 @@ function canonicalFactory226($bindings, $runtime) {
   }
 }
 
-function canonicalFactory227($bindings, $runtime) {
+function canonicalFactory224($bindings, $runtime) {
   const { float, ivec2, sin, cos, fract, clamp, mix, dot, texture, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27348,9 +27131,9 @@ function canonicalFactory227($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory227.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory224.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory228($bindings, $runtime) {
+function canonicalFactory225($bindings, $runtime) {
   const { clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27376,7 +27159,7 @@ function canonicalFactory228($bindings, $runtime) {
   }
 }
 
-function canonicalFactory229($bindings, $runtime) {
+function canonicalFactory226($bindings, $runtime) {
   const { ivec2, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27397,7 +27180,7 @@ function canonicalFactory229($bindings, $runtime) {
   }
 }
 
-function canonicalFactory230($bindings, $runtime) {
+function canonicalFactory227($bindings, $runtime) {
   const { float, ivec2, sin, cos, floor, fract, mix, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27516,9 +27299,9 @@ function canonicalFactory230($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory230.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory227.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory231($bindings, $runtime) {
+function canonicalFactory228($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27536,7 +27319,7 @@ function canonicalFactory231($bindings, $runtime) {
   }
 }
 
-function canonicalFactory232($bindings, $runtime) {
+function canonicalFactory229($bindings, $runtime) {
   const { max, mix, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27564,7 +27347,7 @@ function canonicalFactory232($bindings, $runtime) {
   }
 }
 
-function canonicalFactory233($bindings, $runtime) {
+function canonicalFactory230($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27586,7 +27369,7 @@ function canonicalFactory233($bindings, $runtime) {
   }
 }
 
-function canonicalFactory234($bindings, $runtime) {
+function canonicalFactory231($bindings, $runtime) {
   const { max, clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27626,7 +27409,7 @@ function canonicalFactory234($bindings, $runtime) {
   }
 }
 
-function canonicalFactory235($bindings, $runtime) {
+function canonicalFactory232($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var VIEW_MODE = $bindings["VIEW_MODE"];
@@ -27644,7 +27427,7 @@ function canonicalFactory235($bindings, $runtime) {
   }
 }
 
-function canonicalFactory236($bindings, $runtime) {
+function canonicalFactory233($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27665,7 +27448,7 @@ function canonicalFactory236($bindings, $runtime) {
   }
 }
 
-function canonicalFactory237($bindings, $runtime) {
+function canonicalFactory234($bindings, $runtime) {
   const { float, ivec2, sin, cos, abs, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27708,7 +27491,7 @@ function canonicalFactory237($bindings, $runtime) {
   }
 }
 
-function canonicalFactory238($bindings, $runtime) {
+function canonicalFactory235($bindings, $runtime) {
   const { ivec2, min, max, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27767,7 +27550,7 @@ function canonicalFactory238($bindings, $runtime) {
   }
 }
 
-function canonicalFactory239($bindings, $runtime) {
+function canonicalFactory236($bindings, $runtime) {
   const { ivec2, floor, fract, clamp, mix, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27812,7 +27595,7 @@ function canonicalFactory239($bindings, $runtime) {
   }
 }
 
-function canonicalFactory240($bindings, $runtime) {
+function canonicalFactory237($bindings, $runtime) {
   const { ivec2, add, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27875,7 +27658,7 @@ function canonicalFactory240($bindings, $runtime) {
   }
 }
 
-function canonicalFactory241($bindings, $runtime) {
+function canonicalFactory238($bindings, $runtime) {
   const { float, ivec2, abs, min, max, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -27921,7 +27704,7 @@ function canonicalFactory241($bindings, $runtime) {
   }
 }
 
-function canonicalFactory242($bindings, $runtime) {
+function canonicalFactory239($bindings, $runtime) {
   const { float, ivec2, sin, cos, floor, fract, clamp, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28041,9 +27824,9 @@ function canonicalFactory242($bindings, $runtime) {
     out[11] = outRGBA[3]
   }
 }
-canonicalFactory242.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory239.outputNames = ["outXYZ","outVel","outRGBA"]
 
-function canonicalFactory243($bindings, $runtime) {
+function canonicalFactory240($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28061,7 +27844,7 @@ function canonicalFactory243($bindings, $runtime) {
   }
 }
 
-function canonicalFactory244($bindings, $runtime) {
+function canonicalFactory241($bindings, $runtime) {
   const { max, clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28090,7 +27873,7 @@ function canonicalFactory244($bindings, $runtime) {
   }
 }
 
-function canonicalFactory245($bindings, $runtime) {
+function canonicalFactory242($bindings, $runtime) {
   const { texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28109,7 +27892,7 @@ function canonicalFactory245($bindings, $runtime) {
   }
 }
 
-function canonicalFactory246($bindings, $runtime) {
+function canonicalFactory243($bindings, $runtime) {
   const { clamp, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28131,7 +27914,7 @@ function canonicalFactory246($bindings, $runtime) {
   }
 }
 
-function canonicalFactory247($bindings, $runtime) {
+function canonicalFactory244($bindings, $runtime) {
   const { ivec2, ivec3, sin, cos, pow, abs, sign, floor, min, max, clamp, mix, length, dot, cross, normalize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28476,9 +28259,9 @@ function canonicalFactory247($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory247.outputNames = ["fragColor","geoOut"]
+canonicalFactory244.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory248($bindings, $runtime) {
+function canonicalFactory245($bindings, $runtime) {
   const { ivec2, ivec3, pow, abs, sign, floor, min, max, clamp, mix, length, dot, normalize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28815,9 +28598,9 @@ function canonicalFactory248($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory248.outputNames = ["fragColor","geoOut"]
+canonicalFactory245.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory249($bindings, $runtime) {
+function canonicalFactory246($bindings, $runtime) {
   const { ivec2, ivec3, exp, floor, min, max, clamp, mix, normalize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -28927,9 +28710,9 @@ function canonicalFactory249($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory249.outputNames = ["fragColor","geoOut"]
+canonicalFactory246.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory250($bindings, $runtime) {
+function canonicalFactory247($bindings, $runtime) {
   const { float, vec3, ivec2, ivec3, sin, cos, tan, pow, abs, floor, min, max, clamp, dot, normalize, lessThan, lessThanEqual, greaterThanEqual, any, multiply, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -29158,9 +28941,9 @@ function canonicalFactory250($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory250.outputNames = ["fragColor","geoOut"]
+canonicalFactory247.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory251($bindings, $runtime) {
+function canonicalFactory248($bindings, $runtime) {
   const { ivec2, ivec3, sin, cos, pow, sqrt, abs, sign, floor, min, max, clamp, mix, length, dot, cross, normalize, lessThan, greaterThan, any, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -29484,9 +29267,9 @@ function canonicalFactory251($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory251.outputNames = ["fragColor","geoOut"]
+canonicalFactory248.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory252($bindings, $runtime) {
+function canonicalFactory249($bindings, $runtime) {
   const { float, sin, cos, abs, floor, fract, clamp, mix } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -29587,7 +29370,7 @@ function canonicalFactory252($bindings, $runtime) {
   }
 }
 
-function canonicalFactory253($bindings, $runtime) {
+function canonicalFactory250($bindings, $runtime) {
   const { float, sin, cos, atan, abs, floor, fract, min, max, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -29708,7 +29491,7 @@ function canonicalFactory253($bindings, $runtime) {
   }
 }
 
-function canonicalFactory254($bindings, $runtime) {
+function canonicalFactory251($bindings, $runtime) {
   const { cos, floor, fract, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -29902,7 +29685,7 @@ function canonicalFactory254($bindings, $runtime) {
   }
 }
 
-function canonicalFactory255($bindings, $runtime) {
+function canonicalFactory252($bindings, $runtime) {
   const { sin, fract, min, mix, step, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -30116,7 +29899,7 @@ function canonicalFactory255($bindings, $runtime) {
   }
 }
 
-function canonicalFactory256($bindings, $runtime) {
+function canonicalFactory253($bindings, $runtime) {
   const { vec4, sin, cos, abs, floor, tanh, mod, min, max, step, length, dot, add, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -30272,7 +30055,7 @@ function canonicalFactory256($bindings, $runtime) {
   }
 }
 
-function canonicalFactory257($bindings, $runtime) {
+function canonicalFactory254($bindings, $runtime) {
   const { float, sin, cos, exp, floor, fract, mix, dot } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -30374,7 +30157,7 @@ function canonicalFactory257($bindings, $runtime) {
   }
 }
 
-function canonicalFactory258($bindings, $runtime) {
+function canonicalFactory255($bindings, $runtime) {
   const { float, sin, cos, atan, abs, floor, fract, mix, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -30547,7 +30330,7 @@ function canonicalFactory258($bindings, $runtime) {
   }
 }
 
-function canonicalFactory259($bindings, $runtime) {
+function canonicalFactory256($bindings, $runtime) {
   const { float, sin, cos, atan, abs, sign, floor, mod, max, clamp, mix, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -30680,7 +30463,7 @@ function canonicalFactory259($bindings, $runtime) {
   }
 }
 
-function canonicalFactory260($bindings, $runtime) {
+function canonicalFactory257($bindings, $runtime) {
   const { sin, cos, atan, pow, log, sqrt, abs, floor, min, max, clamp, length, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31033,7 +30816,7 @@ function canonicalFactory260($bindings, $runtime) {
   }
 }
 
-function canonicalFactory261($bindings, $runtime) {
+function canonicalFactory258($bindings, $runtime) {
   const { ivec2, sin, cos, floor, fract, clamp, mix, add, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31251,7 +31034,7 @@ function canonicalFactory261($bindings, $runtime) {
   }
 }
 
-function canonicalFactory262($bindings, $runtime) {
+function canonicalFactory259($bindings, $runtime) {
   const { cos, floor, fract, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31444,7 +31227,7 @@ function canonicalFactory262($bindings, $runtime) {
   }
 }
 
-function canonicalFactory263($bindings, $runtime) {
+function canonicalFactory260($bindings, $runtime) {
   const { sin, abs, fract, min, mix, step, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31601,7 +31384,7 @@ function canonicalFactory263($bindings, $runtime) {
   }
 }
 
-function canonicalFactory264($bindings, $runtime) {
+function canonicalFactory261($bindings, $runtime) {
   const { sin, abs, floor, fract, mod, min, max, mix, smoothstep } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31712,7 +31495,7 @@ function canonicalFactory264($bindings, $runtime) {
   }
 }
 
-function canonicalFactory265($bindings, $runtime) {
+function canonicalFactory262($bindings, $runtime) {
   const { ivec2, floor, fract, clamp, mix, add, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31764,7 +31547,7 @@ function canonicalFactory265($bindings, $runtime) {
   }
 }
 
-function canonicalFactory266($bindings, $runtime) {
+function canonicalFactory263($bindings, $runtime) {
   const { ivec2, pow, floor, fract, clamp, mix, add, subtract, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31821,7 +31604,7 @@ function canonicalFactory266($bindings, $runtime) {
   }
 }
 
-function canonicalFactory267($bindings, $runtime) {
+function canonicalFactory264($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31864,7 +31647,7 @@ function canonicalFactory267($bindings, $runtime) {
   }
 }
 
-function canonicalFactory268($bindings, $runtime) {
+function canonicalFactory265($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31903,7 +31686,7 @@ function canonicalFactory268($bindings, $runtime) {
   }
 }
 
-function canonicalFactory269($bindings, $runtime) {
+function canonicalFactory266($bindings, $runtime) {
   const { ivec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -31945,7 +31728,7 @@ function canonicalFactory269($bindings, $runtime) {
   }
 }
 
-function canonicalFactory270($bindings, $runtime) {
+function canonicalFactory267($bindings, $runtime) {
   const { ivec2, floor, fract, clamp, mix, smoothstep, add, subtract, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -32092,7 +31875,7 @@ function canonicalFactory270($bindings, $runtime) {
   }
 }
 
-function canonicalFactory271($bindings, $runtime) {
+function canonicalFactory268($bindings, $runtime) {
   const { ivec2, sin, exp, fract, clamp, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -32171,7 +31954,7 @@ function canonicalFactory271($bindings, $runtime) {
   }
 }
 
-function canonicalFactory272($bindings, $runtime) {
+function canonicalFactory269($bindings, $runtime) {
   const { vec2, sin, cos, pow, log, log2, sqrt, floor, min, clamp, add } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -32473,7 +32256,7 @@ function canonicalFactory272($bindings, $runtime) {
   }
 }
 
-function canonicalFactory273($bindings, $runtime) {
+function canonicalFactory270($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, sin, cos, atan, pow, abs, floor, fract, max, mix, smoothstep, length, dot, add, subtract, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -32991,7 +32774,7 @@ function canonicalFactory273($bindings, $runtime) {
   }
 }
 
-function canonicalFactory274($bindings, $runtime) {
+function canonicalFactory271($bindings, $runtime) {
   const { sin, cos, abs, floor, fract, mod, mix, step } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -33108,7 +32891,7 @@ function canonicalFactory274($bindings, $runtime) {
   }
 }
 
-function canonicalFactory275($bindings, $runtime) {
+function canonicalFactory272($bindings, $runtime) {
   const { vec2, sin, cos, atan, sqrt, abs, sign, floor, fract, mod, min, max, mix, smoothstep, length, dot, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -33329,7 +33112,7 @@ function canonicalFactory275($bindings, $runtime) {
   }
 }
 
-function canonicalFactory276($bindings, $runtime) {
+function canonicalFactory273($bindings, $runtime) {
   const { float, ivec3, sin, cos, abs, floor, fract, mod, max, clamp, mix, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -33592,7 +33375,7 @@ function canonicalFactory276($bindings, $runtime) {
   }
 }
 
-function canonicalFactory277($bindings, $runtime) {
+function canonicalFactory274($bindings, $runtime) {
   const { float, sin, cos, atan, floor, max, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -33646,7 +33429,7 @@ function canonicalFactory277($bindings, $runtime) {
   }
 }
 
-function canonicalFactory278($bindings, $runtime) {
+function canonicalFactory275($bindings, $runtime) {
   const { ivec2, cos, floor, fract, clamp, mix, smoothstep, subtract, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -33878,7 +33661,7 @@ function canonicalFactory278($bindings, $runtime) {
   }
 }
 
-function canonicalFactory279($bindings, $runtime) {
+function canonicalFactory276($bindings, $runtime) {
   const { ivec2, fract, clamp, mix, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -34078,7 +33861,7 @@ function canonicalFactory279($bindings, $runtime) {
   }
 }
 
-function canonicalFactory280($bindings, $runtime) {
+function canonicalFactory277($bindings, $runtime) {
   const { bool, vec2, sqrt, min, max, clamp, smoothstep, dot, lessThan, greaterThan, any, all, multiply, divide, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -34225,7 +34008,7 @@ function canonicalFactory280($bindings, $runtime) {
   }
 }
 
-function canonicalFactory281($bindings, $runtime) {
+function canonicalFactory278($bindings, $runtime) {
   const { float, vec2, sin, cos, abs, floor, max, clamp, mix, smoothstep, length, dot, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -34522,7 +34305,7 @@ function canonicalFactory281($bindings, $runtime) {
   }
 }
 
-function canonicalFactory282($bindings, $runtime) {
+function canonicalFactory279($bindings, $runtime) {
   const { float, vec2, vec3, ivec2, sin, cos, atan, abs, floor, fract, max, mix, smoothstep, length, dot, add, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -34971,7 +34754,7 @@ function canonicalFactory282($bindings, $runtime) {
   }
 }
 
-function canonicalFactory283($bindings, $runtime) {
+function canonicalFactory280($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
   
   var color = $bindings["color"];
@@ -34987,7 +34770,7 @@ function canonicalFactory283($bindings, $runtime) {
   }
 }
 
-function canonicalFactory284($bindings, $runtime) {
+function canonicalFactory281($bindings, $runtime) {
   const { float, abs, floor, fract, mod, min, max, clamp, mix, step, smoothstep, length, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -35255,7 +35038,7 @@ function canonicalFactory284($bindings, $runtime) {
   }
 }
 
-function canonicalFactory285($bindings, $runtime) {
+function canonicalFactory282($bindings, $runtime) {
   const { float, abs, round, fract, min, max, clamp, smoothstep, length } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -35409,9 +35192,9 @@ function canonicalFactory285($bindings, $runtime) {
     $runtime.writeColor(fragColor, out)
   }
 }
-canonicalFactory285.usesDerivatives = true
+canonicalFactory282.usesDerivatives = true
 
-function canonicalFactory286($bindings, $runtime) {
+function canonicalFactory283($bindings, $runtime) {
   const { vec3, ivec2, ivec3, abs, floor, fract, max, clamp, mix, length, normalize, add } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -35535,9 +35318,9 @@ function canonicalFactory286($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory286.outputNames = ["fragColor","geoOut"]
+canonicalFactory283.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory287($bindings, $runtime) {
+function canonicalFactory284($bindings, $runtime) {
   const { ivec2, ivec3, fract, min, mix, length, dot, add, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -35777,7 +35560,7 @@ function canonicalFactory287($bindings, $runtime) {
   }
 }
 
-function canonicalFactory288($bindings, $runtime) {
+function canonicalFactory285($bindings, $runtime) {
   const { vec3, ivec2, sin, cos, acos, atan, pow, log, abs, fract, mod, min, clamp, length, dot, cross, normalize, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -36015,9 +35798,9 @@ function canonicalFactory288($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory288.outputNames = ["fragColor","geoOut"]
+canonicalFactory285.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory289($bindings, $runtime) {
+function canonicalFactory286($bindings, $runtime) {
   const { vec3, ivec2, sin, cos, acos, atan, pow, log, abs, mod, min, clamp, length, dot, normalize, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -36237,9 +36020,9 @@ function canonicalFactory289($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory289.outputNames = ["fragColor","geoOut"]
+canonicalFactory286.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory290($bindings, $runtime) {
+function canonicalFactory287($bindings, $runtime) {
   const { float, ivec2, ivec3, floor, clamp, dot, normalize, lessThan, greaterThanEqual, any, add, subtract, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -36301,9 +36084,9 @@ function canonicalFactory290($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory290.outputNames = ["fragColor","geoOut"]
+canonicalFactory287.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory291($bindings, $runtime) {
+function canonicalFactory288($bindings, $runtime) {
   const { float, ivec2, ivec4, abs, floor, fract, mod, clamp, mix, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -36470,9 +36253,9 @@ function canonicalFactory291($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory291.outputNames = ["fragColor","geoOut"]
+canonicalFactory288.outputNames = ["fragColor","geoOut"]
 
-function canonicalFactory292($bindings, $runtime) {
+function canonicalFactory289($bindings, $runtime) {
   const { ivec2, ivec3, fract, min, max, clamp, mix, dot, add, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -36598,7 +36381,7 @@ function canonicalFactory292($bindings, $runtime) {
   }
 }
 
-function canonicalFactory293($bindings, $runtime) {
+function canonicalFactory290($bindings, $runtime) {
   const { vec2, vec3, sin, sqrt, abs, floor, min, max, clamp, length, dot, normalize, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
@@ -36783,7 +36566,7 @@ function canonicalFactory293($bindings, $runtime) {
     out[7] = geoOut[3]
   }
 }
-canonicalFactory293.outputNames = ["fragColor","geoOut"]
+canonicalFactory290.outputNames = ["fragColor","geoOut"]
 
 export const canonicalKernelFactories = Object.freeze({
   "classicNoisedeck/bitEffects:bitEffects": canonicalFactory0,
@@ -36806,278 +36589,275 @@ export const canonicalKernelFactories = Object.freeze({
   "classicNoisedeck/shapes3d:shapes3d": canonicalFactory17,
   "classicNoisedeck/splat:splat": canonicalFactory18,
   "filter/adjust:adjust": canonicalFactory19,
-  "filter/bc:bc": canonicalFactory20,
-  "filter/bloom:brightPass": canonicalFactory21,
-  "filter/bloom:composite": canonicalFactory22,
-  "filter/bloom:ntapGather": canonicalFactory23,
-  "filter/blur:blurH": canonicalFactory24,
-  "filter/blur:blurV": canonicalFactory25,
-  "filter/bulge:bulge": canonicalFactory26,
-  "filter/celShading:celShadingBlend": canonicalFactory27,
-  "filter/celShading:celShadingColor": canonicalFactory28,
-  "filter/celShading:celShadingEdges": canonicalFactory29,
-  "filter/channel:channel": canonicalFactory30,
-  "filter/chroma:chroma": canonicalFactory31,
-  "filter/chromaticAberration:chromaticAberration": canonicalFactory32,
-  "filter/chrome:chBlurH": canonicalFactory33,
-  "filter/chrome:chBlurV": canonicalFactory34,
-  "filter/chrome:chMap": canonicalFactory35,
-  "filter/clouds:clouds": canonicalFactory36,
-  "filter/colorReplace:colorReplace": canonicalFactory37,
-  "filter/colorspace:colorspace": canonicalFactory38,
-  "filter/convolutionFeedback:cfBlend": canonicalFactory39,
-  "filter/convolutionFeedback:cfBlur": canonicalFactory40,
-  "filter/convolutionFeedback:cfSharpen": canonicalFactory41,
-  "filter/corrupt:corrupt": canonicalFactory42,
-  "filter/craquelure:craquelure": canonicalFactory43,
-  "filter/crt:crt": canonicalFactory44,
-  "filter/degauss:degauss": canonicalFactory45,
-  "filter/deriv:deriv": canonicalFactory46,
-  "filter/directionalBlur:directionalBlur": canonicalFactory47,
-  "filter/dither:dither": canonicalFactory48,
-  "filter/edge:edge": canonicalFactory49,
-  "filter/emboss:emboss": canonicalFactory50,
-  "filter/extrude:extrude": canonicalFactory51,
-  "filter/feedback:copy": canonicalFactory52,
-  "filter/feedback:feedback": canonicalFactory53,
-  "filter/fibers:fibersBlend": canonicalFactory54,
-  "filter/flipMirror:flipMirror": canonicalFactory55,
-  "filter/fxaa:fxaa": canonicalFactory56,
-  "filter/glowingEdge:glowingEdge": canonicalFactory57,
-  "filter/glyphMap:glyphMap": canonicalFactory58,
-  "filter/grade:creative": canonicalFactory59,
-  "filter/grade:hslSecondary": canonicalFactory60,
-  "filter/grade:lut": canonicalFactory61,
-  "filter/grade:primary": canonicalFactory62,
-  "filter/grade:vignette": canonicalFactory63,
-  "filter/grade:wheels": canonicalFactory64,
-  "filter/grain:grain": canonicalFactory65,
-  "filter/grime:grime": canonicalFactory66,
-  "filter/halftone:halftone": canonicalFactory67,
-  "filter/hatch:hatch": canonicalFactory68,
-  "filter/highPass:hpBlurH": canonicalFactory69,
-  "filter/highPass:hpBlurV": canonicalFactory70,
-  "filter/highPass:hpCombine": canonicalFactory71,
-  "filter/hs:hs": canonicalFactory72,
-  "filter/invert:inv": canonicalFactory73,
-  "filter/lens:lens": canonicalFactory74,
-  "filter/lensFlare:lensFlare": canonicalFactory75,
-  "filter/lensWarp:lensWarp": canonicalFactory76,
-  "filter/lightLeak:lightLeak": canonicalFactory77,
-  "filter/lighting:lighting": canonicalFactory78,
-  "filter/lowPoly:lowPoly": canonicalFactory79,
-  "filter/median:median": canonicalFactory80,
-  "filter/morphology:morphA": canonicalFactory81,
-  "filter/morphology:morphB": canonicalFactory82,
-  "filter/mosaicTiles:mosaicTiles": canonicalFactory83,
-  "filter/motionBlur:copy": canonicalFactory84,
-  "filter/motionBlur:motionBlur": canonicalFactory85,
-  "filter/normalMap:normalMap": canonicalFactory86,
-  "filter/normalize:apply": canonicalFactory87,
-  "filter/normalize:reduce": canonicalFactory88,
-  "filter/normalize:reduceMinmax": canonicalFactory89,
-  "filter/normalize:statsFinal": canonicalFactory90,
-  "filter/octaveWarp:octaveWarp": canonicalFactory91,
-  "filter/oilPaint:oilFlatten": canonicalFactory92,
-  "filter/oilPaint:oilPost": canonicalFactory93,
-  "filter/osd:osd": canonicalFactory94,
-  "filter/outline:outlineBlend": canonicalFactory95,
-  "filter/outline:outlineSobel": canonicalFactory96,
-  "filter/outline:outlineValueMap": canonicalFactory97,
-  "filter/parallax:parallax": canonicalFactory98,
-  "filter/patchwork:patchwork": canonicalFactory99,
-  "filter/photocopy:pcBlurH": canonicalFactory100,
-  "filter/photocopy:pcBlurV": canonicalFactory101,
-  "filter/photocopy:pcCombine": canonicalFactory102,
-  "filter/pinch:pinch": canonicalFactory103,
-  "filter/pixelSort:computeRank": canonicalFactory104,
-  "filter/pixelSort:finalize": canonicalFactory105,
-  "filter/pixelSort:findBrightest": canonicalFactory106,
-  "filter/pixelSort:gatherSorted": canonicalFactory107,
-  "filter/pixelSort:luminance": canonicalFactory108,
-  "filter/pixelSort:prepare": canonicalFactory109,
-  "filter/pixels:pixels": canonicalFactory110,
-  "filter/plasticWrap:pwBlurH": canonicalFactory111,
-  "filter/plasticWrap:pwBlurV": canonicalFactory112,
-  "filter/plasticWrap:pwSpec": canonicalFactory113,
-  "filter/polar:polar": canonicalFactory114,
-  "filter/pondRipples:pondRipples": canonicalFactory115,
-  "filter/posterize:posterize": canonicalFactory116,
-  "filter/prismaticAberration:prismaticAberration": canonicalFactory117,
-  "filter/reindex:nmReindexApply": canonicalFactory118,
-  "filter/reindex:nmReindexReduce": canonicalFactory119,
-  "filter/reindex:nmReindexStats": canonicalFactory120,
-  "filter/relief:rlBlurH": canonicalFactory121,
-  "filter/relief:rlBlurV": canonicalFactory122,
-  "filter/relief:rlShade": canonicalFactory123,
-  "filter/repeat:repeat": canonicalFactory124,
-  "filter/reverb:reverb": canonicalFactory125,
-  "filter/ridge:ridge": canonicalFactory126,
-  "filter/rotate:rot": canonicalFactory127,
-  "filter/scale:scale": canonicalFactory128,
-  "filter/scanlineError:scanlineError": canonicalFactory129,
-  "filter/scatter:scatterJitter": canonicalFactory130,
-  "filter/scatter:scatterSmooth": canonicalFactory131,
-  "filter/scratches:scratchesBlend": canonicalFactory132,
-  "filter/scroll:scroll": canonicalFactory133,
-  "filter/seamless:seamless": canonicalFactory134,
-  "filter/sharpen:sharpen": canonicalFactory135,
-  "filter/simpleAberration:chromaticAberration": canonicalFactory136,
-  "filter/sine:sine": canonicalFactory137,
-  "filter/skew:skew": canonicalFactory138,
-  "filter/smooth:smoothBlend": canonicalFactory139,
-  "filter/smooth:smoothEdge": canonicalFactory140,
-  "filter/smoothstep:smoothstep": canonicalFactory141,
-  "filter/snow:snow": canonicalFactory142,
-  "filter/sobel:sobel": canonicalFactory143,
-  "filter/spatter:spatter": canonicalFactory144,
-  "filter/spinBlur:spinBlur": canonicalFactory145,
-  "filter/spiral:spiral": canonicalFactory146,
-  "filter/spookyTicker:spookyTicker": canonicalFactory147,
-  "filter/stamp:stBlurH": canonicalFactory148,
-  "filter/stamp:stBlurV": canonicalFactory149,
-  "filter/stamp:stThreshold": canonicalFactory150,
-  "filter/step:step": canonicalFactory151,
-  "filter/stipple:stipple": canonicalFactory152,
-  "filter/strayHair:strayHairBlend": canonicalFactory153,
-  "filter/strokes:stkPost": canonicalFactory154,
-  "filter/strokes:stkSmear": canonicalFactory155,
-  "filter/temporalAberration:delayShift": canonicalFactory156,
-  "filter/temporalAberration:temporalAberration": canonicalFactory157,
-  "filter/tetraColorArray:tetraColorArray": canonicalFactory158,
-  "filter/tetraCosine:tetraCosine": canonicalFactory159,
-  "filter/text:text": canonicalFactory160,
-  "filter/texture:texture": canonicalFactory161,
-  "filter/threshold:thresh": canonicalFactory162,
-  "filter/tile:tile": canonicalFactory163,
-  "filter/tint:colorize": canonicalFactory164,
-  "filter/translate:translate": canonicalFactory165,
-  "filter/tunnel:tunnel": canonicalFactory166,
-  "filter/unsharpMask:usmBlurH": canonicalFactory167,
-  "filter/unsharpMask:usmBlurV": canonicalFactory168,
-  "filter/unsharpMask:usmCombine": canonicalFactory169,
-  "filter/vaseline:upsample": canonicalFactory170,
-  "filter/vignette:vignette": canonicalFactory171,
-  "filter/warp:warp": canonicalFactory172,
-  "filter/watercolor:wcComposite": canonicalFactory173,
-  "filter/watercolor:wcSeed": canonicalFactory174,
-  "filter/watercolor:wcSimplify": canonicalFactory175,
-  "filter/waves:waves": canonicalFactory176,
-  "filter/wind:wind": canonicalFactory177,
-  "filter/wobble:wobble": canonicalFactory178,
-  "filter/wormhole:blend": canonicalFactory179,
-  "filter/wormhole:clear": canonicalFactory180,
-  "filter/wormhole:deposit": canonicalFactory181,
-  "filter/zoomBlur:zoomBlur": canonicalFactory182,
-  "filter3d/flow3d:agent": canonicalFactory183,
-  "filter3d/flow3d:blend": canonicalFactory184,
-  "filter3d/flow3d:copy": canonicalFactory185,
-  "filter3d/flow3d:diffuse": canonicalFactory186,
-  "filter3d/palette3d:palette3d": canonicalFactory187,
-  "mixer/alphaMask:alphaMask": canonicalFactory188,
-  "mixer/applyMode:applyMode": canonicalFactory189,
-  "mixer/blendMode:blendMode": canonicalFactory190,
-  "mixer/cellSplit:cellSplit": canonicalFactory191,
-  "mixer/centerMask:centerMask": canonicalFactory192,
-  "mixer/channelCombine:channelCombine": canonicalFactory193,
-  "mixer/distortion:distortion": canonicalFactory194,
-  "mixer/focusBlur:focusBlur": canonicalFactory195,
-  "mixer/mashup:mashup": canonicalFactory196,
-  "mixer/patternMix:patternMix": canonicalFactory197,
-  "mixer/shadow:shadow": canonicalFactory198,
-  "mixer/shapeMask:shapeMask": canonicalFactory199,
-  "mixer/split:split": canonicalFactory200,
-  "mixer/thresholdMix:thresholdMix": canonicalFactory201,
-  "mixer/uvRemap:uvRemap": canonicalFactory202,
-  "points/attractor:agent": canonicalFactory203,
-  "points/attractor:passthrough": canonicalFactory204,
-  "points/buddhabrot:agent": canonicalFactory205,
-  "points/buddhabrot:passthrough": canonicalFactory206,
-  "points/buddhabrot:zWrite": canonicalFactory207,
-  "points/dla:agent": canonicalFactory208,
-  "points/dla:copyGrid": canonicalFactory209,
-  "points/dla:initGrid": canonicalFactory210,
-  "points/dla:passthrough": canonicalFactory211,
-  "points/flock:agent": canonicalFactory212,
-  "points/flock:passthrough": canonicalFactory213,
-  "points/flow:agent": canonicalFactory214,
-  "points/flow:passthrough": canonicalFactory215,
-  "points/heightGrid:agent": canonicalFactory216,
-  "points/heightGrid:passthrough": canonicalFactory217,
-  "points/hydraulic:agent": canonicalFactory218,
-  "points/hydraulic:passthrough": canonicalFactory219,
-  "points/lenia:agentField": canonicalFactory220,
-  "points/lenia:clear": canonicalFactory221,
-  "points/lenia:convolve": canonicalFactory222,
-  "points/lenia:passthrough": canonicalFactory223,
-  "points/life:agent": canonicalFactory224,
-  "points/life:matrix": canonicalFactory225,
-  "points/life:passthrough": canonicalFactory226,
-  "points/physarum:agent": canonicalFactory227,
-  "points/physarum:diffuse": canonicalFactory228,
-  "points/physarum:passthrough": canonicalFactory229,
-  "points/physical:agent": canonicalFactory230,
-  "points/physical:passthrough": canonicalFactory231,
-  "render/loopBegin:loopBegin": canonicalFactory232,
-  "render/loopEnd:copy": canonicalFactory233,
-  "render/pointsBillboardRender:blend": canonicalFactory234,
-  "render/pointsBillboardRender:clearDefocus": canonicalFactory235,
-  "render/pointsBillboardRender:copy": canonicalFactory236,
-  "render/pointsBillboardRender:depthKeys": canonicalFactory237,
-  "render/pointsBillboardRender:depthMerge": canonicalFactory238,
-  "render/pointsBillboardRender:diffuse": canonicalFactory239,
-  "render/pointsBillboardRender:spriteMean": canonicalFactory240,
-  "render/pointsBillboardRender:spriteMeanTiles": canonicalFactory241,
-  "render/pointsEmit:init": canonicalFactory242,
-  "render/pointsEmit:passthrough": canonicalFactory243,
-  "render/pointsRender:blend": canonicalFactory244,
-  "render/pointsRender:copy": canonicalFactory245,
-  "render/pointsRender:diffuse": canonicalFactory246,
-  "render/render3d:render3d": canonicalFactory247,
-  "render/renderCubemap3d:renderCubemap3d": canonicalFactory248,
-  "render/renderCubemapSurface:renderCubemapSurface": canonicalFactory249,
-  "render/renderLandscape3d:landscape": canonicalFactory250,
-  "render/renderLit3d:renderLit3d": canonicalFactory251,
-  "synth/bitwise:bitwise": canonicalFactory252,
-  "synth/cell:cell": canonicalFactory253,
-  "synth/cellularAutomata:ca": canonicalFactory254,
-  "synth/cellularAutomata:caFb": canonicalFactory255,
-  "synth/curl:curl": canonicalFactory256,
-  "synth/gabor:gabor": canonicalFactory257,
-  "synth/gradient:gradient": canonicalFactory258,
-  "synth/mandala:mandala": canonicalFactory259,
-  "synth/mandelbrot:mandelbrot": canonicalFactory260,
-  "synth/media:mediaInput": canonicalFactory261,
-  "synth/mnca:mnca": canonicalFactory262,
-  "synth/mnca:mncaFb": canonicalFactory263,
-  "synth/modPattern:modPattern": canonicalFactory264,
-  "synth/navierStokes:ns": canonicalFactory265,
-  "synth/navierStokes:nsAdvect": canonicalFactory266,
-  "synth/navierStokes:nsDivergence": canonicalFactory267,
-  "synth/navierStokes:nsGradient": canonicalFactory268,
-  "synth/navierStokes:nsPressure": canonicalFactory269,
-  "synth/navierStokes:nsSmooth": canonicalFactory270,
-  "synth/navierStokes:nsSplat": canonicalFactory271,
-  "synth/newton:newton": canonicalFactory272,
-  "synth/noise:noise": canonicalFactory273,
-  "synth/osc2d:osc2d": canonicalFactory274,
-  "synth/pattern:pattern": canonicalFactory275,
-  "synth/perlin:perlin": canonicalFactory276,
-  "synth/polygon:shape": canonicalFactory277,
-  "synth/reactionDiffusion:rd": canonicalFactory278,
-  "synth/reactionDiffusion:rdFb": canonicalFactory279,
-  "synth/remap:remap": canonicalFactory280,
-  "synth/sacredGeometry:sacredGeometry": canonicalFactory281,
-  "synth/shape:shape": canonicalFactory282,
-  "synth/solid:solid": canonicalFactory283,
-  "synth/subdivide:subdivide": canonicalFactory284,
-  "synth/testPattern:testPattern": canonicalFactory285,
-  "synth3d/cell3d:precompute": canonicalFactory286,
-  "synth3d/cellularAutomata3d:simulate": canonicalFactory287,
-  "synth3d/flythrough3d:precompute": canonicalFactory288,
-  "synth3d/fractal3d:precompute": canonicalFactory289,
-  "synth3d/heightmap3d:precompute": canonicalFactory290,
-  "synth3d/noise3d:precompute": canonicalFactory291,
-  "synth3d/reactionDiffusion3d:simulate": canonicalFactory292,
-  "synth3d/shape3d:precompute": canonicalFactory293,
+  "filter/bloom:brightPass": canonicalFactory20,
+  "filter/bloom:composite": canonicalFactory21,
+  "filter/bloom:ntapGather": canonicalFactory22,
+  "filter/blur:blurH": canonicalFactory23,
+  "filter/blur:blurV": canonicalFactory24,
+  "filter/bulge:bulge": canonicalFactory25,
+  "filter/celShading:celShadingBlend": canonicalFactory26,
+  "filter/celShading:celShadingColor": canonicalFactory27,
+  "filter/celShading:celShadingEdges": canonicalFactory28,
+  "filter/channel:channel": canonicalFactory29,
+  "filter/chroma:chroma": canonicalFactory30,
+  "filter/chromaticAberration:chromaticAberration": canonicalFactory31,
+  "filter/chrome:chBlurH": canonicalFactory32,
+  "filter/chrome:chBlurV": canonicalFactory33,
+  "filter/chrome:chMap": canonicalFactory34,
+  "filter/clouds:clouds": canonicalFactory35,
+  "filter/colorReplace:colorReplace": canonicalFactory36,
+  "filter/convolutionFeedback:cfBlend": canonicalFactory37,
+  "filter/convolutionFeedback:cfBlur": canonicalFactory38,
+  "filter/convolutionFeedback:cfSharpen": canonicalFactory39,
+  "filter/corrupt:corrupt": canonicalFactory40,
+  "filter/craquelure:craquelure": canonicalFactory41,
+  "filter/crt:crt": canonicalFactory42,
+  "filter/degauss:degauss": canonicalFactory43,
+  "filter/deriv:deriv": canonicalFactory44,
+  "filter/directionalBlur:directionalBlur": canonicalFactory45,
+  "filter/dither:dither": canonicalFactory46,
+  "filter/edge:edge": canonicalFactory47,
+  "filter/emboss:emboss": canonicalFactory48,
+  "filter/extrude:extrude": canonicalFactory49,
+  "filter/feedback:copy": canonicalFactory50,
+  "filter/feedback:feedback": canonicalFactory51,
+  "filter/fibers:fibersBlend": canonicalFactory52,
+  "filter/flipMirror:flipMirror": canonicalFactory53,
+  "filter/fxaa:fxaa": canonicalFactory54,
+  "filter/glowingEdge:glowingEdge": canonicalFactory55,
+  "filter/glyphMap:glyphMap": canonicalFactory56,
+  "filter/grade:creative": canonicalFactory57,
+  "filter/grade:hslSecondary": canonicalFactory58,
+  "filter/grade:lut": canonicalFactory59,
+  "filter/grade:primary": canonicalFactory60,
+  "filter/grade:vignette": canonicalFactory61,
+  "filter/grade:wheels": canonicalFactory62,
+  "filter/grain:grain": canonicalFactory63,
+  "filter/grime:grime": canonicalFactory64,
+  "filter/halftone:halftone": canonicalFactory65,
+  "filter/hatch:hatch": canonicalFactory66,
+  "filter/highPass:hpBlurH": canonicalFactory67,
+  "filter/highPass:hpBlurV": canonicalFactory68,
+  "filter/highPass:hpCombine": canonicalFactory69,
+  "filter/invert:inv": canonicalFactory70,
+  "filter/lens:lens": canonicalFactory71,
+  "filter/lensFlare:lensFlare": canonicalFactory72,
+  "filter/lensWarp:lensWarp": canonicalFactory73,
+  "filter/lightLeak:lightLeak": canonicalFactory74,
+  "filter/lighting:lighting": canonicalFactory75,
+  "filter/lowPoly:lowPoly": canonicalFactory76,
+  "filter/median:median": canonicalFactory77,
+  "filter/morphology:morphA": canonicalFactory78,
+  "filter/morphology:morphB": canonicalFactory79,
+  "filter/mosaicTiles:mosaicTiles": canonicalFactory80,
+  "filter/motionBlur:copy": canonicalFactory81,
+  "filter/motionBlur:motionBlur": canonicalFactory82,
+  "filter/normalMap:normalMap": canonicalFactory83,
+  "filter/normalize:apply": canonicalFactory84,
+  "filter/normalize:reduce": canonicalFactory85,
+  "filter/normalize:reduceMinmax": canonicalFactory86,
+  "filter/normalize:statsFinal": canonicalFactory87,
+  "filter/octaveWarp:octaveWarp": canonicalFactory88,
+  "filter/oilPaint:oilFlatten": canonicalFactory89,
+  "filter/oilPaint:oilPost": canonicalFactory90,
+  "filter/osd:osd": canonicalFactory91,
+  "filter/outline:outlineBlend": canonicalFactory92,
+  "filter/outline:outlineSobel": canonicalFactory93,
+  "filter/outline:outlineValueMap": canonicalFactory94,
+  "filter/parallax:parallax": canonicalFactory95,
+  "filter/patchwork:patchwork": canonicalFactory96,
+  "filter/photocopy:pcBlurH": canonicalFactory97,
+  "filter/photocopy:pcBlurV": canonicalFactory98,
+  "filter/photocopy:pcCombine": canonicalFactory99,
+  "filter/pinch:pinch": canonicalFactory100,
+  "filter/pixelSort:computeRank": canonicalFactory101,
+  "filter/pixelSort:finalize": canonicalFactory102,
+  "filter/pixelSort:findBrightest": canonicalFactory103,
+  "filter/pixelSort:gatherSorted": canonicalFactory104,
+  "filter/pixelSort:luminance": canonicalFactory105,
+  "filter/pixelSort:prepare": canonicalFactory106,
+  "filter/pixels:pixels": canonicalFactory107,
+  "filter/plasticWrap:pwBlurH": canonicalFactory108,
+  "filter/plasticWrap:pwBlurV": canonicalFactory109,
+  "filter/plasticWrap:pwSpec": canonicalFactory110,
+  "filter/polar:polar": canonicalFactory111,
+  "filter/pondRipples:pondRipples": canonicalFactory112,
+  "filter/posterize:posterize": canonicalFactory113,
+  "filter/prismaticAberration:prismaticAberration": canonicalFactory114,
+  "filter/reindex:nmReindexApply": canonicalFactory115,
+  "filter/reindex:nmReindexReduce": canonicalFactory116,
+  "filter/reindex:nmReindexStats": canonicalFactory117,
+  "filter/relief:rlBlurH": canonicalFactory118,
+  "filter/relief:rlBlurV": canonicalFactory119,
+  "filter/relief:rlShade": canonicalFactory120,
+  "filter/repeat:repeat": canonicalFactory121,
+  "filter/reverb:reverb": canonicalFactory122,
+  "filter/ridge:ridge": canonicalFactory123,
+  "filter/rotate:rot": canonicalFactory124,
+  "filter/scale:scale": canonicalFactory125,
+  "filter/scanlineError:scanlineError": canonicalFactory126,
+  "filter/scatter:scatterJitter": canonicalFactory127,
+  "filter/scatter:scatterSmooth": canonicalFactory128,
+  "filter/scratches:scratchesBlend": canonicalFactory129,
+  "filter/scroll:scroll": canonicalFactory130,
+  "filter/seamless:seamless": canonicalFactory131,
+  "filter/sharpen:sharpen": canonicalFactory132,
+  "filter/simpleAberration:chromaticAberration": canonicalFactory133,
+  "filter/sine:sine": canonicalFactory134,
+  "filter/skew:skew": canonicalFactory135,
+  "filter/smooth:smoothBlend": canonicalFactory136,
+  "filter/smooth:smoothEdge": canonicalFactory137,
+  "filter/smoothstep:smoothstep": canonicalFactory138,
+  "filter/snow:snow": canonicalFactory139,
+  "filter/sobel:sobel": canonicalFactory140,
+  "filter/spatter:spatter": canonicalFactory141,
+  "filter/spinBlur:spinBlur": canonicalFactory142,
+  "filter/spiral:spiral": canonicalFactory143,
+  "filter/spookyTicker:spookyTicker": canonicalFactory144,
+  "filter/stamp:stBlurH": canonicalFactory145,
+  "filter/stamp:stBlurV": canonicalFactory146,
+  "filter/stamp:stThreshold": canonicalFactory147,
+  "filter/step:step": canonicalFactory148,
+  "filter/stipple:stipple": canonicalFactory149,
+  "filter/strayHair:strayHairBlend": canonicalFactory150,
+  "filter/strokes:stkPost": canonicalFactory151,
+  "filter/strokes:stkSmear": canonicalFactory152,
+  "filter/temporalAberration:delayShift": canonicalFactory153,
+  "filter/temporalAberration:temporalAberration": canonicalFactory154,
+  "filter/tetraColorArray:tetraColorArray": canonicalFactory155,
+  "filter/tetraCosine:tetraCosine": canonicalFactory156,
+  "filter/text:text": canonicalFactory157,
+  "filter/texture:texture": canonicalFactory158,
+  "filter/threshold:thresh": canonicalFactory159,
+  "filter/tile:tile": canonicalFactory160,
+  "filter/tint:colorize": canonicalFactory161,
+  "filter/translate:translate": canonicalFactory162,
+  "filter/tunnel:tunnel": canonicalFactory163,
+  "filter/unsharpMask:usmBlurH": canonicalFactory164,
+  "filter/unsharpMask:usmBlurV": canonicalFactory165,
+  "filter/unsharpMask:usmCombine": canonicalFactory166,
+  "filter/vaseline:upsample": canonicalFactory167,
+  "filter/vignette:vignette": canonicalFactory168,
+  "filter/warp:warp": canonicalFactory169,
+  "filter/watercolor:wcComposite": canonicalFactory170,
+  "filter/watercolor:wcSeed": canonicalFactory171,
+  "filter/watercolor:wcSimplify": canonicalFactory172,
+  "filter/waves:waves": canonicalFactory173,
+  "filter/wind:wind": canonicalFactory174,
+  "filter/wobble:wobble": canonicalFactory175,
+  "filter/wormhole:blend": canonicalFactory176,
+  "filter/wormhole:clear": canonicalFactory177,
+  "filter/wormhole:deposit": canonicalFactory178,
+  "filter/zoomBlur:zoomBlur": canonicalFactory179,
+  "filter3d/flow3d:agent": canonicalFactory180,
+  "filter3d/flow3d:blend": canonicalFactory181,
+  "filter3d/flow3d:copy": canonicalFactory182,
+  "filter3d/flow3d:diffuse": canonicalFactory183,
+  "filter3d/palette3d:palette3d": canonicalFactory184,
+  "mixer/alphaMask:alphaMask": canonicalFactory185,
+  "mixer/applyMode:applyMode": canonicalFactory186,
+  "mixer/blendMode:blendMode": canonicalFactory187,
+  "mixer/cellSplit:cellSplit": canonicalFactory188,
+  "mixer/centerMask:centerMask": canonicalFactory189,
+  "mixer/channelCombine:channelCombine": canonicalFactory190,
+  "mixer/distortion:distortion": canonicalFactory191,
+  "mixer/focusBlur:focusBlur": canonicalFactory192,
+  "mixer/mashup:mashup": canonicalFactory193,
+  "mixer/patternMix:patternMix": canonicalFactory194,
+  "mixer/shadow:shadow": canonicalFactory195,
+  "mixer/shapeMask:shapeMask": canonicalFactory196,
+  "mixer/split:split": canonicalFactory197,
+  "mixer/thresholdMix:thresholdMix": canonicalFactory198,
+  "mixer/uvRemap:uvRemap": canonicalFactory199,
+  "points/attractor:agent": canonicalFactory200,
+  "points/attractor:passthrough": canonicalFactory201,
+  "points/buddhabrot:agent": canonicalFactory202,
+  "points/buddhabrot:passthrough": canonicalFactory203,
+  "points/buddhabrot:zWrite": canonicalFactory204,
+  "points/dla:agent": canonicalFactory205,
+  "points/dla:copyGrid": canonicalFactory206,
+  "points/dla:initGrid": canonicalFactory207,
+  "points/dla:passthrough": canonicalFactory208,
+  "points/flock:agent": canonicalFactory209,
+  "points/flock:passthrough": canonicalFactory210,
+  "points/flow:agent": canonicalFactory211,
+  "points/flow:passthrough": canonicalFactory212,
+  "points/heightGrid:agent": canonicalFactory213,
+  "points/heightGrid:passthrough": canonicalFactory214,
+  "points/hydraulic:agent": canonicalFactory215,
+  "points/hydraulic:passthrough": canonicalFactory216,
+  "points/lenia:agentField": canonicalFactory217,
+  "points/lenia:clear": canonicalFactory218,
+  "points/lenia:convolve": canonicalFactory219,
+  "points/lenia:passthrough": canonicalFactory220,
+  "points/life:agent": canonicalFactory221,
+  "points/life:matrix": canonicalFactory222,
+  "points/life:passthrough": canonicalFactory223,
+  "points/physarum:agent": canonicalFactory224,
+  "points/physarum:diffuse": canonicalFactory225,
+  "points/physarum:passthrough": canonicalFactory226,
+  "points/physical:agent": canonicalFactory227,
+  "points/physical:passthrough": canonicalFactory228,
+  "render/loopBegin:loopBegin": canonicalFactory229,
+  "render/loopEnd:copy": canonicalFactory230,
+  "render/pointsBillboardRender:blend": canonicalFactory231,
+  "render/pointsBillboardRender:clearDefocus": canonicalFactory232,
+  "render/pointsBillboardRender:copy": canonicalFactory233,
+  "render/pointsBillboardRender:depthKeys": canonicalFactory234,
+  "render/pointsBillboardRender:depthMerge": canonicalFactory235,
+  "render/pointsBillboardRender:diffuse": canonicalFactory236,
+  "render/pointsBillboardRender:spriteMean": canonicalFactory237,
+  "render/pointsBillboardRender:spriteMeanTiles": canonicalFactory238,
+  "render/pointsEmit:init": canonicalFactory239,
+  "render/pointsEmit:passthrough": canonicalFactory240,
+  "render/pointsRender:blend": canonicalFactory241,
+  "render/pointsRender:copy": canonicalFactory242,
+  "render/pointsRender:diffuse": canonicalFactory243,
+  "render/render3d:render3d": canonicalFactory244,
+  "render/renderCubemap3d:renderCubemap3d": canonicalFactory245,
+  "render/renderCubemapSurface:renderCubemapSurface": canonicalFactory246,
+  "render/renderLandscape3d:landscape": canonicalFactory247,
+  "render/renderLit3d:renderLit3d": canonicalFactory248,
+  "synth/bitwise:bitwise": canonicalFactory249,
+  "synth/cell:cell": canonicalFactory250,
+  "synth/cellularAutomata:ca": canonicalFactory251,
+  "synth/cellularAutomata:caFb": canonicalFactory252,
+  "synth/curl:curl": canonicalFactory253,
+  "synth/gabor:gabor": canonicalFactory254,
+  "synth/gradient:gradient": canonicalFactory255,
+  "synth/mandala:mandala": canonicalFactory256,
+  "synth/mandelbrot:mandelbrot": canonicalFactory257,
+  "synth/media:mediaInput": canonicalFactory258,
+  "synth/mnca:mnca": canonicalFactory259,
+  "synth/mnca:mncaFb": canonicalFactory260,
+  "synth/modPattern:modPattern": canonicalFactory261,
+  "synth/navierStokes:ns": canonicalFactory262,
+  "synth/navierStokes:nsAdvect": canonicalFactory263,
+  "synth/navierStokes:nsDivergence": canonicalFactory264,
+  "synth/navierStokes:nsGradient": canonicalFactory265,
+  "synth/navierStokes:nsPressure": canonicalFactory266,
+  "synth/navierStokes:nsSmooth": canonicalFactory267,
+  "synth/navierStokes:nsSplat": canonicalFactory268,
+  "synth/newton:newton": canonicalFactory269,
+  "synth/noise:noise": canonicalFactory270,
+  "synth/osc2d:osc2d": canonicalFactory271,
+  "synth/pattern:pattern": canonicalFactory272,
+  "synth/perlin:perlin": canonicalFactory273,
+  "synth/polygon:shape": canonicalFactory274,
+  "synth/reactionDiffusion:rd": canonicalFactory275,
+  "synth/reactionDiffusion:rdFb": canonicalFactory276,
+  "synth/remap:remap": canonicalFactory277,
+  "synth/sacredGeometry:sacredGeometry": canonicalFactory278,
+  "synth/shape:shape": canonicalFactory279,
+  "synth/solid:solid": canonicalFactory280,
+  "synth/subdivide:subdivide": canonicalFactory281,
+  "synth/testPattern:testPattern": canonicalFactory282,
+  "synth3d/cell3d:precompute": canonicalFactory283,
+  "synth3d/cellularAutomata3d:simulate": canonicalFactory284,
+  "synth3d/flythrough3d:precompute": canonicalFactory285,
+  "synth3d/fractal3d:precompute": canonicalFactory286,
+  "synth3d/heightmap3d:precompute": canonicalFactory287,
+  "synth3d/noise3d:precompute": canonicalFactory288,
+  "synth3d/reactionDiffusion3d:simulate": canonicalFactory289,
+  "synth3d/shape3d:precompute": canonicalFactory290,
 })

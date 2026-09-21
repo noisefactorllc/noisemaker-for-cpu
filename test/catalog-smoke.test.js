@@ -68,10 +68,10 @@ function choiceProgram(effect, name, value) {
   return smokeProgram(effect, [[name, value]])
 }
 
-test('default catalog contains the exact canonical 208-effect coverage set', () => {
+test('default catalog contains the exact canonical 205-effect coverage set', () => {
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
-  assert.equal(createDefaultRegistry().list().length, 208)
-  assert.equal(kernelFactories.size, 298)
+  assert.equal(createDefaultRegistry().list().length, 205)
+  assert.equal(kernelFactories.size, 295)
   assert.ok(kernels.size >= 33)
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {
