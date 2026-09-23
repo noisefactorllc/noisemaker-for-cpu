@@ -382,14 +382,14 @@ test('generated kernels for the 17 volume and explicit-loop effects bind and emi
     'classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d',
     'filter3d/flow3d', 'filter3d/palette3d',
     'render/loopBegin', 'render/loopEnd', 'render/render3d', 'render/renderCubemap3d',
-    'render/renderCubemapSurface', 'render/renderLit3d',
+    'render/renderCubemapSurface', 'render/renderLandscape3d', 'render/renderLit3d',
     'synth3d/cell3d', 'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
     'synth3d/fractal3d', 'synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
   ])
   const generatedKeys = Object.keys(canonicalKernelFactories)
     .filter((key) => volumeAndLoopEffectIds.has(key.split(':')[0]))
     .sort()
-  assert.equal(generatedKeys.length, 20)
+  assert.equal(generatedKeys.length, 21)
 
   for (const key of generatedKeys) {
     const [effectId, program] = key.split(':')

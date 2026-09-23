@@ -1,8 +1,8 @@
 # Effect coverage
 
-This is the exact CPU-eligible target imported from Noisemaker revision `643b2be1e28b62e3282a4009c2ea65c583ed6ccc`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact CPU-eligible target imported from Noisemaker revision `44bc4ed4ac729bddaa95b083d64bee942ade35da`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
-The runtime contains 205 effects and 301 canonical programs (291 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 458 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
+The runtime contains 205 effects and 301 canonical programs (291 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 460 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 
 ## `classicNoisedeck` — 20
 
@@ -36,7 +36,7 @@ Twelve of these (`bloom`, `chrome`, `highPass`, `oilPaint`, `photocopy`, `plasti
 
 The three `points*` render effects are stateful/particle effects. `pointsEmit` is the only definition in the whole catalog that declares `global_xyz`; it opens and owns an iteration group, seeding agent positions/velocities/colors from its own input image. `pointsRender` and `pointsBillboardRender` rasterize the current agent state into a trail texture (point sprites and billboard quads respectively) composited over the input. `pointsRender`/`pointsBillboardRender` also gained a `perspective` view mode this round (alongside the existing flat/ortho), and `pointsBillboardRender` gained depth-sorted alpha blending and aperture defocus — see [CSL.md](CSL.md) for how the per-viewMode `defines` those introduce are handled.
 
-`renderLandscape3d` (new) is a `volume-renderer`-domain effect (like `render3d`/`renderLit3d`): an isometric/perspective voxel raymarch with face lighting, consuming a `synth3d` generator's volume+geometry bundle — its own companion generator is `synth3d/heightmap3d`, below.
+`renderLandscape3d` (new) is a `volume-renderer`-domain effect (like `render3d`/`renderLit3d`): an isometric/perspective voxel or isosurface raymarch with face lighting, consuming a `synth3d` generator's volume+geometry bundle — its own companion generator is `synth3d/heightmap3d`, below.
 
 ## `synth` — 26
 

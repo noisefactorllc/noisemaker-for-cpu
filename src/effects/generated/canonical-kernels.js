@@ -28713,7 +28713,7 @@ function canonicalFactory246($bindings, $runtime) {
 canonicalFactory246.outputNames = ["fragColor","geoOut"]
 
 function canonicalFactory247($bindings, $runtime) {
-  const { float, vec3, ivec2, ivec3, sin, cos, tan, pow, abs, floor, min, max, clamp, dot, normalize, lessThan, lessThanEqual, greaterThanEqual, any, multiply, texelFetch } = $runtime.stdlib
+  const { float, vec3, ivec2, ivec3, sin, cos, tan, pow, abs, floor, fract, min, max, clamp, length, dot, normalize, lessThan, lessThanEqual, greaterThanEqual, any, multiply, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -28726,6 +28726,7 @@ function canonicalFactory247($bindings, $runtime) {
   
   
   var VIEW_MODE = $bindings["VIEW_MODE"];
+  var FILTERING = $bindings["FILTERING"];
   var volumeCache = $bindings["volumeCache"];
   var analyticalGeo = $bindings["analyticalGeo"];
   var resolution = $bindings["resolution"];
@@ -28766,6 +28767,114 @@ function canonicalFactory247($bindings, $runtime) {
   	specular = (pow(max(dot(normal, normalize(halfVector)), 0), 32)) * specularIntensity;
   	};
   	return new $runtime.PooledFloat32Array([color[0] * (ambient + (max(dot(normal, light), 0)) * diffuseIntensity) + specular, color[1] * (ambient + (max(dot(normal, light), 0)) * diffuseIntensity) + specular, color[2] * (ambient + (max(dot(normal, light), 0)) * diffuseIntensity) + specular]);
+  };
+  function sampleAtlasTexel (atlas, p, material) {
+  	var coord = cpu_ivec2_float_float(p[0], p[1] + p[2] * volumeSize);
+  	var value = texelFetch(atlas, coord, 0);
+  	if (material) {
+  	var present = (texelFetch(analyticalGeo, coord, 0)[3]) > 0 ? 1 : 0;
+  	return new $runtime.PooledFloat32Array([value[0] * present, value[1] * present, value[2] * present, present]);
+  	};
+  	return value;
+  };
+  function interpolateAtlas (a, b, weight) {
+  	a = $runtime.copy(a);
+  	b = $runtime.copy(b);
+  	return new $runtime.PooledFloat32Array([a[0] + (b[0] - a[0]) * weight, a[1] + (b[1] - a[1]) * weight, a[2] + (b[2] - a[2]) * weight, a[3] + (b[3] - a[3]) * weight]);
+  };
+  
+  function atlasCoords (p) {
+  	p = $runtime.copy(p);
+  	var texel = clamp(new $runtime.PooledFloat32Array([p[0] - 0.5, p[1] - 0.5, p[2] - 0.5]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([cpu_float(volumeSize - 1), cpu_float(volumeSize - 1), cpu_float(volumeSize - 1)]));
+  	return {
+  	lo: cpu_ivec3_vec3(floor(texel)),
+  	fraction: fract(texel)
+  	};
+  };
+  function sampleAtlasCoords (atlas, coords, material) {
+  	var lo = coords.lo;
+  	var hi = min(new $runtime.PooledFloat32Array([lo[0] + 1, lo[1] + 1, lo[2] + 1]), cpu_ivec3(volumeSize - 1));
+  	var f = coords.fraction;
+  	var c00 = interpolateAtlas(sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(lo[0], lo[1], lo[2]), material), sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(hi[0], lo[1], lo[2]), material), f[0]);
+  	var c10 = interpolateAtlas(sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(lo[0], hi[1], lo[2]), material), sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(hi[0], hi[1], lo[2]), material), f[0]);
+  	var c01 = interpolateAtlas(sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(lo[0], lo[1], hi[2]), material), sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(hi[0], lo[1], hi[2]), material), f[0]);
+  	var c11 = interpolateAtlas(sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(lo[0], hi[1], hi[2]), material), sampleAtlasTexel(atlas, cpu_ivec3_float_float_float(hi[0], hi[1], hi[2]), material), f[0]);
+  	var value = interpolateAtlas(interpolateAtlas(c00, c10, f[1]), interpolateAtlas(c01, c11, f[1]), f[2]);
+  	if (material && (value[3] > 0)) {
+  	value = new $runtime.PooledFloat32Array([value[0] / value[3], value[1] / value[3], value[2] / value[3], value[3]]);
+  	};
+  	return value;
+  };
+  function sampleAtlas (atlas, p, material) {
+  	p = $runtime.copy(p);
+  	return sampleAtlasCoords(atlas, atlasCoords(p), material);
+  };
+  function isSolid (coords) {
+  	var density = sampleAtlasCoords(analyticalGeo, coords, false)[3];
+  	return (density > 0) && (density >= threshold);
+  };
+  
+  function traceIsosurface (origin, direction, start, leave) {
+  	origin = $runtime.copy(origin);
+  	direction = $runtime.copy(direction);
+  	var position = new $runtime.PooledFloat32Array([origin[0] + direction[0] * start, origin[1] + direction[1] * start, origin[2] + direction[2] * start]);
+  	var coords = atlasCoords(position);
+  	if (isSolid(coords)) {
+  	return {
+  	distance: start,
+  	position: position,
+  	coords: coords
+  	};
+  	};
+  	var stepSize = 0.5 / length(direction);
+  	var previous = start;
+  	for (var step = 0; step < (volumeSize * 4); step++) {
+  	var distance = min(previous + stepSize, leave);
+  	(position[0] = origin[0] + direction[0] * distance, position[1] = origin[1] + direction[1] * distance, position[2] = origin[2] + direction[2] * distance, position);
+  	coords = atlasCoords(position);
+  	if (isSolid(coords)) {
+  	var lo = previous;
+  	var hi = distance;
+  	for (var refine = 0; refine < 8; refine++) {
+  	var mid = (lo + hi) * 0.5;
+  	var candidate = new $runtime.PooledFloat32Array([origin[0] + direction[0] * mid, origin[1] + direction[1] * mid, origin[2] + direction[2] * mid]);
+  	var candidateCoords = atlasCoords(candidate);
+  	if (isSolid(candidateCoords)) {
+  	hi = mid;
+  	(position[0] = candidate[0], position[1] = candidate[1], position[2] = candidate[2], position);
+  	coords = candidateCoords;
+  	} else {
+  	lo = mid;
+  	};
+  	};
+  	return {
+  	distance: hi,
+  	position: position,
+  	coords: coords
+  	};
+  	};
+  	if (distance >= leave) {
+  	break;
+  	};
+  	previous = distance;
+  	};
+  	return {
+  	distance: -1,
+  	position: new $runtime.PooledFloat32Array([0, 0, 0]),
+  	coords: {
+  	lo: cpu_ivec3(0),
+  	fraction: new $runtime.PooledFloat32Array([0, 0, 0])
+  	}
+  	};
+  };
+  function isosurfaceNormal (p, fallback) {
+  	p = $runtime.copy(p);
+  	fallback = $runtime.copy(fallback);
+  	var gradient = new $runtime.PooledFloat32Array([sampleAtlas(analyticalGeo, new $runtime.PooledFloat32Array([p[0] - 0.5, p[1], p[2]]), false)[3] - sampleAtlas(analyticalGeo, new $runtime.PooledFloat32Array([p[0] + 0.5, p[1], p[2]]), false)[3], sampleAtlas(analyticalGeo, new $runtime.PooledFloat32Array([p[0], p[1] - 0.5, p[2]]), false)[3] - sampleAtlas(analyticalGeo, new $runtime.PooledFloat32Array([p[0], p[1] + 0.5, p[2]]), false)[3], sampleAtlas(analyticalGeo, new $runtime.PooledFloat32Array([p[0], p[1], p[2] - 0.5]), false)[3] - sampleAtlas(analyticalGeo, new $runtime.PooledFloat32Array([p[0], p[1], p[2] + 0.5]), false)[3]]);
+  	if ((dot(gradient, gradient)) > 9.999999960041972e-13) {
+  	return normalize(gradient);
+  	};
+  	return fallback;
   };
   function inverseRotation (p) {
   	p = $runtime.copy(p);
@@ -28841,6 +28950,21 @@ function canonicalFactory247($bindings, $runtime) {
   	};
   	};
   	};
+  	if (FILTERING == 0) {
+  	var hit = traceIsosurface(origin, direction, distance, leave);
+  	var hitDist = hit.distance;
+  	if (hitDist < 0) {
+  	return;
+  	};
+  	var p = hit.position;
+  	if (hitDist > distance) {
+  	isosurfaceNormal(p, normal).reduce((res,el,i)=>(res[i] = el, res), normal);
+  	};
+  	var worldNormal = forwardRotation(normal);
+  	new $runtime.PooledFloat32Array([...lighting(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, sampleAtlasCoords(volumeCache, hit.coords, true))), worldNormal, viewDirection), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([worldNormal[0] * 0.5 + 0.5, worldNormal[1] * 0.5 + 0.5, worldNormal[2] * 0.5 + 0.5]), clamp(hitDist / 320, 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
+  	return;
+  	};
   	for (var step = 0; step < (volumeSize * 3); step++) {
   	if ((any(lessThan(cell, cpu_ivec3(0)))) || (any(greaterThanEqual(cell, cpu_ivec3(volumeSize)))) || (distance >= leave)) {
   	break;
@@ -28899,6 +29023,20 @@ function canonicalFactory247($bindings, $runtime) {
   	if (nearT[0] >= nearT[2]) {
   	(normal[0] = 1, normal[1] = 0, normal[2] = 0, normal);
   	};
+  	};
+  	if (FILTERING == 0) {
+  	var hit = traceIsosurface(origin, new $runtime.PooledFloat32Array([-1, -1, -1]), distance, leave);
+  	var hitDist = hit.distance;
+  	if (hitDist < 0) {
+  	return;
+  	};
+  	var p = hit.position;
+  	if (hitDist > distance) {
+  	isosurfaceNormal(p, normal).reduce((res,el,i)=>(res[i] = el, res), normal);
+  	};
+  	new $runtime.PooledFloat32Array([...lighting(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, sampleAtlasCoords(volumeCache, hit.coords, true))), normal, new $runtime.PooledFloat32Array([0.5773502588272095, 0.5773502588272095, 0.5773502588272095])), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp(hitDist / (size * 4), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
+  	return;
   	};
   	for (var step = 0; step < (volumeSize * 3); step++) {
   	if ((any(lessThan(cell, cpu_ivec3(0)))) || (distance >= leave)) {

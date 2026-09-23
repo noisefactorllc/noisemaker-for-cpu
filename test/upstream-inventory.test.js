@@ -260,7 +260,7 @@ const EXCLUDED = [
 ].sort()
 
 test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
-  assert.equal(UPSTREAM_REVISION, '643b2be1e28b62e3282a4009c2ea65c583ed6ccc')
+  assert.equal(UPSTREAM_REVISION, '44bc4ed4ac729bddaa95b083d64bee942ade35da')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
@@ -329,6 +329,12 @@ test('upstream snapshot preserves parity-critical definition metadata', () => {
 
   assert.equal(byId.get('render/loopBegin').loopRole, 'begin')
   assert.equal(byId.get('render/loopEnd').loopRole, 'end')
+
+  const landscape = byId.get('render/renderLandscape3d')
+  assert.equal(landscape.params.filtering.type, 'int')
+  assert.equal(landscape.params.filtering.default, 1)
+  assert.equal(landscape.params.filtering.define, 'FILTERING')
+  assert.deepEqual(landscape.params.filtering.choices, { isosurface: 0, voxel: 1 })
 })
 
 test('stateful and particle records carry CPU iteration metadata', () => {

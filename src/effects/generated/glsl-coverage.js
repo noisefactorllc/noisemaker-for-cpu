@@ -2309,9 +2309,9 @@ export const programCoverage = Object.freeze([
     "program": "landscape",
     "file": "landscape.glsl",
     "status": "generated",
-    "sourceBytes": 7781,
-    "normalizedBytes": 8311,
-    "generatedBytes": 11114
+    "sourceBytes": 13406,
+    "normalizedBytes": 14016,
+    "generatedBytes": 17563
   },
   {
     "effectId": "render/renderLit3d",

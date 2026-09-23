@@ -372,6 +372,16 @@ function adaptCanonicalSource(effectId, source) {
         'return fract(vec2(float(float(p3.x + p3.y) * p3.z), float(float(p3.x + p3.z) * p3.y)));',
       )
   }
+  if (effectId === 'render/renderLandscape3d') {
+    source = source
+      .replaceAll(
+        'if (hit.distance < 0.0) return;',
+        'float hitDist = hit.distance;\n        if (hitDist < 0.0) return;',
+      )
+      .replaceAll('if (hit.distance > distance)', 'if (hitDist > distance)')
+      .replaceAll('hit.distance / 320.0', 'hitDist / 320.0')
+      .replaceAll('hit.distance / (size * 4.0)', 'hitDist / (size * 4.0)')
+  }
   source = source.replace(
     /^(\s*)i1 = \(x0\.x > x0\.y\) \? vec2\(1\.0, 0\.0\) : vec2\(0\.0, 1\.0\);$/gm,
     '$1if (x0.x > x0.y) { i1 = vec2(1.0, 0.0); } else { i1 = vec2(0.0, 1.0); }',
@@ -551,6 +561,17 @@ function adaptCanonicalSource(effectId, source) {
 
 function factorySource(index, effectId, transpiled, normalized, originalSource) {
   if (effectId === 'filter/median') transpiled = preserveMedianUnsignedSemantics(transpiled)
+  if (effectId === 'render/renderLandscape3d') {
+    transpiled = transpiled
+      .replace(
+        'atlasCoords(position).reduce((res,el,i)=>(res[i] = el, res), coords);',
+        'coords = atlasCoords(position);',
+      )
+      .replace(
+        '(coords[0] = candidateCoords[0], coords[1] = candidateCoords[1], coords);',
+        'coords = candidateCoords;',
+      )
+  }
   transpiled = lowerUnsignedJavaScript(transpiled, originalSource)
   // ANGLE's optimized scatter hash straddles a nearest-sampling boundary in
   // the canonical default. Its original scalar lowering matches that backend;

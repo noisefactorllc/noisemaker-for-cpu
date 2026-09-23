@@ -3,7 +3,7 @@ import test from 'node:test'
 
 import { EffectDefinition } from '../src/effects/definition.js'
 import { EffectRegistry } from '../src/effects/registry.js'
-import { createDefaultRegistry, kernelFactories } from '../src/effects/catalog.js'
+import { createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 
 function volumeSeedFactory($bindings, runtime) {
@@ -341,3 +341,27 @@ test('iterated volume generators inherit the incoming atlas size before state al
 
   assert.ok(Math.abs(result.surface.data[0] - 0.4) < 0.002, `iterated volumeSize: ${result.surface.data[0]}`)
 })
+
+test('renderLandscape3d renders both voxel and isosurface filtering modes across empty and solid rays', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const voxelResult = renderer.render(`
+    search synth3d, render
+    noise3d(volumeSize: 4)
+      .renderLandscape3d(volumeSize: 4, filtering: 1)
+      .write(o0)
+    render(o0)
+  `, { width: 8, height: 8 })
+  assert.ok(voxelResult.surface.data.every((v) => Number.isFinite(v)))
+
+  // Using threshold: 0.9 ensures rays step through empty space before/without hitting solid,
+  // exercising the non-solid isosurface raymarch loop and coords updates.
+  const isoResult = renderer.render(`
+    search synth3d, render
+    noise3d(volumeSize: 4)
+      .renderLandscape3d(volumeSize: 4, filtering: 0, threshold: 0.9)
+      .write(o0)
+    render(o0)
+  `, { width: 8, height: 8 })
+  assert.ok(isoResult.surface.data.every((v) => Number.isFinite(v)))
+})
+

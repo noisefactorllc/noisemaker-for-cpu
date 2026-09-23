@@ -71,6 +71,16 @@ test('canonical aliases, member enums, strings, booleans, and hex colors normali
 
   const lighting = catalog.get('filter/lighting').normalizeArguments([])
   assert.deepEqual(lighting.heightMap, { kind: 'input' })
+
+  const landscape = catalog.get('render/renderLandscape3d')
+  assert.equal(landscape.params.filtering.type, 'int')
+  assert.equal(landscape.params.filtering.default, 1)
+  assert.equal(landscape.params.filtering.define, 'FILTERING')
+  assert.deepEqual(landscape.params.filtering.choices, { isosurface: 0, voxel: 1 })
+  const landscapeDefault = landscape.normalizeArguments([])
+  assert.equal(landscapeDefault.filtering, 1)
+  const landscapeIso = landscape.normalizeArguments([{ name: 'filtering', value: 'filtering.isosurface' }])
+  assert.equal(landscapeIso.filtering, 0)
 })
 
 test('input-free classic programs are generators, including fractal', () => {
