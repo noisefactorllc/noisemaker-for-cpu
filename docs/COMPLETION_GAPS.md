@@ -28,6 +28,13 @@ Publication scope contains this document and one README link.
 Both existing workflows exclude these paths. This publication triggers no kit release, downstream dispatch, package publication, tag, or deployment.
 The publication commit and remote file hashes belong to the shared audit result.
 
+Review date: 2026-09-23. Current source: `16c38245c42030c8ee46dc61108791d2fea4bda9`.
+Current kit `0.1.24` records that source. The current kernel pin is `44bc4ed4ac729bddaa95b083d64bee942ade35da`.
+Earlier measurements retain their original source and date. The current schema contains 460 choices, compared with 458 during the audit.
+
+Live upstream at review: `532ed64775000635e43caac085e4451c06e71afc`. Published runtime: `1.0.169` at `44bc4ed4ac729bddaa95b083d64bee942ade35da`.
+The review does not qualify every upstream change after the recorded port authority.
+
 ## 2. Completion claims
 
 | ID | Source | Scope | Finding | Evidence |
@@ -35,7 +42,7 @@ The publication commit and remote file hashes belong to the shared audit result.
 | C-001 | README, Collection parity | 205 effects. 301 programs. 458 compile-time choices execute | supported | 272 unit tests pass. Catalog tests exercise 458 individual choices at 2×2. This proves bounded execution, not pixel equivalence. |
 | C-002 | README, Collection parity | 166/167 pass. 117 frames are byte-exact | contradicted | Current gate reports 163/164, with 114 byte-exact frames and 41 skips. Three retired effects explain the smaller catalog. |
 | C-003 | README, introductory parity statement | Pixel-level parity | partial | CRT fails the unchanged tolerance. Skipped effects and broader parameter combinations lack qualifying pixel evidence. |
-| C-004 | README, canonical schemas | Canonical parameters and choices | partial | The recorded pin is explicit. Current upstream adds landscape `filtering`, which the port rejects. |
+| C-004 | README, canonical schemas | Canonical parameters and choices | partial | The audit rejected landscape filtering. Current source accepts both choices and produces finite frames. Independent authority pixel comparison remains unavailable. |
 | C-005 | README, Quick start and Browser API | Human usability through CLI and browser | partial | Installed CLI renders PNGs. Browser renders, resizes, reports invalid DSL, recovers, and executes with keyboard input. Accessible names remain incomplete. |
 | C-006 | package.json and README | Ecosystem fit for dependency-free JavaScript | partial | Isolated tarball installation and ESM imports work. The public npm name returns E404. The README does not describe installation. |
 | C-007 | Export kit template | Offline useful output and complete engine delivery | supported | All 93 published files match hashes. Rebuild reproduces all 93 files. Published CLI produces a 64×64 PNG. |
@@ -114,6 +121,33 @@ Native plugin signing, notarization, and ABI checks do not apply to this source-
 Browser accessibility does apply because the repository supplies an interactive demo.
 A public npm release was unavailable. The packed candidate does not substitute for testing a published npm release.
 
+### Daily review evidence, 2026-09-23
+
+Review evidence resides in `review-20260923-01/noisemaker-for-cpu` in the shared store.
+The reviewer checked worker parity, package, media, browser observations, source differences, and release logs.
+The worker's screenshots remain task-local. The reviewer did not independently inspect them.
+
+`npm run parity -- --json` still exits 1: 163/164 pass, 114 byte-exact, and 41 skips.
+The independent public-renderer probe reproduces CRT's maximum difference of 80 and 89/256 channels above tolerance.
+Both landscape choices compile and produce finite 8×8 frames. This is execution evidence, not GPU parity.
+The schema now contains 460 named define choices. `probe.json` records the extracted count and render results.
+The original 458-choice execution result does not establish coverage for the two added choices.
+
+The current parity report labels `sourceRevision` with the new kernel pin, `44bc4ed4`.
+No retained golden changed between the worker source and current source.
+That report field does not identify the reference-image capture revision. GAP-008 records this evidence boundary.
+
+Kit `0.1.24` contains 93 files. Its three changed files pass fresh inventory hash and length checks.
+The other 90 inventory hashes match the previous kit. A fresh compatibility-file download also matches.
+[Current source CI](https://github.com/noisefactorllc/noisemaker-for-cpu/actions/runs/35809319614) passed.
+[Downstream CI](https://github.com/noisefactorllc/scaffold/actions/runs/35809326430) passed 84 tests and skipped one test.
+The staged CPU PNG render ran without a skip. The workflow excluded other-kit suites.
+Neither result closes the retained CRT failure or proves the new modes' rendered parity.
+
+The reviewer reconfirmed npm CLI 11 package rules and Node.js 22/24 LTS status from the official references above.
+The review did not repeat browser interaction, package lifecycle, Windows/Linux API checks, or saved-program upgrades for current source.
+Their qualification remains bounded by the worker's recorded source and environment.
+
 ## 4. Known gaps
 
 P1 means false completion or a major correctness gap. P2 means coverage or integration gaps. P3 means documentation inconsistency.
@@ -144,17 +178,19 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Required checks: Public CLI and ESM entry points, sync/async equality, and unchanged existing parity fixtures.
 - Remaining coverage: Multi-frame state, long renders, cancellation, and wider parameter combinations require separate qualification.
 
-### GAP-003: Current landscape authority differs
+### GAP-003: Updated landscape modes lack authority pixel evidence
 
 - Status: open. Priority: P2. Category: authority.
 - Affected scope: `render/renderLandscape3d`, compiler schemas, and generated kernels.
 - Expected behavior: Completion claims identify whether they target the recorded pin or current upstream.
-- Observed behavior: Current upstream adds `filtering` choices `isosurface` and `voxel`. The port rejects that parameter.
+- Historical behavior: the audited source rejected `filtering` choices `isosurface` and `voxel`.
+- Current behavior: source `16c38245` accepts both choices and renders finite frames under pin `44bc4ed4`.
+- Remaining uncertainty: landscape remains one of the parity gate's 41 skips. No authority pixel comparison qualifies these modes.
 - Evidence: `landscape-current.js`, `authority-diff.json`, and `probe.json`.
-- Next action: Record the parameter and shader delta as deferred work at the current checkpoint.
-- Dependencies: A separate scope decision must authorize any authority migration or new mode implementation.
-- Acceptance criteria: Until migration, compatibility statements identify the pin and reject unsupported current modes explicitly.
-- Required checks: Exact-source schema comparison and public compiler rejection. Future migration requires rendered evidence for each mode.
+- Next action: compare both existing modes against authority `44bc4ed4` at specified size, seed, time, and projection.
+- Dependencies: retain the completed source update. Establish reference provenance under GAP-008 before accepting new rendered parity.
+- Acceptance criteria: default, voxel, and isosurface frames satisfy a declared unchanged comparison gate. Record orthographic and perspective results separately.
+- Required checks: `node --test test/volume-effects.test.js`, public rendering, and independent authority comparisons. Finite-pixel checks alone cannot close this gap.
 
 ### GAP-004: Parity summary is stale
 
@@ -207,11 +243,26 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Acceptance criteria: Each slider and editor exposes a distinct, accurate name. Keyboard changes remain functional.
 - Required checks: Accessibility tree inspection, keyboard execution, invalid-input recovery, and a screen-reader pass.
 
+### GAP-008: Parity reports do not identify golden provenance separately
+
+- Status: open. Priority: P2. Category: verification.
+- Affected scope: `scripts/parity/run.js`, retained reference images, and source-bound parity claims.
+- Expected behavior: reports identify candidate source, kernel authority, and reference-image provenance separately.
+- Observed behavior: `sourceRevision` follows the generated kernel pin. It changed to `44bc4ed4` while all retained golden files remained unchanged.
+- Evidence: `parity.log`, source comparison, and `scripts/parity/run.js:138` in the reviewed source.
+- Next action: map each retained golden hash to its existing capture record and authority before changing report fields.
+- Dependencies: preserve the reference images and tolerances. Implementation owns any report-format correction.
+- Acceptance criteria: each comparison has an explicit reference revision or a visible unknown-provenance marker. Kernel updates cannot relabel reference captures.
+- Required checks: compare `git diff` for `parity/goldens` across the two source SHAs. Check recorded hashes against capture evidence.
+- Last verification: 2026-09-23. The review found no reference-image changes and did not regenerate goldens.
+
 ## 5. Ordered next actions
 
 1. Preserve this source checkpoint and all raw evidence. Review GAP-001 before any broad completion statement.
-2. Diagnose CRT under the existing fixture. Scope affected files to the CRT adapter and its required regression checks.
-3. Define external-input acceptance under GAP-002. Keep new authority modes deferred under GAP-003.
+2. Diagnose `src/effects/adapters/crt.js` under the retained fixture. Run `npm run parity -- --only filter/crt --json`.
+   Require zero channels above the existing tolerance of 2. Then require all 164 comparisons to pass without changing the 41 skips.
+3. Establish golden provenance under GAP-008. Then qualify the existing landscape modes under GAP-003 and external inputs under GAP-002.
+   Record candidate and authority hashes, dimensions, seed, time, input bytes, and comparison metrics for each bounded case.
 4. Correct stale summaries under GAP-004 through separately scoped documentation work. Preserve historical measurements.
 5. Define existing-system release checks under GAP-005. Do not bypass the red parity result.
 6. Qualify the documented artifact under GAP-006. Check package metadata, required documents, installation, removal, upgrades, and supported platforms.
@@ -224,3 +275,4 @@ These actions describe required follow-up evidence. They do not authorize implem
 | Date | Source SHA | Changes | Tested scope | Remaining limits |
 | --- | --- | --- | --- | --- |
 | 2026-09-23 | `36fbfac07be5a9a10b7a991209b566be3f54fe6e` | Created this register and added its README link. No implementation changes | 272 unit tests. 164 parity comparisons. 41 skips. Independent CRT probe. CLI/ESM and browser checks. 93 kit hashes. Build reproduction. Exact-source CI | Seven open gaps. No release approval or parity-checkpoint advancement |
+| 2026-09-23 | `16c38245c42030c8ee46dc61108791d2fea4bda9` | Corrected stale landscape rejection and choice count. Added GAP-008 and executable CRT acceptance. | Repeated full parity and independent CRT comparison. Probed both landscape modes. Checked worker evidence, changed kit files, and exact-source CI. | Eight gaps remain. No closures. Current host, broad pixel, and platform qualification remains incomplete. |
