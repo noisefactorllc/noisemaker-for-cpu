@@ -141,6 +141,8 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 ## Collection parity
 
+See [the current completion gap register](docs/COMPLETION_GAPS.md) for audited evidence and remaining limits.
+
 The catalog is the exact eligible collection from Noisemaker revision `643b2be1e28b62e3282a4009c2ea65c583ed6ccc`:
 
 - 205 effects: 20 `classicNoisedeck`, 113 `filter`, 2 `filter3d`, 15 `mixer`, 11 `points`, 10 `render`, 26 `synth`, and 8 `synth3d`
