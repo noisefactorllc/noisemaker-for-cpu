@@ -116,3 +116,64 @@ test('SinkManager close is terminal, closes every sink once, and reports the fir
   assert.deepEqual(closes, ['first', 'second'])
   assert.throws(() => manager.add({ configure() {}, submit() {}, close() {} }), /closed/)
 })
+
+test('SinkManager shouldDeferRender reports sink deferral, handles exceptions, and honors unregister', () => {
+  const reported = []
+  const manager = new api.SinkManager({
+    onError(error, sink) {
+      reported.push([error.message, sink])
+    },
+  })
+
+  let defer = false
+  const deferringSink = {
+    configure() {},
+    submit() { return true },
+    close() {},
+    deferRender() { return defer },
+  }
+  const regularSink = {
+    configure() {},
+    submit() { return true },
+    close() {},
+  }
+  const throwingSink = {
+    configure() {},
+    submit() { return true },
+    close() {},
+    deferRender() { throw new Error('defer failed') },
+  }
+
+  assert.equal(manager.shouldDeferRender(), false)
+  manager.add(regularSink)
+  assert.equal(manager.shouldDeferRender(), false)
+
+  const unregister = manager.add(deferringSink)
+  assert.equal(manager.shouldDeferRender(), false)
+
+  // Non-boolean truthy values must not trigger deferral (strict boolean true required)
+  defer = 1
+  assert.equal(manager.shouldDeferRender(), false)
+  defer = 'yes'
+  assert.equal(manager.shouldDeferRender(), false)
+
+  defer = true
+  assert.equal(manager.shouldDeferRender(), true)
+
+  defer = false
+  manager.add(throwingSink)
+  // Throwing sink does not cause shouldDeferRender to throw or defer; reported via onError
+  assert.equal(manager.shouldDeferRender(), false)
+  assert.equal(reported.length > 0, true)
+  assert.equal(manager.stats.get(throwingSink).failed > 0, true)
+
+  defer = true
+  assert.equal(manager.shouldDeferRender(), true)
+
+  unregister()
+  assert.equal(manager.shouldDeferRender(), false)
+
+  manager.close()
+  assert.equal(manager.shouldDeferRender(), false)
+})
+

@@ -86,9 +86,9 @@ export const programCoverage = Object.freeze([
     "program": "glitch",
     "file": "glitch.glsl",
     "status": "generated",
-    "sourceBytes": 7894,
-    "normalizedBytes": 8025,
-    "generatedBytes": 11038
+    "sourceBytes": 8195,
+    "normalizedBytes": 8326,
+    "generatedBytes": 11128
   },
   {
     "effectId": "classicNoisedeck/kaleido",
@@ -122,9 +122,9 @@ export const programCoverage = Object.freeze([
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
-    "sourceBytes": 31258,
-    "normalizedBytes": 32178,
-    "generatedBytes": 30817
+    "sourceBytes": 31461,
+    "normalizedBytes": 32381,
+    "generatedBytes": 30877
   },
   {
     "effectId": "classicNoisedeck/noise3d",

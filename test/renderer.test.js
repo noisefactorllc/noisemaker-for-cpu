@@ -162,3 +162,23 @@ test('CpuRenderer disposal closes sinks once while preserving existing render di
   assert.equal(closes, 1)
   assert.throws(() => renderer.addSink({ configure() {}, submit() { return true }, close() {} }), /closed/)
 })
+
+test('CpuRenderer delegates shouldDeferRender to its sinkManager', () => {
+  const renderer = fixture()
+  assert.equal(typeof renderer.shouldDeferRender, 'function')
+  assert.equal(renderer.shouldDeferRender(), false)
+
+  let defer = false
+  const remove = renderer.addSink({
+    configure() {},
+    submit() { return true },
+    close() {},
+    deferRender() { return defer },
+  })
+
+  assert.equal(renderer.shouldDeferRender(), false)
+  defer = true
+  assert.equal(renderer.shouldDeferRender(), true)
+  remove()
+  assert.equal(renderer.shouldDeferRender(), false)
+})

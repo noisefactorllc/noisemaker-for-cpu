@@ -235,6 +235,10 @@ export class CpuRenderer {
     return this.sinkManager.add(sink)
   }
 
+  shouldDeferRender() {
+    return this.sinkManager.shouldDeferRender()
+  }
+
   createFrameExportQueue(options = {}) {
     return new FrameExportQueue(new CpuFrameExportAdapter(), options)
   }

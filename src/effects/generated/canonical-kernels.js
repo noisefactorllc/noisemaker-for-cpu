@@ -3307,6 +3307,7 @@ function canonicalFactory8($bindings, $runtime) {
   };
   function glitch (st) {
   	st = $runtime.copy(st);
+  	if (glitchiness != 0) {
   	var freq = new $runtime.PooledFloat32Array([1, 1]);
   	freq[0] *= map(xChonk, 1, 100, 50, 1);
   	freq[1] *= map(yChonk, 1, 100, 50, 1);
@@ -3321,6 +3322,7 @@ function canonicalFactory8($bindings, $runtime) {
   	var refract = g * 0.125;
   	st[0] = mod(st[0] + (sin(xOffset * 6.2831854820251465)) * refract, 1);
   	st[1] = mod(st[1] + (sin(yOffset * 6.2831854820251465)) * refract, 1);
+  	};
   	var diff = new $runtime.PooledFloat32Array([0.5 - st[0], 0.5 - st[1]]);
   	if (aspectLens) {
   	(diff[0] = (0.5 * fullResolution[0]) / fullResolution[1] - (st[0] * fullResolution[0]) / fullResolution[1], diff[1] = 0.5 - st[1], diff);
@@ -3353,8 +3355,12 @@ function canonicalFactory8($bindings, $runtime) {
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	var blendy = periodicFunction(time - offsets(uv));
   	glitch(uv).reduce((res,el,i)=>(res[i] = el, res), color);
+  	if (scanlinesAmt != 0) {
   	scanlines(color, uv).reduce((res,el,i)=>(res[i] = el, res), color);
+  	};
+  	if (snowAmt != 0) {
   	snow(color, uv).reduce((res,el,i)=>(res[i] = el, res), color);
+  	};
   	if (vignetteAmt < 0) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0] - pow((length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * 1.125, 2), color[1] - pow((length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * 1.125, 2), color[2] - pow((length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * 1.125, 2)]), new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), map(vignetteAmt, -100, 0, 0, 1)));
   	color[3] = max(color[3], (length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * (map(vignetteAmt, -100, 0, 1, 0)));
@@ -5621,6 +5627,7 @@ function canonicalFactory12($bindings, $runtime) {
   	var nominalBase = (nominalFreq[0] * 0.5) * multiplier;
   	multiplicand += 1 / multiplier;
   	if ((REFRACT_MODE == 1) || (REFRACT_MODE == 2)) {
+  	if (refractAmt != 0) {
   	var xRefractFreq = new $runtime.PooledFloat32Array([baseFreq[0], nominalBase]);
   	var yRefractFreq = new $runtime.PooledFloat32Array([nominalBase, baseFreq[1]]);
   	var xRef = value(st, xRefractFreq, s + 10 * (i), blend) - 0.5;
@@ -5629,12 +5636,15 @@ function canonicalFactory12($bindings, $runtime) {
   	var cpu_vector_assignment_0 = new $runtime.PooledFloat32Array([st[0] + xRef * ref, st[1] + yRef * ref]);
   	(st[0] = cpu_vector_assignment_0[0], st[1] = cpu_vector_assignment_0[1], st);
   	};
+  	};
   	var layer = generate_octave(st, baseFreq, s + 10 * (i), blend, (i));
   	if ((REFRACT_MODE == 0) || (REFRACT_MODE == 2)) {
+  	if (refractAmt != 0) {
   	var xOff = cos(layer[2]) * 0.5 + 0.5;
   	var yOff = sin(layer[2]) * 0.5 + 0.5;
   	var ref = generate_octave(new $runtime.PooledFloat32Array([st[0] + xOff, st[1] + yOff]), baseFreq, s + 15 * (i), blend, (i));
   	mix(layer, ref, map(refractAmt, 0, 100, 0, 1)).reduce((res,el,i)=>(res[i] = el, res), layer);
+  	};
   	};
   	color = new $runtime.PooledFloat32Array([color[0] + layer[0] / multiplier, color[1] + layer[1] / multiplier, color[2] + layer[2] / multiplier]);
   	};
