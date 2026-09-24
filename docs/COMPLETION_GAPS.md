@@ -1,5 +1,7 @@
 # noisemaker-for-cpu: completion gaps
 
+Current compatibility matrix: [compatibility report](COMPATIBILITY.md).
+
 ## 1. Scope and source revisions
 
 Audit date: 2026-09-23 UTC. Run ID: `20260923-cpu-04`.
