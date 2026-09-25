@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import GLSL from 'glsl-transpiler'
+import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, extname, resolve } from 'node:path'
@@ -649,6 +650,13 @@ for (const record of effectRecords) {
       program,
       file,
       status,
+      // sha256 of the exact canonical source bytes this kernel was built from,
+      // recorded so tests can tie the committed kernels to the pinned tree's
+      // GLSL via scripts/upstream/pinned-source-manifest.json: if upstream GLSL
+      // changes and the kernels are not regenerated, these hashes stop
+      // matching the manifest and the suite fails instead of silently shipping
+      // stale kernels.
+      sourceSha256: createHash('sha256').update(source).digest('hex'),
       sourceBytes: Buffer.byteLength(source),
       normalizedBytes: Buffer.byteLength(normalized.source),
       generatedBytes,
