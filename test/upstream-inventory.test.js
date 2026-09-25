@@ -260,7 +260,7 @@ const EXCLUDED = [
 ].sort()
 
 test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
-  assert.equal(UPSTREAM_REVISION, '240740dd2d30cbd0984b179834ab24abe71c8fb2')
+  assert.equal(UPSTREAM_REVISION, '2f47612c29045c1b91af94887a8ff20106e980ef')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
