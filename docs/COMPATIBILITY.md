@@ -2,6 +2,14 @@
 
 ## 1. Source and authority revisions
 
+Daily review: 2026-09-25. Current inspected source: [`6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`](https://github.com/noisefactorllc/noisemaker-for-cpu/commit/6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85).
+Full rendered parity remains **unverified** (the current bounded gate also has failures). No release approval or new closure follows from this review.
+Current upstream discovery: `bbdeb56c4b75cf33379766c3e87b0f5a18bcbba8`. Published Noisemaker authority: `1.0.179`, source `fca611fd8f91424661d4e531d39313d24ea21134`, 210 effect IDs.
+The observations below retain their original source and authority identities; they do not qualify later updates.
+Current served kit: `0.1.28`, source `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`. [Retrieved inventory and hashes](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/current-served-inventories.json). Artifact identity does not establish host qualification.
+
+### Earlier source observations
+
 Report date: 2026-09-24. Source inspected: [`f2eb495d70abcb74e3632e7a652a4f83e4f3b11e`](https://github.com/noisefactorllc/noisemaker-for-cpu/commit/f2eb495d70abcb74e3632e7a652a4f83e4f3b11e).
 Full rendered parity at this SHA: **unverified**. This is not a release approval.
 A later documentation-only commit does not change this tested source identity.
@@ -21,6 +29,9 @@ Historical measurements remain bound to their original revisions in [completion 
 
 ## 2. Host and distribution matrix
 
+Current tests and qualification limits are in [section 3](#3-parity-coverage).
+The matrix below retains the earlier measured scope. A historical verified row is not a current-source or full-platform certification.
+
 | Dimension | Status | Measured scope or limit |
 |---|---|---|
 | Source-level checks | unverified | Historical image sweep: 163 of 164 passed, 41 skipped, and CRT failed. Current-source full parity was not rerun. |
@@ -36,6 +47,14 @@ Historical measurements remain bound to their original revisions in [completion 
 
 ## 3. Parity coverage
 
+### Daily review, 2026-09-25
+
+The existing full CPU gate exits 1: 164 cases executed, 114 byte-exact, 163 accepted at tolerance 2, and 41 skipped. filter/crt has maximum error 80 and mean error 5.05859375. The gate identifies authority 4891b9953f9fd8a61cf9ae0dda2fe747a9be82df. Five of the 210 current effect IDs are outside its 205-effect inventory. Full parity fails. [Raw evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json).
+
+The current full case denominator remains incomplete. Missing parameters, hosts, external inputs, and stateful sequences remain qualification gaps. No skip or tolerated difference counts as exact parity.
+
+### Earlier measurements
+
 Full parity requires complete applicable coverage with no skips or missing cases.
 Historical NEAR, CHAOS, and tolerated differences do not count as strict equality.
 The existing numerical contracts remain separate from exact comparison. This report does not change tolerances or goldens.
@@ -45,9 +64,11 @@ Unknown values mean `not measured`, never zero.
 |---|---|---|---|---|---|---|
 | Current full render suite | not measured | not measured | not measured | not measured | not measured | unverified |
 
-Served compatibility inventory declares 205 effect IDs. Declaration does not establish execution or parity.
+Earlier served compatibility inventory declares 205 effect IDs. Declaration does not establish execution or parity.
 IDs absent from the served declaration: `render/meshLoader`, `render/meshRender`, `synth/roll`, `synth/scope`, `synth/spectrum`.
 Missing effects remain visible toward the full-parity goal. Contract exclusions do not become successful tests.
+
+Current served declaration: 205 effect IDs. This inventory is not evidence of execution. The declaration column below reflects kit `0.1.28`.
 
 ### Effect inventory
 
@@ -266,6 +287,8 @@ Missing effects remain visible toward the full-parity goal. Contract exclusions 
 
 ## 4. Evidence
 
+Review CI boundary: Exact-source runs: Export kit, Downstream. A passing export dispatch does not qualify rendered parity. Current complete-render enforcement remains an open verification requirement. [Exact-source responses and workflows](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/noisemaker-for-cpu-remote-evidence.json).
+
 [Earlier audit and review evidence](COMPLETION_GAPS.md#3-methods-and-evidence). [Exact-source Actions](https://github.com/noisefactorllc/noisemaker-for-cpu/actions?query=head_sha%3Af2eb495d70abcb74e3632e7a652a4f83e4f3b11e).
 [This run evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/evidence-20260924-remaining-gap-documents) retains commands, exit codes, source identities, and distribution metadata.
 Official host references and historical environment limits remain in the linked gap register.
@@ -273,6 +296,9 @@ Source CI, export dispatch, artifact delivery, and rendered parity are separate 
 A successful dispatch or unit-test summary does not establish a full rendered gate.
 
 ## 5. Open compatibility limits
+
+Next bounded check: Reproduce filter/crt with node scripts/parity/run.js --json before implementation. After repair, rerun the same gate with unchanged tolerances and authority inputs. Account separately for all 41 skips and the five missing effects; do not close full parity until every required case executes and matches.
+See the stable entries in [completion gaps](COMPLETION_GAPS.md).
 
 See [GAP-002 and the complete gap register](COMPLETION_GAPS.md#4-known-gaps) for evidence, dependencies, and acceptance criteria.
 
@@ -285,6 +311,8 @@ All eligible ports have equal priority. Full parity and zero skipped cases remai
 Implementation corrections remain with the separate job. This report does not advance the parity checkpoint.
 
 ## 6. History
+
+2026-09-25 daily review at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed; open qualification limits retained. [Retained review evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json). No new closure claimed.
 
 | Date | Source | Result | Change |
 |---|---|---|---|
