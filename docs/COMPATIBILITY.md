@@ -5,7 +5,7 @@
 Daily review: 2026-09-25. Current inspected source: [`6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`](https://github.com/noisefactorllc/noisemaker-for-cpu/commit/6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85).
 Full rendered parity remains **unverified** (the current bounded gate also has failures). No release approval or new closure follows from this review.
 Current upstream discovery: `bbdeb56c4b75cf33379766c3e87b0f5a18bcbba8`. Published Noisemaker authority: `1.0.179`, source `fca611fd8f91424661d4e531d39313d24ea21134`, 210 effect IDs.
-The observations below retain their original source and authority identities; they do not qualify later updates.
+The observations below retain their original source and authority identities. They do not qualify later updates.
 Current served kit: `0.1.28`, source `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`. [Retrieved inventory and hashes](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/current-served-inventories.json). Artifact identity does not establish host qualification.
 
 ### Earlier source observations
@@ -297,7 +297,7 @@ A successful dispatch or unit-test summary does not establish a full rendered ga
 
 ## 5. Open compatibility limits
 
-Next bounded check: Reproduce filter/crt with node scripts/parity/run.js --json before implementation. After repair, rerun the same gate with unchanged tolerances and authority inputs. Account separately for all 41 skips and the five missing effects; do not close full parity until every required case executes and matches.
+Next bounded check: Reproduce filter/crt with node scripts/parity/run.js --json before implementation. After repair, rerun the same gate with unchanged tolerances and authority inputs. Account separately for all 41 skips and the five missing effects. Do not close full parity until every required case executes and matches.
 See the stable entries in [completion gaps](COMPLETION_GAPS.md).
 
 See [GAP-002 and the complete gap register](COMPLETION_GAPS.md#4-known-gaps) for evidence, dependencies, and acceptance criteria.
@@ -312,7 +312,7 @@ Implementation corrections remain with the separate job. This report does not ad
 
 ## 6. History
 
-2026-09-25 daily review at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed; open qualification limits retained. [Retained review evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json). No new closure claimed.
+2026-09-25 daily review at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. [Retained review evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json). No new closure claimed.
 
 | Date | Source | Result | Change |
 |---|---|---|---|
