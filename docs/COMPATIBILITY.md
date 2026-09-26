@@ -9,6 +9,11 @@ Current upstream main: `95743621696483b91968992ef6ee0d87b2089fa8`. Published Noi
 The published effect manifest is byte-identical across `1.0.179` through `1.0.184`. Its SHA-256 is `05c4d7b7744837ae90a3bb4c89e5403ff09448a74d9d7e824abb3d719ad3314e`, with 210 effect IDs.
 Two runtime `shaders/` commits separate the pin from the published source. Their parity is unqualified.
 Current served kit: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. [Retrieved metadata](https://kits.noisedeck.app/cpu/0/deployment-meta.json). That tree differs from the audited source only in the gap register.
+
+### Source-lock sync, 2026-09-26 (commit `a1801be`)
+
+The port's source lock now pins upstream `6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa` (through current upstream `main`, proven a descendant of the prior pin `8eeb7b5a` and of range start `fca611fd`). The 205-effect catalog is byte-identical to the prior pin. The range's three runtime `shaders/` commits (texture-pooling consumption `6113da00`, viewport-without-clear pooling safety `95743621`, backend diagnostic union `f83a427e`) target the GPU pipeline and WebGL2/WebGPU backends; the CPU renderer keeps one surface per virtual texture and has no GPU backends, so no CPU behavioral change applies. Executed at `a1801be` with a reference checkout at `6a0af04d`: `npm test` 278 pass / 0 fail / 1 skip; `npm run parity -- --json` exit 1 as recorded under GAP-001: 163/164 within ±2, 114 byte-exact, 41 skipped, `filter/crt` max error 80 — unchanged, no gap closure. Rendered parity remains unqualified under GAP-002/GAP-008.
+
 The observations below retain their original source and authority identities. They do not qualify later updates.
 
 ### Earlier source observations
