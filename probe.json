@@ -1,0 +1,17 @@
+{
+  "id": "filter/crt",
+  "fixture": "parity/upstream-defaults/filter__crt.dsl",
+  "golden": "parity/goldens/defaults/filter__crt.golden.png",
+  "goldenSha256": "cf8d9b2aa9af44736a6223edec4d5c101f521ab321e7e632eef661be9b8f461c",
+  "size": 8,
+  "time": 0.25,
+  "seed": 1,
+  "tolerance": 2,
+  "method": "compareRgba8 of CpuRenderer output against the retained golden PNG",
+  "exact": false,
+  "pass": false,
+  "maxError": 80,
+  "meanError": 5.05859375,
+  "differingChannels": 139,
+  "channelsOverTolerance": 89
+}

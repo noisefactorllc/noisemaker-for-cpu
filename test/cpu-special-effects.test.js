@@ -1,8 +1,19 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { canonicalAdapterFactories, createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
+import { canonicalAdapterFactories, canonicalKernelFactories, createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
+import { readPng } from '../src/node/png.js'
+import { compareRgba8 } from '../scripts/parity/lib.js'
+
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+async function readGoldenCrt() {
+  const goldenPath = resolve(dirname(fileURLToPath(import.meta.url)), '../parity/goldens/defaults/filter__crt.golden.png')
+  const golden = await readPng(goldenPath)
+  return golden.data
+}
 
 function renderer() {
   return new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories, tileRows: 8 })
@@ -22,6 +33,49 @@ test('snow uses its float32 semantic adapter for GPU operation boundaries', () =
 
 test('CRT uses its reduced-turn sine adapter for Metal fast-math range reduction', () => {
   assert.equal(kernelFactories.get('filter/crt:crt'), canonicalAdapterFactories['filter/crt:crt'])
+})
+
+test('turn-based cosine reduction worsens the CRT fixture parity metrics', async () => {
+  // Characterization evidence for docs/CRT-PARITY.md: wrapping stdlib cos (as reverted commit
+  // 8debec5 did) changes output bytes at this fixture and moves every compareRgba8 metric away
+  // from the retained golden, which is why the wrap was reverted. If a future kernel edit
+  // changes either side of this comparison, the wrap's effect must be re-measured.
+  const F32 = Math.fround
+  const TAU = F32(6.283185307179586)
+  const INV_TAU = F32(1 / 6.283185307179586)
+  const metalCosine = (value) => {
+    const turns = F32(value * INV_TAU)
+    const phase = turns - Math.floor(turns)
+    return F32(Math.cos(phase * TAU))
+  }
+  const cosWrappedFactory = ($bindings, $runtime) => {
+    const runtime = Object.create($runtime)
+    const cos = (value) => {
+      if (!ArrayBuffer.isView(value) && !Array.isArray(value)) return metalCosine(value)
+      const out = $runtime.alloc(value.length)
+      for (let index = 0; index < value.length; index += 1) out[index] = metalCosine(value[index])
+      return out
+    }
+    runtime.stdlib = Object.freeze({ ...$runtime.stdlib, cos })
+    return canonicalKernelFactories['filter/crt:crt']($bindings, runtime)
+  }
+  const wrapped = new Map(kernelFactories)
+  wrapped.set('filter/crt:crt', cosWrappedFactory)
+  const source = 'search synth, filter\nnoise(seed: 1, ridges: true).crt(seed: 1).write(o0)\nrender(o0)'
+  const options = { width: 8, height: 8, time: 0.25, seed: 1, oneShot: 'initial' }
+  const plain = renderer().render(source, options)
+  const wrappedRender = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories: wrapped, tileRows: 8 }).render(source, options)
+  assert.notDeepEqual([...wrappedRender.toRgba8()], [...plain.toRgba8()])
+  const goldenData = await readGoldenCrt()
+  const plainMetrics = compareRgba8(plain.toRgba8(), goldenData, 2)
+  const wrappedMetrics = compareRgba8(wrappedRender.toRgba8(), goldenData, 2)
+  // Measured 2026-09-26: the wrap moves every metric away from the golden.
+  assert.equal(plainMetrics.channelsOverTolerance, 89)
+  assert.equal(plainMetrics.maxError, 80)
+  assert.equal(plainMetrics.meanError, 5.05859375)
+  assert.equal(wrappedMetrics.channelsOverTolerance, 94)
+  assert.equal(wrappedMetrics.maxError, 105)
+  assert.equal(wrappedMetrics.meanError, 5.86328125)
 })
 
 test('bitEffects uses its scalar bit-mask adapter and matches the canonical first pixel', () => {
