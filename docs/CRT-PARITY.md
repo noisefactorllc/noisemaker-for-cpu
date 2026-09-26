@@ -59,7 +59,7 @@ Further localization (2026-09-26) narrowed the divergence to the `fract(sin(x) *
 ## Constraints on any fix
 
 - The ±2-byte tolerance and the 8×8/time/seed fixture parameters do not change for this effect. Widening tolerance, shrinking the comparison, or marking CRT expected-fail would convert an honest red gate into a silent quality regression. Parity claims are enforced, not inferred.
-- `npm run parity` must keep every non-CRT compared effect green while CRT is being worked on; a CRT fix that regresses any green effect is not a fix. At the 2026-09-26 catalog (164 compared, 41 skipped) the current non-CRT result is 163/164 with 114 byte-exact; the historical 166/167-with-117-byte-exact figures refer to the earlier, smaller catalog denominator.
+- `npm run parity` must remain 166/167 with 117 byte-exact while CRT is being worked on; a CRT fix that regresses any green effect is not a fix. (Historical figures at the smaller pre-sync catalog; the current post-sync denominator is 164 compared with 41 explicit skips and measures 163/164 with 114 byte-exact — see docs/COMPLETION_GAPS.md C-002.)
 - Visual comparison is not evidence for this effect, in either direction.
 
 ## Paths to green
