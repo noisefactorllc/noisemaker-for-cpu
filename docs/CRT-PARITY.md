@@ -50,6 +50,8 @@ Two amplification stages then convert ULP differences into large byte deltas:
 
 `src/effects/adapters/crt.js` wraps the generated factory (registered in `src/effects/adapters/index.js` as `filter/crt:crt`) and replaces `sin` with `metalSine`, which emulates Metal's turn-based range reduction: reduce `x/τ` to a fractional turn in f32, then take the sine of the reduced phase. This moved the result closer to the golden but is insufficient — the residual divergence indicates fast-math effects beyond sine range reduction (contraction and approximation elsewhere in the simplex/hash chains).
 
+A turn-based cosine wrap (metalCosine, mirroring metalSine) was also tried and measured as a bit-identical no-op on the fixture: with and without the wrap, `node scripts/parity/run.js --suite defaults --only filter__crt` reports the same `FAIL filter/crt max=80 mean=5.0586 channels>2=89`. The only `cos` site in the kernel (`simplex_random`, evaluated at `angle = time * TAU`) is unaffected by Metal's turn-based range reduction at this fixture's magnitudes, so the wrap was reverted. Sine range reduction plus cosine wrapping together do not close the gap; the remaining divergence is consistent with fma contraction and approximation behavior deeper in the simplex/hash chains.
+
 ## Constraints on any fix
 
 - The ±2-byte tolerance and the 8×8/time/seed fixture parameters do not change for this effect. Widening tolerance, shrinking the comparison, or marking CRT expected-fail would convert an honest red gate into a silent quality regression. Parity claims are enforced, not inferred.
