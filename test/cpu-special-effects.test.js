@@ -35,11 +35,15 @@ test('CRT uses its reduced-turn sine adapter for Metal fast-math range reduction
   assert.equal(kernelFactories.get('filter/crt:crt'), canonicalAdapterFactories['filter/crt:crt'])
 })
 
-test('turn-based cosine reduction worsens the CRT fixture parity metrics', async () => {
-  // Characterization evidence for docs/CRT-PARITY.md: wrapping stdlib cos (as reverted commit
-  // 8debec5 did) changes output bytes at this fixture and moves every compareRgba8 metric away
-  // from the retained golden, which is why the wrap was reverted. If a future kernel edit
-  // changes either side of this comparison, the wrap's effect must be re-measured.
+test('turn-based cosine reduction on top of the retained sine adapter still worsens parity', async () => {
+  // Characterization evidence for docs/CRT-PARITY.md. This isolates the cosine variable on
+  // top of the retained adapter configuration (metalSine) rather than the reverted raw
+  // factory: the wrapped factory inherits the adapter's sin override through the runtime
+  // prototype chain (Object.create($runtime) where $runtime already carries metalSine).
+  // Measured 2026-09-26: with metalSine in place, wrapping cos still moves every
+  // compareRgba8 metric away from the retained golden, which is why the wrap was reverted.
+  // If a future kernel edit changes either side of this comparison, the wrap's effect must
+  // be re-measured.
   const F32 = Math.fround
   const TAU = F32(6.283185307179586)
   const INV_TAU = F32(1 / 6.283185307179586)
@@ -48,7 +52,7 @@ test('turn-based cosine reduction worsens the CRT fixture parity metrics', async
     const phase = turns - Math.floor(turns)
     return F32(Math.cos(phase * TAU))
   }
-  const cosWrappedFactory = ($bindings, $runtime) => {
+  const cosWrappedAdapterFactory = ($bindings, $runtime) => {
     const runtime = Object.create($runtime)
     const cos = (value) => {
       if (!ArrayBuffer.isView(value) && !Array.isArray(value)) return metalCosine(value)
@@ -60,7 +64,7 @@ test('turn-based cosine reduction worsens the CRT fixture parity metrics', async
     return canonicalKernelFactories['filter/crt:crt']($bindings, runtime)
   }
   const wrapped = new Map(kernelFactories)
-  wrapped.set('filter/crt:crt', cosWrappedFactory)
+  wrapped.set('filter/crt:crt', cosWrappedAdapterFactory)
   const source = 'search synth, filter\nnoise(seed: 1, ridges: true).crt(seed: 1).write(o0)\nrender(o0)'
   const options = { width: 8, height: 8, time: 0.25, seed: 1, oneShot: 'initial' }
   const plain = renderer().render(source, options)
@@ -69,7 +73,8 @@ test('turn-based cosine reduction worsens the CRT fixture parity metrics', async
   const goldenData = await readGoldenCrt()
   const plainMetrics = compareRgba8(plain.toRgba8(), goldenData, 2)
   const wrappedMetrics = compareRgba8(wrappedRender.toRgba8(), goldenData, 2)
-  // Measured 2026-09-26: the wrap moves every metric away from the golden.
+  // Baseline = the committed adapter (metalSine, no cos wrap). Wrapped adds only the cos
+  // override on top of it, so any metric difference is attributable to the cosine wrap.
   assert.equal(plainMetrics.channelsOverTolerance, 89)
   assert.equal(plainMetrics.maxError, 80)
   assert.equal(plainMetrics.meanError, 5.05859375)
