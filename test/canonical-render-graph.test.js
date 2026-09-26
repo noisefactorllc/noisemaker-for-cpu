@@ -258,6 +258,24 @@ function fixture() {
         { name: 'readBack', program: 'copy', inputs: { srcTex: '_precise' }, outputs: { fragColor: 'outputTex' } },
       ],
     }),
+    // GAP-005: viewport w/h overriding texture dimensions, scale with clamp
+    new EffectDefinition({
+      namespace: 'filter', func: 'viewportScale', kind: 'filter', params: {},
+      textures: {
+        _scaled: { width: 'input', height: 'input', format: 'rgba16f' },
+        outputTex: { width: 'input', height: 'input', format: 'rgba16f' },
+      },
+      passes: [
+        {
+          name: 'writeScaled',
+          program: 'writeResolution',
+          inputs: {},
+          outputs: { fragColor: '_scaled' },
+          viewport: { w: { scale: 0.5, clamp: { min: 8, max: 128 } }, h: { scale: 0.25 } },
+        },
+        { name: 'readBack', program: 'copy', inputs: { srcTex: '_scaled' }, outputs: { fragColor: 'outputTex' } },
+      ],
+    }),
   ]
   return new CpuRenderer({
     registry: new EffectRegistry(definitions),
@@ -277,6 +295,8 @@ function fixture() {
       ['filter/sizedScratch:probe', probeFactory],
       ['filter/highPrecision:writeTiny', writeTinyFactory],
       ['filter/highPrecision:copy', copyFactory],
+      ['filter/viewportScale:writeResolution', writeResolutionFactory],
+      ['filter/viewportScale:copy', copyFactory],
     ]),
     tileRows: 2,
   })
@@ -373,4 +393,18 @@ test('param and screenDivide texture sizes resolve', () => {
 test('rgba32f textures are not quantized', () => {
   const result = fixture().render('search filter\nhighPrecision().write(o0)\nrender(o0)', { width: 1, height: 1 })
   assert.equal(result.surface.data[0], Math.fround(0.00001))
+})
+
+test('viewport w/h and scale dimension specifications resolve correctly', () => {
+  const result = fixture().render('search filter\nviewportScale().write(o0)\nrender(o0)', { width: 64, height: 64 })
+  assert.equal(result.surface.data[0], 32)
+  assert.equal(result.surface.data[1], 16)
+
+  // Test min clamping: width 8 -> 8 * 0.5 = 4, clamped up to min: 8
+  const clampedMin = fixture().render('search filter\nviewportScale().write(o0)\nrender(o0)', { width: 8, height: 8 })
+  assert.equal(clampedMin.surface.data[0], 8)
+
+  // Test max clamping: width 512 -> 512 * 0.5 = 256, clamped down to max: 128
+  const clampedMax = fixture().render('search filter\nviewportScale().write(o0)\nrender(o0)', { width: 512, height: 512 })
+  assert.equal(clampedMax.surface.data[0], 128)
 })
