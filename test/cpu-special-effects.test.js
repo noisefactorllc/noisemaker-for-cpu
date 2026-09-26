@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { canonicalAdapterFactories, canonicalKernelFactories, createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
+import { crtFactory } from '../src/effects/adapters/crt.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { readPng } from '../src/node/png.js'
 import { compareRgba8 } from '../scripts/parity/lib.js'
@@ -35,15 +36,17 @@ test('CRT uses its reduced-turn sine adapter for Metal fast-math range reduction
   assert.equal(kernelFactories.get('filter/crt:crt'), canonicalAdapterFactories['filter/crt:crt'])
 })
 
-test('turn-based cosine reduction on top of the retained sine adapter still worsens parity', async () => {
-  // Characterization evidence for docs/CRT-PARITY.md. This isolates the cosine variable on
-  // top of the retained adapter configuration (metalSine) rather than the reverted raw
-  // factory: the wrapped factory inherits the adapter's sin override through the runtime
-  // prototype chain (Object.create($runtime) where $runtime already carries metalSine).
-  // Measured 2026-09-26: with metalSine in place, wrapping cos still moves every
-  // compareRgba8 metric away from the retained golden, which is why the wrap was reverted.
-  // If a future kernel edit changes either side of this comparison, the wrap's effect must
-  // be re-measured.
+test('cosine-wrap configurations: no-op on metalSine, two-variable delta on plain sin', async () => {
+  // Characterization evidence for docs/CRT-PARITY.md. Three configurations, measured
+  // 2026-09-26:
+  //   plain     — committed adapter (metalSine, no cos wrap): the recorded baseline.
+  //   wrapped   — metalSine + turn-based metalCosine (the reverted 8debec5 configuration,
+  //               rebuilt through crtFactory with a cos-extended stdlib): byte-identical to
+  //               plain, so the cos wrap is a no-op on top of the retained sine adapter.
+  //   rawWrap   — plain runtime sin + metalCosine (no sine adapter): the two-variable
+  //               configuration behind the earlier 94/105/5.86328125 figures; its delta from
+  //               plain confounds the sine and cosine variables and is pinned only to keep
+  //               the measured numbers honest.
   const F32 = Math.fround
   const TAU = F32(6.283185307179586)
   const INV_TAU = F32(1 / 6.283185307179586)
@@ -61,26 +64,34 @@ test('turn-based cosine reduction on top of the retained sine adapter still wors
       return out
     }
     runtime.stdlib = Object.freeze({ ...$runtime.stdlib, cos })
+    // Route through the committed adapter so metalSine stays in effect: crtFactory builds
+    // its stdlib from $runtime.stdlib, so the canonical kernel's cos destructure resolves to
+    // metalCosine while sin resolves to the adapter's metalSine — exactly the 8debec5 config.
+    const composedRuntime = Object.create($runtime)
+    composedRuntime.stdlib = runtime.stdlib
+    return crtFactory($bindings, composedRuntime)
+  }
+  const rawCosAdapterFactory = ($bindings, $runtime) => {
+    const runtime = Object.create($runtime)
+    runtime.stdlib = Object.freeze({ ...$runtime.stdlib, cos: metalCosine })
     return canonicalKernelFactories['filter/crt:crt']($bindings, runtime)
   }
-  const wrapped = new Map(kernelFactories)
-  wrapped.set('filter/crt:crt', cosWrappedAdapterFactory)
   const source = 'search synth, filter\nnoise(seed: 1, ridges: true).crt(seed: 1).write(o0)\nrender(o0)'
   const options = { width: 8, height: 8, time: 0.25, seed: 1, oneShot: 'initial' }
-  const plain = renderer().render(source, options)
-  const wrappedRender = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories: wrapped, tileRows: 8 }).render(source, options)
-  assert.notDeepEqual([...wrappedRender.toRgba8()], [...plain.toRgba8()])
+  const plain = renderer().render(source, options).toRgba8()
+  const wrapped = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories: new Map(kernelFactories).set('filter/crt:crt', cosWrappedAdapterFactory), tileRows: 8 }).render(source, options).toRgba8()
+  const rawWrapped = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories: new Map(kernelFactories).set('filter/crt:crt', rawCosAdapterFactory), tileRows: 8 }).render(source, options).toRgba8()
   const goldenData = await readGoldenCrt()
-  const plainMetrics = compareRgba8(plain.toRgba8(), goldenData, 2)
-  const wrappedMetrics = compareRgba8(wrappedRender.toRgba8(), goldenData, 2)
-  // Baseline = the committed adapter (metalSine, no cos wrap). Wrapped adds only the cos
-  // override on top of it, so any metric difference is attributable to the cosine wrap.
+  const plainMetrics = compareRgba8(plain, goldenData, 2)
+  const wrappedMetrics = compareRgba8(wrapped, goldenData, 2)
+  const rawMetrics = compareRgba8(rawWrapped, goldenData, 2)
+  assert.deepEqual([...wrapped], [...plain])
   assert.equal(plainMetrics.channelsOverTolerance, 89)
   assert.equal(plainMetrics.maxError, 80)
   assert.equal(plainMetrics.meanError, 5.05859375)
-  assert.equal(wrappedMetrics.channelsOverTolerance, 94)
-  assert.equal(wrappedMetrics.maxError, 105)
-  assert.equal(wrappedMetrics.meanError, 5.86328125)
+  assert.equal(rawMetrics.channelsOverTolerance, 94)
+  assert.equal(rawMetrics.maxError, 105)
+  assert.equal(rawMetrics.meanError, 5.86328125)
 })
 
 test('bitEffects uses its scalar bit-mask adapter and matches the canonical first pixel', () => {
