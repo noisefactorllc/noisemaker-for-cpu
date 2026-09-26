@@ -10,14 +10,26 @@ function metalSine(value) {
   return F32(Math.sin(phase * TAU))
 }
 
+function metalCosine(value) {
+  const turns = F32(value * INV_TAU)
+  const phase = turns - Math.floor(turns)
+  return F32(Math.cos(phase * TAU))
+}
+
 export function crtFactory($bindings, $runtime) {
   const runtime = Object.create($runtime)
+  const cosWrap = (value) => {
+    if (!ArrayBuffer.isView(value) && !Array.isArray(value)) return metalCosine(value)
+    const out = $runtime.alloc(value.length)
+    for (let index = 0; index < value.length; index += 1) out[index] = metalCosine(value[index])
+    return out
+  }
   const sin = (value) => {
     if (!ArrayBuffer.isView(value) && !Array.isArray(value)) return metalSine(value)
     const out = $runtime.alloc(value.length)
     for (let index = 0; index < value.length; index += 1) out[index] = metalSine(value[index])
     return out
   }
-  runtime.stdlib = Object.freeze({ ...$runtime.stdlib, sin })
+  runtime.stdlib = Object.freeze({ ...$runtime.stdlib, sin, cos: cosWrap })
   return canonicalKernelFactories['filter/crt:crt']($bindings, runtime)
 }
