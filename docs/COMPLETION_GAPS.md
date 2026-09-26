@@ -4,13 +4,23 @@ Current compatibility matrix: [compatibility report](COMPATIBILITY.md).
 
 ## 1. Scope and source revisions
 
-Daily review: 2026-09-25. Current inspected source: [`6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`](https://github.com/noisefactorllc/noisemaker-for-cpu/commit/6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85).
-Full rendered parity remains **unverified** (the current bounded gate also has failures). No release approval or new closure follows from this review.
-Current upstream discovery: `bbdeb56c4b75cf33379766c3e87b0f5a18bcbba8`. Published Noisemaker authority: `1.0.179`, source `fca611fd8f91424661d4e531d39313d24ea21134`, 210 effect IDs.
+Worker audit: 2026-09-26. Run ID: `audit-20260926-010135`. Audited source: [`ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5`](https://github.com/noisefactorllc/noisemaker-for-cpu/commit/ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5).
+Local and remote `main` both resolve to that SHA. The checkout is clean.
+Full rendered parity remains **unverified**. The bounded gate still fails. No release approval or closure follows from this audit.
+Kernel pin: `8eeb7b5ac14eb37a8d16037f607a88ce63924cd3`, upstream tag `v1.0.183`.
+Current upstream main: `95743621696483b91968992ef6ee0d87b2089fa8`. Published Noisemaker authority: `1.0.184` at that source.
+The published effect manifest is byte-identical across `1.0.179` through `1.0.184`. Its SHA-256 is `05c4d7b7744837ae90a3bb4c89e5403ff09448a74d9d7e824abb3d719ad3314e`, with 210 effect IDs.
+Two runtime `shaders/` commits separate the pin from `9574362`. This audit records `9574362` as a new pending authority revision.
+Current served kit: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. That tree differs from the audited source only in this register. [Retrieved metadata](https://kits.noisedeck.app/cpu/0/deployment-meta.json).
 The observations below retain their original source and authority identities. They do not qualify later updates.
-Current served kit: `0.1.28`, source `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`. [Retrieved inventory and hashes](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/current-served-inventories.json). Artifact identity does not establish host qualification.
 
 ### Earlier source observations
+
+Daily review: 2026-09-25. Inspected source: [`6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`](https://github.com/noisefactorllc/noisemaker-for-cpu/commit/6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85).
+Upstream discovery at that review: `bbdeb56c4b75cf33379766c3e87b0f5a18bcbba8`. Published authority then: `1.0.179`, source `fca611fd8f91424661d4e531d39313d24ea21134`.
+Served kit then: `0.1.28`, source `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`.
+
+### Worker audit observations, 2026-09-23
 
 Audit date: 2026-09-23 UTC. Run ID: `20260923-cpu-04`.
 This audit assesses the JavaScript CPU renderer, its CLI, browser demo, package candidate, and published export kit.
@@ -61,6 +71,23 @@ The review does not qualify every upstream change after the recorded port author
 ## 3. Methods and evidence
 
 Review CI boundary: Exact-source runs: Export kit, Downstream. A passing export dispatch does not qualify rendered parity. Current complete-render enforcement remains an open verification requirement. [Exact-source responses and workflows](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/noisemaker-for-cpu-remote-evidence.json).
+
+### Worker audit, 2026-09-26
+
+Environment: Linux x86_64 container without GPU or browser. Node.js 26.5.1, npm 11.17.0.
+The reference root was a scratch clone of the authority at pinned revision `8eeb7b5a`.
+`npm test` exited 0: 279 tests, 278 pass, zero failures, one skip.
+The reference-gated manifest cross-checks executed and passed against the pinned tree.
+`npm run parity -- --json` exited 1: 164 executed, 163 passed, 114 byte-exact, 41 skipped.
+`filter/crt` keeps maximum error 80 and mean error 5.05859375, with 89 channels over tolerance.
+No golden, tolerance, or `parity/` path changed since the last review.
+The CLI quick start rendered a 64×64 PNG and a chained 96×64 PNG, both exit 0.
+An unknown effect and a missing input file each produced a clear error and exit 1.
+Served kit `0.1.32` records source `bfbe547`. Its served engine CLI and entry hashes match the audited tree.
+No workflow ran for the audited SHA. Documentation-only commits match no workflow path filter.
+Exact-source delivery dispatches for `bfbe547` passed: Export kit 36205713332, Downstream 36205713330.
+The public npm name still returns E404.
+Raw evidence: run `audit-20260926-010135` in the shared series state, `evidence-audit-20260926-010135/result-noisemaker-for-cpu.json`.
 
 ### Daily review, 2026-09-25
 
@@ -168,7 +195,7 @@ Their qualification remains bounded by the worker's recorded source and environm
 ## 4. Known gaps
 
 P1 means false completion or a major correctness gap. P2 means coverage or integration gaps. P3 means documentation inconsistency.
-The auditor checked all entries below on 2026-09-23. No entry closed during this pass.
+The auditor checked all entries below on 2026-09-23. The 2026-09-26 audit reverified the gate failures and open states at `ba1c89a`. No entry closed.
 
 ### GAP-001: CRT pixel mismatch
 
@@ -181,6 +208,7 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Dependencies: The separate implementation job owns corrections. Preserve the current checkpoint and reference images.
 - Acceptance criteria: CRT passes the unchanged fixture. All other 163 compared effects retain their results.
 - Required checks: Independent channel comparison, `npm test`, and the full parity command.
+- Last verification: 2026-09-26. The full gate reproduces the failure at `ba1c89a`. Goldens and tolerances are unchanged.
 
 ### GAP-002: Rendered coverage remains incomplete
 
@@ -215,11 +243,13 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Affected scope: README Collection parity, CRT status narrative, and parity-runner comments.
 - Expected behavior: Current summaries distinguish historical measurements from the current catalog denominator.
 - Observed behavior: README reports 166/167 and 117 exact. Current measurements are 163/164 and 114 exact.
+- Current check: `README.md:157` and `docs/CRT-PARITY.md:56` still state 166/167 with 117 byte-exact at source `ba1c89a`.
 - Evidence: `parity.log`, README, and [CRT-PARITY.md](CRT-PARITY.md).
 - Next action: Reconcile current summaries with three retired catalog effects while retaining historical measurements.
 - Dependencies: Use this audit's recorded source and raw result. Do not reduce coverage to improve the summary.
 - Acceptance criteria: Current counts total 205 eligible effects. Historical counts carry their source revision or date.
 - Required checks: Full parity output and a catalog-to-fixture comparison.
+- Last verification: 2026-09-26. The stale counts remain at the current source.
 
 ### GAP-005: Release CI does not enforce port parity
 
@@ -232,6 +262,7 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Dependencies: GAP-001 remains an honest red parity result. Workflow changes belong to separately authorized implementation work.
 - Acceptance criteria: A release record identifies exact-source port test results, parity failures, skips, and package checks.
 - Required checks: Inspect complete job logs for the reviewed SHA. Do not infer execution from a dispatch success.
+- Last verification: 2026-09-26. No workflow runs the port gates. The docs-only audited SHA triggered no runs. Exact-source dispatches for `bfbe547` passed.
 
 ### GAP-006: Distribution and platform qualification are incomplete
 
@@ -247,6 +278,7 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Required checks: Node 22 floor, supported LTS versions, Windows/Linux, declared browsers, and saved-program upgrade behavior.
 - Limits: Linux CI proves one kit render. It does not qualify the full API. macOS checks cover only the recorded runtimes.
 - License checks: The kit contains both MIT notices. No native binary signing requirement applies.
+- Last verification: 2026-09-26. Served kit `0.1.32` tracks the current functional source. Bounded served-file hashes match. The public npm name still returns E404.
 
 ### GAP-007: Browser controls lack accessible names
 
@@ -271,7 +303,7 @@ The auditor checked all entries below on 2026-09-23. No entry closed during this
 - Dependencies: preserve the reference images and tolerances. Implementation owns any report-format correction.
 - Acceptance criteria: each comparison has an explicit reference revision or a visible unknown-provenance marker. Kernel updates cannot relabel reference captures.
 - Required checks: compare `git diff` for `parity/goldens` across the two source SHAs. Check recorded hashes against capture evidence.
-- Last verification: 2026-09-23. The review found no reference-image changes and did not regenerate goldens.
+- Last verification: 2026-09-23. No reference-image changes and no golden regeneration. 2026-09-26: goldens remain unchanged. The report's `sourceRevision` field now follows kernel pin `8eeb7b5a`. Reference-capture provenance remains unidentified.
 
 ## 5. Ordered next actions
 
@@ -292,10 +324,12 @@ These actions describe required follow-up evidence. They do not authorize implem
 
 ## 6. Pass history
 
-2026-09-25 daily review at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. [Retained review evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json). No new closure claimed.
+Worker audit on 2026-09-26 at `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5`: reran the full gate and bounded usability checks. All eight gaps remain open. No closure claimed. New published authority `1.0.184` at `9574362` is unqualified and recorded as pending.
+Daily review on 2026-09-25 at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. [Retained review evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json). No new closure claimed.
 
 | Date | Source SHA | Changes | Tested scope | Remaining limits |
 | --- | --- | --- | --- | --- |
 | 2026-09-23 | `36fbfac07be5a9a10b7a991209b566be3f54fe6e` | Created this register and added its README link. No implementation changes | 272 unit tests. 164 parity comparisons. 41 skips. Independent CRT probe. CLI/ESM and browser checks. 93 kit hashes. Build reproduction. Exact-source CI | Seven open gaps. No release approval or parity-checkpoint advancement |
 | 2026-09-23 | `16c38245c42030c8ee46dc61108791d2fea4bda9` | Corrected stale landscape rejection and choice count. Added GAP-008 and executable CRT acceptance. | Repeated full parity and independent CRT comparison. Probed both landscape modes. Checked worker evidence, changed kit files, and exact-source CI. | Eight gaps remain. No closures. Current host, broad pixel, and platform qualification remains incomplete. |
 | 2026-09-26 | `3ec3fe1270b8fc1f527938c71425929a7d58e1b6` (adds this row on top of merge `b644b468` of remote sync `bfbe5476`) | Register pass-history row added; functional tree otherwise unchanged from remote sync `bfbe5476`, which pins upstream `8eeb7b5ac14eb37a8d16037f607a88ce63924cd3` with manifest digest `7382c8ccee81a540d48e1298911d6960de9b2970817a0709ef1da58ab99567a8`. Ancestry check against a fresh upstream clone proves `9d3474dfdc6cb737ebb7b2f3598b16d940af1544` (this job's originally required end) is an ancestor of `8eeb7b5ac14e`, so the pin covers the required range; the four upstream `shaders/` commits in `9d3474df..8eeb7b5a` (GAP-005 pass fields, GAP-004 mipmaps/persistent/filter texture policies, allocation fixes) were ported by `bfbe5476` (snapshot, CpuRenderer viewport resolution, new render-graph test). Earlier in this job, candidate `41b92689` regenerated kernel artifacts with per-record `sourceSha256` and added the checkout-free manifest/coverage tie-in test while pinning `9d3474dfdc6c`; the later remote sync superseded that pin state. No effect behavior, tolerances, or goldens changed in the register row | Executed at `3ec3fe12` with `NM_REFERENCE_ROOT` at upstream `8eeb7b5a`: `npm test` (node --test) 278 pass / 0 fail / 1 skip (the second environment-gated test runs and passes with the reference root); `node --test test/upstream-source-lock.test.js test/upstream-inventory.test.js` 8 pass / 0 fail / 0 skip, including the reference-tree manifest cross-checks that are skipped without `NM_REFERENCE_ROOT`. `npm run parity` exits 1 as recorded under GAP-001: 163/164 within ±2, 114 byte-exact, 41 skipped, filter/crt max 80 — unchanged, no gap closure. Exact-source CI at `41b92689` (export-kit 36204154657, downstream 36204154669) succeeded as delivery dispatches; the repo has no workflow that runs the unit suite, so the suite evidence above is the locally executed run | No gap closures claimed. GAP-001 CRT failure and the other seven gaps remain as recorded. Full rendered parity remains unverified |
+| 2026-09-26 | `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5` | Audit-only register and report update. No implementation change | `npm test` 278 pass, 0 fail, 1 skip with the pinned reference tree. Full parity gate exit 1: 163/164, 114 exact, 41 skips, CRT max 80. CLI quick start, chain render, and two error paths. Served kit `0.1.32` file checks. Fleet inventory and exact-source dispatch review | Eight gaps remain open. New authority `9574362` (`1.0.184`) unqualified. No browser, GPU, or platform checks this pass |
