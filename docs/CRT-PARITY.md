@@ -4,7 +4,7 @@
 
 ## Status
 
-Measured 2026-07-19 with:
+Measured 2026-07-19 (and re-measured at every subsequent audit, most recently 2026-09-26 at `c2a1d18`) with:
 
 ```bash
 node scripts/parity/run.js --suite defaults --only filter__crt
@@ -53,6 +53,8 @@ Two amplification stages then convert ULP differences into large byte deltas:
 A turn-based cosine wrap (metalCosine, mirroring metalSine) was also tried and measured as a bit-identical no-op on the fixture: with and without the wrap, `node scripts/parity/run.js --suite defaults --only filter__crt` reports the same `FAIL filter/crt max=80 mean=5.0586 channels>2=89`. The only `cos` site in the kernel (`simplex_random`, evaluated at `angle = time * TAU`) is unaffected by Metal's turn-based range reduction at this fixture's magnitudes, so the wrap was reverted. Sine range reduction plus cosine wrapping together do not close the gap; the remaining divergence is consistent with fma contraction and approximation behavior deeper in the simplex/hash chains.
 
 FMA-contraction emulation was then tested directly in the generated kernel (`canonicalFactory42`: `permute`, `mod289_vec3/vec4`, `taylor_inv_sqrt`, and the `z * 157 + w * 113` site in `simplex_random`, each rewritten as single-rounding `fround(a * b + c)` fused multiplies). It is a structural no-op here: the CPU runtime rounds every intermediate to f32 (`Math.fround` at each stdlib op and pooled-array write), so a fused single-rounding multiply-add produces exactly the same bits as the separate rounded operations it replaces — there is no double rounding to eliminate. The same run also confirmed the factory is on the executed path (forcing `random_scalar` to a constant shifts the result to `max=108 mean=6.2148 channels>2=99`, while one-ULP constant perturbations vanish under f32 rounding). Conclusion: the residual divergence is Metal's approximate transcendentals and reciprocal paths (their internal ULP patterns), which cannot be recovered by reassociation of IEEE ops; closing it requires either the driver's approximation formulas (not documented) or re-pinning the golden from a non-fast-math backend (path 2 above).
+
+Further localization (2026-09-26) narrowed the divergence to the `fract(sin(x) * 43758.546875)` hash sites — 16 distinct scalar inputs (5 `random_scalar` seeds and the 11 `value_noise_3d` corner hashes that produce the two scanline base values). `dot` rounding variants (per-op f32, fma-chain, f64 accumulation) and `permute`/`mod289` algebraic reorderings (`x²·34 + x` per-op and fused) are all bit-identical no-ops because every intermediate in those chains is exactly representable in f32 for this fixture. Sine implementations tried at the hash sites: plain f32 `Math.sin` (max=105), f32 Taylor degree-7 (max=103), ARM optimized-routines-style `sinf` with f32 argument reduction (max=55, mean=5.67), and f64-accurate reduction plus `Math.sin` (mean 4.50, max 55) — none passes, and a greedy ±4-ULP-per-input search over the 16 inputs (best: 91 over-tolerance channels, max 104) does not collapse toward the golden. The turn-based reduction already in the adapter remains the closest measured implementation (89 over-tolerance channels, max 80). Matching the retained golden therefore requires the capture backend's exact transcendental implementation, whose provenance is unidentified (GAP-008); with no GPU in this environment, GAP-001 is recorded as blocked in [COMPLETION_GAPS.md](COMPLETION_GAPS.md) pending one of the resolution paths above.
 
 ## Constraints on any fix
 

@@ -199,16 +199,17 @@ The auditor checked all entries below on 2026-09-23. The 2026-09-26 audit reveri
 
 ### GAP-001: CRT pixel mismatch
 
-- Status: open. Priority: P1. Category: implementation.
+- Status: blocked (no-GPU environment). Priority: P1. Category: implementation.
 - Affected scope: `filter/crt`, its CPU adapter, and the retained parity gate.
 - Expected behavior: Every compared channel stays within the existing ±2-byte tolerance.
-- Observed behavior: 89 of 256 channels exceed tolerance. Maximum difference is 80.
+- Observed behavior: 89 of 256 channels exceed tolerance. Maximum difference is 80. Unchanged at `c2a1d18`.
 - Evidence: `parity.log`, `probe.json`, and [CRT-PARITY.md](CRT-PARITY.md).
-- Next action: Localize the first divergent intermediate value under the retained CRT fixture.
+- Localization (2026-09-26): divergence is isolated to the `fract(sin(x) * 43758.546875)` hash sites of the CRT kernel — 16 distinct scalar inputs (5 `random_scalar` seeds, 11 `value_noise_3d` corner hashes feeding the scanline base values). All other candidate sites measured as bit-identical no-ops on the fixture: the cosine wrap, fma-contraction emulation (the CPU runtime rounds every intermediate to f32, so fused and separate ops agree), `dot` rounding variants, and `permute`/`mod289` algebraic reorderings (all intermediate values are exactly representable in f32 for this fixture). A ±4-ULP-per-input greedy search over the 16 hash inputs (plain-sin parameterization) does not pass: best alternative 91 over-tolerance channels / max 104 versus the turn-based-reduction baseline 89 / 80.
+- Blocked requirement: the retained golden encodes the capture GPU's undocumented transcendental bit-pattern; its capture provenance is unidentified (GAP-008) and this environment is a Linux x86_64 container without GPU, so no candidate implementation can be verified here. Resolution paths: identify the capture backend and its `sin` implementation, re-capture the golden from a reproducible backend ([CRT-PARITY.md](CRT-PARITY.md) path 2), or move the upstream shader to integer hashing (path 3). All change the fixture or upstream and are outside this job's write scope.
 - Dependencies: The separate implementation job owns corrections. Preserve the current checkpoint and reference images.
 - Acceptance criteria: CRT passes the unchanged fixture. All other 163 compared effects retain their results.
 - Required checks: Independent channel comparison, `npm test`, and the full parity command.
-- Last verification: 2026-09-26. The full gate reproduces the failure at `ba1c89a`. Goldens and tolerances are unchanged.
+- Last verification: 2026-09-26 at `c2a1d18`. `npm test`: 277 pass, 0 fail, 2 skipped. Full parity: 163/164 within ±2, 114 byte-exact, 41 skipped. Independent channel comparison (`compareRgba8` against the retained golden): `filter/crt` max=80, mean=5.05859375, 89 channels over tolerance. Goldens and tolerances are unchanged.
 
 ### GAP-002: Rendered coverage remains incomplete
 
