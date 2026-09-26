@@ -23,6 +23,27 @@ Range audit, 2026-09-26, against a fresh clone of `https://github.com/noisefacto
 
 Exact-source closure at the published candidate `d03aed7b30384bcebc04bc7f73a7f750ce3b2227` (2026-09-26): commits `f935c34` and `d03aed7` after the functional sync `a1801be` are documentation-only (`git diff --stat a1801be..d03aed7` shows only `docs/COMPATIBILITY.md` and `docs/COMPLETION_GAPS.md`, 13 insertions). Re-executed at `d03aed7` with `NM_REFERENCE_ROOT` at upstream `6a0af04d`: `npm test` 278 pass / 0 fail / 1 skip; `node --test test/upstream-source-lock.test.js test/upstream-inventory.test.js` 8 pass / 0 fail / 0 skip (manifest cross-checks run); `npm run parity -- --json` exit 1 unchanged: 163/164 within ±2, 114 byte-exact, 41 skipped, `filter/crt` max error 80, mean 5.05859375, `sourceRevision` `6a0af04d`. Served kit: `https://kits.noisedeck.app/cpu/0/deployment-meta.json` now reports `version 0.1.33`, `git_hash d03aed7b30384bcebc04bc7f73a7f750ce3b2227` (the export-kit workflow's push paths include `src/**`, so the kit was rebuilt at the candidate SHA). Served files fetched from the kit host are byte-identical to the candidate tree: `engine/src/index.js` sha256 `222f58d4ce1f046c98207175b906b072ea4801a5d94a9c40c5b9ddeaf4d9f7a8`, `engine/bin/noisemaker-cpu.js` sha256 `96d09295c0292a68478fc0c22872d8ea56ac8209cf7ff8182fe2ad8629a36cd4`. The committed `pinned-source-manifest.json` diff corroborates the range audit: only the `revision` field and four `shaders/src/runtime` entry hashes/size changed (`pipeline.js`, `webgl2.js`, `webgpu.js`) plus the new `backends/diagnostics.js` entry; no `shaders/effects` entry changed.
 
+### Bounded external-input comparison, 2026-09-26 (GAP-002)
+
+One bounded external-input comparison, as GAP-002's next action required, defined and executed with the retained authority.
+
+- Input: a deterministic asymmetric 37×19 RGBA8 PNG. Channel recipe, for pixel `(x, y)`: R `(x*7+13) mod 256`, G `(y*11+x*3) mod 256`, B `200` for `x < 19` else `(x+y*5) mod 256`, A `255`. sha256 `697e387f067377be726917cbd03d2923a259595cada53e0e8dcb59f1904e5df8`.
+- Program (identical bytes on both sides):
+
+```
+search synth
+
+media(bgColor: #000000, bgAlpha: 1)
+  .write(o0)
+
+render(o0)
+```
+
+- CPU side at `ea198510` and re-executed at `4b590d2` (same functional tree; Node 26.5.1): the public CLI (`node bin/noisemaker-cpu.js render <program> --input <input> --width 37 --height 19 --time 0 --seed 1`) and `effect synth/media --input ...` produced byte-identical PNGs, sha256 `75335647e2336c2e9d50651c0df940564d112bc953ce88fdbe6b5767f66b81b5`. The ESM entry (`CpuRenderer` from `src/index.js` with the PNG bound as `imageTex`/`textTex` through `Surface.fromRgba8`) produced the same bytes synchronously and asynchronously (`render` and `renderAsync` byte-identical, matching the CLI PNG).
+- Authority side: upstream Noisemaker at `6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa` (the port's source-lock pin), its `CanvasRenderer` on WebGL2 under headless Chromium 154.0.8037.57 (SwiftShader, `--enable-unsafe-swiftshader --use-gl=angle --use-angle=swiftshader-webgl`), the same DSL compiled by the upstream compiler, the same PNG uploaded as the `imageTex_step_0` pass input via `updateTextureFromSource` (37×19 confirmed), canvas 37×19, `render(0)` twice, `o0` read back via `backend.readPixels` (2,812 bytes, 37×19×4). The authority render was executed twice with byte-identical readbacks; RGBA readback sha256 `cb793babf1fa776c9ed177b3032d16a7b29ff7490261ec19f810ddb8eee4aae0`.
+- Channel metrics for the same input, CPU PNG bytes vs authority readback (and vs the vertically flipped CPU bytes, since readback orientation is ambiguous without the retained golden convention): max error 0, mean error 0, differing channels 0, channels over ±2 tolerance 0 — byte-exact, well inside the gate's ±2 tolerance.
+- Scope limits: this qualifies one effect (`synth/media`), one input, one size, `time 0`, `seed 1` on one machine. It does not close the 41 parity-gate skips, GAP-001's CRT failure, multi-frame state, cancellation, long renders, or wider parameter combinations, and no cross-machine or real-GPU stability is claimed for the SwiftShader authority run.
+
 The observations below retain their original source and authority identities. They do not qualify later updates.
 
 ### Earlier source observations
