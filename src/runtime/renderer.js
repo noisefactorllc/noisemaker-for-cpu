@@ -128,7 +128,7 @@ function bundleOutput(name, input, resources) {
 // `{ param }`/`{ screenDivide }` object forms below).
 function textureDimension(spec, axis, ctx) {
   const fallback = ctx[axis]
-  if (spec === undefined || spec === 'input' || spec === 'screen' || spec === 'resolution' || spec === '100%') return fallback
+  if (spec === undefined || spec === 'input' || spec === 'screen' || spec === 'auto' || spec === 'resolution' || spec === '100%') return fallback
   if (typeof spec === 'number') return Math.max(1, Math.round(spec))
   if (typeof spec === 'string') {
     const percent = spec.match(/^(\d+(?:\.\d+)?)%$/)
@@ -141,13 +141,27 @@ function textureDimension(spec, axis, ctx) {
       if (input?.data) return axis === 'width' ? input.width : input.height
     }
     if ('param' in spec) {
-      const value = ctx.params?.[spec.param] ?? spec.paramDefault ?? spec.default
-      const resolved = spec.power === undefined ? value : value ** spec.power
-      return Math.max(1, Math.round(resolved))
+      const hasTransform = spec.power !== undefined || spec.multiply !== undefined
+      const paramDefault = spec.paramDefault ?? spec.default ?? 64
+      let value = ctx.params?.[spec.param] ?? paramDefault
+      if (spec.multiply !== undefined) value *= spec.multiply
+      if (spec.power !== undefined) value = Math.pow(value, spec.power)
+      if (hasTransform && ctx.params?.[spec.param] === undefined && spec.default !== undefined) {
+        value = spec.default
+      }
+      return Math.max(1, Math.round(value))
     }
     if ('screenDivide' in spec) {
-      const divisor = Math.max(1, ctx.params?.[spec.screenDivide] ?? spec.default)
+      const divisor = Math.max(1, ctx.params?.[spec.screenDivide] ?? spec.default ?? 1)
       return Math.max(1, Math.ceil(fallback / divisor))
+    }
+    if ('scale' in spec) {
+      let computed = Math.floor(fallback * spec.scale)
+      if (spec.clamp) {
+        if (spec.clamp.min !== undefined) computed = Math.max(spec.clamp.min, computed)
+        if (spec.clamp.max !== undefined) computed = Math.min(spec.clamp.max, computed)
+      }
+      return Math.max(1, computed)
     }
   }
   throw new TypeError(`Unsupported canonical texture dimension ${JSON.stringify(spec)}`)
@@ -385,8 +399,10 @@ export class CpuRenderer {
   canonicalDestination(definition, outputName, params, renderOptions, pass = null, resources = null) {
     const texture = definition.textures[outputName] ?? {}
     const ctx = { params, width: renderOptions.width, height: renderOptions.height, resources }
-    const width = textureDimension(pass?.viewport?.width ?? texture.width, 'width', ctx)
-    const height = textureDimension(pass?.viewport?.height ?? texture.height, 'height', ctx)
+    const widthSpec = pass?.viewport?.w ?? pass?.viewport?.width ?? texture.width
+    const heightSpec = pass?.viewport?.h ?? pass?.viewport?.height ?? texture.height
+    const width = textureDimension(widthSpec, 'width', ctx)
+    const height = textureDimension(heightSpec, 'height', ctx)
     const surface = this.pool.acquire(width, height)
     surface.format = texture.format ?? 'rgba16f'
     return surface

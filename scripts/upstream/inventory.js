@@ -85,7 +85,7 @@ function projectPass(pass) {
     inputs: pass.inputs ?? {},
     outputs,
   }
-  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport', 'defines']) {
+  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport', 'defines', 'samplerTypes']) {
     if (pass[key] !== undefined) projected[key] = pass[key]
   }
   return projected
@@ -93,7 +93,7 @@ function projectPass(pass) {
 
 function projectTextures(textures = {}) {
   return Object.fromEntries(Object.entries(textures).map(([name, texture]) => [name, Object.fromEntries(
-    ['width', 'height', 'depth', 'format', 'is3D'].filter((key) => texture[key] !== undefined).map((key) => [key, texture[key]]),
+    ['width', 'height', 'depth', 'format', 'is3D', 'mipmaps', 'persistent', 'filter'].filter((key) => texture[key] !== undefined).map((key) => [key, texture[key]]),
   )]))
 }
 
