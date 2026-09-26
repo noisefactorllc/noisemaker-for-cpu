@@ -81,3 +81,51 @@ test('pinned source manifest matches the real upstream tree when NM_REFERENCE_RO
   assert.equal(sourceLock.computePinnedSourceDigest(root), sourceLock.PINNED_SOURCE_DIGEST)
   assert.equal(sourceLock.sourceManifestDigest(computed), sourceLock.PINNED_SOURCE_MANIFEST_DIGEST)
 })
+
+// Checkout-free anti-staleness anchor: every compiled canonical kernel record
+// carries the sha256 of the exact upstream GLSL bytes it was built from, and
+// that hash must match the committed pinned-source manifest entry for the
+// same file. If upstream GLSL changes and the kernels are not regenerated,
+// these hashes stop matching the manifest and the suite fails here instead of
+// silently shipping stale kernels — with no reference checkout required.
+test('committed kernel records match the pinned-source manifest hashes', async () => {
+  const manifestPath = new URL(`../scripts/upstream/${sourceLock.PINNED_SOURCE_MANIFEST_PATH}`, import.meta.url)
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
+  const manifestByPath = new Map(manifest.entries.map((entry) => [entry.path, entry]))
+
+  const coverageModule = await import('../src/effects/generated/glsl-coverage.js')
+  assert.ok(Array.isArray(coverageModule.programCoverage) && coverageModule.programCoverage.length > 0)
+  for (const record of coverageModule.programCoverage) {
+    const sourcePath = `shaders/effects/${record.effectId}/glsl/${record.file}`
+    const entry = manifestByPath.get(sourcePath)
+    assert.ok(entry, `Coverage record file ${record.file} is not in the pinned-source manifest`)
+    assert.match(record.sourceSha256, /^[0-9a-f]{64}$/, `Coverage record ${record.effectId}:${record.program} is missing its sourceSha256`)
+    assert.equal(
+      record.sourceSha256,
+      entry.sha256,
+      `Committed kernel ${record.effectId}:${record.program} was not built from the pinned bytes of ${sourcePath}; regenerate the canonical kernels.`,
+    )
+    assert.equal(record.sourceBytes, entry.size)
+  }
+
+  // Every pinned GLSL/fragment source that the port compiles must be
+  // accounted for by a coverage record, so a manifest-only drift (effect
+  // added/removed upstream) cannot hide an unported kernel change in either
+  // direction. Excluded are the deliberately unported upstream trees
+  // (mesh/reactive, mirrored from the generated snapshot's excludedEffects)
+  // and shared include fragments under _shared/, which compile-glsl.js never
+  // records as effect programs.
+  const snapshot = await import('../src/effects/generated/upstream-snapshot.js')
+  const excludedIds = new Set([...snapshot.excludedEffects.mesh, ...snapshot.excludedEffects.reactive])
+  const eligible = new Set(snapshot.effectRecords.map((record) => record.id))
+  const covered = new Set(coverageModule.programCoverage.map((record) => `shaders/effects/${record.effectId}/glsl/${record.file}`))
+  for (const entry of manifest.entries) {
+    if (!/\.(glsl|frag)$/.test(entry.path)) continue
+    if (entry.path.includes('/_shared/')) continue
+    const match = entry.path.match(/^shaders\/effects\/([^/]+\/[^/]+)\//)
+    assert.ok(match, `Unexpected pinned source layout: ${entry.path}`)
+    if (excludedIds.has(match[1])) continue
+    assert.ok(eligible.has(match[1]), `Pinned source ${entry.path} belongs to an effect the snapshot does not carry`)
+    assert.ok(covered.has(entry.path), `Pinned upstream source ${entry.path} has no committed kernel coverage record`)
+  }
+})

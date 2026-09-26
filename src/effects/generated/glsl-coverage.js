@@ -5,6 +5,7 @@ export const programCoverage = Object.freeze([
     "program": "bitEffects",
     "file": "bitEffects.glsl",
     "status": "generated",
+    "sourceSha256": "1066c6794400f025288147568179b2913b3f6464201e21fa470f3f5a1f6ca06b",
     "sourceBytes": 12748,
     "normalizedBytes": 13272,
     "generatedBytes": 13422
@@ -14,6 +15,7 @@ export const programCoverage = Object.freeze([
     "program": "caustic",
     "file": "caustic.glsl",
     "status": "generated",
+    "sourceSha256": "161cb6114f312a223d88a5c60a3ecb694a4c8766fca91b3fc47ae92078f2a00d",
     "sourceBytes": 15645,
     "normalizedBytes": 16018,
     "generatedBytes": 17726
@@ -23,6 +25,7 @@ export const programCoverage = Object.freeze([
     "program": "cellNoise",
     "file": "cellNoise.glsl",
     "status": "generated",
+    "sourceSha256": "9fd76306b377ef501a5dd340263179f04e3e890cc05d5e82f524f7bdf793d3b8",
     "sourceBytes": 9643,
     "normalizedBytes": 9886,
     "generatedBytes": 11882
@@ -32,6 +35,7 @@ export const programCoverage = Object.freeze([
     "program": "cellRefract",
     "file": "cellRefract.glsl",
     "status": "generated",
+    "sourceSha256": "aa93167faa07ee22ff0be9c653b5602ac88b1b962e405548cafab43b9e867a70",
     "sourceBytes": 13719,
     "normalizedBytes": 14040,
     "generatedBytes": 16080
@@ -41,6 +45,7 @@ export const programCoverage = Object.freeze([
     "program": "coalesce",
     "file": "coalesce.glsl",
     "status": "generated",
+    "sourceSha256": "a0f96df68ce058e5e2154c78880b5a611eaf5ab9adcd64242368978c813b6b58",
     "sourceBytes": 9962,
     "normalizedBytes": 9984,
     "generatedBytes": 14730
@@ -50,6 +55,7 @@ export const programCoverage = Object.freeze([
     "program": "colorLab",
     "file": "colorLab.glsl",
     "status": "generated",
+    "sourceSha256": "4bf9ea925634ee684e01917ea3b690d332b37905d21c8aa7377bf88625570945",
     "sourceBytes": 9276,
     "normalizedBytes": 9332,
     "generatedBytes": 13676
@@ -59,6 +65,7 @@ export const programCoverage = Object.freeze([
     "program": "composite",
     "file": "composite.glsl",
     "status": "generated",
+    "sourceSha256": "ae3f29a129016653a5705647cb61c5c6448504e44ad321539fb4ce2e120d9123",
     "sourceBytes": 6120,
     "normalizedBytes": 6062,
     "generatedBytes": 7243
@@ -68,6 +75,7 @@ export const programCoverage = Object.freeze([
     "program": "effects",
     "file": "effects.glsl",
     "status": "generated",
+    "sourceSha256": "e3b742be53b6b1b0dd5e089a805ff02a931cd14643d0a0abe376bd8044e8ec6c",
     "sourceBytes": 21087,
     "normalizedBytes": 21590,
     "generatedBytes": 25473
@@ -77,6 +85,7 @@ export const programCoverage = Object.freeze([
     "program": "fractal",
     "file": "fractal.glsl",
     "status": "adapter",
+    "sourceSha256": "a73c8044185be58e3ae1b0f14b954dbaa7bb8852290b821dba44167fee5e037b",
     "sourceBytes": 10067,
     "normalizedBytes": 10180,
     "generatedBytes": 0
@@ -86,6 +95,7 @@ export const programCoverage = Object.freeze([
     "program": "glitch",
     "file": "glitch.glsl",
     "status": "generated",
+    "sourceSha256": "9ed4cce15c5d4358f191d8beeaae93624520530f1c4181dd7a5895e47821cc0e",
     "sourceBytes": 8195,
     "normalizedBytes": 8326,
     "generatedBytes": 11128
@@ -95,6 +105,7 @@ export const programCoverage = Object.freeze([
     "program": "kaleido",
     "file": "kaleido.glsl",
     "status": "generated",
+    "sourceSha256": "18a201e5189430578a2cd1d03cea911957a08f3bd7f3e74e78b97eb9f946ed52",
     "sourceBytes": 27570,
     "normalizedBytes": 28389,
     "generatedBytes": 29015
@@ -104,6 +115,7 @@ export const programCoverage = Object.freeze([
     "program": "lensDistortion",
     "file": "lensDistortion.glsl",
     "status": "generated",
+    "sourceSha256": "f4e6453fe233692fa67c5fdbb3eb8f7a512d21bc722e63af6fc23166a62dd444",
     "sourceBytes": 8269,
     "normalizedBytes": 8493,
     "generatedBytes": 11013
@@ -113,6 +125,7 @@ export const programCoverage = Object.freeze([
     "program": "moodscape",
     "file": "moodscape.glsl",
     "status": "generated",
+    "sourceSha256": "a2580a36096208dd7a63965d2b277be9356f29a8d3af634d1736df9142db1a44",
     "sourceBytes": 19559,
     "normalizedBytes": 19953,
     "generatedBytes": 22038
@@ -122,6 +135,7 @@ export const programCoverage = Object.freeze([
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
+    "sourceSha256": "e8eeb7d9134b7c08901df12f041767151b26b23ee534d038d1b71b6e47f69586",
     "sourceBytes": 31461,
     "normalizedBytes": 32381,
     "generatedBytes": 30877
@@ -131,6 +145,7 @@ export const programCoverage = Object.freeze([
     "program": "noise3d",
     "file": "noise3d.glsl",
     "status": "generated",
+    "sourceSha256": "f359a11d4a3799686a554ee4dbaca725235ef38781a7b91e37628537cebb220f",
     "sourceBytes": 19654,
     "normalizedBytes": 20394,
     "generatedBytes": 29764
@@ -140,6 +155,7 @@ export const programCoverage = Object.freeze([
     "program": "refract",
     "file": "refract.glsl",
     "status": "generated",
+    "sourceSha256": "d9675b5de9c329aa619f4ef68129611faac8cbe515b6e80aa8528c593a49cfa2",
     "sourceBytes": 7973,
     "normalizedBytes": 7936,
     "generatedBytes": 11086
@@ -149,6 +165,7 @@ export const programCoverage = Object.freeze([
     "program": "shapeMixer",
     "file": "shapeMixer.glsl",
     "status": "generated",
+    "sourceSha256": "51bee071387b3498bd9e8abad5ca3b93b3e38100b9a56b8f4abcb177ea9d675b",
     "sourceBytes": 21721,
     "normalizedBytes": 22327,
     "generatedBytes": 22775
@@ -158,6 +175,7 @@ export const programCoverage = Object.freeze([
     "program": "shapes",
     "file": "shapes.glsl",
     "status": "generated",
+    "sourceSha256": "28775b3e960c9051a320d48c7974792fbef33eaab80e5ca9aed5af43e8645d5e",
     "sourceBytes": 21292,
     "normalizedBytes": 21798,
     "generatedBytes": 23156
@@ -167,6 +185,7 @@ export const programCoverage = Object.freeze([
     "program": "shapes3d",
     "file": "shapes3d.glsl",
     "status": "generated",
+    "sourceSha256": "818badfbadcf295d1863d208c0d0582a1349ff64f44dbf43f905a92fcfd4c5ad",
     "sourceBytes": 16152,
     "normalizedBytes": 16442,
     "generatedBytes": 18035
@@ -176,6 +195,7 @@ export const programCoverage = Object.freeze([
     "program": "splat",
     "file": "splat.glsl",
     "status": "generated",
+    "sourceSha256": "cfdcc4edcc5097043ad72602feb62a40622c14ba1bee66fb1ac2e414d1b3cced",
     "sourceBytes": 5069,
     "normalizedBytes": 5189,
     "generatedBytes": 7311
@@ -185,6 +205,7 @@ export const programCoverage = Object.freeze([
     "program": "adjust",
     "file": "adjust.glsl",
     "status": "generated",
+    "sourceSha256": "dafbae039de5463cb5a94bb5e3046fd65b3212240e15a14996186e3d4d88b71d",
     "sourceBytes": 3955,
     "normalizedBytes": 4090,
     "generatedBytes": 5424
@@ -194,6 +215,7 @@ export const programCoverage = Object.freeze([
     "program": "brightPass",
     "file": "brightPass.glsl",
     "status": "generated",
+    "sourceSha256": "db9bb2dbe897ee03435cae86aa88a766b7d8e6bc58e61103fa5e66c3c3dbc880",
     "sourceBytes": 1360,
     "normalizedBytes": 1499,
     "generatedBytes": 1431
@@ -203,6 +225,7 @@ export const programCoverage = Object.freeze([
     "program": "composite",
     "file": "composite.glsl",
     "status": "generated",
+    "sourceSha256": "28e480fad84b7254e9392b8d4d85bc398b62a0e57f94dffac94db655132abbef",
     "sourceBytes": 843,
     "normalizedBytes": 982,
     "generatedBytes": 1242
@@ -212,6 +235,7 @@ export const programCoverage = Object.freeze([
     "program": "ntapGather",
     "file": "ntapGather.glsl",
     "status": "generated",
+    "sourceSha256": "f11c983976cb8450d611e8d888bd151a4c2cfdda8d9d772f906608dedb99d237",
     "sourceBytes": 2196,
     "normalizedBytes": 2159,
     "generatedBytes": 1922
@@ -221,6 +245,7 @@ export const programCoverage = Object.freeze([
     "program": "blurH",
     "file": "blurH.glsl",
     "status": "generated",
+    "sourceSha256": "c4283e820b2ade9148358ad4582d350bc7f4a5ccb5fc60f2e1b76bcda58deecc",
     "sourceBytes": 1120,
     "normalizedBytes": 1240,
     "generatedBytes": 1618
@@ -230,6 +255,7 @@ export const programCoverage = Object.freeze([
     "program": "blurV",
     "file": "blurV.glsl",
     "status": "generated",
+    "sourceSha256": "cc33343032b34e1ede6eed15fbdcb9229ad64484a092b2914065b09fa957fb9b",
     "sourceBytes": 1118,
     "normalizedBytes": 1238,
     "generatedBytes": 1618
@@ -239,6 +265,7 @@ export const programCoverage = Object.freeze([
     "program": "bulge",
     "file": "bulge.glsl",
     "status": "generated",
+    "sourceSha256": "87f26ffa13ffe946d94d92a00bd45ca3a9787b9ee402dfe04ebc3d4a911eb170",
     "sourceBytes": 2352,
     "normalizedBytes": 2378,
     "generatedBytes": 3272
@@ -248,6 +275,7 @@ export const programCoverage = Object.freeze([
     "program": "celShadingBlend",
     "file": "celShadingBlend.glsl",
     "status": "generated",
+    "sourceSha256": "182d5b48d026e923aa2c412c659c633541859ffc3e9bc03315d5c5e18385f69f",
     "sourceBytes": 905,
     "normalizedBytes": 1182,
     "generatedBytes": 1494
@@ -257,6 +285,7 @@ export const programCoverage = Object.freeze([
     "program": "celShadingColor",
     "file": "celShadingColor.glsl",
     "status": "generated",
+    "sourceSha256": "90fa87484d3549bdaa2ddca4836a7ca8602ad4f1f30aa87a72841d4e013521f4",
     "sourceBytes": 2780,
     "normalizedBytes": 2910,
     "generatedBytes": 3571
@@ -266,6 +295,7 @@ export const programCoverage = Object.freeze([
     "program": "celShadingEdges",
     "file": "celShadingEdges.glsl",
     "status": "generated",
+    "sourceSha256": "9c2848c92bd0f3e2de76fd065ac8fc55086cb7d209ce09ac4ba6488acda4630e",
     "sourceBytes": 2010,
     "normalizedBytes": 2153,
     "generatedBytes": 2100
@@ -275,6 +305,7 @@ export const programCoverage = Object.freeze([
     "program": "channel",
     "file": "channel.glsl",
     "status": "generated",
+    "sourceSha256": "b237868c688bcfe51deb56155b0fbfe66a3fcf0db5cba93177ec2198ae48e9e7",
     "sourceBytes": 676,
     "normalizedBytes": 657,
     "generatedBytes": 839
@@ -284,6 +315,7 @@ export const programCoverage = Object.freeze([
     "program": "chroma",
     "file": "chroma.glsl",
     "status": "generated",
+    "sourceSha256": "520627b0a7461e42baad13d20851ff4c0a2cb1a7d050776f3592ade9f800dcfb",
     "sourceBytes": 1453,
     "normalizedBytes": 1588,
     "generatedBytes": 1763
@@ -293,6 +325,7 @@ export const programCoverage = Object.freeze([
     "program": "chromaticAberration",
     "file": "chromaticAberration.glsl",
     "status": "generated",
+    "sourceSha256": "bd8fafacdad36703c280204fb007cb6e260ecb4455fcb754a756ae04d51562b6",
     "sourceBytes": 1885,
     "normalizedBytes": 1798,
     "generatedBytes": 2358
@@ -302,6 +335,7 @@ export const programCoverage = Object.freeze([
     "program": "chBlurH",
     "file": "chBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "cd2cfbb3d6abefd90dd3777704060c28a8fadfa25b43f6447a6eef81f0eff43a",
     "sourceBytes": 1178,
     "normalizedBytes": 1197,
     "generatedBytes": 1160
@@ -311,6 +345,7 @@ export const programCoverage = Object.freeze([
     "program": "chBlurV",
     "file": "chBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "b6e49ae5eeb8528e57266a50f7ebba7b937712f01db40c69f819ca790ffc3b9b",
     "sourceBytes": 984,
     "normalizedBytes": 1003,
     "generatedBytes": 1160
@@ -320,6 +355,7 @@ export const programCoverage = Object.freeze([
     "program": "chMap",
     "file": "chMap.glsl",
     "status": "generated",
+    "sourceSha256": "4329fdfb95fc912608b3f5ce0f1efd282d5965e9c2f8326bc2d845cfe4aa9dae",
     "sourceBytes": 5009,
     "normalizedBytes": 4987,
     "generatedBytes": 1855
@@ -329,6 +365,7 @@ export const programCoverage = Object.freeze([
     "program": "clouds",
     "file": "clouds.glsl",
     "status": "generated",
+    "sourceSha256": "fe73bfd7ea5daec2f31d588dc147d8231f127680929dd90d679c4e0a2c9f299d",
     "sourceBytes": 4564,
     "normalizedBytes": 4659,
     "generatedBytes": 5875
@@ -338,6 +375,7 @@ export const programCoverage = Object.freeze([
     "program": "colorReplace",
     "file": "colorReplace.glsl",
     "status": "generated",
+    "sourceSha256": "e85d80a109a48d551d60ff6136efedb4a131e0b973ad9637b82df9b46449f5fb",
     "sourceBytes": 1221,
     "normalizedBytes": 1363,
     "generatedBytes": 1560
@@ -347,6 +385,7 @@ export const programCoverage = Object.freeze([
     "program": "cfBlend",
     "file": "cfBlend.glsl",
     "status": "generated",
+    "sourceSha256": "147bed82561a7c57d3b7a50c017eea826ebe24e54940a4fa032265d79c3be4a0",
     "sourceBytes": 818,
     "normalizedBytes": 957,
     "generatedBytes": 1093
@@ -356,6 +395,7 @@ export const programCoverage = Object.freeze([
     "program": "cfBlur",
     "file": "cfBlur.glsl",
     "status": "generated",
+    "sourceSha256": "ab116ed830bb31a9103dfd30c8bd809ab8d9b478d860c0a2a76e45458020f88a",
     "sourceBytes": 1573,
     "normalizedBytes": 1761,
     "generatedBytes": 1936
@@ -365,6 +405,7 @@ export const programCoverage = Object.freeze([
     "program": "cfSharpen",
     "file": "cfSharpen.glsl",
     "status": "generated",
+    "sourceSha256": "97d8e84b9ae47100cc2ea384a953e719675c61aee274c6739f1eb9f32caf0baa",
     "sourceBytes": 1642,
     "normalizedBytes": 1830,
     "generatedBytes": 2180
@@ -374,6 +415,7 @@ export const programCoverage = Object.freeze([
     "program": "corrupt",
     "file": "corrupt.glsl",
     "status": "generated",
+    "sourceSha256": "b81642d2e63294f9f51656eb2441cdaf479c495c5e4acb0d3a4907a13b070d02",
     "sourceBytes": 7421,
     "normalizedBytes": 7818,
     "generatedBytes": 7763
@@ -383,6 +425,7 @@ export const programCoverage = Object.freeze([
     "program": "craquelure",
     "file": "craquelure.glsl",
     "status": "generated",
+    "sourceSha256": "a21be5c20bec6d75d648c0a2debcc69843193e676f5195efff7b643bb0cc9e2b",
     "sourceBytes": 9516,
     "normalizedBytes": 9611,
     "generatedBytes": 4907
@@ -392,6 +435,7 @@ export const programCoverage = Object.freeze([
     "program": "crt",
     "file": "crt.glsl",
     "status": "generated",
+    "sourceSha256": "62d915eda8e20a458b1df91198cee3e85f0f0b9676cd4d0777264e9cd8b99b7c",
     "sourceBytes": 19560,
     "normalizedBytes": 20156,
     "generatedBytes": 20884
@@ -401,6 +445,7 @@ export const programCoverage = Object.freeze([
     "program": "degauss",
     "file": "degauss.glsl",
     "status": "generated",
+    "sourceSha256": "915f208e47a5bf012a3e0583e03a7ee888b7103d5834b386d32c916b8715050c",
     "sourceBytes": 10803,
     "normalizedBytes": 11279,
     "generatedBytes": 13300
@@ -410,6 +455,7 @@ export const programCoverage = Object.freeze([
     "program": "deriv",
     "file": "deriv.glsl",
     "status": "generated",
+    "sourceSha256": "e1283736b0b1aeacf1bb795eda742871f0b6027bdf98659a3c7fa4a68d91f3ce",
     "sourceBytes": 1137,
     "normalizedBytes": 1273,
     "generatedBytes": 1872
@@ -419,6 +465,7 @@ export const programCoverage = Object.freeze([
     "program": "directionalBlur",
     "file": "directionalBlur.glsl",
     "status": "generated",
+    "sourceSha256": "1e4a9d6371683b75a1dbefa968e1536e0017e921fe02f80e600e8f1482e8691c",
     "sourceBytes": 1153,
     "normalizedBytes": 1196,
     "generatedBytes": 1474
@@ -428,6 +475,7 @@ export const programCoverage = Object.freeze([
     "program": "dither",
     "file": "dither.glsl",
     "status": "generated",
+    "sourceSha256": "a966f1746213c8206c5cb57a88cafd8033eb8f8cb08b207209eb31479a11abdb",
     "sourceBytes": 19391,
     "normalizedBytes": 20259,
     "generatedBytes": 19012
@@ -437,6 +485,7 @@ export const programCoverage = Object.freeze([
     "program": "edge",
     "file": "edge.glsl",
     "status": "generated",
+    "sourceSha256": "841f9f547d06aace8444953f401009abd02758f9dff271097b2799424c1db5d0",
     "sourceBytes": 6530,
     "normalizedBytes": 6655,
     "generatedBytes": 7749
@@ -446,6 +495,7 @@ export const programCoverage = Object.freeze([
     "program": "emboss",
     "file": "emboss.glsl",
     "status": "generated",
+    "sourceSha256": "872eff00bdfe411a0dceb66e8b203b5ea1c03015e3eea041d821966354713191",
     "sourceBytes": 5160,
     "normalizedBytes": 5124,
     "generatedBytes": 7083
@@ -455,6 +505,7 @@ export const programCoverage = Object.freeze([
     "program": "extrude",
     "file": "extrude.glsl",
     "status": "generated",
+    "sourceSha256": "3be128643867dc78184bd209306cbe524538fd8d6d53a21817fb87f746100e29",
     "sourceBytes": 16945,
     "normalizedBytes": 16934,
     "generatedBytes": 9593
@@ -464,6 +515,7 @@ export const programCoverage = Object.freeze([
     "program": "copy",
     "file": "copy.glsl",
     "status": "generated",
+    "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
     "generatedBytes": 545
@@ -473,6 +525,7 @@ export const programCoverage = Object.freeze([
     "program": "feedback",
     "file": "feedback.glsl",
     "status": "generated",
+    "sourceSha256": "d0048fb91c30eafbb4532b2f02ed416e3dff61b14ce5861ce3565db81a743ca2",
     "sourceBytes": 10931,
     "normalizedBytes": 11045,
     "generatedBytes": 14536
@@ -482,6 +535,7 @@ export const programCoverage = Object.freeze([
     "program": "fibersBlend",
     "file": "fibersBlend.glsl",
     "status": "generated",
+    "sourceSha256": "3c541fbfa45fa98cbfd67c2c7c8a91e4167867a3935681163260733c19cb7575",
     "sourceBytes": 430,
     "normalizedBytes": 572,
     "generatedBytes": 883
@@ -491,6 +545,7 @@ export const programCoverage = Object.freeze([
     "program": "flipMirror",
     "file": "flipMirror.glsl",
     "status": "generated",
+    "sourceSha256": "696263e373913b7ab71430189fb7626ca966780ff645384b89509cf9d1a3fa7e",
     "sourceBytes": 2497,
     "normalizedBytes": 2633,
     "generatedBytes": 2297
@@ -500,6 +555,7 @@ export const programCoverage = Object.freeze([
     "program": "fxaa",
     "file": "fxaa.glsl",
     "status": "generated",
+    "sourceSha256": "088449aa1fd5855489d3ce0c6ed2986b9b128fa93ace5817dbeafeff92a7bdf0",
     "sourceBytes": 4938,
     "normalizedBytes": 5319,
     "generatedBytes": 5796
@@ -509,6 +565,7 @@ export const programCoverage = Object.freeze([
     "program": "glowingEdge",
     "file": "glowingEdge.glsl",
     "status": "generated",
+    "sourceSha256": "e5df47ffdea81d4f7403d4a3133acd42f2955da8870fd62e6052c2dbeef1d3fd",
     "sourceBytes": 2965,
     "normalizedBytes": 2946,
     "generatedBytes": 4101
@@ -518,6 +575,7 @@ export const programCoverage = Object.freeze([
     "program": "glyphMap",
     "file": "glyphMap.glsl",
     "status": "generated",
+    "sourceSha256": "853c3c15f300cf56ba3c11d5613cb91bfcb14b8b2f1be6bb5193e71397fdcea1",
     "sourceBytes": 7838,
     "normalizedBytes": 8104,
     "generatedBytes": 5915
@@ -527,6 +585,7 @@ export const programCoverage = Object.freeze([
     "program": "creative",
     "file": "creative.glsl",
     "status": "generated",
+    "sourceSha256": "b043aa43d17e098ffb736f16e6c81a5ca422ecdd6fc37fef03c39b01cc939bd3",
     "sourceBytes": 4230,
     "normalizedBytes": 4369,
     "generatedBytes": 4554
@@ -536,6 +595,7 @@ export const programCoverage = Object.freeze([
     "program": "hslSecondary",
     "file": "hslSecondary.glsl",
     "status": "generated",
+    "sourceSha256": "2f2c54a6d977ccc0ba8657c02f1fc2fecfb576ad85f6d03ea16468fc9cbd095a",
     "sourceBytes": 4975,
     "normalizedBytes": 5109,
     "generatedBytes": 4642
@@ -545,6 +605,7 @@ export const programCoverage = Object.freeze([
     "program": "lut",
     "file": "lut.glsl",
     "status": "generated",
+    "sourceSha256": "0a8a3ae4d2a14142ae7d53373bfac6ac87a0b175dff132d71cd80e6226f9ec40",
     "sourceBytes": 13745,
     "normalizedBytes": 13884,
     "generatedBytes": 13503
@@ -554,6 +615,7 @@ export const programCoverage = Object.freeze([
     "program": "primary",
     "file": "primary.glsl",
     "status": "generated",
+    "sourceSha256": "97a3a6497e3bc03716e875b75b7efab058d9848c915f806b68239154e313e71d",
     "sourceBytes": 6013,
     "normalizedBytes": 6152,
     "generatedBytes": 5441
@@ -563,6 +625,7 @@ export const programCoverage = Object.freeze([
     "program": "vignette",
     "file": "vignette.glsl",
     "status": "generated",
+    "sourceSha256": "50dbb470cec43a2f7db7e1caf319c3dd2465bf85e09f0250e7a13eadaf975522",
     "sourceBytes": 4172,
     "normalizedBytes": 4311,
     "generatedBytes": 4256
@@ -572,6 +635,7 @@ export const programCoverage = Object.freeze([
     "program": "wheels",
     "file": "wheels.glsl",
     "status": "generated",
+    "sourceSha256": "fa9c411096816263985e8d5ef82ade976667a6cadecf8929ecd185edbc71f479",
     "sourceBytes": 3529,
     "normalizedBytes": 3668,
     "generatedBytes": 4078
@@ -581,6 +645,7 @@ export const programCoverage = Object.freeze([
     "program": "grain",
     "file": "grain.glsl",
     "status": "generated",
+    "sourceSha256": "6edf8deec35e2fa3a32fc150c2be8cb6d71a9356c1c7a3cff5bd3c6c7df764f0",
     "sourceBytes": 8796,
     "normalizedBytes": 9558,
     "generatedBytes": 9313
@@ -590,6 +655,7 @@ export const programCoverage = Object.freeze([
     "program": "grime",
     "file": "grime.glsl",
     "status": "generated",
+    "sourceSha256": "15a88fff0e951bf7fa01f4c982532cf79d835663cb2a81c2076c5fecbd9c351f",
     "sourceBytes": 5776,
     "normalizedBytes": 5896,
     "generatedBytes": 7078
@@ -599,6 +665,7 @@ export const programCoverage = Object.freeze([
     "program": "halftone",
     "file": "halftone.glsl",
     "status": "generated",
+    "sourceSha256": "063ddb13f5fffc6f957d4be0a60b0408ff706d6111fd4e3ba52582f7507c7ad7",
     "sourceBytes": 8440,
     "normalizedBytes": 8523,
     "generatedBytes": 6211
@@ -608,6 +675,7 @@ export const programCoverage = Object.freeze([
     "program": "hatch",
     "file": "hatch.glsl",
     "status": "generated",
+    "sourceSha256": "510c07e58308c1b0ffb16aafdd90362decc92f818fe25da676bb6c348b120106",
     "sourceBytes": 9577,
     "normalizedBytes": 9641,
     "generatedBytes": 7184
@@ -617,6 +685,7 @@ export const programCoverage = Object.freeze([
     "program": "hpBlurH",
     "file": "hpBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "d2254ef3ad99291669d5e705529350f9fe383995760f83654af3d1de9f8195b9",
     "sourceBytes": 960,
     "normalizedBytes": 979,
     "generatedBytes": 1175
@@ -626,6 +695,7 @@ export const programCoverage = Object.freeze([
     "program": "hpBlurV",
     "file": "hpBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "8d4f5b6f17480c441fbf0bc26f05c42409472344b5dd410fa5663b7337cddd3c",
     "sourceBytes": 958,
     "normalizedBytes": 977,
     "generatedBytes": 1175
@@ -635,6 +705,7 @@ export const programCoverage = Object.freeze([
     "program": "hpCombine",
     "file": "hpCombine.glsl",
     "status": "generated",
+    "sourceSha256": "1dc649d0010cee700cdd56b0e35f4867bbadee7426cb04cad49a126ad1e95284",
     "sourceBytes": 603,
     "normalizedBytes": 581,
     "generatedBytes": 823
@@ -644,6 +715,7 @@ export const programCoverage = Object.freeze([
     "program": "historicPalette",
     "file": "historicPalette.glsl",
     "status": "adapter",
+    "sourceSha256": "cc0feb09e2f90505766a0b8b0d61ca0cf83a1121ec7b104eea5ff806c9ce0c33",
     "sourceBytes": 12528,
     "normalizedBytes": 12506,
     "generatedBytes": 0
@@ -653,6 +725,7 @@ export const programCoverage = Object.freeze([
     "program": "inv",
     "file": "inv.glsl",
     "status": "generated",
+    "sourceSha256": "a18fa342ca8507983495ff5eeaaa7704f227b58d476cf413476b230cbd5d6de4",
     "sourceBytes": 736,
     "normalizedBytes": 871,
     "generatedBytes": 1019
@@ -662,6 +735,7 @@ export const programCoverage = Object.freeze([
     "program": "lens",
     "file": "lens.glsl",
     "status": "generated",
+    "sourceSha256": "6633d8c7b1ab23600cb25bb87f3f67c5d1d148b0626169f24de520fbce9e64a5",
     "sourceBytes": 2909,
     "normalizedBytes": 3045,
     "generatedBytes": 3493
@@ -671,6 +745,7 @@ export const programCoverage = Object.freeze([
     "program": "lensFlare",
     "file": "lensFlare.glsl",
     "status": "generated",
+    "sourceSha256": "46ba9da4e66a3978f92b18810bcb5db9d0f2f01fb4a80843c2091381f2001244",
     "sourceBytes": 10007,
     "normalizedBytes": 9914,
     "generatedBytes": 9412
@@ -680,6 +755,7 @@ export const programCoverage = Object.freeze([
     "program": "lensWarp",
     "file": "lensWarp.glsl",
     "status": "generated",
+    "sourceSha256": "543b53a26b14dfdcf979e2601eaad32d6ec683c41427301b851173334a670480",
     "sourceBytes": 4033,
     "normalizedBytes": 4142,
     "generatedBytes": 5288
@@ -689,6 +765,7 @@ export const programCoverage = Object.freeze([
     "program": "lightLeak",
     "file": "lightLeak.glsl",
     "status": "generated",
+    "sourceSha256": "61bcb2989992c109dcf73ac5b34bb4dfa7f6603b54c111a84e69b6f73a9501bb",
     "sourceBytes": 5047,
     "normalizedBytes": 5370,
     "generatedBytes": 6721
@@ -698,6 +775,7 @@ export const programCoverage = Object.freeze([
     "program": "lighting",
     "file": "lighting.glsl",
     "status": "generated",
+    "sourceSha256": "a0601f7012f385c14c1bdb9f462e5dcb303fe05cfbb4645484d5d1bd629e1a4f",
     "sourceBytes": 6049,
     "normalizedBytes": 6752,
     "generatedBytes": 8579
@@ -707,6 +785,7 @@ export const programCoverage = Object.freeze([
     "program": "lowPoly",
     "file": "lowPoly.glsl",
     "status": "generated",
+    "sourceSha256": "2f6a184ef4d372ebf811eaa59420bbce66fa25702e23a278557521679ce7b2f5",
     "sourceBytes": 8719,
     "normalizedBytes": 8954,
     "generatedBytes": 7819
@@ -716,6 +795,7 @@ export const programCoverage = Object.freeze([
     "program": "median",
     "file": "median.glsl",
     "status": "generated",
+    "sourceSha256": "95e869c02fe2645f4a1b5af5a7446b3f2bacb888f2c965bc272ba56b10666e5d",
     "sourceBytes": 3846,
     "normalizedBytes": 5021,
     "generatedBytes": 5360
@@ -725,6 +805,7 @@ export const programCoverage = Object.freeze([
     "program": "morphA",
     "file": "morphA.glsl",
     "status": "generated",
+    "sourceSha256": "9c9b20313b5a112d7684d34ee3f62cb49d04c34aa75f0c846dc9443c6380ba70",
     "sourceBytes": 2126,
     "normalizedBytes": 2060,
     "generatedBytes": 1473
@@ -734,6 +815,7 @@ export const programCoverage = Object.freeze([
     "program": "morphB",
     "file": "morphB.glsl",
     "status": "generated",
+    "sourceSha256": "68818a6c62f0b9960aacd671a8dce1622c6860df44b3c1381abf47447a6504b5",
     "sourceBytes": 1255,
     "normalizedBytes": 1201,
     "generatedBytes": 1007
@@ -743,6 +825,7 @@ export const programCoverage = Object.freeze([
     "program": "mosaicTiles",
     "file": "mosaicTiles.glsl",
     "status": "generated",
+    "sourceSha256": "1495023febe8ffccc57fa8738c6dc027b57d98e77fc88108ae639a8590c2fd47",
     "sourceBytes": 11349,
     "normalizedBytes": 11446,
     "generatedBytes": 7028
@@ -752,6 +835,7 @@ export const programCoverage = Object.freeze([
     "program": "copy",
     "file": "copy.glsl",
     "status": "generated",
+    "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
     "generatedBytes": 545
@@ -761,6 +845,7 @@ export const programCoverage = Object.freeze([
     "program": "motionBlur",
     "file": "motionBlur.glsl",
     "status": "generated",
+    "sourceSha256": "fea5905d92b575b94c500f674a9cc1449f379f8c31ec13e1f71439e75e09df4f",
     "sourceBytes": 954,
     "normalizedBytes": 932,
     "generatedBytes": 677
@@ -770,6 +855,7 @@ export const programCoverage = Object.freeze([
     "program": "normalMap",
     "file": "normalMap.glsl",
     "status": "generated",
+    "sourceSha256": "384312e50972f75dbebd4080cd76d1c2554a439eb36746f2e351d63a03a271cb",
     "sourceBytes": 4017,
     "normalizedBytes": 4330,
     "generatedBytes": 4343
@@ -779,6 +865,7 @@ export const programCoverage = Object.freeze([
     "program": "apply",
     "file": "apply.glsl",
     "status": "generated",
+    "sourceSha256": "c59c0bad843a38c823bd2fc6396d0b9bca1cac7f1fe074aaf5dbc9622522e855",
     "sourceBytes": 738,
     "normalizedBytes": 884,
     "generatedBytes": 1260
@@ -788,6 +875,7 @@ export const programCoverage = Object.freeze([
     "program": "reduce",
     "file": "reduce.glsl",
     "status": "generated",
+    "sourceSha256": "f32243e29192b79cb5da701de42b62858108ee71a9a1c01220fd93a87beac2b3",
     "sourceBytes": 1435,
     "normalizedBytes": 1582,
     "generatedBytes": 1339
@@ -797,6 +885,7 @@ export const programCoverage = Object.freeze([
     "program": "reduceMinmax",
     "file": "reduceMinmax.glsl",
     "status": "generated",
+    "sourceSha256": "4d68eff794b58f3f87b1c9aeaabd153cec3d4fd1110acb9b6e7e85c25f480905",
     "sourceBytes": 1236,
     "normalizedBytes": 1382,
     "generatedBytes": 1227
@@ -806,6 +895,7 @@ export const programCoverage = Object.freeze([
     "program": "statsFinal",
     "file": "statsFinal.glsl",
     "status": "generated",
+    "sourceSha256": "0b8daf6d5a38dc34bbd98800fdd46f9cdfa0b97f00196382023456a0b6eb1dfa",
     "sourceBytes": 959,
     "normalizedBytes": 1101,
     "generatedBytes": 733
@@ -815,6 +905,7 @@ export const programCoverage = Object.freeze([
     "program": "octaveWarp",
     "file": "octaveWarp.glsl",
     "status": "generated",
+    "sourceSha256": "ced7dca971a24fb3d8a48641c7bb66c4af637a57984d45ddc9e51f0492a59bea",
     "sourceBytes": 4902,
     "normalizedBytes": 5081,
     "generatedBytes": 5490
@@ -824,6 +915,7 @@ export const programCoverage = Object.freeze([
     "program": "oilFlatten",
     "file": "oilFlatten.glsl",
     "status": "generated",
+    "sourceSha256": "f2f512b35b846d8a15362739a843c162199b7c53d95251918576726b1b094690",
     "sourceBytes": 7321,
     "normalizedBytes": 7449,
     "generatedBytes": 6146
@@ -833,6 +925,7 @@ export const programCoverage = Object.freeze([
     "program": "oilPost",
     "file": "oilPost.glsl",
     "status": "generated",
+    "sourceSha256": "0275b2a69a9d884ab1d2f6bb230229252e77dd702f1113769dc94ec572dfc84e",
     "sourceBytes": 5533,
     "normalizedBytes": 5582,
     "generatedBytes": 6189
@@ -842,6 +935,7 @@ export const programCoverage = Object.freeze([
     "program": "osd",
     "file": "osd.glsl",
     "status": "generated",
+    "sourceSha256": "c45adaf30ecef6fb7f83a4f3995e671df0caaa47bfeceba8bb9bfe2c07427443",
     "sourceBytes": 6164,
     "normalizedBytes": 6391,
     "generatedBytes": 5158
@@ -851,6 +945,7 @@ export const programCoverage = Object.freeze([
     "program": "outlineBlend",
     "file": "outlineBlend.glsl",
     "status": "generated",
+    "sourceSha256": "5cf1613b00702bda4ccd5a03c1beee0aa779c1a947dc77d2adb78c854dad1a0d",
     "sourceBytes": 1003,
     "normalizedBytes": 1141,
     "generatedBytes": 1332
@@ -860,6 +955,7 @@ export const programCoverage = Object.freeze([
     "program": "outlineSobel",
     "file": "outlineSobel.glsl",
     "status": "generated",
+    "sourceSha256": "cfe848d1605f1ad693fd3ce9e518a4adf4e0f34e3fff6c6ae1ebcaec49949f5d",
     "sourceBytes": 2380,
     "normalizedBytes": 2527,
     "generatedBytes": 2323
@@ -869,6 +965,7 @@ export const programCoverage = Object.freeze([
     "program": "outlineValueMap",
     "file": "outlineValueMap.glsl",
     "status": "generated",
+    "sourceSha256": "8d6504a8464a44cb4d1e86d2596c0d7a60d4924d18bd2114dc1f5ce5d49434cb",
     "sourceBytes": 1770,
     "normalizedBytes": 1908,
     "generatedBytes": 2205
@@ -878,6 +975,7 @@ export const programCoverage = Object.freeze([
     "program": "palette",
     "file": "palette.glsl",
     "status": "adapter",
+    "sourceSha256": "03ab3914862807288f7d5f6d2cbe8907cfa66fd1bb80b02df509880292967c09",
     "sourceBytes": 15189,
     "normalizedBytes": 15176,
     "generatedBytes": 0
@@ -887,6 +985,7 @@ export const programCoverage = Object.freeze([
     "program": "parallax",
     "file": "parallax.glsl",
     "status": "generated",
+    "sourceSha256": "5ce5dce2ec8e8d7ebd3024c6a5bd5dcb068d0cf322bfd105c4fb3546e1b97642",
     "sourceBytes": 2430,
     "normalizedBytes": 2398,
     "generatedBytes": 2486
@@ -896,6 +995,7 @@ export const programCoverage = Object.freeze([
     "program": "patchwork",
     "file": "patchwork.glsl",
     "status": "generated",
+    "sourceSha256": "39e866a841c98d5c716ab853b23bc9dea919585f135e5010d264d2bb3a04b53e",
     "sourceBytes": 10534,
     "normalizedBytes": 10502,
     "generatedBytes": 3693
@@ -905,6 +1005,7 @@ export const programCoverage = Object.freeze([
     "program": "pcBlurH",
     "file": "pcBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "4c4ca404f015f0112dc81cf8161b2f15743287baf3720a9590d3cc3fe061aa68",
     "sourceBytes": 1152,
     "normalizedBytes": 1171,
     "generatedBytes": 1155
@@ -914,6 +1015,7 @@ export const programCoverage = Object.freeze([
     "program": "pcBlurV",
     "file": "pcBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "a718a4793dc36d8008cd8c67378b6bc65d84f57b6f7507245859ebd32d44ab15",
     "sourceBytes": 920,
     "normalizedBytes": 939,
     "generatedBytes": 1155
@@ -923,6 +1025,7 @@ export const programCoverage = Object.freeze([
     "program": "pcCombine",
     "file": "pcCombine.glsl",
     "status": "generated",
+    "sourceSha256": "67f0d9c44fe0142c326691427ffa6bb819a9e04bd8bd8c7aa0f639c659aeba03",
     "sourceBytes": 2985,
     "normalizedBytes": 2963,
     "generatedBytes": 1324
@@ -932,6 +1035,7 @@ export const programCoverage = Object.freeze([
     "program": "pinch",
     "file": "pinch.glsl",
     "status": "generated",
+    "sourceSha256": "031405e087822fd10b07d972e53f2f6d2da95f67d9c56605cbc104e0b955d71c",
     "sourceBytes": 2296,
     "normalizedBytes": 2321,
     "generatedBytes": 3281
@@ -941,6 +1045,7 @@ export const programCoverage = Object.freeze([
     "program": "computeRank",
     "file": "computeRank.glsl",
     "status": "generated",
+    "sourceSha256": "6ce61bb5cb69bb22ac51f48603d5b40755b1e3f700acad1bc685a1e8a4dea6a4",
     "sourceBytes": 1417,
     "normalizedBytes": 1633,
     "generatedBytes": 1148
@@ -950,6 +1055,7 @@ export const programCoverage = Object.freeze([
     "program": "finalize",
     "file": "finalize.glsl",
     "status": "generated",
+    "sourceSha256": "99a84b4b2f5196788c227915b500a44542d74e5cc7cb41bbf637361ae327ad87",
     "sourceBytes": 1824,
     "normalizedBytes": 1997,
     "generatedBytes": 3145
@@ -959,6 +1065,7 @@ export const programCoverage = Object.freeze([
     "program": "findBrightest",
     "file": "findBrightest.glsl",
     "status": "generated",
+    "sourceSha256": "c94b2ccb8882c7713b66f78b0e14d1bdaaa6786a6814cf60ef6daa4a244782ae",
     "sourceBytes": 1045,
     "normalizedBytes": 1270,
     "generatedBytes": 977
@@ -968,6 +1075,7 @@ export const programCoverage = Object.freeze([
     "program": "gatherSorted",
     "file": "gatherSorted.glsl",
     "status": "generated",
+    "sourceSha256": "a45eb039bae3e7b0a5f804de68c441092b6b7826b594c4aa5221c22a6c7b1386",
     "sourceBytes": 1896,
     "normalizedBytes": 2133,
     "generatedBytes": 1467
@@ -977,6 +1085,7 @@ export const programCoverage = Object.freeze([
     "program": "luminance",
     "file": "luminance.glsl",
     "status": "generated",
+    "sourceSha256": "da27454ff4cc3fcc40b296c8ea8bd8913a00165b2c001aef3cd9e6bd05db0298",
     "sourceBytes": 1280,
     "normalizedBytes": 1468,
     "generatedBytes": 1447
@@ -986,6 +1095,7 @@ export const programCoverage = Object.freeze([
     "program": "prepare",
     "file": "prepare.glsl",
     "status": "generated",
+    "sourceSha256": "2418f2a2bb05e85a88c7b38d7a8fdf5b797d6181e829997123373d8b258ddeb2",
     "sourceBytes": 1242,
     "normalizedBytes": 1287,
     "generatedBytes": 1827
@@ -995,6 +1105,7 @@ export const programCoverage = Object.freeze([
     "program": "pixels",
     "file": "pixels.glsl",
     "status": "generated",
+    "sourceSha256": "06919a5f0cb829fdae9c04ae878aa4d7a12072e176ce3c98fb1ccf2623661e6e",
     "sourceBytes": 1094,
     "normalizedBytes": 1229,
     "generatedBytes": 1526
@@ -1004,6 +1115,7 @@ export const programCoverage = Object.freeze([
     "program": "pwBlurH",
     "file": "pwBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "6c0c36d1f9c5b658d87c5cd4abe30da3c9969aafd14d12893a8a103a9a17fe93",
     "sourceBytes": 1253,
     "normalizedBytes": 1272,
     "generatedBytes": 1148
@@ -1013,6 +1125,7 @@ export const programCoverage = Object.freeze([
     "program": "pwBlurV",
     "file": "pwBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "cc214498ee40dcfeaf3b411a4becde7b336d8e238495e27ffc996ea3f3576cea",
     "sourceBytes": 939,
     "normalizedBytes": 958,
     "generatedBytes": 1148
@@ -1022,6 +1135,7 @@ export const programCoverage = Object.freeze([
     "program": "pwSpec",
     "file": "pwSpec.glsl",
     "status": "generated",
+    "sourceSha256": "a26cbadc9c0aec753494f3e2a95964f35358eb8bf283107c2d7c624055c87767",
     "sourceBytes": 4131,
     "normalizedBytes": 4109,
     "generatedBytes": 2938
@@ -1031,6 +1145,7 @@ export const programCoverage = Object.freeze([
     "program": "polar",
     "file": "polar.glsl",
     "status": "generated",
+    "sourceSha256": "391b82e45bc2ea9799de1a200afbd735af96ad15627695d46cfc8caa1298a36d",
     "sourceBytes": 2027,
     "normalizedBytes": 2162,
     "generatedBytes": 3230
@@ -1040,6 +1155,7 @@ export const programCoverage = Object.freeze([
     "program": "pondRipples",
     "file": "pondRipples.glsl",
     "status": "generated",
+    "sourceSha256": "2958de77f0cdf2a21a00d1505ea75f26df5b66dd7f2cb98431e27178d3386c3d",
     "sourceBytes": 5187,
     "normalizedBytes": 5186,
     "generatedBytes": 3360
@@ -1049,6 +1165,7 @@ export const programCoverage = Object.freeze([
     "program": "posterize",
     "file": "posterize.glsl",
     "status": "generated",
+    "sourceSha256": "460910a8d1103eca5cc0b4df82f39fd91fbc447b9a815250ae7d34dfab8ee5b2",
     "sourceBytes": 2630,
     "normalizedBytes": 2608,
     "generatedBytes": 3299
@@ -1058,6 +1175,7 @@ export const programCoverage = Object.freeze([
     "program": "prismaticAberration",
     "file": "prismaticAberration.glsl",
     "status": "generated",
+    "sourceSha256": "513eac95fdf7f67a6839ee5d96e5bbfd76b6cfa62d3254df6fed23d8effe380e",
     "sourceBytes": 4247,
     "normalizedBytes": 4206,
     "generatedBytes": 5804
@@ -1067,6 +1185,7 @@ export const programCoverage = Object.freeze([
     "program": "nmReindexApply",
     "file": "nmReindexApply.glsl",
     "status": "generated",
+    "sourceSha256": "651bb6930d3fe51629fc3a17c88bfa7c7831e78fa18be0ea16d0f3f9d3c5154d",
     "sourceBytes": 2616,
     "normalizedBytes": 2798,
     "generatedBytes": 2927
@@ -1076,6 +1195,7 @@ export const programCoverage = Object.freeze([
     "program": "nmReindexReduce",
     "file": "nmReindexReduce.glsl",
     "status": "generated",
+    "sourceSha256": "5e9701125522aaa1f838858a7892ac1312f1161608a5f94b494ae64c7db8b7ff",
     "sourceBytes": 1331,
     "normalizedBytes": 1478,
     "generatedBytes": 1383
@@ -1085,6 +1205,7 @@ export const programCoverage = Object.freeze([
     "program": "nmReindexStats",
     "file": "nmReindexStats.glsl",
     "status": "generated",
+    "sourceSha256": "06525e054fc4910e7bc53345ad656071d2fcb33fc897f4aa35e8fc59b6f0b951",
     "sourceBytes": 2395,
     "normalizedBytes": 2542,
     "generatedBytes": 2459
@@ -1094,6 +1215,7 @@ export const programCoverage = Object.freeze([
     "program": "rlBlurH",
     "file": "rlBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "bc2fba2fc1a766f59890289bea39e4001b0403983b7c81e47be5259a5e2bb260",
     "sourceBytes": 1411,
     "normalizedBytes": 1448,
     "generatedBytes": 1190
@@ -1103,6 +1225,7 @@ export const programCoverage = Object.freeze([
     "program": "rlBlurV",
     "file": "rlBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "da3ea200f6e5296fa03af42a1ec9f01dd3f9edfc0965534813b1f0c8ec481ec8",
     "sourceBytes": 984,
     "normalizedBytes": 1021,
     "generatedBytes": 1190
@@ -1112,6 +1235,7 @@ export const programCoverage = Object.freeze([
     "program": "rlShade",
     "file": "rlShade.glsl",
     "status": "generated",
+    "sourceSha256": "dda1113e9cca57b25fa93c0843cd19fa76880724059fe1b56c5e5735f671ea90",
     "sourceBytes": 5873,
     "normalizedBytes": 5918,
     "generatedBytes": 3899
@@ -1121,6 +1245,7 @@ export const programCoverage = Object.freeze([
     "program": "repeat",
     "file": "repeat.glsl",
     "status": "generated",
+    "sourceSha256": "6fe9a919129c3424f66c145aca77b4a4101c7edc46828c2d85bff40d4f67ebbc",
     "sourceBytes": 1366,
     "normalizedBytes": 1348,
     "generatedBytes": 1793
@@ -1130,6 +1255,7 @@ export const programCoverage = Object.freeze([
     "program": "reverb",
     "file": "reverb.glsl",
     "status": "generated",
+    "sourceSha256": "4dde4b901aded65365d0d46145a7d50dcd2b8d279e32c3d1e7bf02cfc7f78bcb",
     "sourceBytes": 1816,
     "normalizedBytes": 1955,
     "generatedBytes": 2718
@@ -1139,6 +1265,7 @@ export const programCoverage = Object.freeze([
     "program": "ridge",
     "file": "ridge.glsl",
     "status": "generated",
+    "sourceSha256": "0e3cc0289ff2057145afd5bb8ceeef71bfbbee0aee149eb0f609937f0571694c",
     "sourceBytes": 818,
     "normalizedBytes": 956,
     "generatedBytes": 1356
@@ -1148,6 +1275,7 @@ export const programCoverage = Object.freeze([
     "program": "rot",
     "file": "rot.glsl",
     "status": "generated",
+    "sourceSha256": "c23e8462e8240f25a715fa3eb05e567269c8d410d27943ba346ebccdd0de1f8f",
     "sourceBytes": 1197,
     "normalizedBytes": 1317,
     "generatedBytes": 1633
@@ -1157,6 +1285,7 @@ export const programCoverage = Object.freeze([
     "program": "scale",
     "file": "scale.glsl",
     "status": "generated",
+    "sourceSha256": "a45f000ee12c498d7a11a04ecc56e911c9fc804ad9cde60cc7cea47533a19ce3",
     "sourceBytes": 1121,
     "normalizedBytes": 1103,
     "generatedBytes": 1556
@@ -1166,6 +1295,7 @@ export const programCoverage = Object.freeze([
     "program": "scanlineError",
     "file": "scanlineError.glsl",
     "status": "generated",
+    "sourceSha256": "66556b29659b479edd397f8e0c87c176cafa7560c426eab8211b6939a08f2198",
     "sourceBytes": 13302,
     "normalizedBytes": 13767,
     "generatedBytes": 15731
@@ -1175,6 +1305,7 @@ export const programCoverage = Object.freeze([
     "program": "scatterJitter",
     "file": "scatterJitter.glsl",
     "status": "generated",
+    "sourceSha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71",
     "sourceBytes": 4475,
     "normalizedBytes": 4408,
     "generatedBytes": 3749
@@ -1184,6 +1315,7 @@ export const programCoverage = Object.freeze([
     "program": "scatterSmooth",
     "file": "scatterSmooth.glsl",
     "status": "generated",
+    "sourceSha256": "124931637680f4f1fd9eed63bd0b63bf961204c5667236c9a67ce1b24ab0e602",
     "sourceBytes": 1138,
     "normalizedBytes": 1114,
     "generatedBytes": 988
@@ -1193,6 +1325,7 @@ export const programCoverage = Object.freeze([
     "program": "scratchesBlend",
     "file": "scratchesBlend.glsl",
     "status": "generated",
+    "sourceSha256": "db76fc1b477acfa7e9a2d22ca532a9d29ed4034ec695d4f4b75ed8741ce63c63",
     "sourceBytes": 504,
     "normalizedBytes": 646,
     "generatedBytes": 886
@@ -1202,6 +1335,7 @@ export const programCoverage = Object.freeze([
     "program": "scroll",
     "file": "scroll.glsl",
     "status": "generated",
+    "sourceSha256": "ce2117916b0d9513890942332835c6cfd1753a39d9d773626c66c6107050d457",
     "sourceBytes": 1124,
     "normalizedBytes": 1106,
     "generatedBytes": 1585
@@ -1211,6 +1345,7 @@ export const programCoverage = Object.freeze([
     "program": "seamless",
     "file": "seamless.glsl",
     "status": "generated",
+    "sourceSha256": "d54569f8e394430d771ecb51edc9258ecde17483674843fab8a9f6efb733dabf",
     "sourceBytes": 1513,
     "normalizedBytes": 1651,
     "generatedBytes": 1492
@@ -1220,6 +1355,7 @@ export const programCoverage = Object.freeze([
     "program": "sharpen",
     "file": "sharpen.glsl",
     "status": "generated",
+    "sourceSha256": "c9a9b196e61a2904b37ad89c7fc46bee1b40b6bba81293dde3d7cd37527773e7",
     "sourceBytes": 1625,
     "normalizedBytes": 1760,
     "generatedBytes": 2720
@@ -1229,6 +1365,7 @@ export const programCoverage = Object.freeze([
     "program": "chromaticAberration",
     "file": "chromaticAberration.glsl",
     "status": "generated",
+    "sourceSha256": "c6d3f57f92c9cc0e7e1a1a8e1381699cc0ddb95d83b9d8b1c1a3da19d782f245",
     "sourceBytes": 1171,
     "normalizedBytes": 1152,
     "generatedBytes": 1618
@@ -1238,6 +1375,7 @@ export const programCoverage = Object.freeze([
     "program": "sine",
     "file": "sine.glsl",
     "status": "generated",
+    "sourceSha256": "569f2d820d99a6d9ac2b310b6fd646cd961c70a6d9eec2bcfd5d8f3686553f07",
     "sourceBytes": 1043,
     "normalizedBytes": 1178,
     "generatedBytes": 1345
@@ -1247,6 +1385,7 @@ export const programCoverage = Object.freeze([
     "program": "skew",
     "file": "skew.glsl",
     "status": "generated",
+    "sourceSha256": "4eb375b32775efa3fc34a07a539350b41576932c344c3b082c2fabcd51f56480",
     "sourceBytes": 1728,
     "normalizedBytes": 1924,
     "generatedBytes": 2121
@@ -1256,6 +1395,7 @@ export const programCoverage = Object.freeze([
     "program": "smoothBlend",
     "file": "smoothBlend.glsl",
     "status": "generated",
+    "sourceSha256": "c317194f9bbdba9d95c5dcae47e2354221cf0cdb05ffcf14e335a94a4ef3729c",
     "sourceBytes": 6858,
     "normalizedBytes": 7288,
     "generatedBytes": 8087
@@ -1265,6 +1405,7 @@ export const programCoverage = Object.freeze([
     "program": "smoothEdge",
     "file": "smoothEdge.glsl",
     "status": "generated",
+    "sourceSha256": "b18be207f35a2bf3bcbdb19eb87018fac241856359d6094362f468fa048b5265",
     "sourceBytes": 1554,
     "normalizedBytes": 1725,
     "generatedBytes": 2109
@@ -1274,6 +1415,7 @@ export const programCoverage = Object.freeze([
     "program": "smoothstep",
     "file": "smoothstep.glsl",
     "status": "generated",
+    "sourceSha256": "505b938cf202f02760d527a127e3c234e5fe527ba1c31e7df25fea70dce59c83",
     "sourceBytes": 562,
     "normalizedBytes": 697,
     "generatedBytes": 1054
@@ -1283,6 +1425,7 @@ export const programCoverage = Object.freeze([
     "program": "snow",
     "file": "snow.glsl",
     "status": "generated",
+    "sourceSha256": "ae057787cc101755743c17b4cdf46b51d70ed8b9896fed9535a058c8b252f48a",
     "sourceBytes": 2982,
     "normalizedBytes": 3518,
     "generatedBytes": 4146
@@ -1292,6 +1435,7 @@ export const programCoverage = Object.freeze([
     "program": "sobel",
     "file": "sobel.glsl",
     "status": "generated",
+    "sourceSha256": "ef459738b931929a65422df36f852da4e7cbe4e90387690bea747a34a2e52f84",
     "sourceBytes": 2136,
     "normalizedBytes": 2271,
     "generatedBytes": 3399
@@ -1301,6 +1445,7 @@ export const programCoverage = Object.freeze([
     "program": "spatter",
     "file": "spatter.glsl",
     "status": "generated",
+    "sourceSha256": "9d8cb56f43761cdb52a36935a7c3b66d758189d82db0c52ad93b5090206579af",
     "sourceBytes": 8034,
     "normalizedBytes": 8438,
     "generatedBytes": 8021
@@ -1310,6 +1455,7 @@ export const programCoverage = Object.freeze([
     "program": "spinBlur",
     "file": "spinBlur.glsl",
     "status": "generated",
+    "sourceSha256": "a5ee242e189066b55d4d5c3140e957418bdff582b367d1f6d4cdfee4c333b405",
     "sourceBytes": 3077,
     "normalizedBytes": 3180,
     "generatedBytes": 2522
@@ -1319,6 +1465,7 @@ export const programCoverage = Object.freeze([
     "program": "spiral",
     "file": "spiral.glsl",
     "status": "generated",
+    "sourceSha256": "3d609c5028c859d82c060af21b0675dd0dd0ec6f720dbc9e3b3b21a65893ef4a",
     "sourceBytes": 2869,
     "normalizedBytes": 2874,
     "generatedBytes": 3359
@@ -1328,6 +1475,7 @@ export const programCoverage = Object.freeze([
     "program": "spookyTicker",
     "file": "spookyTicker.glsl",
     "status": "generated",
+    "sourceSha256": "d50ca880cd6c6c03dd01a7ae683316d42ed93baddaadce9f3b918be1c816d50f",
     "sourceBytes": 4276,
     "normalizedBytes": 4357,
     "generatedBytes": 3458
@@ -1337,6 +1485,7 @@ export const programCoverage = Object.freeze([
     "program": "stBlurH",
     "file": "stBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "2177384617ed22ade9338585025b881166adbe2a1c1d31b3cae6f194e232e2ad",
     "sourceBytes": 1180,
     "normalizedBytes": 1199,
     "generatedBytes": 1160
@@ -1346,6 +1495,7 @@ export const programCoverage = Object.freeze([
     "program": "stBlurV",
     "file": "stBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "cbcd8aba19f19c99653416b1b9b6ffff27f40e7f6b9ca7330936d2645a84bd7f",
     "sourceBytes": 921,
     "normalizedBytes": 940,
     "generatedBytes": 1160
@@ -1355,6 +1505,7 @@ export const programCoverage = Object.freeze([
     "program": "stThreshold",
     "file": "stThreshold.glsl",
     "status": "generated",
+    "sourceSha256": "d93168982b13907e32e1264c021c39f9d434ae122efd7d11898733293ee5da94",
     "sourceBytes": 3467,
     "normalizedBytes": 3512,
     "generatedBytes": 2459
@@ -1364,6 +1515,7 @@ export const programCoverage = Object.freeze([
     "program": "step",
     "file": "step.glsl",
     "status": "generated",
+    "sourceSha256": "4f5680a9b25a2c12cecdcef3cc1ba106c2ee7a8390790544a3425890153cb7bf",
     "sourceBytes": 709,
     "normalizedBytes": 844,
     "generatedBytes": 1509
@@ -1373,6 +1525,7 @@ export const programCoverage = Object.freeze([
     "program": "stipple",
     "file": "stipple.glsl",
     "status": "generated",
+    "sourceSha256": "69d75b6fab4281fe0a0997eaf6b7b81e5ab30f0da5dfec9255c9dbb6e914c609",
     "sourceBytes": 8490,
     "normalizedBytes": 8711,
     "generatedBytes": 5817
@@ -1382,6 +1535,7 @@ export const programCoverage = Object.freeze([
     "program": "strayHairBlend",
     "file": "strayHairBlend.glsl",
     "status": "generated",
+    "sourceSha256": "bacff9ec121ac6e28d377702145eb14cdd8dfa2cbfc4ec9ba89765f658b1345c",
     "sourceBytes": 682,
     "normalizedBytes": 833,
     "generatedBytes": 1264
@@ -1391,6 +1545,7 @@ export const programCoverage = Object.freeze([
     "program": "stkPost",
     "file": "stkPost.glsl",
     "status": "generated",
+    "sourceSha256": "b911bd1b40452044205ee2e7bb8ae90f54cc56faaa0225430d5baa67e5ec949f",
     "sourceBytes": 1375,
     "normalizedBytes": 1361,
     "generatedBytes": 1424
@@ -1400,6 +1555,7 @@ export const programCoverage = Object.freeze([
     "program": "stkSmear",
     "file": "stkSmear.glsl",
     "status": "generated",
+    "sourceSha256": "dac057232a650f3c9eb56829aa12507b639d8632f6fc132cbd067a28996fa4db",
     "sourceBytes": 14787,
     "normalizedBytes": 14894,
     "generatedBytes": 13019
@@ -1409,6 +1565,7 @@ export const programCoverage = Object.freeze([
     "program": "delayShift",
     "file": "delayShift.glsl",
     "status": "generated",
+    "sourceSha256": "ad1376bf6f09e0f778f1ecf00bae7b2dc16d14b110e404fee1637b9b72f9fa8f",
     "sourceBytes": 677,
     "normalizedBytes": 815,
     "generatedBytes": 538
@@ -1418,6 +1575,7 @@ export const programCoverage = Object.freeze([
     "program": "temporalAberration",
     "file": "temporalAberration.glsl",
     "status": "generated",
+    "sourceSha256": "d5d298c95e663f89972292ac78767f35c8eba4c3ed08eb24381ac95b97bbc190",
     "sourceBytes": 2291,
     "normalizedBytes": 2414,
     "generatedBytes": 2889
@@ -1427,6 +1585,7 @@ export const programCoverage = Object.freeze([
     "program": "tetraColorArray",
     "file": "tetraColorArray.glsl",
     "status": "generated",
+    "sourceSha256": "68c7cabce311a0a05ba116ce8d34bd5e70e0c09bfb8eab06c93f4f9e01fa5438",
     "sourceBytes": 9754,
     "normalizedBytes": 9758,
     "generatedBytes": 8844
@@ -1436,6 +1595,7 @@ export const programCoverage = Object.freeze([
     "program": "tetraCosine",
     "file": "tetraCosine.glsl",
     "status": "generated",
+    "sourceSha256": "538f13b472519cc521b5d30dbd72a799c7fa46a820691ab88117aff4d93f0ffd",
     "sourceBytes": 5314,
     "normalizedBytes": 5310,
     "generatedBytes": 4970
@@ -1445,6 +1605,7 @@ export const programCoverage = Object.freeze([
     "program": "text",
     "file": "text.glsl",
     "status": "generated",
+    "sourceSha256": "7a492aea1422528421c352187d108ea32a1d5bf48991ef74f099f8dafbe5ccea",
     "sourceBytes": 1978,
     "normalizedBytes": 1956,
     "generatedBytes": 1427
@@ -1454,6 +1615,7 @@ export const programCoverage = Object.freeze([
     "program": "texture",
     "file": "texture.glsl",
     "status": "generated",
+    "sourceSha256": "8e95251ef9a7789b1de4e51718ab3bebd9fc6d20db8acd0969191e288ec7454c",
     "sourceBytes": 14344,
     "normalizedBytes": 14827,
     "generatedBytes": 15485
@@ -1463,6 +1625,7 @@ export const programCoverage = Object.freeze([
     "program": "thresh",
     "file": "thresh.glsl",
     "status": "generated",
+    "sourceSha256": "cef36d6704f2c2070f7b02ce88c9789a2c667db699d41c2e21a872836918561e",
     "sourceBytes": 552,
     "normalizedBytes": 533,
     "generatedBytes": 757
@@ -1472,6 +1635,7 @@ export const programCoverage = Object.freeze([
     "program": "tile",
     "file": "tile.glsl",
     "status": "generated",
+    "sourceSha256": "ff85419a24f0cdcc7f12334885cb87bca74a51cf6617ab549d3ebdc6d34e03a7",
     "sourceBytes": 3517,
     "normalizedBytes": 3494,
     "generatedBytes": 3159
@@ -1481,6 +1645,7 @@ export const programCoverage = Object.freeze([
     "program": "colorize",
     "file": "colorize.glsl",
     "status": "generated",
+    "sourceSha256": "d10c38ae0a90c8dbd4b0998362b199af71c549ff743a9479a23decc5f7c3037d",
     "sourceBytes": 2045,
     "normalizedBytes": 2187,
     "generatedBytes": 2651
@@ -1490,6 +1655,7 @@ export const programCoverage = Object.freeze([
     "program": "translate",
     "file": "translate.glsl",
     "status": "generated",
+    "sourceSha256": "70f5c44a2d8275f3dd51a9c11fa997dbb0ffc829c5b3565d651ebbfa246db987",
     "sourceBytes": 760,
     "normalizedBytes": 895,
     "generatedBytes": 1185
@@ -1499,6 +1665,7 @@ export const programCoverage = Object.freeze([
     "program": "tunnel",
     "file": "tunnel.glsl",
     "status": "generated",
+    "sourceSha256": "c0ebe43eead7a1c040dd4a37162d634fe4b1a93ea0b8704bac502fbc5a978193",
     "sourceBytes": 3062,
     "normalizedBytes": 3192,
     "generatedBytes": 4288
@@ -1508,6 +1675,7 @@ export const programCoverage = Object.freeze([
     "program": "usmBlurH",
     "file": "usmBlurH.glsl",
     "status": "generated",
+    "sourceSha256": "86ee319a6cc22695b679507e569e9b4338083a0100ecb4afeee3cd8e9217917c",
     "sourceBytes": 748,
     "normalizedBytes": 767,
     "generatedBytes": 1102
@@ -1517,6 +1685,7 @@ export const programCoverage = Object.freeze([
     "program": "usmBlurV",
     "file": "usmBlurV.glsl",
     "status": "generated",
+    "sourceSha256": "43528782e9f3cc69d8a6aefd9a213bd120088653ad76d2503c578deece812e7a",
     "sourceBytes": 746,
     "normalizedBytes": 765,
     "generatedBytes": 1102
@@ -1526,6 +1695,7 @@ export const programCoverage = Object.freeze([
     "program": "usmCombine",
     "file": "usmCombine.glsl",
     "status": "generated",
+    "sourceSha256": "d5bc1d96fd7f241579d705688045ef2ba4975c382c99e1aec3f1f69bf0b3c03c",
     "sourceBytes": 866,
     "normalizedBytes": 844,
     "generatedBytes": 918
@@ -1535,6 +1705,7 @@ export const programCoverage = Object.freeze([
     "program": "upsample",
     "file": "upsample.glsl",
     "status": "generated",
+    "sourceSha256": "39055a214903d09a9b2dd8db9ec5b2023a920c22707ec424ae90d5fb90ebf461",
     "sourceBytes": 2524,
     "normalizedBytes": 2652,
     "generatedBytes": 3650
@@ -1544,6 +1715,7 @@ export const programCoverage = Object.freeze([
     "program": "vignette",
     "file": "vignette.glsl",
     "status": "generated",
+    "sourceSha256": "0b7f632bb4c11cd61ff340ab9ef4ca82186a848ea70fe24e69aad5a0dfb63b6d",
     "sourceBytes": 1427,
     "normalizedBytes": 1562,
     "generatedBytes": 2000
@@ -1553,6 +1725,7 @@ export const programCoverage = Object.freeze([
     "program": "warp",
     "file": "warp.glsl",
     "status": "generated",
+    "sourceSha256": "f3034ac02a2926b819ff874d2d1d0d3dacebf2b7a409c983237d6a71865942ee",
     "sourceBytes": 3095,
     "normalizedBytes": 3188,
     "generatedBytes": 4451
@@ -1562,6 +1735,7 @@ export const programCoverage = Object.freeze([
     "program": "wcComposite",
     "file": "wcComposite.glsl",
     "status": "generated",
+    "sourceSha256": "b3f03b27f84a4a9629c1eb2808edaaf63a3c696fa385e871d853cacce21dcaa6",
     "sourceBytes": 3785,
     "normalizedBytes": 3830,
     "generatedBytes": 4314
@@ -1571,6 +1745,7 @@ export const programCoverage = Object.freeze([
     "program": "wcSeed",
     "file": "wcSeed.glsl",
     "status": "generated",
+    "sourceSha256": "e3158e856ebb45df82222fcf26708c83d5bdba7b9af2f017e18f4fde696633da",
     "sourceBytes": 368,
     "normalizedBytes": 346,
     "generatedBytes": 320
@@ -1580,6 +1755,7 @@ export const programCoverage = Object.freeze([
     "program": "wcSimplify",
     "file": "wcSimplify.glsl",
     "status": "generated",
+    "sourceSha256": "81e668d554920b70353a2cccaaa414f1ad4eebd83bd1d7100ca05f44a11f8b5c",
     "sourceBytes": 2233,
     "normalizedBytes": 2211,
     "generatedBytes": 3063
@@ -1589,6 +1765,7 @@ export const programCoverage = Object.freeze([
     "program": "waves",
     "file": "waves.glsl",
     "status": "generated",
+    "sourceSha256": "f4cddf1b3a6c9c68aa677b6743af313e1cdb2bf0a857ce9a1c13edc80f54e3aa",
     "sourceBytes": 2622,
     "normalizedBytes": 2628,
     "generatedBytes": 3388
@@ -1598,6 +1775,7 @@ export const programCoverage = Object.freeze([
     "program": "wind",
     "file": "wind.glsl",
     "status": "generated",
+    "sourceSha256": "68eb0f4deca51ab5352307fa06509b153cf19a29cea4820d054adafa42655f22",
     "sourceBytes": 3520,
     "normalizedBytes": 3487,
     "generatedBytes": 3085
@@ -1607,6 +1785,7 @@ export const programCoverage = Object.freeze([
     "program": "wobble",
     "file": "wobble.glsl",
     "status": "generated",
+    "sourceSha256": "1bdd1e3bed9111743dfeb7e3418e14c42aa8d93ed4636167a99d17cb143a38cc",
     "sourceBytes": 3105,
     "normalizedBytes": 3294,
     "generatedBytes": 3465
@@ -1616,6 +1795,7 @@ export const programCoverage = Object.freeze([
     "program": "blend",
     "file": "blend.glsl",
     "status": "generated",
+    "sourceSha256": "dee5cfdc0f16be116355c951be3d4f185d49d64c85578bef71001253c1920377",
     "sourceBytes": 1635,
     "normalizedBytes": 1606,
     "generatedBytes": 1608
@@ -1625,6 +1805,7 @@ export const programCoverage = Object.freeze([
     "program": "clear",
     "file": "clear.glsl",
     "status": "generated",
+    "sourceSha256": "4d3b8edd70ff43d7291b965861622ce0303e7b4c1f4de61c7a3b74e9aa1c171f",
     "sourceBytes": 104,
     "normalizedBytes": 85,
     "generatedBytes": 156
@@ -1634,6 +1815,7 @@ export const programCoverage = Object.freeze([
     "program": "deposit",
     "file": "deposit.frag",
     "status": "generated",
+    "sourceSha256": "156401729b935381b38732d8e84ebdbbe185734e642972fa45533c5ce51a083d",
     "sourceBytes": 117,
     "normalizedBytes": 95,
     "generatedBytes": 233
@@ -1643,6 +1825,7 @@ export const programCoverage = Object.freeze([
     "program": "zoomBlur",
     "file": "zoomBlur.glsl",
     "status": "generated",
+    "sourceSha256": "3b24e68c6aec2161bbac73f5cac3d21e658531fff6a365ae78a4982179a707bd",
     "sourceBytes": 1496,
     "normalizedBytes": 1790,
     "generatedBytes": 2440
@@ -1652,6 +1835,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "f4e3622f4def27221de0bd0b93ed1152f56f835957361e0fcffea8b84d3ce356",
     "sourceBytes": 9859,
     "normalizedBytes": 10250,
     "generatedBytes": 7496
@@ -1661,6 +1845,7 @@ export const programCoverage = Object.freeze([
     "program": "blend",
     "file": "blend.glsl",
     "status": "generated",
+    "sourceSha256": "22c4ad697b9d365ab53cb5703f9aa76326cf2d47393bc41c27347ef48c6312c6",
     "sourceBytes": 1154,
     "normalizedBytes": 1314,
     "generatedBytes": 1299
@@ -1670,6 +1855,7 @@ export const programCoverage = Object.freeze([
     "program": "copy",
     "file": "copy.glsl",
     "status": "generated",
+    "sourceSha256": "6fae73fc5c59a210d64610e35060076370ebf853264f47cde01247d5296813db",
     "sourceBytes": 466,
     "normalizedBytes": 626,
     "generatedBytes": 587
@@ -1679,6 +1865,7 @@ export const programCoverage = Object.freeze([
     "program": "deposit",
     "file": "deposit.frag",
     "status": "adapter",
+    "sourceSha256": "3df54b20e8dd1716c63156758097d1935c04082caac806a60c54611fc15df823",
     "sourceBytes": 191,
     "normalizedBytes": 191,
     "generatedBytes": 0
@@ -1688,6 +1875,7 @@ export const programCoverage = Object.freeze([
     "program": "diffuse",
     "file": "diffuse.glsl",
     "status": "generated",
+    "sourceSha256": "6730670173a744b12d7a8e837ca917779fe7a9bc28b78078d6e975f079480711",
     "sourceBytes": 725,
     "normalizedBytes": 885,
     "generatedBytes": 809
@@ -1697,6 +1885,7 @@ export const programCoverage = Object.freeze([
     "program": "palette3d",
     "file": "palette3d.glsl",
     "status": "generated",
+    "sourceSha256": "6425d323befb35d590b818a2bdb269e7bd6fb11aebf148a0c040b3eff0655015",
     "sourceBytes": 15170,
     "normalizedBytes": 16799,
     "generatedBytes": 19937
@@ -1706,6 +1895,7 @@ export const programCoverage = Object.freeze([
     "program": "alphaMask",
     "file": "alphaMask.glsl",
     "status": "generated",
+    "sourceSha256": "eb9575c06da965149deab73905b19fcb68a7a4c74530f98732812e490bbddc12",
     "sourceBytes": 1475,
     "normalizedBytes": 1456,
     "generatedBytes": 1764
@@ -1715,6 +1905,7 @@ export const programCoverage = Object.freeze([
     "program": "applyMode",
     "file": "applyMode.glsl",
     "status": "generated",
+    "sourceSha256": "636174ce4937e5e3da07b757117caf98c760c70ff85e1eb822049fafe2c45670",
     "sourceBytes": 2032,
     "normalizedBytes": 2013,
     "generatedBytes": 2914
@@ -1724,6 +1915,7 @@ export const programCoverage = Object.freeze([
     "program": "blendMode",
     "file": "blendMode.glsl",
     "status": "generated",
+    "sourceSha256": "02a68bb4aa158a0aeb4ed6ba4aa7026b2ed81b0a505658ed9d4087adb31f2d2d",
     "sourceBytes": 4279,
     "normalizedBytes": 4260,
     "generatedBytes": 5443
@@ -1733,6 +1925,7 @@ export const programCoverage = Object.freeze([
     "program": "cellSplit",
     "file": "cellSplit.glsl",
     "status": "generated",
+    "sourceSha256": "c6de84cdf428b367ac95d345cf6d72f3438ddeeb728136ea34e8937af72ceff9",
     "sourceBytes": 4058,
     "normalizedBytes": 4201,
     "generatedBytes": 4762
@@ -1742,6 +1935,7 @@ export const programCoverage = Object.freeze([
     "program": "centerMask",
     "file": "centerMask.glsl",
     "status": "generated",
+    "sourceSha256": "55d708d50af0c0d0a6caf8a32ca3621f8137ff0d489aeb8d5f579e20984599e2",
     "sourceBytes": 4859,
     "normalizedBytes": 4840,
     "generatedBytes": 5137
@@ -1751,6 +1945,7 @@ export const programCoverage = Object.freeze([
     "program": "channelCombine",
     "file": "channelCombine.glsl",
     "status": "generated",
+    "sourceSha256": "6332e5524f694f9fd85a70d15d462019b530c5d2eb99d80daceb7da16db4c735",
     "sourceBytes": 820,
     "normalizedBytes": 801,
     "generatedBytes": 1275
@@ -1760,6 +1955,7 @@ export const programCoverage = Object.freeze([
     "program": "distortion",
     "file": "distortion.glsl",
     "status": "generated",
+    "sourceSha256": "569fbab57b57baad275a60facfd70b913afe76d69a724b682e821883d40dcae8",
     "sourceBytes": 8117,
     "normalizedBytes": 8698,
     "generatedBytes": 11314
@@ -1769,6 +1965,7 @@ export const programCoverage = Object.freeze([
     "program": "focusBlur",
     "file": "focusBlur.glsl",
     "status": "generated",
+    "sourceSha256": "dff787c7de67122abe60ac14f0fc8995e8087fc4549626e6fe678d8f86b3d7d1",
     "sourceBytes": 2268,
     "normalizedBytes": 2382,
     "generatedBytes": 2704
@@ -1778,6 +1975,7 @@ export const programCoverage = Object.freeze([
     "program": "mashup",
     "file": "mashup.glsl",
     "status": "generated",
+    "sourceSha256": "defacb16704d2e7ca69c85959fad97d09587523caa731252f263004cc1e01fe6",
     "sourceBytes": 3196,
     "normalizedBytes": 3126,
     "generatedBytes": 2749
@@ -1787,6 +1985,7 @@ export const programCoverage = Object.freeze([
     "program": "patternMix",
     "file": "patternMix.glsl",
     "status": "generated",
+    "sourceSha256": "b7fab7bc3646f4936fa2f730a07df9ffb9fd36b21250410fc5d0f4718a06d21d",
     "sourceBytes": 5579,
     "normalizedBytes": 5313,
     "generatedBytes": 5501
@@ -1796,6 +1995,7 @@ export const programCoverage = Object.freeze([
     "program": "shadow",
     "file": "shadow.glsl",
     "status": "generated",
+    "sourceSha256": "6a321002481cd9dcbf92b11abb37089e7a6a2995494bf8a5befa2145fb1066aa",
     "sourceBytes": 4121,
     "normalizedBytes": 4140,
     "generatedBytes": 3842
@@ -1805,6 +2005,7 @@ export const programCoverage = Object.freeze([
     "program": "shapeMask",
     "file": "shapeMask.glsl",
     "status": "generated",
+    "sourceSha256": "2503c37ae4bb9f81b5d77931445b69743067b7e43370a50779d5a09d86bf0374",
     "sourceBytes": 3775,
     "normalizedBytes": 3765,
     "generatedBytes": 4194
@@ -1814,6 +2015,7 @@ export const programCoverage = Object.freeze([
     "program": "split",
     "file": "split.glsl",
     "status": "generated",
+    "sourceSha256": "5e6aa68831e8e5749d76f8cc9721d2dadca6149f06f79991bdf671106f04c0b8",
     "sourceBytes": 2079,
     "normalizedBytes": 2047,
     "generatedBytes": 2125
@@ -1823,6 +2025,7 @@ export const programCoverage = Object.freeze([
     "program": "thresholdMix",
     "file": "thresholdMix.glsl",
     "status": "generated",
+    "sourceSha256": "66a51769ab16f2b2575101d5c347860a19fc0a7618af6dd7d06c561af22d1a87",
     "sourceBytes": 3022,
     "normalizedBytes": 2995,
     "generatedBytes": 2869
@@ -1832,6 +2035,7 @@ export const programCoverage = Object.freeze([
     "program": "uvRemap",
     "file": "uvRemap.glsl",
     "status": "generated",
+    "sourceSha256": "ec2514ab283fa6cd67687c3cbf717d4d8596d3bdc075a7ea3d7c7dab800694e5",
     "sourceBytes": 1500,
     "normalizedBytes": 1482,
     "generatedBytes": 2109
@@ -1841,6 +2045,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "5ec5c8c92dc026ca123c37cb735386c4bca9df0e2b2ebbd9831d3fbc32ac127e",
     "sourceBytes": 4936,
     "normalizedBytes": 5036,
     "generatedBytes": 5192
@@ -1850,6 +2055,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -1859,6 +2065,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "0e2e9336878287c4c856c6f6a4e7d2a19219d29025f33d0ead8c5f17fc19cc5c",
     "sourceBytes": 4826,
     "normalizedBytes": 4922,
     "generatedBytes": 4905
@@ -1868,6 +2075,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -1877,6 +2085,7 @@ export const programCoverage = Object.freeze([
     "program": "zWrite",
     "file": "zWrite.glsl",
     "status": "generated",
+    "sourceSha256": "e6fefa1486d7be6895efef7153d599497234386f83b21b042248b824018d655d",
     "sourceBytes": 874,
     "normalizedBytes": 1016,
     "generatedBytes": 1097
@@ -1886,6 +2095,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "5f11d2d5096ac4f54b243a2e9de1d7526960be76c460314f8ec7142c21c9995a",
     "sourceBytes": 5928,
     "normalizedBytes": 6105,
     "generatedBytes": 5944
@@ -1895,6 +2105,7 @@ export const programCoverage = Object.freeze([
     "program": "copyGrid",
     "file": "copyGrid.glsl",
     "status": "generated",
+    "sourceSha256": "21e17a96f09141870bb930c7707d1fc8b2ba5e97f699fdd5c7b8246720974d58",
     "sourceBytes": 274,
     "normalizedBytes": 255,
     "generatedBytes": 317
@@ -1904,6 +2115,7 @@ export const programCoverage = Object.freeze([
     "program": "depositGrid",
     "file": "depositGrid.frag",
     "status": "adapter",
+    "sourceSha256": "bbafff4c1dcd4883c8c7ab243161074fb74313b744476a7f6f229a0165722439",
     "sourceBytes": 471,
     "normalizedBytes": 449,
     "generatedBytes": 0
@@ -1913,6 +2125,7 @@ export const programCoverage = Object.freeze([
     "program": "initGrid",
     "file": "initGrid.glsl",
     "status": "generated",
+    "sourceSha256": "bcc9ca92c223dc0aadf5f74b40d54c49de8da7928e36c381e011c1fef6830242",
     "sourceBytes": 1811,
     "normalizedBytes": 1859,
     "generatedBytes": 1939
@@ -1922,6 +2135,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "d422ca4f58ab159fb5fe78892c9611d485c6848631b09afa526f5afb70c02046",
     "sourceBytes": 860,
     "normalizedBytes": 841,
     "generatedBytes": 839
@@ -1931,6 +2145,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "4c664f7443b1085a37896730b5077ed6399ce345a7b5a25101a7a91e00b18363",
     "sourceBytes": 9726,
     "normalizedBytes": 9903,
     "generatedBytes": 10012
@@ -1940,6 +2155,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -1949,6 +2165,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "0584139db3b2e14af99788458a48094a0d650a03ae540a0468309bf2f097bb6b",
     "sourceBytes": 5848,
     "normalizedBytes": 6042,
     "generatedBytes": 5363
@@ -1958,6 +2175,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -1967,6 +2185,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "40edcf1e02d2ee47a25404c5f4f0e809a5243c5b639bb301b823217b9fda1e77",
     "sourceBytes": 1037,
     "normalizedBytes": 1109,
     "generatedBytes": 1427
@@ -1976,6 +2195,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -1985,6 +2205,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "988fe48308354bc7cd8eaa1cb768bccf9ac37b3ce8ebb4256f567eb8419f1001",
     "sourceBytes": 6329,
     "normalizedBytes": 6451,
     "generatedBytes": 5195
@@ -1994,6 +2215,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -2003,6 +2225,7 @@ export const programCoverage = Object.freeze([
     "program": "agentField",
     "file": "agentField.glsl",
     "status": "generated",
+    "sourceSha256": "dc6f5ea902d32e0fb7da530b93c2269ae095f99ac3a76d403a887d4078ef3237",
     "sourceBytes": 3542,
     "normalizedBytes": 3771,
     "generatedBytes": 3558
@@ -2012,6 +2235,7 @@ export const programCoverage = Object.freeze([
     "program": "clear",
     "file": "clear.glsl",
     "status": "generated",
+    "sourceSha256": "d7f2308a63b5598e06004de9ceed4ff215dac41c07478c7670767c94c5f5854d",
     "sourceBytes": 157,
     "normalizedBytes": 138,
     "generatedBytes": 156
@@ -2021,6 +2245,7 @@ export const programCoverage = Object.freeze([
     "program": "convolve",
     "file": "convolve.glsl",
     "status": "generated",
+    "sourceSha256": "911443464a21bac3436a3d8a9505859b1f6eda97aa0e24ce633aa312970dbc44",
     "sourceBytes": 2019,
     "normalizedBytes": 2112,
     "generatedBytes": 1566
@@ -2030,6 +2255,7 @@ export const programCoverage = Object.freeze([
     "program": "deposit",
     "file": "deposit.frag",
     "status": "adapter",
+    "sourceSha256": "7e1d94a931b0c5b5c2cc63bcc22c1f8dd9772c0a1df67224a67c73ad9d348f91",
     "sourceBytes": 271,
     "normalizedBytes": 252,
     "generatedBytes": 0
@@ -2039,6 +2265,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "9831abb1e757196018520d2c7b33139ec265ca87e1c6ab71ab956db6bda771d6",
     "sourceBytes": 266,
     "normalizedBytes": 408,
     "generatedBytes": 468
@@ -2048,6 +2275,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "78513907f1480250cef2e603e91a012aa4972c2e9e4bd66fc5aefa089a9a4775",
     "sourceBytes": 9544,
     "normalizedBytes": 9685,
     "generatedBytes": 8302
@@ -2057,6 +2285,7 @@ export const programCoverage = Object.freeze([
     "program": "matrix",
     "file": "matrix.glsl",
     "status": "generated",
+    "sourceSha256": "405376b51b550714253aff0f818a4fd56d50618bc792558826195b901c5fa073",
     "sourceBytes": 1889,
     "normalizedBytes": 2132,
     "generatedBytes": 1608
@@ -2066,6 +2295,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "9831abb1e757196018520d2c7b33139ec265ca87e1c6ab71ab956db6bda771d6",
     "sourceBytes": 266,
     "normalizedBytes": 408,
     "generatedBytes": 468
@@ -2075,6 +2305,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "d39a5afa26f97da83f61099e712b40d7a901978ce5b2a0070c2d87eef0c03c44",
     "sourceBytes": 4817,
     "normalizedBytes": 4931,
     "generatedBytes": 4754
@@ -2084,6 +2315,7 @@ export const programCoverage = Object.freeze([
     "program": "deposit",
     "file": "deposit.frag",
     "status": "adapter",
+    "sourceSha256": "340def672386279e0407bb56630bd37b78e6bdacd348d942737dfc268de6b72f",
     "sourceBytes": 175,
     "normalizedBytes": 153,
     "generatedBytes": 0
@@ -2093,6 +2325,7 @@ export const programCoverage = Object.freeze([
     "program": "diffuse",
     "file": "diffuse.glsl",
     "status": "generated",
+    "sourceSha256": "c1b316f77d7ae5a5880dc8d667b05afb0e7dd2c3d346397ebee609953ffeb6f8",
     "sourceBytes": 708,
     "normalizedBytes": 689,
     "generatedBytes": 718
@@ -2102,6 +2335,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "9831abb1e757196018520d2c7b33139ec265ca87e1c6ab71ab956db6bda771d6",
     "sourceBytes": 266,
     "normalizedBytes": 408,
     "generatedBytes": 468
@@ -2111,6 +2345,7 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
+    "sourceSha256": "a144cacbadeca15a78a83dac987bfd25164bd7904a2e9f0ea22e8b1bf22e3614",
     "sourceBytes": 4136,
     "normalizedBytes": 4308,
     "generatedBytes": 3680
@@ -2120,6 +2355,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -2129,6 +2365,7 @@ export const programCoverage = Object.freeze([
     "program": "loopBegin",
     "file": "loopBegin.glsl",
     "status": "generated",
+    "sourceSha256": "5ddaa003e23b516d8f17dde75e09f106fea0f0b938898b1f3880d025167c2168",
     "sourceBytes": 1064,
     "normalizedBytes": 1045,
     "generatedBytes": 797
@@ -2138,6 +2375,7 @@ export const programCoverage = Object.freeze([
     "program": "copy",
     "file": "copy.glsl",
     "status": "generated",
+    "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
     "generatedBytes": 545
@@ -2147,6 +2385,7 @@ export const programCoverage = Object.freeze([
     "program": "blend",
     "file": "blend.glsl",
     "status": "generated",
+    "sourceSha256": "c057535d715351b5f725248f7d16982cd30398fbf4f2cce2d6230e5d057aa527",
     "sourceBytes": 1302,
     "normalizedBytes": 1354,
     "generatedBytes": 1871
@@ -2156,6 +2395,7 @@ export const programCoverage = Object.freeze([
     "program": "clearDefocus",
     "file": "clearDefocus.glsl",
     "status": "generated",
+    "sourceSha256": "f3fa4eba0fd6ab99bcc0f2f5dd4eea264639278b3a8fc5aa77965f61c8d05a34",
     "sourceBytes": 135,
     "normalizedBytes": 187,
     "generatedBytes": 358
@@ -2165,6 +2405,7 @@ export const programCoverage = Object.freeze([
     "program": "copy",
     "file": "copy.glsl",
     "status": "generated",
+    "sourceSha256": "b4fae08087b09cf8fb049e60ed07d7c80ac12401e49f44fb3f3022388b3dc889",
     "sourceBytes": 286,
     "normalizedBytes": 338,
     "generatedBytes": 447
@@ -2174,6 +2415,7 @@ export const programCoverage = Object.freeze([
     "program": "deposit",
     "file": "deposit.frag",
     "status": "adapter",
+    "sourceSha256": "c6981a708d7d9771eacd8e945c4d18b9f811795a4203fb91618b105719221ff1",
     "sourceBytes": 4271,
     "normalizedBytes": 4483,
     "generatedBytes": 0
@@ -2183,6 +2425,7 @@ export const programCoverage = Object.freeze([
     "program": "depthKeys",
     "file": "depthKeys.glsl",
     "status": "generated",
+    "sourceSha256": "e8c0dbd5acf0aa5a695b07f091d653165d50b5a35ba51b49e60ae34cee906e89",
     "sourceBytes": 1134,
     "normalizedBytes": 1518,
     "generatedBytes": 1791
@@ -2192,6 +2435,7 @@ export const programCoverage = Object.freeze([
     "program": "depthMerge",
     "file": "depthMerge.glsl",
     "status": "generated",
+    "sourceSha256": "e023d00bddd8dc5b94ce8eafe76b668f0dca06254f6db56fb1513f08bc8bbd6e",
     "sourceBytes": 1570,
     "normalizedBytes": 1787,
     "generatedBytes": 2023
@@ -2201,6 +2445,7 @@ export const programCoverage = Object.freeze([
     "program": "diffuse",
     "file": "diffuse.glsl",
     "status": "generated",
+    "sourceSha256": "3e4b3866bf3249e999f9e8d7b361391af9c4e31f969001b913e782bc095cf6a1",
     "sourceBytes": 1358,
     "normalizedBytes": 1587,
     "generatedBytes": 1853
@@ -2210,6 +2455,7 @@ export const programCoverage = Object.freeze([
     "program": "spriteMean",
     "file": "spriteMean.glsl",
     "status": "generated",
+    "sourceSha256": "6a3bd5af6a673b4499c2ba0e8e1066a15ab5fdb7513e875fafe8a5a0f581964e",
     "sourceBytes": 1203,
     "normalizedBytes": 1420,
     "generatedBytes": 1734
@@ -2219,6 +2465,7 @@ export const programCoverage = Object.freeze([
     "program": "spriteMeanTiles",
     "file": "spriteMeanTiles.glsl",
     "status": "generated",
+    "sourceSha256": "e81c8f169c10a4168acd07489bafa55ecd349540c35bb1607df1fbba65261cc7",
     "sourceBytes": 1125,
     "normalizedBytes": 1393,
     "generatedBytes": 2147
@@ -2228,6 +2475,7 @@ export const programCoverage = Object.freeze([
     "program": "init",
     "file": "init.glsl",
     "status": "generated",
+    "sourceSha256": "cd266c795b298b372f077e6aeb6f862c75a0970999fba2f87c4462b322592402",
     "sourceBytes": 5236,
     "normalizedBytes": 5390,
     "generatedBytes": 4545
@@ -2237,6 +2485,7 @@ export const programCoverage = Object.freeze([
     "program": "passthrough",
     "file": "passthrough.glsl",
     "status": "generated",
+    "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
     "generatedBytes": 320
@@ -2246,6 +2495,7 @@ export const programCoverage = Object.freeze([
     "program": "blend",
     "file": "blend.glsl",
     "status": "generated",
+    "sourceSha256": "22c07cd12838f88611ae2bba729c59dd8dee2cf54d2caf1a69a22ebc4e28fa0d",
     "sourceBytes": 1055,
     "normalizedBytes": 1059,
     "generatedBytes": 988
@@ -2255,6 +2505,7 @@ export const programCoverage = Object.freeze([
     "program": "copy",
     "file": "copy.glsl",
     "status": "generated",
+    "sourceSha256": "b4fae08087b09cf8fb049e60ed07d7c80ac12401e49f44fb3f3022388b3dc889",
     "sourceBytes": 286,
     "normalizedBytes": 290,
     "generatedBytes": 363
@@ -2264,6 +2515,7 @@ export const programCoverage = Object.freeze([
     "program": "deposit",
     "file": "deposit.frag",
     "status": "adapter",
+    "sourceSha256": "340def672386279e0407bb56630bd37b78e6bdacd348d942737dfc268de6b72f",
     "sourceBytes": 175,
     "normalizedBytes": 176,
     "generatedBytes": 0
@@ -2273,6 +2525,7 @@ export const programCoverage = Object.freeze([
     "program": "diffuse",
     "file": "diffuse.glsl",
     "status": "generated",
+    "sourceSha256": "e34a1a875649930e3eff5d22e394c97afb088d325562d78368e463a8dda59afb",
     "sourceBytes": 620,
     "normalizedBytes": 624,
     "generatedBytes": 596
@@ -2282,6 +2535,7 @@ export const programCoverage = Object.freeze([
     "program": "render3d",
     "file": "render3d.glsl",
     "status": "generated",
+    "sourceSha256": "5ff6fc621924c7c53425c2f18202e549ace6a4ff8a96f9e908ad26bba6e0c7e2",
     "sourceBytes": 14169,
     "normalizedBytes": 14725,
     "generatedBytes": 14433
@@ -2291,6 +2545,7 @@ export const programCoverage = Object.freeze([
     "program": "renderCubemap3d",
     "file": "renderCubemap3d.glsl",
     "status": "generated",
+    "sourceSha256": "bcebff481c2d945e140870b50ce3e32e12bc3f198f75a53dc6d2450d5777db26",
     "sourceBytes": 14026,
     "normalizedBytes": 14587,
     "generatedBytes": 14042
@@ -2300,6 +2555,7 @@ export const programCoverage = Object.freeze([
     "program": "renderCubemapSurface",
     "file": "renderCubemapSurface.glsl",
     "status": "generated",
+    "sourceSha256": "ce467e742120b8a2ec9c34898a2fd1e2f56a85cbe5d27774bcbb1b7f204511fc",
     "sourceBytes": 4410,
     "normalizedBytes": 4703,
     "generatedBytes": 5049
@@ -2309,6 +2565,7 @@ export const programCoverage = Object.freeze([
     "program": "landscape",
     "file": "landscape.glsl",
     "status": "generated",
+    "sourceSha256": "c9e9ab5c4d7226e774f8d1b9f8aff9d54fd4d6cd97e07c2d3c907df1d7b07ff8",
     "sourceBytes": 13406,
     "normalizedBytes": 14016,
     "generatedBytes": 17563
@@ -2318,6 +2575,7 @@ export const programCoverage = Object.freeze([
     "program": "renderLit3d",
     "file": "renderLit3d.glsl",
     "status": "generated",
+    "sourceSha256": "77460fb4a9e53f7776d7a3d73cb3fcc1840dce577c6f0989354eeb540011529f",
     "sourceBytes": 12143,
     "normalizedBytes": 12586,
     "generatedBytes": 12956
@@ -2327,6 +2585,7 @@ export const programCoverage = Object.freeze([
     "program": "bitwise",
     "file": "bitwise.glsl",
     "status": "generated",
+    "sourceSha256": "1beb9d4b4fff3466587b9c942af3b1a46c0f35a1bf41874c7461c18dcf2f923f",
     "sourceBytes": 3095,
     "normalizedBytes": 3116,
     "generatedBytes": 2907
@@ -2336,6 +2595,7 @@ export const programCoverage = Object.freeze([
     "program": "cell",
     "file": "cell.glsl",
     "status": "generated",
+    "sourceSha256": "b2cae5ecdfd315194d4b3b04d2c5b39d1b48c56a9bd1a10396827e3b8d413a18",
     "sourceBytes": 3813,
     "normalizedBytes": 3903,
     "generatedBytes": 4718
@@ -2345,6 +2605,7 @@ export const programCoverage = Object.freeze([
     "program": "ca",
     "file": "ca.glsl",
     "status": "generated",
+    "sourceSha256": "147eb021eb138adc47149edf9440b94e8c1128d2a35dfb236a9a76f091397e15",
     "sourceBytes": 11253,
     "normalizedBytes": 11299,
     "generatedBytes": 14342
@@ -2354,6 +2615,7 @@ export const programCoverage = Object.freeze([
     "program": "caFb",
     "file": "caFb.glsl",
     "status": "generated",
+    "sourceSha256": "1668346247db9567e6880d69290cef113c50edc0ba576cf2d29cf497227fef89",
     "sourceBytes": 7949,
     "normalizedBytes": 8061,
     "generatedBytes": 5305
@@ -2363,6 +2625,7 @@ export const programCoverage = Object.freeze([
     "program": "curl",
     "file": "curl.glsl",
     "status": "generated",
+    "sourceSha256": "33d1f2bd0215d6439b51a0aa8d50b5c3637abc0b5cade8f3e451b8d258d0afce",
     "sourceBytes": 7290,
     "normalizedBytes": 7368,
     "generatedBytes": 9162
@@ -2372,6 +2635,7 @@ export const programCoverage = Object.freeze([
     "program": "gabor",
     "file": "gabor.glsl",
     "status": "generated",
+    "sourceSha256": "91665da2d584d6d88b38e8ba314dfc0b546dd49d29aa161f5d66aecf6bf67bf5",
     "sourceBytes": 3870,
     "normalizedBytes": 3999,
     "generatedBytes": 3915
@@ -2381,6 +2645,7 @@ export const programCoverage = Object.freeze([
     "program": "gradient",
     "file": "gradient.glsl",
     "status": "generated",
+    "sourceSha256": "308537be8f376750a2239be89a07e558e54ee1661a0ea360c6a3e48b8c6e7a75",
     "sourceBytes": 5439,
     "normalizedBytes": 5592,
     "generatedBytes": 5833
@@ -2390,6 +2655,7 @@ export const programCoverage = Object.freeze([
     "program": "julia",
     "file": "julia.glsl",
     "status": "adapter",
+    "sourceSha256": "825e175c22fea086ad2860e16bcf0a79d797574a9dfad937a23baaadaffdeef0",
     "sourceBytes": 12407,
     "normalizedBytes": 12405,
     "generatedBytes": 0
@@ -2399,6 +2665,7 @@ export const programCoverage = Object.freeze([
     "program": "mandala",
     "file": "mandala.glsl",
     "status": "generated",
+    "sourceSha256": "ef97349f9f3003d356bf73ecea6292bbe8ad41c6c2605eff4a8468a44215dea2",
     "sourceBytes": 5124,
     "normalizedBytes": 4935,
     "generatedBytes": 4193
@@ -2408,6 +2675,7 @@ export const programCoverage = Object.freeze([
     "program": "mandelbrot",
     "file": "mandelbrot.glsl",
     "status": "generated",
+    "sourceSha256": "0587dbc29f2dc8c186d7c47ebe6182e89dfe0387fc29a23826cac15499fba615",
     "sourceBytes": 14855,
     "normalizedBytes": 14866,
     "generatedBytes": 11628
@@ -2417,6 +2685,7 @@ export const programCoverage = Object.freeze([
     "program": "mediaInput",
     "file": "mediaInput.glsl",
     "status": "generated",
+    "sourceSha256": "3f26aa8aa6d813e0825f7ccbe1c0ab6d9e91445283d27d6d87d72eeb0b7b0c9c",
     "sourceBytes": 6598,
     "normalizedBytes": 6774,
     "generatedBytes": 6113
@@ -2426,6 +2695,7 @@ export const programCoverage = Object.freeze([
     "program": "mnca",
     "file": "mnca.glsl",
     "status": "generated",
+    "sourceSha256": "725c245f6f52a1629f7427b98a211b527c546fd3e0dcecbb9c5b65ecf3ee239a",
     "sourceBytes": 11142,
     "normalizedBytes": 11188,
     "generatedBytes": 14289
@@ -2435,6 +2705,7 @@ export const programCoverage = Object.freeze([
     "program": "mncaFb",
     "file": "mncaFb.glsl",
     "status": "generated",
+    "sourceSha256": "4a1b1bbb1e52f66871808d878068f1ff6b379d2b68ca0dd8053f89659c8bf9d6",
     "sourceBytes": 5044,
     "normalizedBytes": 5150,
     "generatedBytes": 4538
@@ -2444,6 +2715,7 @@ export const programCoverage = Object.freeze([
     "program": "modPattern",
     "file": "modPattern.glsl",
     "status": "generated",
+    "sourceSha256": "5bf4fc9ed8fdf68fa58e9c66f79e1f42624234500f89fb1ee63da64839d3dc2e",
     "sourceBytes": 3818,
     "normalizedBytes": 3804,
     "generatedBytes": 3969
@@ -2453,6 +2725,7 @@ export const programCoverage = Object.freeze([
     "program": "ns",
     "file": "ns.glsl",
     "status": "generated",
+    "sourceSha256": "f2c930b585558c5b90b1e502fc71ffef4ea28c6b5c0d75c0c9d20cccf727a36f",
     "sourceBytes": 1719,
     "normalizedBytes": 2063,
     "generatedBytes": 2229
@@ -2462,6 +2735,7 @@ export const programCoverage = Object.freeze([
     "program": "nsAdvect",
     "file": "nsAdvect.glsl",
     "status": "generated",
+    "sourceSha256": "fda5781baa1fffca8fcae28ef599652580135c1dba57307db4692eecc7df64f8",
     "sourceBytes": 1954,
     "normalizedBytes": 2128,
     "generatedBytes": 2294
@@ -2471,6 +2745,7 @@ export const programCoverage = Object.freeze([
     "program": "nsDivergence",
     "file": "nsDivergence.glsl",
     "status": "generated",
+    "sourceSha256": "7cf59c745b982c23bcd6eb67ab23cdc723416cdeda835ec36579d71fa18c708e",
     "sourceBytes": 1168,
     "normalizedBytes": 1296,
     "generatedBytes": 1558
@@ -2480,6 +2755,7 @@ export const programCoverage = Object.freeze([
     "program": "nsGradient",
     "file": "nsGradient.glsl",
     "status": "generated",
+    "sourceSha256": "b247c640a0ac51e14b30b894c2427b994b3c545d9be2b19bd186bd7b57a40a9b",
     "sourceBytes": 991,
     "normalizedBytes": 1283,
     "generatedBytes": 1445
@@ -2489,6 +2765,7 @@ export const programCoverage = Object.freeze([
     "program": "nsPressure",
     "file": "nsPressure.glsl",
     "status": "generated",
+    "sourceSha256": "3f2dd662ebc4e141a40959456739f09fd075655917197da3492ab99611482251",
     "sourceBytes": 932,
     "normalizedBytes": 1366,
     "generatedBytes": 1449
@@ -2498,6 +2775,7 @@ export const programCoverage = Object.freeze([
     "program": "nsSmooth",
     "file": "nsSmooth.glsl",
     "status": "generated",
+    "sourceSha256": "964147d68d182e7afe016e5fee82ad010e047946121fa407873386cc1c4b4453",
     "sourceBytes": 5301,
     "normalizedBytes": 5495,
     "generatedBytes": 8346
@@ -2507,6 +2785,7 @@ export const programCoverage = Object.freeze([
     "program": "nsSplat",
     "file": "nsSplat.glsl",
     "status": "generated",
+    "sourceSha256": "c3e88bac9c8afa8ed31baec34756db36ad30dd0e73588b35ffc320cba36d3f37",
     "sourceBytes": 3251,
     "normalizedBytes": 3336,
     "generatedBytes": 3077
@@ -2516,6 +2795,7 @@ export const programCoverage = Object.freeze([
     "program": "newton",
     "file": "newton.glsl",
     "status": "generated",
+    "sourceSha256": "603090e299ccb08fd4db4bf54a2aa6668ed81be971a84a8b679c7f560e5c27ac",
     "sourceBytes": 10325,
     "normalizedBytes": 10357,
     "generatedBytes": 9010
@@ -2525,6 +2805,7 @@ export const programCoverage = Object.freeze([
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
+    "sourceSha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274",
     "sourceBytes": 18131,
     "normalizedBytes": 18748,
     "generatedBytes": 21223
@@ -2534,6 +2815,7 @@ export const programCoverage = Object.freeze([
     "program": "osc2d",
     "file": "osc2d.glsl",
     "status": "generated",
+    "sourceSha256": "e25335112291f2b3f7e9e7f5803948b602a44058bb10c20f835c461f0b6a3512",
     "sourceBytes": 4562,
     "normalizedBytes": 4518,
     "generatedBytes": 3028
@@ -2543,6 +2825,7 @@ export const programCoverage = Object.freeze([
     "program": "pattern",
     "file": "pattern.glsl",
     "status": "generated",
+    "sourceSha256": "d3ce98d432c1548553fac6446a040d2dab8f0fbb7f852457aa4fc4f139d44c5c",
     "sourceBytes": 8370,
     "normalizedBytes": 8041,
     "generatedBytes": 7226
@@ -2552,6 +2835,7 @@ export const programCoverage = Object.freeze([
     "program": "perlin",
     "file": "perlin.glsl",
     "status": "generated",
+    "sourceSha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318",
     "sourceBytes": 10882,
     "normalizedBytes": 11060,
     "generatedBytes": 9451
@@ -2561,6 +2845,7 @@ export const programCoverage = Object.freeze([
     "program": "shape",
     "file": "shape.glsl",
     "status": "generated",
+    "sourceSha256": "e43087ee8ade2e59ff1a2098c1e6ceb4357a3eb9ee63755a3f8a3879824115e6",
     "sourceBytes": 1707,
     "normalizedBytes": 1915,
     "generatedBytes": 2211
@@ -2570,6 +2855,7 @@ export const programCoverage = Object.freeze([
     "program": "rd",
     "file": "rd.glsl",
     "status": "generated",
+    "sourceSha256": "2c7c242db938ea81fa738b4f5a4fff9f067afca63802e39689aec49d4955f53c",
     "sourceBytes": 12782,
     "normalizedBytes": 13031,
     "generatedBytes": 16089
@@ -2579,6 +2865,7 @@ export const programCoverage = Object.freeze([
     "program": "rdFb",
     "file": "rdFb.glsl",
     "status": "generated",
+    "sourceSha256": "1b0a2ce5b7594005e778b0487a14c1c83c081b7ce3d0db50f81809ac931be976",
     "sourceBytes": 5763,
     "normalizedBytes": 5873,
     "generatedBytes": 6703
@@ -2588,6 +2875,7 @@ export const programCoverage = Object.freeze([
     "program": "remap",
     "file": "remap.glsl",
     "status": "generated",
+    "sourceSha256": "500f761ac9b0a58aedc7574f974994abfdaf4d41cb9947a11b4cdd18b0482b9b",
     "sourceBytes": 7225,
     "normalizedBytes": 6844,
     "generatedBytes": 4805
@@ -2597,6 +2885,7 @@ export const programCoverage = Object.freeze([
     "program": "sacredGeometry",
     "file": "sacredGeometry.glsl",
     "status": "generated",
+    "sourceSha256": "24e5bc642f5a1f368d4514fd33590ef7d479f56c1c862144576f7bde321f53de",
     "sourceBytes": 9710,
     "normalizedBytes": 9422,
     "generatedBytes": 8953
@@ -2606,6 +2895,7 @@ export const programCoverage = Object.freeze([
     "program": "shape",
     "file": "shape.glsl",
     "status": "generated",
+    "sourceSha256": "d917d2027c873f05bc4183277a2b1dffe158c13cfd1281461580a31e0cd7d67f",
     "sourceBytes": 15986,
     "normalizedBytes": 16286,
     "generatedBytes": 18045
@@ -2615,6 +2905,7 @@ export const programCoverage = Object.freeze([
     "program": "solid",
     "file": "solid.glsl",
     "status": "generated",
+    "sourceSha256": "82afae3ccf523d1938cd02eadc6bfae5e4440a9b22a4f5629688d1d05856287c",
     "sourceBytes": 273,
     "normalizedBytes": 254,
     "generatedBytes": 269
@@ -2624,6 +2915,7 @@ export const programCoverage = Object.freeze([
     "program": "subdivide",
     "file": "subdivide.glsl",
     "status": "generated",
+    "sourceSha256": "65e57d82c8982040240528c4410328453bc39de4f4d9519da2497266b1b500bd",
     "sourceBytes": 9154,
     "normalizedBytes": 9278,
     "generatedBytes": 8941
@@ -2633,6 +2925,7 @@ export const programCoverage = Object.freeze([
     "program": "testPattern",
     "file": "testPattern.glsl",
     "status": "generated",
+    "sourceSha256": "f913300a1312c6630d56fa1cc2faf2cb17fe0643d832473fdec7b66dd373cb20",
     "sourceBytes": 5919,
     "normalizedBytes": 5897,
     "generatedBytes": 4956
@@ -2642,6 +2935,7 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
+    "sourceSha256": "83ef13ab1e5997c76e64280d11e0bdb0eaedd6f41a504d2b1e79761cd1dd1755",
     "sourceBytes": 5081,
     "normalizedBytes": 5533,
     "generatedBytes": 5165
@@ -2651,6 +2945,7 @@ export const programCoverage = Object.freeze([
     "program": "simulate",
     "file": "simulate.glsl",
     "status": "generated",
+    "sourceSha256": "e29a5b033304463b8610c86823f46c16751270a3cbaa37f1204df968c6c5394a",
     "sourceBytes": 8843,
     "normalizedBytes": 9171,
     "generatedBytes": 6738
@@ -2660,6 +2955,7 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
+    "sourceSha256": "e4288dfc3384f76e63eda968ad4ce3219a9b96989d8e6ff38755dbcf44f788f3",
     "sourceBytes": 11404,
     "normalizedBytes": 11328,
     "generatedBytes": 9283
@@ -2669,6 +2965,7 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
+    "sourceSha256": "8ab3dfe63e16d4406deee719c1f822d405c712bae21bd1348ae5b75b79a14d41",
     "sourceBytes": 6912,
     "normalizedBytes": 6959,
     "generatedBytes": 6937
@@ -2678,6 +2975,7 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
+    "sourceSha256": "d43f213b09edcba90f10c14e0bae421587c56168c5823b3107a1eb183d36d759",
     "sourceBytes": 1777,
     "normalizedBytes": 2125,
     "generatedBytes": 2932
@@ -2687,6 +2985,7 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
+    "sourceSha256": "60ce97d188bf78bc84176c063943f29c25371e4325f13cedbb4eec889c905727",
     "sourceBytes": 7667,
     "normalizedBytes": 8228,
     "generatedBytes": 7991
@@ -2696,6 +2995,7 @@ export const programCoverage = Object.freeze([
     "program": "simulate",
     "file": "simulate.glsl",
     "status": "generated",
+    "sourceSha256": "23a23fcf7cfda986215efc76e21f79faf237bef0c362881d801b040407766b17",
     "sourceBytes": 6257,
     "normalizedBytes": 6581,
     "generatedBytes": 5114
@@ -2705,6 +3005,7 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
+    "sourceSha256": "53b240191c2f0d2e61b5dacecb532ecd3b8aad3973bbf8e38d8712073d50d14f",
     "sourceBytes": 6508,
     "normalizedBytes": 6424,
     "generatedBytes": 5290
