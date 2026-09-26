@@ -77,9 +77,10 @@ async function main() {
     if (options.only && options.only !== definition.id && options.only !== definition.id.replace('/', '__')) return false
     return true
   })
-  // Keep the established 167-golden parity gate unchanged. The 21 pre-existing CPU-divergent
-  // simulation effects and the 17 newly ported volume/loop effects are explicit, preflighted
-  // skips until pinned GPU goldens exist for the latter set.
+  // Keep the established golden parity gate unchanged. The 21 pre-existing CPU-divergent
+  // simulation effects and the 20 ported volume/loop effects (the 17 earlier volume/loop
+  // ports plus the 3 landscape/heightfield effects from reference 0ed489ec) are explicit,
+  // preflighted skips until pinned GPU goldens exist for the latter set.
   const shouldSkip = (definition) => definition.iterated || NEW_CPU_EFFECT_IDS.has(definition.id)
   const definitions = candidates.filter((definition) => !shouldSkip(definition))
   const skipped = candidates.filter(shouldSkip)

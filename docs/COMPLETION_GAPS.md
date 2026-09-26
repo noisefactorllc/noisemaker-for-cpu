@@ -242,17 +242,17 @@ The auditor checked all entries below on 2026-09-23. The 2026-09-26 audit reveri
 
 ### GAP-004: Parity summary is stale
 
-- Status: open. Priority: P3. Category: contract.
-- Affected scope: README Collection parity, CRT status narrative, and parity-runner comments.
+- Status: closed. Priority: P3. Category: contract.
+- Affected scope: README Collection parity, the CRT status narrative, docs/EFFECTS.md parity status, and parity-runner comments.
 - Expected behavior: Current summaries distinguish historical measurements from the current catalog denominator.
-- Observed behavior: README reports 166/167 and 117 exact. Current measurements are 163/164 and 114 exact.
-- Current check: `README.md:157` and `docs/CRT-PARITY.md:56` still state 166/167 with 117 byte-exact at source `ba1c89a`.
+- Observed behavior: README reported 166/167 and 117 exact as current. Current measurements are 163/164 and 114 exact.
+- Current check: `README.md:157`, `docs/CRT-PARITY.md:62`, `docs/EFFECTS.md:88`, and the `scripts/parity/run.js` gate comment carried 166/167 with 117 byte-exact at source `ba1c89a`.
 - Evidence: `parity.log`, README, and [CRT-PARITY.md](CRT-PARITY.md).
-- Next action: Reconcile current summaries with three retired catalog effects while retaining historical measurements.
-- Dependencies: Use this audit's recorded source and raw result. Do not reduce coverage to improve the summary.
-- Acceptance criteria: Current counts total 205 eligible effects. Historical counts carry their source revision or date.
+- Resolution: README Collection parity, the CRT constraint, docs/EFFECTS.md parity status, and the parity-runner comment now state the current result as 163/164 with 114 byte-exact over 164 compared goldens plus 41 explicit skips (205 eligible effects total), and attribute the historical 166/167 with 117 byte-exact to the smaller pre-sync catalog pinned at `f1d2b46` (published 2026-09-19), before upstream retired `filter/bc`, `filter/colorspace`, and `filter/hs`. No coverage, tolerance, fixture, or gate behavior changed; the runner comment now counts the 41 skips as 21 CPU-divergent plus 20 ported volume/loop effects.
+- Dependencies: Used this audit's recorded source and raw result. Coverage was not reduced; the three retired effects were removed by upstream between `f1d2b46` and the current pin, not by this change.
+- Acceptance criteria: Current counts total 205 eligible effects (verified: 164 executed + 41 skipped = 205 registry entries). Historical counts carry their source revision or date (`f1d2b46`, 2026-09-19).
 - Required checks: Full parity output and a catalog-to-fixture comparison.
-- Last verification: 2026-09-26. The stale counts remain at the current source.
+- Last verification: 2026-09-26 at the publication commit carrying this row (parent `12db707`; docs plus the runner comment only — no functional source, fixture, golden, or test change). Required checks executed: `npm run parity -- --json` exits 1 as recorded under GAP-001: 163/164 within ±2, 114 byte-exact, 41 skipped, `filter/crt` max 80, mean 5.05859375, `sourceRevision 6a0af04d` — identical to the audit's recorded raw result. Catalog-to-fixture comparison: default registry lists exactly 205 eligible effects; all 41 skipped effects have compile-passing fixtures (`parity/upstream-defaults/`), and all 164 executed effects have pinned goldens in `parity/goldens/{defaults,classic}`; 164 + 41 = 205. Historical re-verification in a scratch clone at `e23324e` (which pins `f1d2b46`): parity measured 166/167, 117 byte-exact, 41 skipped, `filter/crt` max 80 — the historical figures reproduce at their recorded revision.
 
 ### GAP-005: Release CI does not enforce port parity
 
