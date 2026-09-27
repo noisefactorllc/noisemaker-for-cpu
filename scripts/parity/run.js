@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -63,6 +64,42 @@ async function loadManifest() {
   }))
 }
 
+// GAP-008: reference-image provenance. The retained goldens are the REFERENCE captures;
+// UPSTREAM_REVISION is the CANDIDATE source/kernel pin and must never be reported as a
+// capture revision. parity/goldens/provenance.json (regenerate with
+// scripts/parity/write-provenance.js) maps each golden to its capture record; goldens
+// recorded without one report provenance 'unknown'. The recorded sha256 is cross-checked
+// against the file bytes so a regenerated golden cannot be silently relabeled.
+async function loadGoldenProvenance() {
+  const manifestPath = resolve(projectRoot, 'parity/goldens/provenance.json')
+  try {
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
+    return new Map(Object.entries(manifest.goldens))
+  } catch (error) {
+    if (error.code === 'ENOENT') return new Map()
+    throw error
+  }
+}
+
+async function referenceProvenance(suite, name, provenance) {
+  const key = `${suite}/${name}.golden.png`
+  const goldenPath = resolve(projectRoot, 'parity/goldens', key)
+  const sha256 = createHash('sha256').update(await readFile(goldenPath)).digest('hex')
+  const entry = provenance.get(key)
+  if (entry) {
+    if (entry.sha256 !== sha256) {
+      throw new Error(`Golden ${key} does not match its provenance record (recorded ${entry.sha256}, actual ${sha256}). Regenerate the capture record with scripts/parity/write-provenance.js and identify the capture revision — do not relabel the reference capture.`)
+    }
+    return {
+      image: `parity/goldens/${key}`,
+      sha256,
+      captureRevision: entry.captureRevision ?? null,
+      provenance: entry.captureRevision ? 'recorded' : 'unknown',
+    }
+  }
+  return { image: `parity/goldens/${key}`, sha256, captureRevision: null, provenance: 'unknown' }
+}
+
 function suiteFor(definition) {
   return definition.namespace === 'classicNoisedeck' ? 'classic' : 'defaults'
 }
@@ -109,6 +146,7 @@ async function main() {
   }
 
   const renderer = new CpuRenderer({ registry, kernelFactories })
+  const goldenProvenance = await loadGoldenProvenance()
   const blank = fixtureSurface(options.size, options.size)
   const results = []
   for (const definition of definitions) {
@@ -131,7 +169,7 @@ async function main() {
     }
     const actual = rendered.toRgba8()
     const comparison = compareRgba8(actual, golden.data, options.tolerance)
-    results.push({ id: definition.id, ...comparison })
+    results.push({ id: definition.id, reference: await referenceProvenance(suite, name, goldenProvenance), ...comparison })
     if (options.writeCpu) await writePng(resolve(directory, `${name}.cpu.png`), rendered)
   }
   const failures = results.filter((result) => !result.pass).sort((left, right) => right.maxError - left.maxError || right.meanError - left.meanError)
@@ -147,10 +185,16 @@ async function main() {
     byteExact: results.filter((result) => result.exact).length,
     failures,
     skipped: skipped.map((definition) => definition.id),
+    results,
+    referenceProvenance: {
+      recorded: results.filter((result) => result.reference?.provenance === 'recorded').length,
+      unknown: results.filter((result) => result.reference?.provenance === 'unknown').length,
+    },
   }
   if (options.json) process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`)
   else {
     process.stdout.write(`Parity ${summary.passed}/${summary.effects} within ±${summary.tolerance} RGBA bytes; ${summary.byteExact} byte-exact; ${summary.skipped.length} skipped\n`)
+    process.stdout.write(`Reference provenance (GAP-008): ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (no capture record; sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)\n`)
     for (const failure of failures) {
       process.stdout.write(`FAIL ${failure.id} max=${failure.maxError} mean=${failure.meanError.toFixed(4)} channels>${summary.tolerance}=${failure.channelsOverTolerance}\n`)
     }
