@@ -1,5 +1,5 @@
 {
- "revision": "6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa",
+ "revision": "7443f6e6180300a45c5b97608459e5094504659d",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5457,8 +5457,8 @@
   },
   {
    "path": "shaders/src/index.js",
-   "size": 3658,
-   "sha256": "afe1f4e4e4f230da75c5894c93902708683e0d05e0755101060d295be7478b37"
+   "size": 3678,
+   "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
   },
   {
    "path": "shaders/src/lang/constants.js",
@@ -5492,8 +5492,8 @@
   },
   {
    "path": "shaders/src/lang/index.js",
-   "size": 807,
-   "sha256": "e83240743969d47a0a855faaec68b773d7aeea119e11f314a9f78ff5fb9aae90"
+   "size": 847,
+   "sha256": "fcdd7ff38c36cbf9af492e7dbbe8f38774888837146cbb8e43cbc1193a8ad6d6"
   },
   {
    "path": "shaders/src/lang/lexer.js",
@@ -5507,8 +5507,8 @@
   },
   {
    "path": "shaders/src/lang/paramAliases.js",
-   "size": 2150,
-   "sha256": "4b7d87851acc871881e0ae76d5b1f50d51956b4b184ad1f2ad10fc56c1f4f0c8"
+   "size": 2501,
+   "sha256": "1fae6e04bca8b68343179634f2b59ecdc2aa2bd04e4f96c453f577a35d22c061"
   },
   {
    "path": "shaders/src/lang/parser.js",
@@ -5527,8 +5527,8 @@
   },
   {
    "path": "shaders/src/lang/transform.js",
-   "size": 11957,
-   "sha256": "70b1557779051928728da9c540a33df731a1a8c662fdeaab05855e672ae6c744"
+   "size": 26660,
+   "sha256": "1507661d8a028ebb49bb13996c4a8c08933af1683c962ad5ca9d9ab34bb8f172"
   },
   {
    "path": "shaders/src/lang/unparser.js",

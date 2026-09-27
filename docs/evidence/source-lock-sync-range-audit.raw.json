@@ -1,0 +1,60 @@
+{
+ "old": "6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa",
+ "new": "7443f6e6180300a45c5b97608459e5094504659d",
+ "refs_replaced": {
+  "README.md": 1,
+  "docs/EFFECTS.md": 1,
+  "test/upstream-inventory.test.js": 1
+ },
+ "stale_refs_files": "NONE",
+ "newpin_in_source-lock.js": "1",
+ "newpin_in_upstream-snapshot.js": "1",
+ "newpin_in_pinned-source-manifest.json": "1",
+ "shaders_commits": 5,
+ "shaders_shortstat": "14 files changed, 1826 insertions(+), 18 deletions(-)",
+ "effects_stat": "EMPTY",
+ "changed_files": [
+  "shaders/src/index.js",
+  "shaders/src/lang/index.js",
+  "shaders/src/lang/paramAliases.js",
+  "shaders/src/lang/transform.js",
+  "shaders/tests/frame-metrics.js",
+  "shaders/tests/frame-readback.js",
+  "shaders/tests/test-harness.js",
+  "shaders/tests/test_frame_metrics.js",
+  "shaders/tests/test_frame_readback.js",
+  "shaders/tests/test_transform.js",
+  "shaders/tests/test_uniform_deltas.js",
+  "shaders/tests/test_uniform_status.js",
+  "shaders/tests/uniform-deltas.js",
+  "shaders/tests/uniform-status.js"
+ ],
+ "lang_and_tests_only": true,
+ "per_commit": [
+  {
+   "sha": "7443f6e6180300a45c5b97608459e5094504659d",
+   "subject": "test(docs): pin the harness WebGPU render-surface readback and narrow GAP-012",
+   "src_stat": ""
+  },
+  {
+   "sha": "7dc0f5640534855d73f8c812ca071fe6b1e09197",
+   "subject": "feat(tests): auditable measured uniform deltas in the harness uniforms report (GAP-011)",
+   "src_stat": ""
+  },
+  {
+   "sha": "9f85687d1bafc445dcd38e28cf5f0c6dfba562f8",
+   "subject": "feat(tests): truthful uniform-responsiveness aggregation behind --strict-uniforms (GAP-010)",
+   "src_stat": ""
+  },
+  {
+   "sha": "403c2a4bf2cb56307448ea2fc1d6fa3cd74b7d6e",
+   "subject": "feat(lang): predict replaceEffect compatibility before mutation (GAP-008)",
+   "src_stat": "shaders/src/index.js             |   2 +-\n shaders/src/lang/index.js        |   4 +-\n shaders/src/lang/paramAliases.js |  11 ++\n shaders/src/lang/transform.js    | 377 ++++++++++++++++++++++++++++++++++++++-\n 4 files changed, 386 insertions(+), 8 deletions(-)"
+  },
+  {
+   "sha": "b35361e08fc17b1d7d6f5127aed0b8bfc2d3989d",
+   "subject": "feat(shaders): temporal no-animation and universal low-variety metrics from renderEffectFrame (GAP-009)",
+   "src_stat": ""
+  }
+ ]
+}

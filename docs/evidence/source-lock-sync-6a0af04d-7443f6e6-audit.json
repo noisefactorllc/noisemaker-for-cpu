@@ -1,0 +1,147 @@
+{
+ "artifact": "source-lock sync range audit for noisemaker-for-cpu",
+ "generated_utc": "2026-09-27T02:42:49Z",
+ "upstream_repository": "https://github.com/noisefactorllc/noisemaker.git",
+ "upstream_compare_url": "https://github.com/noisefactorllc/noisemaker/compare/6a0af04d...7443f6e6",
+ "range": {
+  "old_pin": "6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa",
+  "new_pin": "7443f6e6180300a45c5b97608459e5094504659d"
+ },
+ "reproduction": [
+  "git clone https://github.com/noisefactorllc/noisemaker.git",
+  "git -C noisemaker merge-base --is-ancestor 6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa 7443f6e6180300a45c5b97608459e5094504659d  # exit 0 proves contiguous delivery",
+  "git -C noisemaker log --oneline 6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa..7443f6e6180300a45c5b97608459e5094504659d -- shaders/",
+  "git -C noisemaker diff --stat 6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa..7443f6e6180300a45c5b97608459e5094504659d -- shaders/",
+  "git -C noisemaker diff 6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa..7443f6e6180300a45c5b97608459e5094504659d -- shaders/effects/  # empty: catalog unchanged",
+  "NM_REFERENCE_ROOT=<checkout> npm test  # in noisemaker-for-cpu at the sync commit"
+ ],
+ "contiguity": {
+  "merge_base_is_ancestor_exit": 0,
+  "note": "old pin is an ancestor of the new pin in a fresh full clone; the job's force-push flag and five observed trigger ranges are covered by ancestry of the consolidated endpoints"
+ },
+ "shaders_commits": [
+  {
+   "sha": "7443f6e6180300a45c5b97608459e5094504659d",
+   "subject": "test(docs): pin the harness WebGPU render-surface readback and narrow GAP-012",
+   "upstream_tree": "7e914813f1e595c22fec5f340bc2b7d5e957be96",
+   "shaders_stat": "shaders/tests/frame-readback.js      |  83 ++++++++++++++++\n shaders/tests/test_frame_readback.js | 183 +++++++++++++++++++++++++++++++++++\n 2 files changed, 266 insertions(+)"
+  },
+  {
+   "sha": "7dc0f5640534855d73f8c812ca071fe6b1e09197",
+   "subject": "feat(tests): auditable measured uniform deltas in the harness uniforms report (GAP-011)",
+   "upstream_tree": "8324fa341d5a31e28bb1207d6a243c9a2c27601b",
+   "shaders_stat": "shaders/tests/test-harness.js        |  44 ++++++\n shaders/tests/test_uniform_deltas.js | 122 +++++++++++++++\n shaders/tests/uniform-deltas.js      | 282 +++++++++++++++++++++++++++++++++++\n 3 files changed, 448 insertions(+)"
+  },
+  {
+   "sha": "9f85687d1bafc445dcd38e28cf5f0c6dfba562f8",
+   "subject": "feat(tests): truthful uniform-responsiveness aggregation behind --strict-uniforms (GAP-010)",
+   "upstream_tree": "9ad40e2dd24cbc8c8ebd053a68529c7cd80ca94d",
+   "shaders_stat": "shaders/tests/test-harness.js        |  24 ++++++--\n shaders/tests/test_uniform_status.js | 116 +++++++++++++++++++++++++++++++++++\n shaders/tests/uniform-status.js      |  78 +++++++++++++++++++++++\n 3 files changed, 214 insertions(+), 4 deletions(-)"
+  },
+  {
+   "sha": "403c2a4bf2cb56307448ea2fc1d6fa3cd74b7d6e",
+   "subject": "feat(lang): predict replaceEffect compatibility before mutation (GAP-008)",
+   "upstream_tree": "c4175880b48f741a0e3bc284f6ac0cd5dcaef0df",
+   "shaders_stat": "shaders/src/index.js             |   2 +-\n shaders/src/lang/index.js        |   4 +-\n shaders/src/lang/paramAliases.js |  11 ++\n shaders/src/lang/transform.js    | 377 ++++++++++++++++++++++++++++++++++++++-\n shaders/tests/test_transform.js  | 200 +++++++++++++++++++++\n 5 files changed, 586 insertions(+), 8 deletions(-)"
+  },
+  {
+   "sha": "b35361e08fc17b1d7d6f5127aed0b8bfc2d3989d",
+   "subject": "feat(shaders): temporal no-animation and universal low-variety metrics from renderEffectFrame (GAP-009)",
+   "upstream_tree": "ab1195d9b4a8174315247ed5e63e1ea4b0fee343",
+   "shaders_stat": "shaders/tests/frame-metrics.js      |  80 +++++++++++++++++\n shaders/tests/test-harness.js       | 167 ++++++++++++++++++++++++++++++++++--\n shaders/tests/test_frame_metrics.js |  71 +++++++++++++++\n 3 files changed, 312 insertions(+), 6 deletions(-)"
+  }
+ ],
+ "effects_tree_diff": "",
+ "shaders_diff_shortstat": "14 files changed, 1826 insertions(+), 18 deletions(-)",
+ "changed_files": [
+  "shaders/src/index.js",
+  "shaders/src/lang/index.js",
+  "shaders/src/lang/paramAliases.js",
+  "shaders/src/lang/transform.js",
+  "shaders/tests/frame-metrics.js",
+  "shaders/tests/frame-readback.js",
+  "shaders/tests/test-harness.js",
+  "shaders/tests/test_frame_metrics.js",
+  "shaders/tests/test_frame_readback.js",
+  "shaders/tests/test_transform.js",
+  "shaders/tests/test_uniform_deltas.js",
+  "shaders/tests/test_uniform_status.js",
+  "shaders/tests/uniform-deltas.js",
+  "shaders/tests/uniform-status.js"
+ ],
+ "manifest_entry_updates": [
+  {
+   "path": "shaders/src/index.js",
+   "old_blob_sha": "20549b0a3251fdfe1f38ddc8c68a1fdc7f26d72e",
+   "new_blob_sha": "57b3a08157b47653688664d78f14c8886c5db8cd",
+   "old_bytes": 3658,
+   "new_bytes": 3678,
+   "old_git_blob_sha256": "c93e5f6ee34138b41409ec14d92d9b006e0f7f2621229574309200ce0f7e5645",
+   "new_git_blob_sha256": "fc830955fa28ca91c4e8232bda147f9aabd6d76371320422714a0f2a0de26583"
+  },
+  {
+   "path": "shaders/src/lang/index.js",
+   "old_blob_sha": "04b5ff1d669bc6899ec30fd69385cc9f120320a4",
+   "new_blob_sha": "3cfaa57c3146242c7ae5979c71ff05eae3d74471",
+   "old_bytes": 807,
+   "new_bytes": 847,
+   "old_git_blob_sha256": "69b703c11a99de1220f0e0a9ed366206617548212b193d27761b50d8551a3a47",
+   "new_git_blob_sha256": "a748dd351f17089bf8318e63e0a898fe3067a32c18b25a1971dcd096743dbe66"
+  },
+  {
+   "path": "shaders/src/lang/paramAliases.js",
+   "old_blob_sha": "77576582fa923d91c06e07c5523784c0cb1aeb9c",
+   "new_blob_sha": "104cb733e6d1977bc3f1676bf0f0bf6de4692b78",
+   "old_bytes": 2150,
+   "new_bytes": 2501,
+   "old_git_blob_sha256": "37053c8ed8027e5d9a15bcb06b789419267d5e9aac177293a0ebe75c7b5dc2b7",
+   "new_git_blob_sha256": "2809584b87c31c7eb05e9398d39a3a27985fd78c93a284e3bac722f5064b078f"
+  },
+  {
+   "path": "shaders/src/lang/transform.js",
+   "old_blob_sha": "0478e7eb767ddd78c0c2a3b13bac4fda66e1ebb5",
+   "new_blob_sha": "12af3e92bff0325cde0ab41125536c81bb7c81ff",
+   "old_bytes": 11957,
+   "new_bytes": 26660,
+   "old_git_blob_sha256": "01cbc26f688bbf2e543000534dfda2bf4ec11f914f55c58ee0451e26c3af49f7",
+   "new_git_blob_sha256": "58cffa1ee230fc9bccbedbd0d4a75af36eccc2b6df57884dbb937bb4f808b30e"
+  }
+ ],
+ "executed_checks": {
+  "environment": {
+   "node": "v26.5.1",
+   "os": "Linux x86_64 container",
+   "NM_REFERENCE_ROOT": "/state/cache/noisemaker-upstream",
+   "reference_checkout_head": "7443f6e6180300a45c5b97608459e5094504659d"
+  },
+  "commands": [
+   {
+    "cmd": "npm test",
+    "exit_code": 0,
+    "result": "279 pass / 0 fail / 1 skip (skip is the fixture-only test that requires no reference root)",
+    "log": "docs/evidence/source-lock-sync-test-full.log",
+    "log_sha256": "6dde810b732e4b3f7ceffc9ef8156a37b97d9fa999e4317dd53092bc34bf50e9"
+   },
+   {
+    "cmd": "node --test test/upstream-source-lock.test.js test/upstream-inventory.test.js",
+    "exit_code": 0,
+    "result": "reference-tree manifest cross-checks executed and passed (NM_REFERENCE_ROOT set)",
+    "log": "docs/evidence/source-lock-sync-source-tests.log",
+    "log_sha256": "f6c6b2d3dd693b2cfeced6d5a676c310151f712d10bccbb93447ef27d675cdc2"
+   },
+   {
+    "cmd": "npm run parity -- --json",
+    "exit_code": 1,
+    "result": "identical to the recorded GAP-001 baseline: 163/164 within +/-2, 114 byte-exact, 41 skipped, filter/crt max error 80, sourceRevision 7443f6e6",
+    "json": "docs/evidence/source-lock-sync-parity.json",
+    "json_sha256": "2a2318d814b899835ea871a021492b1aa86df8f58083fe636b0e119a75bf2c5c"
+   },
+   {
+    "cmd": "npm run compile:upstream",
+    "exit_code": 0,
+    "result": "no diff: canonical kernels are unchanged by this range (shaders/effects untouched)"
+   }
+  ],
+  "port_surface_check": "grep for replaceEffect|getCompatibleReplacements|predictReplacement over the port's src/ and scripts/ returns no API definition; the four changed upstream files are carried only as pinned manifest entries"
+ }
+}
