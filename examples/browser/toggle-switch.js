@@ -187,6 +187,11 @@ class ToggleSwitch extends HTMLElement {
             </div>
         `
         this._track = this.querySelector('.ts-track')
+        // Propagate the host's accessible name to the focusable track
+        // (GAP-007): the host <toggle-switch> is not focusable, so the switch
+        // role must carry the name itself.
+        const hostLabel = this.getAttribute('aria-label')
+        if (hostLabel) this._track.setAttribute('aria-label', hostLabel)
 
         // Sync initial state from attributes
         this._checked = this.hasAttribute('checked')

@@ -224,13 +224,17 @@ class EffectSelect extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['value']
+        return ['value', 'aria-label']
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'value' && oldValue !== newValue) {
             this._value = newValue
             this._updateDisplay()
+        } else if (name === 'aria-label' && oldValue !== newValue) {
+            // Keep the focusable trigger's name in sync with the host (GAP-007).
+            const trigger = this.querySelector('.es-trigger')
+            if (trigger && newValue) trigger.setAttribute('aria-label', newValue)
         }
     }
 
@@ -330,6 +334,11 @@ class EffectSelect extends HTMLElement {
             </button>
             <div class="es-dropdown" role="listbox"></div>
         `
+        // Propagate an optional host-provided accessible name (GAP-007): the
+        // trigger is the focusable element, so the switch/select semantics it
+        // announces must carry the name itself.
+        const hostLabel = this.getAttribute('aria-label')
+        if (hostLabel) this.querySelector('.es-trigger').setAttribute('aria-label', hostLabel)
     }
 
     _renderDropdown() {

@@ -39,8 +39,8 @@
                 <div class="effect-content">
                     <div class="render-settings">
                         <label class="setting">
-                            <span class="setting-label">size</span>
-                            <select id="resolution" class="hf-select">
+                            <span class="setting-label" aria-hidden="true">size</span>
+                            <select id="resolution" class="hf-select" aria-label="size">
                                 <option value="128">128</option>
                                 <option value="256" selected>256</option>
                                 <option value="384">384</option>
@@ -48,14 +48,14 @@
                             </select>
                         </label>
                         <label class="setting">
-                            <span class="setting-label">seed</span>
+                            <span class="setting-label" aria-hidden="true">seed</span>
                             <span class="seed-controls">
-                                <input id="seed" class="hf-number" type="number" step="1" min="0" value="11" />
+                                <input id="seed" class="hf-number" type="number" step="1" min="0" value="11" aria-label="seed" />
                                 <button id="seed-randomize" class="hf-action-btn tooltip" data-title="Random seed" aria-label="Random seed">↻</button>
                             </span>
                         </label>
                         <label class="setting">
-                            <span class="setting-label">time</span>
+                            <span class="setting-label" aria-hidden="true">time</span>
                             <span id="time-control" class="time-control"></span>
                         </label>
                     </div>
@@ -68,7 +68,7 @@
             <!-- Add a filter -->
             <div class="shader-effect hf-panel" id="add-effect-panel">
                 <div class="effect-content">
-                    <effect-select id="add-effect"></effect-select>
+                    <effect-select id="add-effect" aria-label="add filter effect"></effect-select>
                 </div>
             </div>
 
@@ -80,7 +80,7 @@
                     <span id="dsl-mode" class="hf-text-dim hf-text-xs"></span>
                 </div>
                 <div class="effect-content">
-                    <textarea id="dsl-editor" class="dsl-editor" spellcheck="false" rows="8"></textarea>
+                    <textarea id="dsl-editor" class="dsl-editor" spellcheck="false" rows="8" aria-label="dsl program"></textarea>
                     <div class="dsl-actions">
                         <button id="dsl-run" class="hf-btn hf-btn-primary">run</button>
                         <button id="dsl-revert" class="hf-btn">back to pipeline</button>

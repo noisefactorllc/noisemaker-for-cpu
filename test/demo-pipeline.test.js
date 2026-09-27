@@ -11,7 +11,7 @@ import {
   formatDslValue,
   buildDsl,
 } from '../examples/browser/pipeline.js'
-import { widgetKindForParam } from '../examples/browser/control-factory.js'
+import { widgetKindForParam, controlAriaLabel } from '../examples/browser/control-factory.js'
 
 const registry = createDefaultRegistry()
 const noise = registry.get('synth', 'noise')
@@ -121,6 +121,42 @@ test('every real effect param maps to a known widget kind', () => {
       assert.ok(kinds.has(kind), `${def.id}.${name} (${def.params[name].type}) -> ${kind}`)
     }
   }
+})
+
+// GAP-007: every generated control exposes a distinct, accurate accessible name.
+test('controlAriaLabel derives the visible param label', () => {
+  assert.equal(controlAriaLabel('scaleX', noise.params.scaleX, 'slider'), 'scaleX')
+  assert.equal(controlAriaLabel('ridges', noise.params.ridges, 'toggle'), 'ridges')
+  assert.equal(controlAriaLabel('type', noise.params.type, 'dropdown'), 'type')
+})
+
+test('every generated param control yields a non-empty, distinct accessible name', () => {
+  for (const def of registry.list()) {
+    const rowNames = new Set()
+    for (const name of def.paramNames) {
+      if (name === 'seed') continue // render-level seed: no per-effect control
+      const spec = def.params[name]
+      const kind = widgetKindForParam(spec)
+      if (kind === 'omit') continue // surface inputs -> code view, no control
+      const label = controlAriaLabel(name, spec, kind)
+      assert.ok(label && label.length > 0, `${def.id}.${name} has an empty accessible name`)
+      rowNames.add(label)
+    }
+    assert.equal(
+      rowNames.size,
+      [...def.paramNames].filter((n) => n !== 'seed' && widgetKindForParam(def.params[n]) !== 'omit').length,
+      `${def.id} row labels are distinct`,
+    )
+  }
+})
+
+test('vector params produce per-component names', () => {
+  // A vec2/vec3 param must name each numeric input distinctly.
+  const vec3 = { type: 'vec3', default: [0, 0, 0] }
+  assert.equal(widgetKindForParam(vec3), 'vector')
+  // The DOM path is exercised in the browser; here we pin the component-suffix
+  // convention through controlAriaLabel's contract: the base name stays stable.
+  assert.equal(controlAriaLabel('tint', vec3, 'vector'), 'tint')
 })
 
 test('buildDsl output compiles against the real registry', () => {

@@ -194,6 +194,7 @@ function renderPipeline() {
   const g = makePanel('generator')
   els.container.appendChild(g.panel)
   const gsel = document.createElement('effect-select')
+  gsel.setAttribute('aria-label', 'generator effect')
   g.content.appendChild(gsel) // connect before setEffects
   gsel.setEffects(effectOptions(generators))
   gsel.value = state.generator.id // may self-dispatch change; no listener attached yet
@@ -247,6 +248,7 @@ function buildTimeControl() {
   slot.innerHTML = ''
   const valueEl = document.createElement('span')
   valueEl.className = 'control-value'
+  const TIME_LABEL = 'time'
   let widget
   if (has('slider-value')) {
     widget = document.createElement('slider-value')
@@ -255,6 +257,15 @@ function buildTimeControl() {
     widget.setAttribute('step', '0.01')
     widget.setAttribute('value', String(state.time))
     widget.setAttribute('type', 'float')
+    widget.setAttribute('aria-label', TIME_LABEL)
+    // Name the inner native range too: the AX tree exposes the input, not the
+    // custom-element host.
+    const nameTimeInput = () => {
+      const inner = widget.querySelector('input.slider')
+      if (inner) inner.setAttribute('aria-label', TIME_LABEL)
+    }
+    nameTimeInput()
+    queueMicrotask(nameTimeInput)
   } else {
     widget = document.createElement('input')
     widget.type = 'range'
@@ -263,6 +274,7 @@ function buildTimeControl() {
     widget.step = '0.01'
     widget.value = String(state.time)
     widget.className = 'hf-range'
+    widget.setAttribute('aria-label', TIME_LABEL)
   }
   widget.style.flex = '1'
   const onInput = () => {

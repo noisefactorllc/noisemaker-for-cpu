@@ -7,7 +7,17 @@
  * vendored `<toggle-switch>`; where a handfish element is absent it degrades to a
  * native control so the demo keeps working. Colors use a native `<input
  * type="color">` for dependable hex I/O.
+ *
+ * Accessibility: every editable control carries a distinct accessible name.
+ * Generated param rows use the visual `.control-label` text (the param name),
+ * applied as `aria-label` on the widget (custom-element widgets have no
+ * labelable inner input, so a native `<label for>` cannot reach it).
  */
+
+/** Human-readable label for a generated param control ("speed" -> "speed"). */
+export function controlAriaLabel(name, spec, kind) {
+  return name
+}
 
 export function widgetKindForParam(spec) {
   if (spec.type === 'bool' || spec.type === 'boolean') return 'toggle'
@@ -23,6 +33,7 @@ export function widgetKindForParam(spec) {
 
 const clamp01 = (n) => Math.max(0, Math.min(1, n))
 const to255 = (c) => Math.max(0, Math.min(255, Math.round(c * 255)))
+const XYZ = ['x', 'y', 'z', 'w']
 
 export function rgbToHex(arr) {
   const [r, g, b] = arr
@@ -60,6 +71,11 @@ export function createControl(name, spec, value, onChange) {
   label.textContent = name
   const valueEl = document.createElement('span')
   valueEl.className = 'control-value'
+  // Distinct accessible name for every widget (GAP-007). The label element is
+  // aria-hidden: a screen reader would otherwise announce the same param name
+  // twice (once from the label, once from the control's aria-label).
+  const accessibleName = controlAriaLabel(name, spec, kind)
+  label.setAttribute('aria-hidden', 'true')
 
   let getValue = () => value
   let setValue = () => {}
@@ -84,6 +100,16 @@ export function createControl(name, spec, value, onChange) {
       widget.setAttribute('step', String(step))
       widget.setAttribute('value', String(value))
       widget.setAttribute('type', isInt ? 'int' : 'float')
+      widget.setAttribute('aria-label', accessibleName)
+      // <slider-value> renders a native <input type="range"> in light DOM; the
+      // AX tree names that input, not the host, so copy the name onto it once
+      // the element renders (and re-copy if the host label changes).
+      const nameSliderInput = () => {
+        const inner = widget.querySelector('input.slider')
+        if (inner) inner.setAttribute('aria-label', accessibleName)
+      }
+      nameSliderInput()
+      queueMicrotask(nameSliderInput)
     } else {
       widget = document.createElement('input')
       widget.type = 'range'
@@ -92,6 +118,7 @@ export function createControl(name, spec, value, onChange) {
       widget.step = String(step)
       widget.value = String(value)
       widget.className = 'hf-range'
+      widget.setAttribute('aria-label', accessibleName)
     }
     const read = () => {
       const n = Number(widget.value)
@@ -108,6 +135,7 @@ export function createControl(name, spec, value, onChange) {
     const keys = Object.keys(spec.choices)
     if (has('select-dropdown')) {
       widget = document.createElement('select-dropdown')
+      widget.setAttribute('aria-label', accessibleName)
       // Configure after the caller appends it (custom element must be connected
       // for setOptions to reach its internal DOM).
       queueMicrotask(() => {
@@ -115,10 +143,14 @@ export function createControl(name, spec, value, onChange) {
           widget.setOptions(keys.map((k) => ({ value: k, text: k })))
         }
         widget.value = value
+        // The handfish trigger button renders after upgrade; name it directly.
+        const trigger = widget.querySelector('.select-trigger')
+        if (trigger) trigger.setAttribute('aria-label', accessibleName)
       })
     } else {
       widget = document.createElement('select')
       widget.className = 'hf-select'
+      widget.setAttribute('aria-label', accessibleName)
       for (const k of keys) {
         const opt = document.createElement('option')
         opt.value = k
@@ -135,6 +167,7 @@ export function createControl(name, spec, value, onChange) {
     widget.addEventListener('change', () => commit(widget.value))
   } else if (kind === 'toggle') {
     widget = document.createElement('toggle-switch')
+    widget.setAttribute('aria-label', accessibleName)
     widget.checked = Boolean(value)
     getValue = () => widget.checked
     setValue = (v) => {
@@ -146,6 +179,7 @@ export function createControl(name, spec, value, onChange) {
     widget = document.createElement('input')
     widget.type = 'color'
     widget.className = 'hf-color'
+    widget.setAttribute('aria-label', accessibleName)
     widget.value = rgbToHex(value)
     getValue = () => hexToRgb(widget.value)
     setValue = (v) => {
@@ -164,6 +198,8 @@ export function createControl(name, spec, value, onChange) {
       const input = document.createElement('input')
       input.type = 'number'
       input.className = 'hf-number'
+      // Distinct per-component names: "<param> x", "<param> y", ...
+      input.setAttribute('aria-label', `${accessibleName} ${XYZ[i] ?? i}`)
       input.value = String(value[i] ?? 0)
       input.step = 'any'
       inputs.push(input)
@@ -181,6 +217,7 @@ export function createControl(name, spec, value, onChange) {
     widget = document.createElement('input')
     widget.type = 'text'
     widget.className = 'hf-input'
+    widget.setAttribute('aria-label', accessibleName)
     widget.value = String(value ?? '')
     getValue = () => widget.value
     setValue = (v) => {
