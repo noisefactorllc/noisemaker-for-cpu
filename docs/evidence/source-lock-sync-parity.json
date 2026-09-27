@@ -3,7 +3,7 @@
 > node scripts/parity/run.js --json
 
 {
-  "sourceRevision": "93229933b102ba82e713402be19db57207698850",
+  "sourceRevision": "296e0138c4744ed485b2e95de3eeb466c17629ee",
   "suite": "all",
   "size": 8,
   "time": 0.25,

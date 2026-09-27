@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
-export const PINNED_UPSTREAM_REVISION = '93229933b102ba82e713402be19db57207698850'
+export const PINNED_UPSTREAM_REVISION = '296e0138c4744ed485b2e95de3eeb466c17629ee'
 export const PINNED_SOURCE_PATHS = Object.freeze(['shaders/effects', 'shaders/src'])
 export const PINNED_SOURCE_DIGEST = 'e371a1650d1ace9462a20ecf4e4f0902e5135b4772e8a9abbc8d2c037beebf59'
 // Digest over the committed pinned-source manifest (pinned-source-manifest.json):
