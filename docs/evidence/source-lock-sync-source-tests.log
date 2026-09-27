@@ -1,11 +1,11 @@
-✔ upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects (2.228738ms)
-✔ upstream snapshot preserves parity-critical definition metadata (0.432266ms)
-✔ stateful and particle records carry CPU iteration metadata (0.650708ms)
-✔ upstream source lock hashes pinned paths deterministically without requiring a Git repository (24.031797ms)
-✔ PINNED_UPSTREAM_REVISION is a valid 40-character hexadecimal git commit SHA (0.438656ms)
-✔ committed pinned-source manifest anchors the pin constants (7.825969ms)
-✔ pinned source manifest matches the real upstream tree when NM_REFERENCE_ROOT is available (155.918324ms)
-✔ committed kernel records match the pinned-source manifest hashes (27.425181ms)
+✔ upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects (2.508256ms)
+✔ upstream snapshot preserves parity-critical definition metadata (0.43875ms)
+✔ stateful and particle records carry CPU iteration metadata (0.705705ms)
+✔ upstream source lock hashes pinned paths deterministically without requiring a Git repository (25.502153ms)
+✔ PINNED_UPSTREAM_REVISION is a valid 40-character hexadecimal git commit SHA (0.625253ms)
+✔ committed pinned-source manifest anchors the pin constants (10.803109ms)
+✔ pinned source manifest matches the real upstream tree when NM_REFERENCE_ROOT is available (191.755721ms)
+✔ committed kernel records match the pinned-source manifest hashes (24.043872ms)
 ℹ tests 8
 ℹ suites 0
 ℹ pass 8
@@ -13,4 +13,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 402.694867
+ℹ duration_ms 463.555152

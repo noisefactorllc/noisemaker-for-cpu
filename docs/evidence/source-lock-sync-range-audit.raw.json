@@ -1,6 +1,6 @@
 {
- "old": "7443f6e6180300a45c5b97608459e5094504659d",
- "new": "12b4d74fb4f28d5f00bb1dde107fa8673814d8b9",
+ "old": "12b4d74fb4f28d5f00bb1dde107fa8673814d8b9",
+ "new": "93229933b102ba82e713402be19db57207698850",
  "refs_replaced": {
   "README.md": 1,
   "docs/EFFECTS.md": 1,
@@ -11,37 +11,40 @@
  "newpin_in_upstream-snapshot.js": "1",
  "newpin_in_pinned-source-manifest.json": "1",
  "shaders_commits": 3,
- "shaders_shortstat": "8 files changed, 1158 insertions(+), 18 deletions(-)",
+ "shaders_shortstat": "3 files changed, 439 insertions(+), 2 deletions(-)",
  "effects_stat": "EMPTY",
+ "src_stat": "EMPTY",
  "changed_files": [
-  "shaders/src/runtime/pipeline.js",
-  "shaders/src/runtime/preflight.js",
-  "shaders/tests/frame-warmup.js",
-  "shaders/tests/image-metrics.js",
+  "shaders/tests/definition-schema.js",
   "shaders/tests/test-harness.js",
-  "shaders/tests/test_frame_warmup.js",
-  "shaders/tests/test_image_metrics.js",
-  "shaders/tests/test_preflight.js"
+  "shaders/tests/test_definition_schema.js"
  ],
- "src_runtime_only": "changed src files: shaders/src/runtime/pipeline.js, shaders/src/runtime/preflight.js",
+ "src_runtime_only": "no shaders/src files changed in this range",
+ "digest_check": {
+  "PINNED_SOURCE_DIGEST_committed": "e371a1650d1ace9462a20ecf4e4f0902e5135b4772e8a9abbc8d2c037beebf59",
+  "PINNED_SOURCE_DIGEST_computed_at_new_pin": "e371a1650d1ace9462a20ecf4e4f0902e5135b4772e8a9abbc8d2c037beebf59",
+  "PINNED_SOURCE_MANIFEST_DIGEST_committed": "8bb68100f40db4955c4544507eb6049b1e31a0887828196b48e67d5cd8c5f218",
+  "PINNED_SOURCE_MANIFEST_DIGEST_computed_at_new_pin": "8bb68100f40db4955c4544507eb6049b1e31a0887828196b48e67d5cd8c5f218",
+  "note": "both digests recomputed from a fresh full clone at 93229933; unchanged values are correct because shaders/effects and shaders/src are byte-identical across the range"
+ },
  "per_commit": [
   {
-   "sha": "12b4d74fb4f28d5f00bb1dde107fa8673814d8b9",
-   "subject": "feat(runtime): static effect preflight for per-backend authorability and device-limit format changes (GAP-016)",
-   "upstream_tree": "c256c774f678630d71acea1715ddada042db893c",
-   "shaders_stat": "shaders/src/runtime/pipeline.js  |  40 ++++--\n shaders/src/runtime/preflight.js | 191 ++++++++++++++++++++++++++++\n shaders/tests/test_preflight.js  | 267 +++++++++++++++++++++++++++++++++++++++\n 3 files changed, 488 insertions(+), 10 deletions(-)"
+   "sha": "93229933b102ba82e713402be19db57207698850",
+   "subject": "feat(harness): complete, lossless definition-schema introspection with an upstream-loss audit (GAP-017)",
+   "upstream_tree": "7f269da0d7efa42e38501e203c95b3d563fe3d61",
+   "shaders_stat": "shaders/tests/definition-schema.js      | 220 ++++++++++++++++++++++\n shaders/tests/test-harness.js           |  60 ++++-\n shaders/tests/test_definition_schema.js | 161 +++++++++\n 3 files changed, 439 insertions(+), 2 deletions(-)"
   },
   {
-   "sha": "e73a44a37f0c99bd3779c5fb26c7bba65a46a379",
-   "subject": "test(harness): warm up frames before pausing for explicit-time render requests (GAP-014)",
-   "upstream_tree": "1c6518d954b2cb34357f18bec59a3de7afd30805",
-   "shaders_stat": "shaders/tests/frame-warmup.js      |  61 ++++++++++++++++\n shaders/tests/test-harness.js      |  26 ++++---\n shaders/tests/test_frame_warmup.js | 144 +++++++++++++++++++++++++++++++++++++\n 3 files changed, 223 insertions(+), 8 deletions(-)"
+   "sha": "8fe3ccaf2cc8f111ba574f4dc356ee68501af971",
+   "subject": "docs: record post-publication deployed-contract evidence and correct the open-gap enumeration",
+   "upstream_tree": "919394c00086c29ea9a07cdff0598e54dd37b318",
+   "shaders_stat": "(no shaders/ paths touched)"
   },
   {
-   "sha": "c2252f0caa66b7c5e133a2aad3328e832564b567",
-   "subject": "test(metrics): auditable GAP-015 metric interchangeability mirror",
-   "upstream_tree": "7071835a841265cc24e59189f1028c0d3e6b757d",
-   "shaders_stat": "shaders/tests/image-metrics.js      | 283 ++++++++++++++++++++++++++++++++++++\n shaders/tests/test_image_metrics.js | 164 +++++++++++++++++++++\n 2 files changed, 447 insertions(+)"
+   "sha": "ec457c2eec695427fdbf026bd5ce5db04456a151",
+   "subject": "docs: advance AI development contract checkpoint through 12b4d74 (GAP-014/015/016 verified pair audit)",
+   "upstream_tree": "fe85d787b9cae00536dba6cd3a2c5d649248a1d0",
+   "shaders_stat": "(no shaders/ paths touched: LEDGER.md, llms-full.txt only)"
   }
  ]
 }
