@@ -16,18 +16,36 @@ A CPU-only backport of the Noisemaker shader engine, Polymorphic DSL, and standa
 
 The renderer is designed to reproduce a frame anywhere JavaScript runs, with the expectation that complex frames can be slow. CSL—CPU Shader Language—provides a compact GLSL-like language for custom CPU shaders. The upstream Noisemaker GLSL collection is translated ahead of time into ordinary ESM pixel kernels. Catalog rendering needs neither runtime evaluation nor the GLSL transpiler.
 
-## Quick start
+## Install
 
-Node.js 22 or newer is required for the CLI.
+Node.js 22 or newer is required for the CLI and the ESM entry.
+
+The supported distribution is the npm package `noisemaker-cpu`. It is not
+published yet (`npm view noisemaker-cpu` returns E404), so install from this
+repository in the meantime:
 
 ```bash
-node bin/noisemaker-cpu.js effect noise \
+npm install github:noisefactorllc/noisemaker-for-cpu
+```
+
+This installs the `noisemaker-cpu` CLI on your PATH and exposes the ESM entry
+through the `noisemaker-cpu` package name. The package has no runtime
+dependencies. Once the package is published, the same commands work after
+`npm install noisemaker-cpu`.
+
+## Quick start
+
+In a repository checkout, run the commands below as
+`node bin/noisemaker-cpu.js ...` instead of `noisemaker-cpu ...`.
+
+```bash
+noisemaker-cpu effect noise \
   --width 256 --height 256 \
   --param scaleX=18 --param scaleY=12 \
   --output noise.png
 
 printf 'search synth, filter\nnoise(scaleX: 18, scaleY: 12).posterize(levels: 8).write(o0)\nrender(o0)\n' |
-  node bin/noisemaker-cpu.js render - \
+    noisemaker-cpu render - \
     --width 256 --height 256 --seed 11 \
     --output showcase.png
 ```
@@ -35,10 +53,10 @@ printf 'search synth, filter\nnoise(scaleX: 18, scaleY: 12).posterize(levels: 8)
 Use an input image or named texture:
 
 ```bash
-node bin/noisemaker-cpu.js effect filter/texture \
+noisemaker-cpu effect filter/texture \
   --input source.png --output texture.png
 
-node bin/noisemaker-cpu.js render program.dsl \
+noisemaker-cpu render program.dsl \
   --texture imageTex=source.png \
   --texture textTex=mask.png \
   --output result.png
@@ -50,16 +68,16 @@ Render from standard input:
 
 ```bash
 printf 'search synth\nsolid(color: #f80).write(o0)\nrender(o0)\n' |
-  node bin/noisemaker-cpu.js render - --width 128 --height 128 --output solid.png
+    noisemaker-cpu render - --width 128 --height 128 --output solid.png
 ```
 
 Useful commands:
 
-- `node bin/noisemaker-cpu.js effects` lists the complete catalog.
-- `npm test` verifies the engine.
-- `npm run compile:upstream` deterministically rebuilds the canonical kernels.
-- `npm run parity` compares all default frames with GPU goldens.
-- `npm run bench -- --size 128` measures local throughput.
+- `noisemaker-cpu effects` lists the complete catalog.
+- `npm test` verifies the engine (repository checkout; the packed package does not ship `test/`).
+- `npm run compile:upstream` deterministically rebuilds the canonical kernels (repository checkout).
+- `npm run parity` compares all default frames with GPU goldens (repository checkout).
+- `npm run bench -- --size 128` measures local throughput (repository checkout).
 
 `noisemaker-cpu effect EFFECT` automatically connects every catalog domain:
 
@@ -71,7 +89,7 @@ Useful commands:
 
 ## Browser API
 
-The main entry has no Node imports:
+The main entry has no Node imports. In a repository checkout, import the same entry as `./src/index.js`:
 
 ```js
 import {
@@ -79,7 +97,7 @@ import {
   createDefaultRegistry,
   kernelFactories,
   kernels,
-} from './src/index.js'
+} from 'noisemaker-cpu'
 
 const renderer = new CpuRenderer({
   registry: createDefaultRegistry(),
@@ -102,7 +120,7 @@ The render-level integer `seed` supplies omitted effect seed parameters. A seed 
 
 Initialized fibers, scratches, and stray-hair overlays use a 64 MiB LRU cache by default. Set the limit with `cpuTextureCacheByteLimit` in the `CpuRenderer` constructor. Inspect the cache with `cpuTextureCacheStats()`. Release retained overlays with `clearCpuTextureCache()`/`dispose()`.
 
-For a canvas, call `renderToCanvas(canvas, dsl, options)` or `await renderToCanvasAsync(...)`. The asynchronous form yields between scanline tiles so the page can update while the CPU works. A browser demo is in `examples/browser`: build a Polymorphic-DSL effect pipeline from the full effect catalog and watch it render on the CPU. Serve the repository over HTTP (for example `python3 -m http.server`). Open `examples/browser/index.html`.
+For a canvas, call `renderToCanvas(canvas, dsl, options)` or `await renderToCanvasAsync(...)`. The asynchronous form yields between scanline tiles so the page can update while the CPU works. A browser demo is in `examples/browser`: build a Polymorphic-DSL effect pipeline from the full effect catalog and watch it render on the CPU. Serve the repository root — or, for an installed package, the installed package root — over HTTP (for example `python3 -m http.server`). Open `examples/browser/index.html`.
 
 ## CSL
 
@@ -123,6 +141,8 @@ import { compileCsl } from './src/index.js'
 
 const shader = compileCsl(source, { sourceName: 'bands.csl' })
 ```
+
+(Import `compileCsl` from `noisemaker-cpu`, or `./src/index.js` in a checkout.)
 
 Runtime compact-CSL compilation uses `Function` after parsing and whitelist-based type checking. Compile only shader source you trust. Catalog kernels use the separate canonical-GLSL compatibility lane and ship as generated ESM suitable for a strict Content Security Policy. See [docs/CSL.md](docs/CSL.md).
 

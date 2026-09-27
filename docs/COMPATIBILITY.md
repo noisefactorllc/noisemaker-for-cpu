@@ -20,7 +20,7 @@ Range audit, 2026-09-27, against a fresh clone of `https://github.com/noisefacto
 - `403c2a4b` (GAP-008) is the only `shaders/src` commit: `shaders/src/index.js`, `shaders/src/lang/index.js`, `shaders/src/lang/paramAliases.js`, `shaders/src/lang/transform.js`, adding a `predictReplacement`/`preflight` prediction layer to the upstream DSL's `replaceEffect`/`getCompatibleReplacements` mutation APIs. The CPU port has no replacement/transform layer (its `src/dsl` compiler exposes no `replaceEffect` or compatible-replacements API — the only `paramAliases` use is argument-name resolution in `src/effects/definition.js` and `src/dsl/compiler.js`), so there is no CPU-side equivalent to change; the committed manifest entries for the four files are the only carrier of this change.
 - `pinned-source-manifest.json` diff corroborates the audit: the `revision` field plus exactly the four `shaders/src` entry hashes/sizes change; no `shaders/effects` entry changes.
 
-Executed with `NM_REFERENCE_ROOT` at upstream `7443f6e6` (committed evidence: [`docs/evidence/source-lock-sync-6a0af04d-7443f6e6-audit.json`](../evidence/source-lock-sync-6a0af04d-7443f6e6-audit.json) carries the per-commit range audit, blob identities of the four changed `shaders/src` files, the executed commands with exit codes, and SHA-256s of the verbatim committed logs [`source-lock-sync-test-full.log`](../evidence/source-lock-sync-test-full.log), [`source-lock-sync-source-tests.log`](../evidence/source-lock-sync-source-tests.log), and [`source-lock-sync-parity.json`](../evidence/source-lock-sync-parity.json)): `npm test` 279 pass / 0 fail / 1 skip (the reference-tree manifest cross-check runs and passes); `node --test test/upstream-source-lock.test.js test/upstream-inventory.test.js` exit 0. Full parity gate re-run at the sync commit: results recorded in the pass-history row.
+Executed with `NM_REFERENCE_ROOT` at upstream `7443f6e6` (committed evidence: `docs/evidence/source-lock-sync-6a0af04d-7443f6e6-audit.json` carries the per-commit range audit, blob identities of the four changed `shaders/src` files, the executed commands with exit codes, and SHA-256s of the verbatim committed logs `source-lock-sync-test-full.log`, `source-lock-sync-source-tests.log`, and `source-lock-sync-parity.json`): `npm test` 279 pass / 0 fail / 1 skip (the reference-tree manifest cross-check runs and passes); `node --test test/upstream-source-lock.test.js test/upstream-inventory.test.js` exit 0. Full parity gate re-run at the sync commit: results recorded in the pass-history row.
 
 ### Source-lock sync, 2026-09-26 (commit `a1801be`)
 
@@ -58,7 +58,7 @@ render(o0)
 
 ### Bounded landscape authority comparison, 2026-09-26 (GAP-003)
 
-The authority pixel comparison GAP-003 required, for both existing `filtering` modes and both projections, defined and executed against the recorded authority pin. It is recorded as required evidence while GAP-008's reference provenance remains unestablished (GAP-008 stays open); rendered parity against the retained goldens is still unaccepted. Full methodology, program bytes, SHA-256s, channel metrics, and the root-cause measurements are in [`landscape-authority-comparison.json`](../landscape-authority-comparison.json).
+The authority pixel comparison GAP-003 required, for both existing `filtering` modes and both projections, defined and executed against the recorded authority pin. It is recorded as required evidence while GAP-008's reference provenance remains unestablished (GAP-008 stays open); rendered parity against the retained goldens is still unaccepted. Full methodology, program bytes, SHA-256s, channel metrics, and the root-cause measurements are in `landscape-authority-comparison.json`.
 
 - Authority: upstream Noisemaker at the recorded pin `44bc4ed4ac729bddaa95b083d64bee942ade35da` (published runtime `1.0.169`), `CanvasRenderer` on WebGL2 under headless Chromium 153.0.8010.12 (SwiftShader, `--enable-unsafe-swiftshader --use-gl=angle --use-angle=swiftshader-webgl`), from a fresh clone. Provenance: `git log 44bc4ed4..6a0af04d -- shaders/effects/render/renderLandscape3d shaders/effects/synth3d/heightmap3d shaders/effects/synth/testPattern` is empty, so the shipped landscape/heightfield/testPattern effect sources are identical between the authority pin and the port's current kernel pin `6a0af04d`. Involved source SHA-256s at `44bc4ed4`: `landscape.glsl` `c9e9ab5c…b07ff8`, `renderLandscape3d/definition.js` `cc31afef…a9b29`, `heightmap3d/glsl/precompute.glsl` `d43f213b…36d759`, `heightmap3d/definition.js` `2720f1d0…e6fa8`, `testPattern/glsl/testPattern.glsl` `f913300a…3cb20`, `testPattern/definition.js` `35a71f6a…5dbe4`.
 - Fixture (identical program bytes on both sides, parameters taken from the upstream effect's own `parity-case.json` at `44bc4ed4`): 96×80 canvas, time 0, seed 1, DSL `search synth, synth3d, render`; `testPattern(pattern: gradient).write(o1)`; `testPattern(pattern: colorBars).write(o2)`; `heightmap3d(heightTex: read(o1), tex: read(o2), volumeSize: x32, heightScale: 0.6, baseHeight: 0.1).renderLandscape3d(viewMode: <ortho|perspective>[, filtering: <voxel|isosurface>], rotateX: 0.62, rotateY: 0.5, posY: 12).write(o0)`; `render(o0)`. The nested-call form of the upstream parity case is used in its `read(o1)`/`read(o2)` form because the CPU DSL parser does not accept effect calls as texture arguments; both sides run this exact same text.
@@ -140,7 +140,7 @@ Raw evidence: run `audit-20260926-010135` in the shared series state, file `evid
 
 ### Daily review, 2026-09-25
 
-The existing full CPU gate exits 1: 164 cases executed, 114 byte-exact, 163 accepted at tolerance 2, and 41 skipped. filter/crt has maximum error 80 and mean error 5.05859375. The gate identifies authority 4891b9953f9fd8a61cf9ae0dda2fe747a9be82df. Five of the 210 current effect IDs are outside its 205-effect inventory. Full parity fails. [Raw evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json).
+The existing full CPU gate exits 1: 164 cases executed, 114 byte-exact, 163 accepted at tolerance 2, and 41 skipped. filter/crt has maximum error 80 and mean error 5.05859375. The gate identifies authority 4891b9953f9fd8a61cf9ae0dda2fe747a9be82df. Five of the 210 current effect IDs are outside its 205-effect inventory. Full parity fails. Raw evidence in the shared automation store.
 
 The current full case denominator remains incomplete. Missing parameters, hosts, external inputs, and stateful sequences remain qualification gaps. No skip or tolerated difference counts as exact parity.
 
@@ -383,10 +383,10 @@ Nearest exact-source delivery dispatches at `bfbe547` passed: Export kit 3620571
 No workflow runs the port unit or parity gates. A passing dispatch does not qualify rendered parity.
 Raw evidence: run `audit-20260926-010135` in the shared series state, file `evidence-audit-20260926-010135/result-noisemaker-for-cpu.json`.
 
-Review CI boundary: Exact-source runs: Export kit, Downstream. A passing export dispatch does not qualify rendered parity. Current complete-render enforcement remains an open verification requirement. [Exact-source responses and workflows](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/noisemaker-for-cpu-remote-evidence.json).
+Review CI boundary: Exact-source runs: Export kit, Downstream. A passing export dispatch does not qualify rendered parity. Current complete-render enforcement remains an open verification requirement. Exact-source responses and workflows in the shared automation store.
 
 [Earlier audit and review evidence](COMPLETION_GAPS.md#3-methods-and-evidence). [Exact-source Actions](https://github.com/noisefactorllc/noisemaker-for-cpu/actions?query=head_sha%3Af2eb495d70abcb74e3632e7a652a4f83e4f3b11e).
-[This run evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/evidence-20260924-remaining-gap-documents) retains commands, exit codes, source identities, and distribution metadata.
+This run evidence in the shared automation store retains commands, exit codes, source identities, and distribution metadata.
 Official host references and historical environment limits remain in the linked gap register.
 Source CI, export dispatch, artifact delivery, and rendered parity are separate evidence dimensions.
 A successful dispatch or unit-test summary does not establish a full rendered gate.
@@ -410,7 +410,7 @@ Implementation corrections remain with the separate job. This report does not ad
 ## 6. History
 
 Worker audit on 2026-09-26 at `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5`: reran the full gate and bounded usability checks. All eight gaps remain open. No closure claimed. New published authority `1.0.184` at `9574362` is unqualified and recorded as pending.
-Daily review on 2026-09-25 at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. [Retained review evidence](/Users/alex/.codex/automations/noisemaker-port-completion-audit/review-20260925-053200/cpu-current-probe.json). No new closure claimed.
+Daily review on 2026-09-25 at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. Retained review evidence in the shared automation store. No new closure claimed.
 
 | Date | Source | Result | Change |
 | --- | --- | --- | --- |
