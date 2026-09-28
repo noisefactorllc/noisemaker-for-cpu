@@ -12,7 +12,7 @@ Served kit then: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. [R
 
 ### Daily review, 2026-09-28
 
-Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. Kernel pin `73c15be0`; upstream `main` `6b05a270` sits three docs or dependency commits past it, `shaders/` unchanged. Published authority `1.0.196` at `296e0138`. Served kit `0.1.38` at this source.
+Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. Kernel pin: `73c15be0`. Upstream `main` `6b05a270` sits three docs or dependency commits past it. The `shaders/` tree stays unchanged. Published authority: `1.0.196` at `296e0138`. Served kit: `0.1.38` at this source.
 The review reopened GAP-003 under the 2026-09-27 closure rule and verified the GAP-004, GAP-007, and GAP-008 closures. Evidence: run `review-20260928-213000` in the shared series state.
 
 ### Source-lock sync, 2026-09-28 (upstream `296e0138`..`73c15be0`)
@@ -199,7 +199,8 @@ Raw evidence: run `audit-20260926-010135` in the shared series state, file `evid
 
 ### Daily review, 2026-09-28
 
-The review re-executed both gates at this source with the reference root at pin `73c15be0`: `npm test` 285 pass, 0 fail, 1 skip; parity exit 1 unchanged, 163/164 within ±2, 114 byte-exact, 41 skipped, `filter/crt` red. The denominator and skips are unchanged.
+The review re-executed both gates at this source. The reference root stayed at pin `73c15be0`. `npm test` gave 285 pass, 0 fail, and 1 skip. The parity gate exited 1, unchanged: 163 of 164 compared cases within ±2, 114 byte-exact, 41 skipped, and `filter/crt` red.
+The whole-port expectation is 210 authority-manifest effect IDs. The five exclusions count as missing cases until this port publishes a `Parity cases:` field.
 Commands, exit codes, and served-kit hash checks: run `review-20260928-213000` in the shared series state, `review-20260928-213000/result.json`.
 
 ### Daily review, 2026-09-25
@@ -459,7 +460,7 @@ A successful dispatch or unit-test summary does not establish a full rendered ga
 
 Next bounded check: continue GAP-001 on the qualified native host. Trace the isolated CRT hash-site inputs against the current Metal render and reconcile the retained golden. Then rerun `node scripts/parity/run.js --json` with unchanged tolerances and authority inputs.
 This audit reproduced the failure on 2026-09-26 and the review reproduced it on 2026-09-28. Account separately for all 41 skips and the five missing effects. Do not close full parity until every required case executes and matches.
-GAP-003 is open under the operator's 2026-09-27 closure rule, which counts the whole port. See the gap register.
+GAP-003 is open under the operator's 2026-09-27 closure rule, which counts the whole port: 210 authority-manifest IDs, with the five exclusions as missing cases. See the gap register.
 See the stable entries in [completion gaps](COMPLETION_GAPS.md).
 
 See [GAP-002 and the complete gap register](COMPLETION_GAPS.md#4-known-gaps) for evidence, dependencies, and acceptance criteria.
