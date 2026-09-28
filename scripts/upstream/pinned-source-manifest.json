@@ -1,5 +1,5 @@
 {
- "revision": "296e0138c4744ed485b2e95de3eeb466c17629ee",
+ "revision": "73c15be00d6888f4b5d2835d8e242ee9e840df45",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5577,8 +5577,8 @@
   },
   {
    "path": "shaders/src/runtime/backends/webgl2.js",
-   "size": 78025,
-   "sha256": "32193ffb12a7df4381ccdd3d5e888827470b0c9e249e796a86061887277ef6a0"
+   "size": 78150,
+   "sha256": "9024b8551b5870f38263839d9b8e43a16021eb11d776bde74b836da8d706a102"
   },
   {
    "path": "shaders/src/runtime/backends/webgpu-frame-export.js",
@@ -5592,8 +5592,8 @@
   },
   {
    "path": "shaders/src/runtime/compiler.js",
-   "size": 8595,
-   "sha256": "ea4224f833d361a7b4721f3abd290d13632e365cc7d97f76aff54472e550520e"
+   "size": 8795,
+   "sha256": "5151a7f07994c828c99d2729393627cffe701328d81a9f0ccdfbd9948f249d49"
   },
   {
    "path": "shaders/src/runtime/default-shaders.js",
@@ -5637,8 +5637,8 @@
   },
   {
    "path": "shaders/src/runtime/pipeline.js",
-   "size": 116862,
-   "sha256": "0ebac052804a6c9d788b466b30c66e2fda91874d9591ea1fddcfa3f0b2b92171"
+   "size": 123038,
+   "sha256": "5e797ea5c82e18b6a86f35a9339164e630eed42c765beae19d0f1c8397882d8c"
   },
   {
    "path": "shaders/src/runtime/preflight.js",
