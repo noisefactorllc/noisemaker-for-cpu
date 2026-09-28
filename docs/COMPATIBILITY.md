@@ -8,7 +8,16 @@ Kernel pin: `8eeb7b5ac14eb37a8d16037f607a88ce63924cd3`, upstream tag `v1.0.183`.
 Current upstream main: `95743621696483b91968992ef6ee0d87b2089fa8`. Published Noisemaker authority: `1.0.184` at that source.
 The published effect manifest is byte-identical across `1.0.179` through `1.0.184`. Its SHA-256 is `05c4d7b7744837ae90a3bb4c89e5403ff09448a74d9d7e824abb3d719ad3314e`, with 210 effect IDs.
 Two runtime `shaders/` commits separate the pin from the published source. Their parity is unqualified.
-Current served kit: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. [Retrieved metadata](https://kits.noisedeck.app/cpu/0/deployment-meta.json). That tree differs from the audited source only in the gap register.
+Served kit then: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. [Retrieved metadata](https://kits.noisedeck.app/cpu/0/deployment-meta.json). That tree differs from the audited source only in the gap register.
+
+### Daily review, 2026-09-28
+
+Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. The bounded gate still fails.
+Kernel pin: `73c15be00d6888f4b5d2835d8e242ee9e840df45`. Current upstream `main` is `6b05a27050b8dccd68c6500a8e9d705a5dfd0e70`, three docs or dependency commits past the pin. The `shaders/` diff over the range is empty. The next audit classifies them.
+Published authority runtime: `1.0.196` at `296e0138c4744ed485b2e95de3eeb466c17629ee`.
+Served kit: `0.1.38`, source `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`. Served `engine/src/index.js` and `engine/bin/noisemaker-cpu.js` SHA-256 match the tree. The npm name returns E404.
+The review re-executed both gates at this source. See section 3. It verified the GAP-004, GAP-007, and GAP-008 closures and reopened GAP-003 under the operator's 2026-09-27 rendered-parity closure rule. See the gap register.
+Raw evidence: run `review-20260928-213000` in the shared series state.
 
 ### Source-lock sync, 2026-09-28 (upstream `296e0138`..`73c15be0`)
 
@@ -110,7 +119,7 @@ render(o0)
 
 ### Bounded landscape authority comparison, 2026-09-26 (GAP-003)
 
-2026-09-27 native follow-up: all six identical cases are byte-exact on Apple M4/Metal (Chromium 151.0.7922.34) at authority `6a0af04d`, with the involved effect sources unchanged through candidate pin `296e0138`. GAP-003 is closed for this bounded qualification. Historical SwiftShader results below remain valid for that backend. CRT remains open and failing; retained fixtures, tolerance, and 41 full-gate skips are unchanged. [Native hashes and metrics](../landscape-authority-comparison.json).
+2026-09-27 native follow-up: all six identical cases are byte-exact on Apple M4/Metal (Chromium 151.0.7922.34) at authority `6a0af04d`, with the involved effect sources unchanged through candidate pin `296e0138`. The 2026-09-28 review re-hashed the six effect sources at pin `73c15be0`; they are unchanged, so the qualification covers the current pin. GAP-003 stays open under the operator's 2026-09-27 rendered-parity closure rule: the port publishes no supervisor-run `scripts/parity-summary`, and the whole-port count remains 164 executed of 205 eligible with 41 skips and `filter/crt` failing. The native result is retained as bounded evidence. Historical SwiftShader results below remain valid for that backend. CRT remains open and failing; retained fixtures, tolerance, and 41 full-gate skips are unchanged. [Native hashes and metrics](../landscape-authority-comparison.json).
 
 The authority pixel comparison GAP-003 required, for both existing `filtering` modes and both projections, defined and executed against the recorded authority pin. It is recorded as required evidence while the retained goldens' capture identity remained unestablished (GAP-008 has since given every comparison a visible unknown-provenance marker; the capture backend itself is still unidentified); rendered parity against the retained goldens is still unaccepted. Full methodology, program bytes, SHA-256s, channel metrics, and the root-cause measurements are in `landscape-authority-comparison.json`.
 
@@ -165,20 +174,20 @@ Historical measurements remain bound to their original revisions in [completion 
 ## 2. Host and distribution matrix
 
 Current tests and qualification limits are in [section 3](#3-parity-coverage).
-The matrix below retains the earlier measured scope. A historical verified row is not a current-source or full-platform certification.
+The matrix below states each row's measured scope as of the 2026-09-28 review. A bounded verified row is not a full-platform certification.
 
 | Dimension | Status | Measured scope or limit |
 |---|---|---|
-| Source-level checks | unverified | Historical image sweep: 163 of 164 passed, 41 skipped, and CRT failed. Current-source full parity was not rerun. |
-| Actual host rendering | unverified | No new complete native or browser workflow qualified by this report. |
-| Minimum and current host versions | unverified | Declared requirements are not a tested version matrix. |
-| Supported operating systems and backends | unverified | This pass does not establish Windows, Linux, and macOS coverage. |
-| Installed package and first useful result | unverified | Complete isolated installation was not qualified for this source. |
-| Parameters, external inputs, state, and chains | unverified | Full current-authority combinations remain unmeasured. |
-| Invalid input and recovery | unverified | Unit checks do not establish every installed public entry point. |
-| Upgrade, removal, and resource cleanup | unverified | Prior defects and missing workflows remain in the gap register. |
-| Accessibility of provided controls | unverified | Keyboard, focus, labels, and diagnostics need host observations where applicable. |
-| Release readiness | blocked | Full parity, installation, host, and artifact evidence remain incomplete. |
+| Source-level checks | verified, bounded | Review re-ran the full gate at `fd9d56c` on 2026-09-28: 163/164 within ±2, 114 byte-exact, 41 skipped, `filter/crt` red (GAP-001). `npm test` 285 pass, 0 fail, 1 skip. |
+| Actual host rendering | verified, bounded | Six 96×80 landscape cases byte-exact against the Apple M4/Metal authority on 2026-09-27, one fixture, one backend. No cross-GPU claim. The full gate keeps 41 skips and CRT failing. |
+| Minimum and current host versions | verified, bounded | Clean GitHub installs at Node 22.20.0, 24.10.0, and 26.5.1 render byte-identically (2026-09-27, GAP-006 record). No wider version matrix. |
+| Supported operating systems and backends | unverified | Linux container checks and one Apple M4/Metal comparison. Windows and other macOS backends remain unqualified. |
+| Installed package and first useful result | verified, bounded | GitHub-install lifecycle qualified 2026-09-27: install, render, invalid-DSL recovery, byte-identical upgrade re-render, uninstall. The npm name stays unpublished (E404). |
+| Parameters, external inputs, state, and chains | unverified | One bounded external-input case is byte-exact (GAP-002 record). Full current-authority combinations remain unmeasured. |
+| Invalid input and recovery | verified, bounded | CLI unknown-effect and missing-input errors exit 1 with clear messages. Installed invalid-DSL recovery recorded. Not every public entry point is covered. |
+| Upgrade, removal, and resource cleanup | verified, bounded | One upgrade re-rendered byte-identically and uninstall removed the package (2026-09-27). Saved-program upgrades across versions remain unqualified. |
+| Accessibility of provided controls | verified, bounded | Headless Chromium 154 CDP audit on 2026-09-27: 23/23 demo controls named, keyboard and recovery checks pass (GAP-007). Real screen readers and other browsers unqualified. |
+| Release readiness | blocked | Full parity fails, the npm name is unpublished, Windows and a browser floor are unqualified, and release CI runs no port gate. |
 
 ## 3. Parity coverage
 
@@ -191,6 +200,13 @@ Five of the 210 current effect IDs remain outside the 205-effect inventory. Full
 No golden or tolerance changed since the last review.
 The newly published authority `1.0.184` at `9574362` is unqualified. It adds two runtime `shaders/` commits beyond the pin.
 Raw evidence: run `audit-20260926-010135` in the shared series state, file `evidence-audit-20260926-010135/result-noisemaker-for-cpu.json`.
+
+### Daily review, 2026-09-28
+
+The review re-executed both gates at source `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e` with the reference root at pinned upstream `73c15be0`.
+`npm test` exited 0: 286 tests, 285 pass, 0 fail, 1 skip.
+`npm run parity -- --json` exited 1: 164 executed, 163 passed within ±2, 114 byte-exact, 41 skipped. `filter/crt` keeps max error 80, mean 5.05859375, 89 channels over tolerance. `referenceProvenance` reports 0 recorded and 164 unknown.
+The result matches every recorded pass. The denominator and skips are unchanged. Raw evidence: run `review-20260928-213000` in the shared series state.
 
 ### Daily review, 2026-09-25
 
@@ -213,7 +229,7 @@ Earlier served compatibility inventory declares 205 effect IDs. Declaration does
 IDs absent from the served declaration: `render/meshLoader`, `render/meshRender`, `synth/roll`, `synth/scope`, `synth/spectrum`.
 Missing effects remain visible toward the full-parity goal. Contract exclusions do not become successful tests.
 
-Current served declaration: 205 effect IDs. This inventory is not evidence of execution. The declaration column below reflects kit `0.1.28`.
+Current served declaration: 205 effect IDs. This inventory is not evidence of execution. The declaration column below reflects the served engine of kit `0.1.38` at `fd9d56c`, whose `engine/src/index.js` matches the tree byte-for-byte.
 
 ### Effect inventory
 
@@ -447,8 +463,9 @@ A successful dispatch or unit-test summary does not establish a full rendered ga
 
 ## 5. Open compatibility limits
 
-Next bounded check: the implementation job repairs `filter/crt`. Then rerun `node scripts/parity/run.js --json` with unchanged tolerances and authority inputs.
-This audit reproduced the failure on 2026-09-26. Account separately for all 41 skips and the five missing effects. Do not close full parity until every required case executes and matches.
+Next bounded check: continue GAP-001 on the qualified native host. Trace the isolated CRT hash-site inputs against the current Metal render and reconcile the retained golden. Then rerun `node scripts/parity/run.js --json` with unchanged tolerances and authority inputs.
+This audit reproduced the failure on 2026-09-26 and the review reproduced it on 2026-09-28. Account separately for all 41 skips and the five missing effects. Do not close full parity until every required case executes and matches.
+GAP-003 is open under the operator's 2026-09-27 closure rule. See the gap register for the conforming closure path.
 See the stable entries in [completion gaps](COMPLETION_GAPS.md).
 
 See [GAP-002 and the complete gap register](COMPLETION_GAPS.md#4-known-gaps) for evidence, dependencies, and acceptance criteria.
@@ -464,10 +481,12 @@ Implementation corrections remain with the separate job. This report does not ad
 ## 6. History
 
 Worker audit on 2026-09-26 at `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5`: reran the full gate and bounded usability checks. All eight gaps remain open. No closure claimed. New published authority `1.0.184` at `9574362` is unqualified and recorded as pending.
+Daily review on 2026-09-28 at `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`: re-executed both gates, verified the GAP-004, GAP-007, and GAP-008 closures, reopened GAP-003 under the 2026-09-27 closure rule, and refreshed the served-kit and matrix rows. No release approval.
 Daily review on 2026-09-25 at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. Retained review evidence in the shared automation store. No new closure claimed.
 
 | Date | Source | Result | Change |
 | --- | --- | --- | --- |
+| 2026-09-28 | `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e` | Full qualification unverified. GAP-003 reopened | Daily review updated this report and the gap register. Gate re-executed at the current source. Served-kit identity refreshed to `0.1.38`. Matrix rows restated with measured scope. |
 | 2026-09-26 | `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5` | Full qualification unverified | Worker audit updated this report and the gap register. Gate and CLI checks rerun. New authority revision recorded. |
 | 2026-09-24 | `f2eb495d70abcb74e3632e7a652a4f83e4f3b11e` | Full qualification unverified | Created the requested maintained compatibility report. Preserved historical evidence and open gaps. |
 
