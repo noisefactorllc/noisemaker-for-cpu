@@ -12,8 +12,9 @@ Served kit then: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. [R
 
 ### Daily review, 2026-09-28
 
-Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. Kernel pin: `73c15be0`. Upstream `main` `6b05a270` sits three docs or dependency commits past it. The `shaders/` tree stays unchanged. Published authority: `1.0.196` at `296e0138`. Served kit: `0.1.38` at this source.
-The review reopened GAP-003 under the 2026-09-27 closure rule and verified the GAP-004, GAP-007, and GAP-008 closures. Evidence: run `review-20260928-213000` in the shared series state.
+Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. Kernel pin: `73c15be0`. Upstream `main` `6b05a270` sits three docs or dependency commits past it. The `shaders/` tree stays unchanged.
+Published authority: `1.0.196` at `296e0138`. Served kit: `0.1.38` at this source.
+The review reopened GAP-003 under the 2026-09-27 closure rule and verified the GAP-004 and GAP-008 closures. The final-acceptance review later reopened GAP-007 for the required real screen-reader pass. Evidence: run `review-20260928-213000` in the shared series state.
 
 ### Source-lock sync, 2026-09-28 (upstream `296e0138`..`73c15be0`)
 
@@ -182,7 +183,7 @@ The matrix below states each row's measured scope as of the 2026-09-28 review. A
 | Parameters, external inputs, state, and chains | unverified | One bounded external-input case is byte-exact (GAP-002 record). Full current-authority combinations remain unmeasured. |
 | Invalid input and recovery | verified, bounded | CLI unknown-effect and missing-input errors exit 1 with clear messages. Installed invalid-DSL recovery recorded. Not every public entry point is covered. |
 | Upgrade, removal, and resource cleanup | verified, bounded | One upgrade re-rendered byte-identically and uninstall removed the package (2026-09-27). Saved-program upgrades across versions remain unqualified. |
-| Accessibility of provided controls | verified, bounded | Headless Chromium 154 CDP audit on 2026-09-27: 23/23 demo controls named, keyboard and recovery checks pass (GAP-007). Real screen readers and other browsers unqualified. |
+| Accessibility of provided controls | partial | Headless Chromium 154 CDP audit on 2026-09-27: 23/23 demo controls named, keyboard and recovery checks pass. The required real screen-reader pass stays unexecuted (GAP-007 open). Real screen readers and other browsers unqualified. |
 | Release readiness | blocked | Full parity fails, the npm name is unpublished, Windows and a browser floor are unqualified, and release CI runs no port gate. |
 
 ## 3. Parity coverage
@@ -476,7 +477,7 @@ Implementation corrections remain with the separate job. This report does not ad
 ## 6. History
 
 Worker audit on 2026-09-26 at `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5`: reran the full gate and bounded usability checks. All eight gaps remain open. No closure claimed. New published authority `1.0.184` at `9574362` is unqualified and recorded as pending.
-Daily review on 2026-09-28 at `fd9d56c`: reopened GAP-003, verified the GAP-004, GAP-007, and GAP-008 closures, refreshed the served-kit and matrix rows. No release approval. Evidence: run `review-20260928-213000` in the shared series state.
+Daily review on 2026-09-28 at `fd9d56c`: reopened GAP-003, verified the GAP-004 and GAP-008 closures, refreshed the served-kit and matrix rows. No release approval. The final-acceptance review later reopened GAP-007. Evidence: run `review-20260928-213000` in the shared series state.
 Daily review on 2026-09-25 at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. Retained review evidence in the shared automation store. No new closure claimed.
 
 | Date | Source | Result | Change |
