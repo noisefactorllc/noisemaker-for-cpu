@@ -67,5 +67,99 @@
     "nodeTestVolumeEffects": "node --test test/volume-effects.test.js: 9 pass, 0 fail",
     "npmTest": "278 pass, 0 fail, 2 skipped",
     "parityGate": "npm run parity -- --json exit 1 unchanged: 163/164 within ±2, 114 byte-exact, 41 skipped, filter/crt max 80, sourceRevision 6a0af04d"
+  },
+  "nativeQualification": {
+    "date": "2026-09-27",
+    "candidateSource": "f290040b497e0aa138a9cc1e3b8aa9cea47bd196",
+    "candidateKernelPin": "296e0138c4744ed485b2e95de3eeb466c17629ee",
+    "authorityRevision": "6a0af04d3c4f345ffab5e9f8e54e532216b4cdaa",
+    "browser": "151.0.7922.34",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "method": "Same six DSL programs, dimensions, time, seed, and unchanged +/-2 gate as above. Exact authority regular source files served locally without a build; all six involved effect source hashes match the recorded pin and are unchanged through candidate kernel pin 296e0138. Public CpuRenderer bytes compared with two identical top-down WebGL2 o0 readbacks. No fixture or tolerance changed.",
+    "cases": [
+      {
+        "projection": "ortho",
+        "mode": "default",
+        "max": 0,
+        "bytesOver2": 0,
+        "differingBytes": 0,
+        "cpuSha256": "82164e815c8afe919fe3f05f9a29fe978d9b551267cc94061383f57ee2f3a82f",
+        "authoritySha256": "82164e815c8afe919fe3f05f9a29fe978d9b551267cc94061383f57ee2f3a82f"
+      },
+      {
+        "projection": "ortho",
+        "mode": "voxel",
+        "max": 0,
+        "bytesOver2": 0,
+        "differingBytes": 0,
+        "cpuSha256": "82164e815c8afe919fe3f05f9a29fe978d9b551267cc94061383f57ee2f3a82f",
+        "authoritySha256": "82164e815c8afe919fe3f05f9a29fe978d9b551267cc94061383f57ee2f3a82f"
+      },
+      {
+        "projection": "ortho",
+        "mode": "isosurface",
+        "max": 0,
+        "bytesOver2": 0,
+        "differingBytes": 0,
+        "cpuSha256": "55436ae74f209b208adfee6b416ad6c68d976a82ed2932a018ae35fc3000f6cb",
+        "authoritySha256": "55436ae74f209b208adfee6b416ad6c68d976a82ed2932a018ae35fc3000f6cb"
+      },
+      {
+        "projection": "perspective",
+        "mode": "default",
+        "max": 0,
+        "bytesOver2": 0,
+        "differingBytes": 0,
+        "cpuSha256": "00531a58127deb2058addc795f13ed1b40a295ddaf7573daee40809d358c1020",
+        "authoritySha256": "00531a58127deb2058addc795f13ed1b40a295ddaf7573daee40809d358c1020"
+      },
+      {
+        "projection": "perspective",
+        "mode": "voxel",
+        "max": 0,
+        "bytesOver2": 0,
+        "differingBytes": 0,
+        "cpuSha256": "00531a58127deb2058addc795f13ed1b40a295ddaf7573daee40809d358c1020",
+        "authoritySha256": "00531a58127deb2058addc795f13ed1b40a295ddaf7573daee40809d358c1020"
+      },
+      {
+        "projection": "perspective",
+        "mode": "isosurface",
+        "max": 0,
+        "bytesOver2": 0,
+        "differingBytes": 0,
+        "cpuSha256": "f93012b7bddb0c019525a855b42de17dfcf34623f3e4cfdbf1d54596990b7694",
+        "authoritySha256": "f93012b7bddb0c019525a855b42de17dfcf34623f3e4cfdbf1d54596990b7694"
+      }
+    ],
+    "crtDiagnostic": {
+      "effect": "filter/crt",
+      "nativeAgainstRetained": {
+        "exact": false,
+        "pass": false,
+        "maxError": 50,
+        "meanError": 7.5546875,
+        "differingChannels": 156,
+        "channelsOverTolerance": 112
+      },
+      "cpuAgainstNative": {
+        "exact": false,
+        "pass": false,
+        "maxError": 83,
+        "meanError": 3.69140625,
+        "differingChannels": 140,
+        "channelsOverTolerance": 86
+      },
+      "cpuAgainstRetained": {
+        "exact": false,
+        "pass": false,
+        "maxError": 80,
+        "meanError": 5.05859375,
+        "differingChannels": 139,
+        "channelsOverTolerance": 89
+      }
+    },
+    "checks": "npm test: 285 passed, 1 skipped. Full retained parity: 163/164 passed, 114 byte-exact, 41 skips; CRT remains max 80, 89 channels over tolerance.",
+    "limits": "One Apple M4/Metal backend at the recorded 96x80 fixture; no cross-GPU closure and no change to the historical SwiftShader failure or retained CRT golden."
   }
 }
