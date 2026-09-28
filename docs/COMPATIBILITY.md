@@ -12,12 +12,8 @@ Served kit then: `0.1.32`, source `bfbe54764eee87c8f67d2b281d5f304faad04a5b`. [R
 
 ### Daily review, 2026-09-28
 
-Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. The bounded gate still fails.
-Kernel pin: `73c15be00d6888f4b5d2835d8e242ee9e840df45`. Current upstream `main` is `6b05a27050b8dccd68c6500a8e9d705a5dfd0e70`, three docs or dependency commits past the pin. The `shaders/` diff over the range is empty. The next audit classifies them.
-Published authority runtime: `1.0.196` at `296e0138c4744ed485b2e95de3eeb466c17629ee`.
-Served kit: `0.1.38`, source `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`. Served `engine/src/index.js` and `engine/bin/noisemaker-cpu.js` SHA-256 match the tree. The npm name returns E404.
-The review re-executed both gates at this source. See section 3. It verified the GAP-004, GAP-007, and GAP-008 closures and reopened GAP-003 under the operator's 2026-09-27 rendered-parity closure rule. See the gap register.
-Raw evidence: run `review-20260928-213000` in the shared series state.
+Reviewed source: `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`, current local and remote `main`. Full rendered parity stays **unverified**. Kernel pin `73c15be0`; upstream `main` `6b05a270` sits three docs or dependency commits past it, `shaders/` unchanged. Published authority `1.0.196` at `296e0138`. Served kit `0.1.38` at this source.
+The review reopened GAP-003 under the 2026-09-27 closure rule and verified the GAP-004, GAP-007, and GAP-008 closures. Evidence: run `review-20260928-213000` in the shared series state.
 
 ### Source-lock sync, 2026-09-28 (upstream `296e0138`..`73c15be0`)
 
@@ -203,10 +199,8 @@ Raw evidence: run `audit-20260926-010135` in the shared series state, file `evid
 
 ### Daily review, 2026-09-28
 
-The review re-executed both gates at source `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e` with the reference root at pinned upstream `73c15be0`.
-`npm test` exited 0: 286 tests, 285 pass, 0 fail, 1 skip.
-`npm run parity -- --json` exited 1: 164 executed, 163 passed within ±2, 114 byte-exact, 41 skipped. `filter/crt` keeps max error 80, mean 5.05859375, 89 channels over tolerance. `referenceProvenance` reports 0 recorded and 164 unknown.
-The result matches every recorded pass. The denominator and skips are unchanged. Raw evidence: run `review-20260928-213000` in the shared series state.
+The review re-executed both gates at this source with the reference root at pin `73c15be0`: `npm test` 285 pass, 0 fail, 1 skip; parity exit 1 unchanged, 163/164 within ±2, 114 byte-exact, 41 skipped, `filter/crt` red. The denominator and skips are unchanged.
+Commands, exit codes, and served-kit hash checks: run `review-20260928-213000` in the shared series state, `review-20260928-213000/result.json`.
 
 ### Daily review, 2026-09-25
 
@@ -465,7 +459,7 @@ A successful dispatch or unit-test summary does not establish a full rendered ga
 
 Next bounded check: continue GAP-001 on the qualified native host. Trace the isolated CRT hash-site inputs against the current Metal render and reconcile the retained golden. Then rerun `node scripts/parity/run.js --json` with unchanged tolerances and authority inputs.
 This audit reproduced the failure on 2026-09-26 and the review reproduced it on 2026-09-28. Account separately for all 41 skips and the five missing effects. Do not close full parity until every required case executes and matches.
-GAP-003 is open under the operator's 2026-09-27 closure rule. See the gap register for the conforming closure path.
+GAP-003 is open under the operator's 2026-09-27 closure rule, which counts the whole port. See the gap register.
 See the stable entries in [completion gaps](COMPLETION_GAPS.md).
 
 See [GAP-002 and the complete gap register](COMPLETION_GAPS.md#4-known-gaps) for evidence, dependencies, and acceptance criteria.
@@ -481,7 +475,7 @@ Implementation corrections remain with the separate job. This report does not ad
 ## 6. History
 
 Worker audit on 2026-09-26 at `ba1c89a3bf37ac6f4e425fc7df43bc02d5c67ce5`: reran the full gate and bounded usability checks. All eight gaps remain open. No closure claimed. New published authority `1.0.184` at `9574362` is unqualified and recorded as pending.
-Daily review on 2026-09-28 at `fd9d56c74ce7500b7eaeea90a93d3bf49375d28e`: re-executed both gates, verified the GAP-004, GAP-007, and GAP-008 closures, reopened GAP-003 under the 2026-09-27 closure rule, and refreshed the served-kit and matrix rows. No release approval.
+Daily review on 2026-09-28 at `fd9d56c`: reopened GAP-003, verified the GAP-004, GAP-007, and GAP-008 closures, refreshed the served-kit and matrix rows. No release approval. Evidence: run `review-20260928-213000` in the shared series state.
 Daily review on 2026-09-25 at `6c3edb868bce8c9c9f93aea9c952dbf4d49e8e85`: source freshness and bounded evidence reviewed. Open qualification limits retained. Retained review evidence in the shared automation store. No new closure claimed.
 
 | Date | Source | Result | Change |
