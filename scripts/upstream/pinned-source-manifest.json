@@ -1,5 +1,5 @@
 {
- "revision": "73c15be00d6888f4b5d2835d8e242ee9e840df45",
+ "revision": "f24b52540af6a88d12daa05feba1a04ad61b22a2",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5617,8 +5617,8 @@
   },
   {
    "path": "shaders/src/runtime/external-input.js",
-   "size": 54120,
-   "sha256": "824dbf38100499bb3406eb30a91a253123048eb002cd84ed9683a45455d5698c"
+   "size": 67725,
+   "sha256": "c29887aa272c02e2e695bede7a273e9010188793598ab82b1daad883071c3763"
   },
   {
    "path": "shaders/src/runtime/frame-export.js",
