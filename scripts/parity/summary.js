@@ -10,7 +10,7 @@
 //             explicitly recorded per-case tolerance accepts. Nothing records one today.
 //   defer   — reserved: explicitly recorded per-case deferrals with their own acceptance
 //             record. Nothing records one today.
-//   skip    — the explicit, fixture-preflighted skips (NEW_CPU_EFFECT_IDS / iterated)
+//   skip    — the explicit, fixture-preflighted skips (NEW_CPU_EFFECT_IDS / ITERATED_SKIP_IDS)
 //             with no captured authority golden to compare against.
 //   fail    — rendered but exceeds the numerical contract (for example the accepted
 //             GAP-001 CRT approximation).
@@ -31,7 +31,7 @@ import {
 } from '../../src/index.js'
 import { sourceEffectIds, UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng } from '../../src/node/png.js'
-import { compareRgba8, goldenReference, loadGoldenProvenance, NEW_CPU_EFFECT_IDS } from './lib.js'
+import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect } from './lib.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -171,7 +171,7 @@ export async function runSummary(options = {}) {
       id,
       inRegistry: definition !== undefined,
       hasGolden: definition !== undefined && existsSync(goldenPath(id)),
-      skipPolicy: definition !== undefined && (definition.iterated || NEW_CPU_EFFECT_IDS.has(id)),
+      skipPolicy: definition !== undefined && isSkippedEffect(definition),
     })
     if (classification.verdict === 'missing') {
       missing.push({ id, reason: classification.reason })

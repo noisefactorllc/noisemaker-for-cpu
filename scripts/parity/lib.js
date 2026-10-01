@@ -63,19 +63,30 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 
 // Shared skip policy for the parity gate and the parity-summary entrypoint: the
 // pre-existing CPU-divergent simulation effects and the ported volume/loop effects
-// (the 17 earlier volume/loop ports plus the 3 landscape/heightfield effects from
-// reference 0ed489ec) are explicit, preflighted skips until pinned GPU goldens
-// exist for them.
+// still lacking a byte-consistent pinned GPU golden are explicit, preflighted skips.
+// Graduated, 2026-10-01 M4/Metal campaign (Worker Elves job 3be6cc6a): the 3
+// landscape/heightfield effects from reference 0ed489ec and 11 iterated effects
+// (dla, flock, flow, hydraulic, life, physarum, physical, pointsEmit, pointsRender,
+// temporalAberration, feedback) now have committed goldens captured byte-exact
+// (feedback within ±2, max 1) and are graded.
 export const NEW_CPU_EFFECT_IDS = Object.freeze(new Set([
   'classicNoisedeck/shapes3d',
   'filter3d/flow3d',
   'render/loopBegin', 'render/loopEnd',
   'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
   'synth3d/fractal3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
-  // Reference 0ed489ec's landscape/heightfield release: no pinned GPU golden yet, same as the
-  // 17 above when they were first ported. Fixtures exist and compile (see the skip-fixture
-  // discipline above); a GPU session needs to render and commit parity/goldens/defaults/
-  // {points__heightGrid,render__renderLandscape3d,synth3d__heightmap3d}.golden.png before these
-  // can move into the graded set.
-  'points/heightGrid', 'render/renderLandscape3d', 'synth3d/heightmap3d',
 ]))
+
+// Iterated (CPU-only per-frame loop) effects whose fresh M4/Metal authority captures
+// show real CPU divergence (the recorded sin-hash / feedback-chain / volume-iteration
+// classes); every other iterated effect is graded against its committed golden.
+export const ITERATED_SKIP_IDS = Object.freeze(new Set([
+  'filter/convolutionFeedback', 'filter/motionBlur',
+  'points/attractor', 'points/buddhabrot', 'points/lenia',
+  'render/pointsBillboardRender',
+  'synth/cellularAutomata', 'synth/mnca', 'synth/navierStokes', 'synth/reactionDiffusion',
+]))
+
+export function isSkippedEffect(definition) {
+  return ITERATED_SKIP_IDS.has(definition.id) || NEW_CPU_EFFECT_IDS.has(definition.id)
+}

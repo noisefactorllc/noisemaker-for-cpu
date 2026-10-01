@@ -103,9 +103,9 @@
     "classic/classicNoisedeck__noise3d.golden.png": {
       "sha256": "107f576a60ab7201375bf9ccd7a63c7b6bfe57d34c841633ae2c24f413c75e28",
       "bytes": 302,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "classic/classicNoisedeck__refract.golden.png": {
       "sha256": "427dd08bc59b03ef1cd22dc115ae4f23f0090da897ed734eaac6c91ecfd6434a",
@@ -138,9 +138,9 @@
     "defaults/filter3d__palette3d.golden.png": {
       "sha256": "919806d50db6cf8a34d6af09e7ff0d53729e3a9c11a68e6b46828ed9987aefa5",
       "bytes": 129,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/filter__adjust.golden.png": {
       "sha256": "e5daf99d76a42a7c7459ecd75baeafab74ba6407469acdb29f60c3f3c25c949c",
@@ -302,6 +302,13 @@
       "introducedIn": "79c3ad626f82939247317d77909080b25f05c6a9",
       "captureRevision": null,
       "captureRecord": null
+    },
+    "defaults/filter__feedback.golden.png": {
+      "sha256": "ced3ff879435ea1e04574f70691320d857395ac132646352a5af75244ec64a73",
+      "bytes": 332,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/filter__fibers.golden.png": {
       "sha256": "17f43b975a40d97983f28db4594404c2a3d499b43d4ff19f2659f1dcb965b517",
@@ -793,6 +800,13 @@
       "captureRevision": null,
       "captureRecord": null
     },
+    "defaults/filter__temporalAberration.golden.png": {
+      "sha256": "cadb1b4ef77eaa20c551b497d9c32a31a8e64ffa261964c29c30eb801c19f1a5",
+      "bytes": 293,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
     "defaults/filter__tetraColorArray.golden.png": {
       "sha256": "bae9888437a9481ca1b5485384fc21f9b1539a1fd0e491df85ebc66208dcc8d4",
       "bytes": 129,
@@ -1031,47 +1045,131 @@
       "captureRevision": null,
       "captureRecord": null
     },
+    "defaults/points__dla.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__flock.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__flow.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__heightGrid.golden.png": {
+      "sha256": "1af9919ce17fb0934da031df49fe4dc8ef384496807d947f3e546ba598cbcb29",
+      "bytes": 74,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__hydraulic.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__life.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__physarum.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/points__physical.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/render__pointsEmit.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/render__pointsRender.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
     "defaults/render__render3d.golden.png": {
       "sha256": "7a82ad70d60b737fb4197c9cbb2a3663d851ef1a2ce7a30fe1dccf2e66550f77",
       "bytes": 199,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/render__renderCubemap3d.golden.png": {
       "sha256": "4172ae515e38b7d16abe1da9f4e4b878851204dcf5fc5bd5632d631266aa6004",
       "bytes": 238,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/render__renderCubemapSurface.golden.png": {
       "sha256": "3584d1925b0474103cf0d49dff665063593be523a98cf23f08bb38f49fb598c7",
       "bytes": 229,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/render__renderLandscape3d.golden.png": {
+      "sha256": "947b4148a6c283b538f008a55244388b140bcc5c30424b025540e99221a08b16",
+      "bytes": 150,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/render__renderLit3d.golden.png": {
       "sha256": "668ae0542a0b6a648935c17e2901dbc21779b809243fe4ab41b9eeaffeaccac0",
       "bytes": 165,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth3d__cell3d.golden.png": {
       "sha256": "e0fa510bbfb8e32e7b12e650648cf9a1e61f329830b7e1eba95c6df3080bc72a",
       "bytes": 236,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/synth3d__heightmap3d.golden.png": {
+      "sha256": "947b4148a6c283b538f008a55244388b140bcc5c30424b025540e99221a08b16",
+      "bytes": 150,
+      "introducedIn": "fcca3655613340778e37885160e2ab811b0b02c3",
+      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth3d__noise3d.golden.png": {
       "sha256": "7a82ad70d60b737fb4197c9cbb2a3663d851ef1a2ce7a30fe1dccf2e66550f77",
       "bytes": 199,
-      "introducedIn": "4ac731c689e6307047356c4b67b6bfd76bcd0a40",
+      "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth__bitwise.golden.png": {
       "sha256": "ebfcc6c3f5d579d5b631acc0163dd40e39de61dff0796e0aa09b0a855221353d",

@@ -33,7 +33,7 @@ test('classifyCase maps the excluded effects, skip policy, and unexplained holes
     { id: 'synth/roll', verdict: 'missing', reason: 'excluded from this port (upstream reactive/mesh effect; no CPU implementation)' },
   )
   assert.equal(
-    classifyCase({ id: 'render/renderLandscape3d', inRegistry: true, hasGolden: false, skipPolicy: true }).verdict,
+    classifyCase({ id: 'points/lenia', inRegistry: true, hasGolden: false, skipPolicy: true }).verdict,
     'skip',
   )
   assert.equal(
@@ -85,7 +85,7 @@ test('entrypoint run on an excluded case counts it as missing', () => {
 })
 
 test('entrypoint run on one skipped case preflights the fixture and reports skip', () => {
-  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'render/renderLandscape3d'], { encoding: 'utf8' })
+  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'points/lenia'], { encoding: 'utf8' })
   const lastLine = stdout.trimEnd().split('\n').pop()
   const summary = JSON.parse(lastLine.replace(/^PARITY-SUMMARY /, ''))
   assert.equal(summary.expected, 1)

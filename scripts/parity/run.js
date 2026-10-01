@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories, compileDsl } from '../../src/index.js'
 import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng, writePng } from '../../src/node/png.js'
-import { compareRgba8, goldenReference, loadGoldenProvenance, NEW_CPU_EFFECT_IDS } from './lib.js'
+import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect, NEW_CPU_EFFECT_IDS } from './lib.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -76,11 +76,9 @@ async function main() {
     if (options.only && options.only !== definition.id && options.only !== definition.id.replace('/', '__')) return false
     return true
   })
-  // Keep the established golden parity gate unchanged. The 21 pre-existing CPU-divergent
-  // simulation effects and the 20 ported volume/loop effects (the 17 earlier volume/loop
-  // ports plus the 3 landscape/heightfield effects from reference 0ed489ec) are explicit,
-  // preflighted skips until pinned GPU goldens exist for the latter set.
-  const shouldSkip = (definition) => definition.iterated || NEW_CPU_EFFECT_IDS.has(definition.id)
+  // Keep the established golden parity gate unchanged. The skip policy lives in
+  // scripts/parity/lib.js (NEW_CPU_EFFECT_IDS + ITERATED_SKIP_IDS via isSkippedEffect).
+  const shouldSkip = isSkippedEffect
   const definitions = candidates.filter((definition) => !shouldSkip(definition))
   const skipped = candidates.filter(shouldSkip)
 
