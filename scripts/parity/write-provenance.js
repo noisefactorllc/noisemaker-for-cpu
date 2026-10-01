@@ -35,15 +35,25 @@ async function introducedIn(path) {
 }
 
 const goldensRoot = join(projectRoot, 'parity', 'goldens')
+// Explicit capture records (GAP-008): a documented GPU-session capture maps a golden key
+// to its capture revision and a human-readable record (host, backend, session). Only keys
+// present here get a non-null captureRevision; everything else stays 'unknown'.
+let captureRecords = {}
+try {
+  captureRecords = JSON.parse(await readFile(join(projectRoot, 'scripts', 'parity', 'capture-records.json'), 'utf8'))
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error
+}
 const goldens = {}
 for (const path of (await listGoldenPngs(goldensRoot)).sort()) {
   const key = relative(goldensRoot, path).split('\\').join('/')
+  const record = captureRecords[key] ?? null
   goldens[key] = {
     sha256: createHash('sha256').update(await readFile(path)).digest('hex'),
     bytes: (await readFile(path)).length,
     introducedIn: await introducedIn(path),
-    captureRevision: null,
-    captureRecord: null,
+    captureRevision: record ? record.captureRevision : null,
+    captureRecord: record ? record.captureRecord : null,
   }
 }
 

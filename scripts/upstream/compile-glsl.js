@@ -215,6 +215,25 @@ function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
   return out
 }
 
+function restoreIntegerDivision(transpiled, originalSource) {
+  // GLSL int/int division truncates toward zero; the transpiler loses int typing on
+  // component-indexed operands (e.g. `int z = pixelCoord.y / volSize;`) and emits a raw
+  // float64 division, shifting every sampled coordinate. Rewrite only statements whose
+  // GLSL original divides provably int-typed operands (int uniforms, int variables,
+  // ivec components).
+  const intNames = new Set()
+  for (const m of originalSource.matchAll(/\buniform\s+int\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
+  for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:=|;)/g)) intNames.add(m[1])
+  for (const m of originalSource.matchAll(/\bivec[234]\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
+  if (intNames.size === 0) return transpiled
+  let out = transpiled
+  out = out.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*)\[(\d+)\] \/ ([A-Za-z_$]\w*);/g, (m, name, vec, idx, divisor) => {
+    if (!intNames.has(divisor)) return m
+    return `var ${name} = Math.trunc(${vec}[${idx}] / ${divisor});`
+  })
+  return out
+}
+
 function preserveIntCastPrecedence(transpiled) {
   const operatorAfterCast = /^(?:\s*)(?:[+\-*/%^]|<<|>>)/
   let output = transpiled
@@ -620,6 +639,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   if (effectId !== 'filter/scatter') transpiled = lowerFloatLiterals(transpiled)
   transpiled = preserveIntCastPrecedence(transpiled)
   transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
+  transpiled = restoreIntegerDivision(transpiled, originalSource)
   transpiled = poolLocalVectors(transpiled)
   const called = new Set([...transpiled.matchAll(/\b([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))
   const defined = new Set([...transpiled.matchAll(/function\s+([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))

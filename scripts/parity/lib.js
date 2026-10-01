@@ -67,12 +67,11 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 // reference 0ed489ec) are explicit, preflighted skips until pinned GPU goldens
 // exist for them.
 export const NEW_CPU_EFFECT_IDS = Object.freeze(new Set([
-  'classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d',
-  'filter3d/flow3d', 'filter3d/palette3d',
-  'render/loopBegin', 'render/loopEnd', 'render/render3d', 'render/renderCubemap3d',
-  'render/renderCubemapSurface', 'render/renderLit3d',
-  'synth3d/cell3d', 'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
-  'synth3d/fractal3d', 'synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
+  'classicNoisedeck/shapes3d',
+  'filter3d/flow3d',
+  'render/loopBegin', 'render/loopEnd',
+  'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
+  'synth3d/fractal3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
   // Reference 0ed489ec's landscape/heightfield release: no pinned GPU golden yet, same as the
   // 17 above when they were first ported. Fixtures exist and compile (see the skip-fixture
   // discipline above); a GPU session needs to render and commit parity/goldens/defaults/

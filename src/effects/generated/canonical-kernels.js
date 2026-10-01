@@ -35416,7 +35416,7 @@ function canonicalFactory283($bindings, $runtime) {
   	var pixelCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var x = pixelCoord[0];
   	var y = pixelCoord[1] % volSize;
-  	var z = pixelCoord[1] / volSize;
+  	var z = Math.trunc(pixelCoord[1] / volSize);
   	if ((x >= volSize) || (y >= volSize) || (z >= volSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
@@ -35632,7 +35632,7 @@ function canonicalFactory284($bindings, $runtime) {
   	var pixelCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var x = pixelCoord[0];
   	var y = pixelCoord[1] % volSize;
-  	var z = pixelCoord[1] / volSize;
+  	var z = Math.trunc(pixelCoord[1] / volSize);
   	var voxel = cpu_ivec3(x, y, z);
   	if ((x >= volSize) || (y >= volSize) || (z >= volSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
@@ -35908,7 +35908,7 @@ function canonicalFactory285($bindings, $runtime) {
   	var pixelCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var vx = pixelCoord[0];
   	var vy = pixelCoord[1] % volSize;
-  	var vz = pixelCoord[1] / volSize;
+  	var vz = Math.trunc(pixelCoord[1] / volSize);
   	if ((vx >= volSize) || (vy >= volSize) || (vz >= volSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
@@ -36130,7 +36130,7 @@ function canonicalFactory286($bindings, $runtime) {
   	var pixelCoord = cpu_ivec2_vec2(globalPixelCoord);
   	var x = mod((pixelCoord[0]), scaledVolSizeF)|0;
   	var y = pixelCoord[1] % scaledVolSize;
-  	var z = pixelCoord[1] / scaledVolSize;
+  	var z = Math.trunc(pixelCoord[1] / scaledVolSize);
   	if ((x >= scaledVolSize) || (y >= scaledVolSize) || (z >= scaledVolSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
@@ -36364,7 +36364,7 @@ function canonicalFactory288($bindings, $runtime) {
   	var pixelCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var x = pixelCoord[0];
   	var y = pixelCoord[1] % volSize;
-  	var z = pixelCoord[1] / volSize;
+  	var z = Math.trunc(pixelCoord[1] / volSize);
   	if ((x >= volSize) || (y >= volSize) || (z >= volSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
@@ -36465,7 +36465,7 @@ function canonicalFactory289($bindings, $runtime) {
   	var pixelCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var x = pixelCoord[0];
   	var y = pixelCoord[1] % volSize;
-  	var z = pixelCoord[1] / volSize;
+  	var z = Math.trunc(pixelCoord[1] / volSize);
   	var voxel = cpu_ivec3(x, y, z);
   	if ((x >= volSize) || (y >= volSize) || (z >= volSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
