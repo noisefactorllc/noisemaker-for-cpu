@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -8,24 +7,13 @@ import { fileURLToPath } from 'node:url'
 import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories, compileDsl } from '../../src/index.js'
 import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng, writePng } from '../../src/node/png.js'
-import { compareRgba8 } from './lib.js'
+import { compareRgba8, goldenReference, loadGoldenProvenance, NEW_CPU_EFFECT_IDS } from './lib.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
 
-const NEW_CPU_EFFECT_IDS = new Set([
-  'classicNoisedeck/noise3d', 'classicNoisedeck/shapes3d',
-  'filter3d/flow3d', 'filter3d/palette3d',
-  'render/loopBegin', 'render/loopEnd', 'render/render3d', 'render/renderCubemap3d',
-  'render/renderCubemapSurface', 'render/renderLit3d',
-  'synth3d/cell3d', 'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
-  'synth3d/fractal3d', 'synth3d/noise3d', 'synth3d/reactionDiffusion3d', 'synth3d/shape3d',
-  // Reference 0ed489ec's landscape/heightfield release: no pinned GPU golden yet, same as the
-  // 17 above when they were first ported. Fixtures exist and compile (see the skip-fixture
-  // discipline above); a GPU session needs to render and commit parity/goldens/defaults/
-  // {points__heightGrid,render__renderLandscape3d,synth3d__heightmap3d}.golden.png before these
-  // can move into the graded set.
-  'points/heightGrid', 'render/renderLandscape3d', 'synth3d/heightmap3d',
-])
+// Shared skip policy (NEW_CPU_EFFECT_IDS) lives in scripts/parity/lib.js; see the
+// comment there for the 21 CPU-divergent + 20 ported volume/loop skip accounting.
 
 function parseArgs(argv) {
   const options = { suite: 'all', size: 8, time: 0.25, seed: 1, tolerance: 2, writeCpu: false, json: false, only: null }
@@ -70,35 +58,9 @@ async function loadManifest() {
 // scripts/parity/write-provenance.js) maps each golden to its capture record; goldens
 // recorded without one report provenance 'unknown'. The recorded sha256 is cross-checked
 // against the file bytes so a regenerated golden cannot be silently relabeled.
-async function loadGoldenProvenance() {
-  const manifestPath = resolve(projectRoot, 'parity/goldens/provenance.json')
-  try {
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
-    return new Map(Object.entries(manifest.goldens))
-  } catch (error) {
-    if (error.code === 'ENOENT') return new Map()
-    throw error
-  }
-}
-
-async function referenceProvenance(suite, name, provenance) {
-  const key = `${suite}/${name}.golden.png`
-  const goldenPath = resolve(projectRoot, 'parity/goldens', key)
-  const sha256 = createHash('sha256').update(await readFile(goldenPath)).digest('hex')
-  const entry = provenance.get(key)
-  if (entry) {
-    if (entry.sha256 !== sha256) {
-      throw new Error(`Golden ${key} does not match its provenance record (recorded ${entry.sha256}, actual ${sha256}). Regenerate the capture record with scripts/parity/write-provenance.js and identify the capture revision — do not relabel the reference capture.`)
-    }
-    return {
-      image: `parity/goldens/${key}`,
-      sha256,
-      captureRevision: entry.captureRevision ?? null,
-      provenance: entry.captureRevision ? 'recorded' : 'unknown',
-    }
-  }
-  return { image: `parity/goldens/${key}`, sha256, captureRevision: null, provenance: 'unknown' }
-}
+// GAP-008 provenance helpers (loadGoldenProvenance / goldenReference) live in
+// scripts/parity/lib.js so the parity-summary entrypoint shares the same
+// relabel-prevention cross-check; behavior here is unchanged.
 
 function suiteFor(definition) {
   return definition.namespace === 'classicNoisedeck' ? 'classic' : 'defaults'
@@ -146,7 +108,7 @@ async function main() {
   }
 
   const renderer = new CpuRenderer({ registry, kernelFactories })
-  const goldenProvenance = await loadGoldenProvenance()
+  const goldenProvenance = await loadGoldenProvenance(goldenRoot)
   const blank = fixtureSurface(options.size, options.size)
   const results = []
   for (const definition of definitions) {
@@ -169,7 +131,7 @@ async function main() {
     }
     const actual = rendered.toRgba8()
     const comparison = compareRgba8(actual, golden.data, options.tolerance)
-    results.push({ id: definition.id, reference: await referenceProvenance(suite, name, goldenProvenance), ...comparison })
+    results.push({ id: definition.id, reference: await goldenReference(goldenRoot, suite, name, goldenProvenance), ...comparison })
     if (options.writeCpu) await writePng(resolve(directory, `${name}.cpu.png`), rendered)
   }
   const failures = results.filter((result) => !result.pass).sort((left, right) => right.maxError - left.maxError || right.meanError - left.meanError)

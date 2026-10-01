@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+// GAP-003 whole-port parity summary entrypoint. Renders every case of the current
+// authority's manifest (210 pinned effect IDs, including the five excluded reactive/mesh
+// effects as expected cases) with this port and compares each against the retained
+// authority golden; positional case-id arguments (either spelling, `filter/crt` or
+// `filter__crt`) restrict the run to those cases. The last output line is the
+// PARITY-SUMMARY JSON with the gap-closure counts. See scripts/parity/summary.js for
+// the classification contract. The exit code reports audit completion, not the parity
+// verdict — the verdict is the counts in the PARITY-SUMMARY line.
+import { runSummary } from './parity/summary.js'
+
+function parseArgs(argv) {
+  const options = { size: 8, time: 0.25, seed: 1, tolerance: 2, requested: [] }
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index]
+    if (argument === '--size') options.size = Number(argv[++index])
+    else if (argument === '--time') options.time = Number(argv[++index])
+    else if (argument === '--seed') options.seed = Number(argv[++index])
+    else if (argument === '--tolerance') options.tolerance = Number(argv[++index])
+    else if (argument.startsWith('--')) throw new TypeError(`Unknown parity-summary option ${argument}`)
+    else options.requested.push(argument)
+  }
+  if (!Number.isInteger(options.size) || options.size <= 0) throw new TypeError('--size must be a positive integer')
+  if (!Number.isFinite(options.time)) throw new TypeError('--time must be finite')
+  if (!Number.isInteger(options.seed)) throw new TypeError('--seed must be an integer')
+  if (!Number.isInteger(options.tolerance) || options.tolerance < 0) throw new TypeError('--tolerance must be a non-negative integer')
+  return options
+}
+
+try {
+  const { lines } = await runSummary(parseArgs(process.argv.slice(2)))
+  for (const line of lines) process.stdout.write(`${line}\n`)
+} catch (error) {
+  process.stderr.write(`${error.stack ?? error.message}\n`)
+  process.exitCode = 1
+}
