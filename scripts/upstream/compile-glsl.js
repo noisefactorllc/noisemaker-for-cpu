@@ -217,21 +217,23 @@ function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
 
 function restoreIntegerDivision(transpiled, originalSource) {
   // GLSL int/int division truncates toward zero; the transpiler loses int typing on
-  // component-indexed operands (e.g. `int z = pixelCoord.y / volSize;`) and emits a raw
-  // float64 division, shifting every sampled coordinate. Rewrite only statements whose
-  // GLSL original divides provably int-typed operands (int uniforms, int variables,
-  // ivec components).
+  // component-indexed operands (e.g. `int z = pixelCoord.y / volSize;` inside the volume
+  // atlas mapping) and emits a raw float64 division, shifting every sampled coordinate.
+  // Narrow statement-level rewrite only: `vec[i] / intName` where the divisor is a
+  // provably int-typed GLSL identifier. Broader expression-level rewrites were measured
+  // against fresh M4/Metal authority captures and REJECTED: the authority's rendered
+  // output for filter/spookyTicker matches the untruncated lowering, not the pinned
+  // GLSL's int-division semantics, so sub-expression rewrites diverge (see the GAP-003
+  // record). Integer casts (`float(x)`) and literals are left untouched.
   const intNames = new Set()
   for (const m of originalSource.matchAll(/\buniform\s+int\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:=|;)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bivec[234]\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
   if (intNames.size === 0) return transpiled
-  let out = transpiled
-  out = out.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*)\[(\d+)\] \/ ([A-Za-z_$]\w*);/g, (m, name, vec, idx, divisor) => {
+  return transpiled.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*)\[(\d+)\] \/ ([A-Za-z_$]\w*);/g, (m, name, vec, idx, divisor) => {
     if (!intNames.has(divisor)) return m
     return `var ${name} = Math.trunc(${vec}[${idx}] / ${divisor});`
   })
-  return out
 }
 
 function preserveIntCastPrecedence(transpiled) {
