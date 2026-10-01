@@ -4,7 +4,7 @@ import { accessSync, constants, readFileSync } from 'node:fs'
 import test from 'node:test'
 
 import { sourceEffectIds } from '../src/effects/generated/upstream-snapshot.js'
-import { buildSummary, classifyCase, selectCases } from '../scripts/parity/summary.js'
+import { buildSummary, classifyCase, runSummary, selectCases } from '../scripts/parity/summary.js'
 
 const ENTRYPOINT = 'scripts/parity-summary'
 
@@ -95,4 +95,21 @@ test('entrypoint run on one skipped case preflights the fixture and reports skip
 
 test('entrypoint fails loudly on an unknown case id', () => {
   assert.throws(() => execFileSync(process.execPath, [ENTRYPOINT, 'filter/bc'], { encoding: 'utf8' }), /not one of the 210/)
+})
+
+test('runSummary rejects non-contract tolerance values', async () => {
+  await assert.rejects(() => runSummary({ tolerance: 3 }), /enforces the published ±2 contract/)
+})
+
+test('entrypoint rejects a widened tolerance instead of counting passes', () => {
+  assert.throws(() => execFileSync(process.execPath, [ENTRYPOINT, '--tolerance', '3', 'filter/adjust'], { encoding: 'utf8' }), /enforces the published ±2 contract/)
+})
+
+test('emitted comparisons carry reference provenance and the summary aggregates it', () => {
+  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'filter/adjust'], { encoding: 'utf8' })
+  const lines = stdout.trimEnd().split('\n')
+  assert.match(lines[0], /^Reference provenance \(GAP-008\): 0 recorded, 1 unknown/)
+  assert.match(lines[1], /reference=parity\/goldens\/defaults\/filter__adjust\.golden\.png sha256=[0-9a-f]{64} provenance=unknown/)
+  const summary = JSON.parse(lines[lines.length - 1].replace(/^PARITY-SUMMARY /, ''))
+  assert.deepEqual(summary.referenceProvenance, { recorded: 0, unknown: 1 })
 })

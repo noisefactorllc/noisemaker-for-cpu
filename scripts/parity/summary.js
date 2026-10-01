@@ -110,6 +110,11 @@ export function buildSummary(rendered, skipped, missing, meta) {
     skip: skipped.length,
     fail,
     missing: missing.length,
+    // GAP-008: reference-image provenance reported separately from the candidate pin.
+    referenceProvenance: {
+      recorded: rendered.filter((result) => result.reference?.provenance === 'recorded').length,
+      unknown: rendered.filter((result) => result.reference?.provenance !== 'recorded').length + skipped.length + missing.length,
+    },
   }
 }
 
@@ -143,6 +148,11 @@ export async function runSummary(options = {}) {
     time: options.time ?? 0.25,
     seed: options.seed ?? 1,
     tolerance: options.tolerance ?? 2,
+  }
+  // The published numerical contract of this port is ±2; the summary classifies
+  // `strict` against it and must not accept a widened tolerance as passes.
+  if (meta.tolerance !== 2) {
+    throw new TypeError('parity-summary enforces the published ±2 contract; --tolerance must be 2')
   }
   const selected = selectCases(options.requested ?? [])
   const registry = createDefaultRegistry()
@@ -192,10 +202,12 @@ export async function runSummary(options = {}) {
 
   const summary = buildSummary(rendered, skipped, missing, meta)
   const lines = []
+  lines.push(`Reference provenance (GAP-008): ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)`)
   for (const result of rendered) {
+    const reference = `reference=${result.reference.image} sha256=${result.reference.sha256} provenance=${result.reference.provenance}`
     lines.push(result.exact
-      ? `EXACT ${result.id} (${fixtureLine(result.id)})`
-      : `${result.pass ? 'STRICT' : 'FAIL'} ${result.id} max=${result.maxError} mean=${result.meanError.toFixed(4)} channels>${meta.tolerance}=${result.channelsOverTolerance} (${fixtureLine(result.id)})`)
+      ? `EXACT ${result.id} (${fixtureLine(result.id)}; ${reference})`
+      : `${result.pass ? 'STRICT' : 'FAIL'} ${result.id} max=${result.maxError} mean=${result.meanError.toFixed(4)} channels>${meta.tolerance}=${result.channelsOverTolerance} (${fixtureLine(result.id)}; ${reference})`)
   }
   for (const entry of skipped) lines.push(`SKIP ${entry.id} (${entry.reason})`)
   for (const entry of missing) lines.push(`MISSING ${entry.id} (${entry.reason})`)
