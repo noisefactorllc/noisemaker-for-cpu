@@ -175,6 +175,46 @@ function lowerFloatLiterals(transpiled) {
   )
 }
 
+function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
+  // The transpiler loses uvec type information when GLSL mixes uint vector
+  // components with the bare operators (hash3/hash4-style LCG mixing), and
+  // emits raw JS arithmetic: JS float64 cannot represent uint multiply-add
+  // mod 2^32 once products exceed 2^53, `>>` is an arithmetic shift while
+  // GLSL uint `>>` is logical, and float(uint) must convert the unsigned bit
+  // pattern. Restore exact GLSL uint semantics statement-by-statement. Only
+  // statements whose integer operands trace back to u-suffixed GLSL literals
+  // (or same-vector component products) are rewritten; everything else keeps
+  // its lowered form.
+  const uintLiterals = new Set([...originalSource.matchAll(/\b(\d+)u\b/g)].map((m) => m[1]))
+  if (uintLiterals.size === 0) return transpiled
+  const uintExact = new Map([...uintLiterals].map((v) => [String(Math.fround(Number(v))), v]))
+  const exact = (token) => uintLiterals.has(token) ? token : (uintExact.get(token) ?? null)
+  let out = transpiled
+  // q[i] = q[i] * <uconst> + <uconst>  ->  q[i] = (umul(q[i], <uconst>) + <uconst>) >>> 0
+  out = out.replace(/([A-Za-z_$]\w*)\[(\d+)\] = \1\[\2\] \* (\d+) \+ (\d+)/g, (m, name, i, a, b) => {
+    const ua = exact(a)
+    if (ua === null || exact(b) === null) return m
+    return `${name}[${i}] = (cpu_umul(${name}[${i}], ${ua}) + ${b === ua ? b : exact(b)}) >>> 0`
+  })
+  // q[i] += q[j] * q[k]  ->  q[i] = (q[i] + umul(q[j], q[k])) >>> 0
+  out = out.replace(/([A-Za-z_$]\w*)\[(\d+)\] \+= \1\[(\d+)\] \* \1\[(\d+)\]/g, (m, name, i, j, k) =>
+    `${name}[${i}] = (${name}[${i}] + cpu_umul(${name}[${j}], ${name}[${k}])) >>> 0`)
+  // q[i] ^= q[i] >> <n>  ->  q[i] = (q[i] ^ (q[i] >>> <n>)) >>> 0
+  out = out.replace(/([A-Za-z_$]\w*)\[(\d+)\] \^= \1\[\2\] >> (\d+)/g, (m, name, i, n) =>
+    `${name}[${i}] = (${name}[${i}] ^ (${name}[${i}] >>> ${n})) >>> 0`)
+  // float(uint) of a component XOR chain converts the unsigned bit pattern.
+  out = out.replace(/cpu_float\(\(\(q\[(\d+)\] \^ q\[(\d+)\]\) \^ q\[(\d+)\]\) \^ q\[(\d+)\]\)/g,
+    'cpu_float((((q[$1] ^ q[$2]) ^ q[$3]) ^ q[$4]) >>> 0)')
+  out = out.replace(/cpu_float\(\(q\[(\d+)\] \^ q\[(\d+)\]\) \^ q\[(\d+)\]\)/g,
+    'cpu_float(((q[$1] ^ q[$2]) ^ q[$3]) >>> 0)')
+  out = out.replace(/cpu_float\(\(q\[(\d+)\] \^ q\[(\d+)\]\)\)/g,
+    'cpu_float(((q[$1] ^ q[$2])) >>> 0)')
+  if (/cpu_umul\(/.test(out) && !/function cpu_umul\s*\(/.test(out)) {
+    out = `function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };\n${out}`
+  }
+  return out
+}
+
 function preserveIntCastPrecedence(transpiled) {
   const operatorAfterCast = /^(?:\s*)(?:[+\-*/%^]|<<|>>)/
   let output = transpiled
@@ -579,6 +619,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   // strict literal lowering moves one texel to the opposite side.
   if (effectId !== 'filter/scatter') transpiled = lowerFloatLiterals(transpiled)
   transpiled = preserveIntCastPrecedence(transpiled)
+  transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
   transpiled = poolLocalVectors(transpiled)
   const called = new Set([...transpiled.matchAll(/\b([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))
   const defined = new Set([...transpiled.matchAll(/function\s+([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))

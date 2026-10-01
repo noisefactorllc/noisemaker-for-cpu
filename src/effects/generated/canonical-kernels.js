@@ -33263,6 +33263,7 @@ function canonicalFactory272($bindings, $runtime) {
 function canonicalFactory273($bindings, $runtime) {
   const { float, ivec3, sin, cos, abs, floor, fract, mod, max, clamp, mix, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   function cpu_ivec3 (a, b, c) { return $runtime.stdlib.ivec3(a, b, c); };
@@ -33303,15 +33304,15 @@ function canonicalFactory273($bindings, $runtime) {
   	p = $runtime.copy(p);
   	(p[0] = p[0] + (seed) * 0.10000000149011612, p[1] = p[1] + (seed) * 0.10000000149011612, p[2] = p[2] + (seed) * 0.10000000149011612, p);
   	var q = cpu_uvec3_vec3(cpu_ivec3_vec3(new $runtime.PooledFloat32Array([p[0] * 1000, p[1] * 1000, p[2] * 1000])).map(function (_) {return _ + 65536;}));
-  	(q[0] = q[0] * 1664525 + 1013904223, q[1] = q[1] * 1664525 + 1013904223, q[2] = q[2] * 1664525 + 1013904223, q);
-  	q[0] += q[1] * q[2];
-  	q[1] += q[2] * q[0];
-  	q[2] += q[0] * q[1];
-  	(q[0] ^= q[0] >> 16, q[1] ^= q[1] >> 16, q[2] ^= q[2] >> 16, q);
-  	q[0] += q[1] * q[2];
-  	q[1] += q[2] * q[0];
-  	q[2] += q[0] * q[1];
-  	return (cpu_float((q[0] ^ q[1]) ^ q[2])) / 4294967296;
+  	(q[0] = (cpu_umul(q[0], 1664525) + 1013904223) >>> 0, q[1] = (cpu_umul(q[1], 1664525) + 1013904223) >>> 0, q[2] = (cpu_umul(q[2], 1664525) + 1013904223) >>> 0, q);
+  	q[0] = (q[0] + cpu_umul(q[1], q[2])) >>> 0;
+  	q[1] = (q[1] + cpu_umul(q[2], q[0])) >>> 0;
+  	q[2] = (q[2] + cpu_umul(q[0], q[1])) >>> 0;
+  	(q[0] = (q[0] ^ (q[0] >>> 16)) >>> 0, q[1] = (q[1] ^ (q[1] >>> 16)) >>> 0, q[2] = (q[2] ^ (q[2] >>> 16)) >>> 0, q);
+  	q[0] = (q[0] + cpu_umul(q[1], q[2])) >>> 0;
+  	q[1] = (q[1] + cpu_umul(q[2], q[0])) >>> 0;
+  	q[2] = (q[2] + cpu_umul(q[0], q[1])) >>> 0;
+  	return (cpu_float(((q[0] ^ q[1]) ^ q[2]) >>> 0)) / 4294967296;
   };
   function grad3 (p) {
   	p = $runtime.copy(p);
@@ -36237,6 +36238,7 @@ canonicalFactory287.outputNames = ["fragColor","geoOut"]
 function canonicalFactory288($bindings, $runtime) {
   const { float, ivec2, ivec4, abs, floor, fract, mod, clamp, mix, dot, normalize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   function cpu_ivec4 (a, b, c, d) { return $runtime.stdlib.ivec4(a, b, c, d); };
@@ -36267,17 +36269,17 @@ function canonicalFactory288($bindings, $runtime) {
   	p = $runtime.copy(p);
   	var ps = new $runtime.PooledFloat32Array([p[0] + (seed) * 0.10000000149011612, p[1] + (seed) * 0.10000000149011612, p[2] + (seed) * 0.10000000149011612, p[3] + (seed) * 0.10000000149011612]);
   	var q = cpu_uvec4_vec4(cpu_ivec4_vec4(new $runtime.PooledFloat32Array([ps[0] * 1000, ps[1] * 1000, ps[2] * 1000, ps[3] * 1000])).map(function (_) {return _ + 65536;}));
-  	(q[0] = q[0] * 1664525 + 1013904223, q[1] = q[1] * 1664525 + 1013904223, q[2] = q[2] * 1664525 + 1013904223, q[3] = q[3] * 1664525 + 1013904223, q);
-  	q[0] += q[1] * q[2];
-  	q[1] += q[2] * q[3];
-  	q[2] += q[3] * q[0];
-  	q[3] += q[0] * q[1];
-  	(q[0] ^= q[0] >> 16, q[1] ^= q[1] >> 16, q[2] ^= q[2] >> 16, q[3] ^= q[3] >> 16, q);
-  	q[0] += q[1] * q[2];
-  	q[1] += q[2] * q[3];
-  	q[2] += q[3] * q[0];
-  	q[3] += q[0] * q[1];
-  	return (cpu_float(((q[0] ^ q[1]) ^ q[2]) ^ q[3])) / 4294967296;
+  	(q[0] = (cpu_umul(q[0], 1664525) + 1013904223) >>> 0, q[1] = (cpu_umul(q[1], 1664525) + 1013904223) >>> 0, q[2] = (cpu_umul(q[2], 1664525) + 1013904223) >>> 0, q[3] = (cpu_umul(q[3], 1664525) + 1013904223) >>> 0, q);
+  	q[0] = (q[0] + cpu_umul(q[1], q[2])) >>> 0;
+  	q[1] = (q[1] + cpu_umul(q[2], q[3])) >>> 0;
+  	q[2] = (q[2] + cpu_umul(q[3], q[0])) >>> 0;
+  	q[3] = (q[3] + cpu_umul(q[0], q[1])) >>> 0;
+  	(q[0] = (q[0] ^ (q[0] >>> 16)) >>> 0, q[1] = (q[1] ^ (q[1] >>> 16)) >>> 0, q[2] = (q[2] ^ (q[2] >>> 16)) >>> 0, q[3] = (q[3] ^ (q[3] >>> 16)) >>> 0, q);
+  	q[0] = (q[0] + cpu_umul(q[1], q[2])) >>> 0;
+  	q[1] = (q[1] + cpu_umul(q[2], q[3])) >>> 0;
+  	q[2] = (q[2] + cpu_umul(q[3], q[0])) >>> 0;
+  	q[3] = (q[3] + cpu_umul(q[0], q[1])) >>> 0;
+  	return (cpu_float((((q[0] ^ q[1]) ^ q[2]) ^ q[3]) >>> 0)) / 4294967296;
   };
   function grad4 (p) {
   	p = $runtime.copy(p);
