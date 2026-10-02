@@ -1,8 +1,8 @@
 # Effect coverage
 
-This is the exact CPU-eligible target imported from Noisemaker revision `e24c844f8dada85551ab084f41db8944fbc176c8`, after the five explicit exclusions below. Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact CPU-eligible target imported from Noisemaker revision `e24c844f8dada85551ab084f41db8944fbc176c8` (the full 210-effect manifest; the formerly excluded reactive/mesh trees are imported since the 2026-10-02 fourth parity leg, below). Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
-The runtime contains 205 effects and 301 canonical programs (291 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 460 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
+The runtime contains 210 effects and 308 canonical programs (298 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 460 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 
 ## `classicNoisedeck` — 20
 
@@ -30,17 +30,21 @@ Twelve of these (`bloom`, `chrome`, `highPass`, `oilPaint`, `photocopy`, `plasti
 
 `heightGrid` (new in revision `0ed489ec4684`) is different: it has no fallback. Its one pass reads `global_xyz`/`global_vel` as inputs without any pass of its own writing them first (it arranges the existing agent grid into an XZ plane with height-mapped Y, it doesn't spawn agents), so it genuinely requires an upstream `pointsEmit()` — used standalone it throws `"points/heightGrid pass \"agent\" requires texture \"global_xyz\""` rather than silently falling back. `smokeProgram()`/`effectProgram()` (test/catalog-smoke.test.js, bin/noisemaker-cpu.js) detect this from the pass graph itself (a read of a particle-state global with no preceding write in the same effect) and prepend `pointsEmit()` automatically.
 
-## `render` — 10
+## `render` — 12
 
-`loopBegin`, `loopEnd`, `pointsBillboardRender`, `pointsEmit`, `pointsRender`, `render3d`, `renderCubemap3d`, `renderCubemapSurface`, `renderLandscape3d`, `renderLit3d`
+`loopBegin`, `loopEnd`, `meshLoader`, `meshRender`, `pointsBillboardRender`, `pointsEmit`, `pointsRender`, `render3d`, `renderCubemap3d`, `renderCubemapSurface`, `renderLandscape3d`, `renderLit3d`
+
+`meshLoader`/`meshRender` are the mesh pipeline: `meshLoader` packs an external OBJ (triangle soup, fan triangulation with reversed winding, smooth vertex normals when the file has none) into 256×256 RGBA data textures and previews them; `meshRender` rasterizes the mesh through a hand-written CPU triangle stage (GLSL-f32 vertex transform, depth-tested LESS with CCW back-face culling, Blinn-Phong/Fresnel-rim lighting, optional wireframe) — fed via `renderOptions.externalInputs.meshData` (parsed and packed by `src/runtime/external-input.js`).
 
 The three `points*` render effects are stateful/particle effects. `pointsEmit` is the only definition in the whole catalog that declares `global_xyz`; it opens and owns an iteration group, seeding agent positions/velocities/colors from its own input image. `pointsRender` and `pointsBillboardRender` rasterize the current agent state into a trail texture (point sprites and billboard quads respectively) composited over the input. `pointsRender`/`pointsBillboardRender` also gained a `perspective` view mode this round (alongside the existing flat/ortho), and `pointsBillboardRender` gained depth-sorted alpha blending and aperture defocus — see [CSL.md](CSL.md) for how the per-viewMode `defines` those introduce are handled.
 
 `renderLandscape3d` (new) is a `volume-renderer`-domain effect (like `render3d`/`renderLit3d`): an isometric/perspective voxel or isosurface raymarch with face lighting, consuming a `synth3d` generator's volume+geometry bundle — its own companion generator is `synth3d/heightmap3d`, below.
 
-## `synth` — 26
+## `synth` — 29
 
-`bitwise`, `cell`, `cellularAutomata`, `curl`, `gabor`, `gradient`, `julia`, `mandala`, `mandelbrot`, `media`, `mnca`, `modPattern`, `navierStokes`, `newton`, `noise`, `osc2d`, `pattern`, `perlin`, `polygon`, `reactionDiffusion`, `remap`, `sacredGeometry`, `shape`, `solid`, `subdivide`, `testPattern`
+`bitwise`, `cell`, `cellularAutomata`, `curl`, `gabor`, `gradient`, `julia`, `mandala`, `mandelbrot`, `media`, `mnca`, `modPattern`, `navierStokes`, `newton`, `noise`, `osc2d`, `pattern`, `perlin`, `polygon`, `reactionDiffusion`, `remap`, `roll`, `sacredGeometry`, `scope`, `shape`, `solid`, `spectrum`, `subdivide`, `testPattern`
+
+`roll` (MIDI note-grid swim lanes scrolled by a feedback surface), `scope` (audio waveform trace), and `spectrum` (audio spectrum curve) are reactive: the renderer binds their external inputs from `renderOptions.externalInputs` (`midiState` with the packed 128×16 note grid, `audioState` with 128-float waveform/spectrum, zero-initialized like WebGL uniform arrays when no state is supplied — see `src/runtime/external-input.js`).
 
 ## `synth3d` — 8
 
@@ -48,14 +52,9 @@ The three `points*` render effects are stateful/particle effects. `pointsEmit` i
 
 `heightmap3d` (new) is a voxel heightfield generator: it bakes separate height and diffuse-color 2D surfaces into the volume atlas, for `render/renderLandscape3d` to raymarch.
 
-## Intentional exclusions
+## Former exclusions, imported (GAP-003)
 
-These are excluded by the requested CPU-port scope, not by silent compiler failures:
-
-- Reactive effects: `synth/roll` (MIDI plus feedback), `synth/scope` (audio waveform), and `synth/spectrum` (audio spectrum)
-- Mesh pipeline: `render/meshLoader` and `render/meshRender`
-
-Media and text are not excluded. `synth/media` and `filter/text` receive browser `Surface` values or CLI PNGs through `--input` and `--texture`.
+The reactive and mesh trees below used to be excluded by the CPU-port scope; they are imported with the catalog since the 2026-10-02 fourth parity leg and graded through the shared deterministic external-input fixtures (`scripts/parity/reactive-fixtures.js`) against M4/Metal authority goldens. Media and text are not excluded either: `synth/media` and `filter/text` receive browser `Surface` values or CLI PNGs through `--input` and `--texture`.
 
 ## Volume and loop semantics
 
