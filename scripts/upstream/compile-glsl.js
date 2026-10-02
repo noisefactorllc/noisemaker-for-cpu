@@ -265,6 +265,25 @@ function preserveIntCastPrecedence(transpiled) {
   return output
 }
 
+// GLSL value semantics: `vecN v = u;` copies. The glsl-transpiler emits a bare alias
+// (`var z = pos;`), so a subsequent component write (mandelbulb's `z[0] = ...`) destroys
+// the aliased source and the `+= pos` recurrence collapses to `2 * z^8` — NaN volumes in
+// synth3d/fractal3d. Scalars pass through untouched; vectors get a pool-backed copy.
+function copyAliasedVectorDeclarations(transpiled) {
+  let depth = 0
+  return transpiled.split('\n').map((line) => {
+    let copied = line
+    if (depth > 0) {
+      copied = copied.replace(/var ([A-Za-z_$][\w$]*) = ([A-Za-z_$][\w.$]*);/g, (match, name, initializer) => {
+        if (initializer === name) return match
+        return `var ${name} = ${initializer} instanceof Float32Array ? $runtime.copy(${initializer}) : ${initializer};`
+      })
+    }
+    depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
+    return copied
+  }).join('\n')
+}
+
 function poolLocalVectors(transpiled) {
   let depth = 0
   return transpiled.split('\n').map((line) => {
@@ -642,6 +661,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   transpiled = preserveIntCastPrecedence(transpiled)
   transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
   transpiled = restoreIntegerDivision(transpiled, originalSource)
+  transpiled = copyAliasedVectorDeclarations(transpiled)
   transpiled = poolLocalVectors(transpiled)
   const called = new Set([...transpiled.matchAll(/\b([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))
   const defined = new Set([...transpiled.matchAll(/function\s+([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))
