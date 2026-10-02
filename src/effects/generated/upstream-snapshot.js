@@ -15914,6 +15914,284 @@ export const effectRecords = Object.freeze([
     "loopRole": "end"
   },
   {
+    "id": "render/meshLoader",
+    "directoryName": "meshLoader",
+    "name": "Mesh Loader",
+    "namespace": "render",
+    "func": "meshLoader",
+    "kind": "filter",
+    "domain": "image",
+    "tags": [
+      "mesh",
+      "geometry",
+      "3d"
+    ],
+    "description": "Load mesh data from OBJ files into GPU textures.",
+    "paramAliases": {},
+    "params": {},
+    "passes": [
+      {
+        "name": "preview",
+        "program": "preview",
+        "inputs": {
+          "positionsTex": "global_mesh0_positions",
+          "normalsTex": "global_mesh0_normals"
+        },
+        "outputs": {
+          "fragColor": "outputTex"
+        }
+      }
+    ],
+    "textures": {},
+    "externalTexture": null
+  },
+  {
+    "id": "render/meshRender",
+    "directoryName": "meshRender",
+    "name": "Mesh Render",
+    "namespace": "render",
+    "func": "meshRender",
+    "kind": "filter",
+    "domain": "image",
+    "tags": [
+      "mesh",
+      "geometry"
+    ],
+    "description": "Render meshes with Blinn-Phong lighting",
+    "paramAliases": {},
+    "params": {
+      "scale": {
+        "type": "float",
+        "default": 1,
+        "uniform": "meshScale",
+        "min": 0.01,
+        "max": 10
+      },
+      "offsetX": {
+        "type": "float",
+        "default": 0,
+        "uniform": "offsetX",
+        "min": -5,
+        "max": 5
+      },
+      "offsetY": {
+        "type": "float",
+        "default": 0,
+        "uniform": "offsetY",
+        "min": -5,
+        "max": 5
+      },
+      "offsetZ": {
+        "type": "float",
+        "default": 0,
+        "uniform": "offsetZ",
+        "min": -5,
+        "max": 5
+      },
+      "rotateX": {
+        "type": "float",
+        "default": 0,
+        "uniform": "rotateX",
+        "min": -180,
+        "max": 180
+      },
+      "rotateY": {
+        "type": "float",
+        "default": 0,
+        "uniform": "rotateY",
+        "min": -180,
+        "max": 180
+      },
+      "rotateZ": {
+        "type": "float",
+        "default": 0,
+        "uniform": "rotateZ",
+        "min": -180,
+        "max": 180
+      },
+      "viewScale": {
+        "type": "float",
+        "default": 1,
+        "uniform": "viewScale",
+        "min": 0.1,
+        "max": 10
+      },
+      "posX": {
+        "type": "float",
+        "default": 0,
+        "uniform": "posX",
+        "min": -10,
+        "max": 10
+      },
+      "posY": {
+        "type": "float",
+        "default": 0,
+        "uniform": "posY",
+        "min": -10,
+        "max": 10
+      },
+      "lightDirection": {
+        "type": "vec3",
+        "default": [
+          0.5,
+          0.7,
+          0.5
+        ],
+        "uniform": "lightDirection"
+      },
+      "diffuseColor": {
+        "type": "color",
+        "default": [
+          1,
+          1,
+          1
+        ],
+        "uniform": "diffuseColor"
+      },
+      "diffuseIntensity": {
+        "type": "float",
+        "default": 0.7,
+        "uniform": "diffuseIntensity",
+        "min": 0,
+        "max": 2
+      },
+      "specularColor": {
+        "type": "color",
+        "default": [
+          1,
+          1,
+          1
+        ],
+        "uniform": "specularColor"
+      },
+      "specularIntensity": {
+        "type": "float",
+        "default": 0.3,
+        "uniform": "specularIntensity",
+        "min": 0,
+        "max": 2
+      },
+      "shininess": {
+        "type": "float",
+        "default": 32,
+        "uniform": "shininess",
+        "min": 1,
+        "max": 256
+      },
+      "ambientColor": {
+        "type": "color",
+        "default": [
+          0.1,
+          0.1,
+          0.1
+        ],
+        "uniform": "ambientColor"
+      },
+      "rimIntensity": {
+        "type": "float",
+        "default": 0.15,
+        "uniform": "rimIntensity",
+        "min": 0,
+        "max": 1
+      },
+      "rimPower": {
+        "type": "float",
+        "default": 3,
+        "uniform": "rimPower",
+        "min": 0.5,
+        "max": 8
+      },
+      "meshColor": {
+        "type": "color",
+        "default": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "uniform": "meshColor"
+      },
+      "bgColor": {
+        "type": "color",
+        "default": [
+          0.1,
+          0.1,
+          0.15
+        ],
+        "uniform": "bgColor"
+      },
+      "bgAlpha": {
+        "type": "float",
+        "default": 1,
+        "uniform": "bgAlpha",
+        "min": 0,
+        "max": 1
+      },
+      "wireframe": {
+        "type": "int",
+        "default": 0,
+        "uniform": "wireframe",
+        "choices": {
+          "solid": 0,
+          "wireframe": 1
+        }
+      }
+    },
+    "passes": [
+      {
+        "name": "clear",
+        "program": "clear",
+        "inputs": {},
+        "outputs": {
+          "fragColor": "outputTex"
+        },
+        "uniforms": {
+          "bgColor": "bgColor",
+          "bgAlpha": "bgAlpha"
+        }
+      },
+      {
+        "name": "render",
+        "program": "render",
+        "inputs": {
+          "inputTex": "inputTex",
+          "meshPositions": "global_mesh0_positions",
+          "meshNormals": "global_mesh0_normals"
+        },
+        "outputs": {
+          "fragColor": "outputTex"
+        },
+        "uniforms": {
+          "meshScale": "meshScale",
+          "meshOffsetX": "offsetX",
+          "meshOffsetY": "offsetY",
+          "meshOffsetZ": "offsetZ",
+          "rotateX": "rotateX",
+          "rotateY": "rotateY",
+          "rotateZ": "rotateZ",
+          "viewScale": "viewScale",
+          "posX": "posX",
+          "posY": "posY",
+          "lightDirection": "lightDirection",
+          "diffuseColor": "diffuseColor",
+          "diffuseIntensity": "diffuseIntensity",
+          "specularColor": "specularColor",
+          "specularIntensity": "specularIntensity",
+          "shininess": "shininess",
+          "ambientColor": "ambientColor",
+          "rimIntensity": "rimIntensity",
+          "rimPower": "rimPower",
+          "meshColor": "meshColor",
+          "wireframe": "wireframe"
+        },
+        "blend": false,
+        "drawMode": "triangles",
+        "count": "input"
+      }
+    ],
+    "textures": {},
+    "externalTexture": null
+  },
+  {
     "id": "render/pointsBillboardRender",
     "directoryName": "pointsBillboardRender",
     "name": "Points Billboard Render",
@@ -24163,6 +24441,76 @@ export const effectRecords = Object.freeze([
     "externalTexture": null
   },
   {
+    "id": "synth/roll",
+    "directoryName": "roll",
+    "name": "Roll",
+    "namespace": "synth",
+    "func": "roll",
+    "kind": "generator",
+    "domain": "image",
+    "tags": [
+      "midi"
+    ],
+    "description": "MIDI piano roll visualizer",
+    "paramAliases": {},
+    "params": {
+      "color": {
+        "type": "color",
+        "default": [
+          0,
+          1,
+          0
+        ],
+        "uniform": "lineColor"
+      },
+      "gain": {
+        "type": "float",
+        "default": 1,
+        "uniform": "gain",
+        "min": 0.1,
+        "max": 5
+      },
+      "speed": {
+        "type": "float",
+        "default": 1,
+        "uniform": "speed",
+        "min": 0.5,
+        "max": 5
+      }
+    },
+    "passes": [
+      {
+        "name": "scroll",
+        "program": "roll",
+        "inputs": {
+          "feedbackTex": "_rollFb",
+          "noteGridTex": "midiNoteGrid"
+        },
+        "outputs": {
+          "fragColor": "outputTex"
+        }
+      },
+      {
+        "name": "feedback",
+        "program": "copy",
+        "inputs": {
+          "inputTex": "outputTex"
+        },
+        "outputs": {
+          "fragColor": "_rollFb"
+        }
+      }
+    ],
+    "textures": {
+      "_rollFb": {
+        "width": "100%",
+        "height": "100%",
+        "format": "rgba16f"
+      }
+    },
+    "externalTexture": null
+  },
+  {
     "id": "synth/sacredGeometry",
     "directoryName": "sacredGeometry",
     "name": "SacredGeometry",
@@ -24287,6 +24635,57 @@ export const effectRecords = Object.freeze([
         "inputs": {},
         "outputs": {
           "color": "outputTex"
+        }
+      }
+    ],
+    "textures": {},
+    "externalTexture": null
+  },
+  {
+    "id": "synth/scope",
+    "directoryName": "scope",
+    "name": "Scope",
+    "namespace": "synth",
+    "func": "scope",
+    "kind": "generator",
+    "domain": "image",
+    "tags": [
+      "audio"
+    ],
+    "description": "Audio waveform oscilloscope",
+    "paramAliases": {},
+    "params": {
+      "color": {
+        "type": "color",
+        "default": [
+          0,
+          1,
+          0
+        ],
+        "uniform": "lineColor"
+      },
+      "thickness": {
+        "type": "float",
+        "default": 2,
+        "uniform": "lineThickness",
+        "min": 0.5,
+        "max": 10
+      },
+      "gain": {
+        "type": "float",
+        "default": 1,
+        "uniform": "gain",
+        "min": 0.1,
+        "max": 5
+      }
+    },
+    "passes": [
+      {
+        "name": "main",
+        "program": "scope",
+        "inputs": {},
+        "outputs": {
+          "fragColor": "outputTex"
         }
       }
     ],
@@ -24476,6 +24875,57 @@ export const effectRecords = Object.freeze([
         "inputs": {},
         "outputs": {
           "color": "outputTex"
+        }
+      }
+    ],
+    "textures": {},
+    "externalTexture": null
+  },
+  {
+    "id": "synth/spectrum",
+    "directoryName": "spectrum",
+    "name": "Spectrum",
+    "namespace": "synth",
+    "func": "spectrum",
+    "kind": "generator",
+    "domain": "image",
+    "tags": [
+      "audio"
+    ],
+    "description": "Audio spectrum analyzer",
+    "paramAliases": {},
+    "params": {
+      "color": {
+        "type": "color",
+        "default": [
+          0,
+          1,
+          0
+        ],
+        "uniform": "lineColor"
+      },
+      "thickness": {
+        "type": "float",
+        "default": 2,
+        "uniform": "lineThickness",
+        "min": 0.5,
+        "max": 10
+      },
+      "gain": {
+        "type": "float",
+        "default": 1,
+        "uniform": "gain",
+        "min": 0.1,
+        "max": 5
+      }
+    },
+    "passes": [
+      {
+        "name": "main",
+        "program": "spectrum",
+        "inputs": {},
+        "outputs": {
+          "fragColor": "outputTex"
         }
       }
     ],

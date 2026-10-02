@@ -75,13 +75,15 @@ test('entrypoint run on one case emits a PARITY-SUMMARY last line', () => {
   assert.deepEqual([summary.near, summary.defer], [0, 0])
 })
 
-test('entrypoint run on an excluded case counts it as missing', () => {
+test('entrypoint runs a former excluded case (synth/roll) through its fixture to an executed verdict', () => {
   const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'synth/roll'], { encoding: 'utf8' })
   const lastLine = stdout.trimEnd().split('\n').pop()
   const summary = JSON.parse(lastLine.replace(/^PARITY-SUMMARY /, ''))
   assert.equal(summary.expected, 1)
-  assert.equal(summary.executed, 0)
-  assert.equal(summary.missing, 1)
+  assert.equal(summary.executed, 1)
+  assert.equal(summary.skip, 0)
+  assert.equal(summary.missing, 0)
+  assert.deepEqual([summary.near, summary.defer, summary.fail], [0, 0, 0])
 })
 
 test('entrypoint run on one skipped case preflights the fixture and reports skip', () => {

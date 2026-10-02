@@ -175,6 +175,8 @@ const EXPECTED_IDS = [
   'points/physical',
   'render/loopBegin',
   'render/loopEnd',
+  'render/meshLoader',
+  'render/meshRender',
   'render/pointsBillboardRender',
   'render/pointsEmit',
   'render/pointsRender',
@@ -204,9 +206,12 @@ const EXPECTED_IDS = [
   'synth/polygon',
   'synth/reactionDiffusion',
   'synth/remap',
+  'synth/roll',
   'synth/sacredGeometry',
+  'synth/scope',
   'synth/shape',
   'synth/solid',
+  'synth/spectrum',
   'synth/subdivide',
   'synth/testPattern',
   'synth3d/cell3d',
@@ -259,7 +264,7 @@ const EXCLUDED = [
   ...REACTIVE,
 ].sort()
 
-test('upstream snapshot partitions the exact source tree into 205 eligible and five excluded effects', () => {
+test('upstream snapshot imports the exact 210-effect source tree with no exclusions', () => {
   assert.equal(UPSTREAM_REVISION, 'e24c844f8dada85551ab084f41db8944fbc176c8')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
@@ -267,14 +272,17 @@ test('upstream snapshot partitions the exact source tree into 205 eligible and f
       namespace,
       eligibleEffectIds.filter((id) => id.startsWith(`${namespace}/`)).length,
     ])),
-    { classicNoisedeck: 20, filter: 113, filter3d: 2, mixer: 15, points: 11, render: 10, synth: 26, synth3d: 8 },
+    { classicNoisedeck: 20, filter: 113, filter3d: 2, mixer: 15, points: 11, render: 12, synth: 29, synth3d: 8 },
   )
+  // The formerly excluded reactive/mesh trees are imported and graded through host-fed
+  // external-input fixtures (GAP-003 closing contract counts them as expected cases);
+  // excludedEffects is retained as an informational record of that former exclusion.
   assert.deepEqual(excludedEffects.reactive, REACTIVE)
-  const excludedIds = Object.values(excludedEffects).flat().sort()
-  assert.deepEqual(excludedIds, EXCLUDED)
+  assert.deepEqual(excludedEffects.mesh, ['render/meshLoader', 'render/meshRender'])
+  assert.deepEqual(Object.values(excludedEffects).flat().filter((id) => !eligibleEffectIds.includes(id)), [])
   assert.equal(sourceEffectIds.length, 210)
-  assert.equal(new Set([...eligibleEffectIds, ...excludedIds]).size, 210)
-  assert.deepEqual([...eligibleEffectIds, ...excludedIds].sort(), [...sourceEffectIds].sort())
+  assert.equal(eligibleEffectIds.length, 210)
+  assert.deepEqual([...eligibleEffectIds].sort(), [...sourceEffectIds].sort())
 })
 
 test('upstream snapshot preserves parity-critical definition metadata', () => {

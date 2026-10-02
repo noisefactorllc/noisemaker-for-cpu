@@ -4,10 +4,12 @@ import test from 'node:test'
 import { effectCatalog } from '../src/effects/catalog.js'
 import { eligibleEffectIds, effectRecords } from '../src/effects/generated/upstream-snapshot.js'
 
-test('runtime catalog is the exact 205-effect canonical inventory', () => {
-  assert.equal(effectCatalog.length, 205)
+test('runtime catalog is the exact 210-effect canonical inventory', () => {
+  assert.equal(effectCatalog.length, 210)
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
-  assert.equal(effectCatalog.some((effect) => ['synth/scope', 'synth/spectrum', 'synth/roll'].includes(effect.id)), false)
+  // The reactive effects are imported with the catalog and graded through host-fed
+  // external-input fixtures (GAP-003 closing contract counts them as expected cases).
+  assert.deepEqual(effectCatalog.filter((effect) => ['synth/scope', 'synth/spectrum', 'synth/roll', 'render/meshLoader', 'render/meshRender'].includes(effect.id)).map((effect) => effect.id).sort(), ['render/meshLoader', 'render/meshRender', 'synth/roll', 'synth/scope', 'synth/spectrum'])
 })
 
 test('runtime definitions preserve canonical metadata and pass schemas', () => {

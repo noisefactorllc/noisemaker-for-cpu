@@ -21,13 +21,18 @@ const ADAPTER_PROGRAMS = [
 ]
 
 test('every eligible canonical GLSL program is transpiled or assigned a parity adapter', () => {
-  assert.equal(programCoverage.length, 301)
-  assert.equal(programCoverage.filter((program) => program.status === 'generated').length, 291)
+  assert.equal(programCoverage.length, 308)
+  assert.equal(programCoverage.filter((program) => program.status === 'generated').length, 298)
   assert.equal(programCoverage.filter((program) => program.status === 'adapter').length, 10)
   assert.deepEqual(
     [...new Set(programCoverage.filter((program) => program.status === 'adapter').map((program) => `${program.effectId}:${program.program}`))].sort(),
     ADAPTER_PROGRAMS,
   )
-  assert.deepEqual([...new Set(programCoverage.map((program) => program.effectId))].length, 205)
+  // The reactive and mesh trees are imported with the catalog (GAP-003): the reactive
+  // fragment programs and the meshLoader preview / meshRender clear programs transpile
+  // normally; meshRender's triangle-draw `render` program is driven by the hand-written
+  // CPU rasterizer in src/effects/cpu/mesh-render.js (its transpiled fragment body is
+  // retained but not executed per-pixel).
+  assert.deepEqual([...new Set(programCoverage.map((program) => program.effectId))].length, 210)
   assert.ok(programCoverage.every((program) => program.sourceBytes > 0 && program.normalizedBytes > 0))
 })

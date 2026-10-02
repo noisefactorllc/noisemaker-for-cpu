@@ -31,7 +31,12 @@ test('CLI prints help and the effect catalog', () => {
   assert.equal(effects.status, 0, effects.stderr)
   assert.match(effects.stdout, /synth\/noise/)
   assert.match(effects.stdout, /filter\/blur/)
-  assert.doesNotMatch(effects.stdout, /synth\/(scope|spectrum|roll)/)
+  // The reactive and mesh trees are imported with the catalog (GAP-003), so the
+  // `effects` listing covers the full 210-effect inventory.
+  assert.match(effects.stdout, /synth\/scope/)
+  assert.match(effects.stdout, /synth\/spectrum/)
+  assert.match(effects.stdout, /synth\/roll/)
+  assert.match(effects.stdout, /render\/meshRender/)
 })
 
 test('CLI renders DSL files and stdin to deterministic PNGs', async () => {
@@ -168,11 +173,13 @@ test('CLI csl command parses typed uniforms and named sampler textures', async (
   }
 })
 
-test('CLI rejects removed reactive effects and audio options', () => {
+test('CLI renders reactive effects with default silent external state and rejects audio options', () => {
+  // The reactive effects are catalog members (GAP-003); with no external state they
+  // render their silent default (zero waveform/spectrum, empty note grid).
   for (const effect of ['synth/scope', 'synth/spectrum', 'synth/roll']) {
-    const result = run(['effect', effect, '--width=1', '--height=1'])
-    assert.notEqual(result.status, 0)
-    assert.match(result.stderr, /Unknown effect/)
+    const result = run(['effect', effect, '--width=4', '--height=4'])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Rendered 4x4/)
   }
   const waveform = run(['effect', 'synth/noise', '--waveform', 'samples.json'])
   assert.notEqual(waveform.status, 0)
@@ -231,16 +238,24 @@ test('CLI --effect random pools exclude iterated, external-texture, and non-imag
   // unlikely to. External-texture effects (synth/media, filter/text) are excluded for the mirror
   // reason: `random` binds no image, so picking one exits nonzero. Re-derive pickEffect's own pool
   // predicate against the real catalog and assert every candidate satisfies it.
+  // External-input effects (reactive synth/roll|scope|spectrum, mesh render/meshLoader|
+  // meshRender) are excluded for the same reason: the CLI binds no MIDI/audio/mesh fixture,
+  // so picking one exits nonzero on its missing external inputs.
   for (const kind of ['generator', 'filter']) {
     const excluded = effectCatalog.filter((effect) => effect.kind === kind && effect.iterated === true)
     assert.ok(excluded.length > 0, `expected at least one iterated ${kind} effect to exclude (catalog drift?)`)
     const pool = effectCatalog.filter(
-      (effect) => effect.kind === kind && effect.domain === 'image' && !effect.iterated && !effect.externalTexture,
+      (effect) => effect.kind === kind && effect.domain === 'image' && !effect.iterated && !effect.externalTexture
+        && !['synth/roll', 'synth/scope', 'synth/spectrum', 'render/meshLoader', 'render/meshRender'].includes(effect.id),
     )
     assert.ok(pool.length > 0, `expected a non-empty random pool for kind "${kind}"`)
     assert.ok(pool.every((effect) => effect.iterated !== true), `random pool for kind "${kind}" must exclude every iterated effect`)
     assert.ok(pool.every((effect) => !effect.externalTexture), `random pool for kind "${kind}" must exclude every external-texture effect`)
     assert.ok(pool.every((effect) => effect.domain === 'image'), `random pool for kind "${kind}" must only contain image-domain effects`)
+    assert.ok(
+      pool.every((effect) => !['synth/roll', 'synth/scope', 'synth/spectrum', 'render/meshLoader', 'render/meshRender'].includes(effect.id)),
+      `random pool for kind "${kind}" must exclude every external-input effect`,
+    )
   }
   // synth/media is a generator requiring imageTex: it was reachable by `generate random` before
   // this exclusion and exited 1 whenever it came up.

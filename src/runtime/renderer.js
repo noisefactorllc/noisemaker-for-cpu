@@ -10,6 +10,8 @@ import { Surface } from './surface.js'
 import { quantizeTexture } from './texture-format.js'
 import { renderCanonicalWormOverlay } from '../effects/cpu/worm-overlay.js'
 import { resolveScatterAdapter } from '../effects/cpu/scatter-registry.js'
+import { resolveMeshAdapter } from '../effects/cpu/mesh-render.js'
+import { externalDataSurface } from './external-textures.js'
 import { paletteData } from '../effects/generated/canonical-adapter-data.js'
 import { computeIterationGroups, isParticleStateName, wrap01, ITERATION_DELTA_TIME } from './iteration.js'
 
@@ -89,6 +91,7 @@ function assertRenderOptions(options) {
     frame: options.frame ?? 0,
     seed,
     externalTextures: options.externalTextures ?? {},
+    externalInputs: options.externalInputs ?? null,
     seedSurfaces: options.seedSurfaces ?? null,
     oneShot,
   }
@@ -218,6 +221,57 @@ function remapUniformData(uniforms, width, height) {
   return data
 }
 
+// Reactive (MIDI/audio) uniform defaults and mesh/external data-texture bindings.
+// Mirrors the upstream pipeline's global-uniform stage (updateGlobalUniforms): the
+// 128-float audio arrays and the MIDI clock counter are bound only for the effects
+// whose kernels declare them, zero-initialized when no external state is supplied,
+// and the packed note grid uploads as a 128x16 RGBA data texture. Mesh textures
+// (`global_mesh0_*`) bind from `renderOptions.externalInputs.meshData` — the same
+// packed RGBA arrays the upstream `uploadMeshData` path feeds.
+const REACTIVE_EFFECT_IDS = new Set(['synth/roll', 'synth/scope', 'synth/spectrum'])
+const MESH_TEX_WIDTH = 256
+const MESH_TEX_HEIGHT = 256
+
+function bindExternalInputs(definition, uniforms, textures, renderOptions) {
+  const externalInputs = renderOptions.externalInputs ?? {}
+  const passInputNames = new Set()
+  for (const pass of definition.passes ?? []) {
+    for (const resourceName of Object.values(pass.inputs ?? {})) passInputNames.add(resourceName)
+  }
+  if (REACTIVE_EFFECT_IDS.has(definition.id)) {
+    const midiState = externalInputs.midiState
+    const audioState = externalInputs.audioState
+    uniforms.midiClockCount = midiState ? midiState.clockCount : 0
+    // GLSL uniform arrays are zero-initialized when the upstream pipeline has no
+    // external state; the CPU kernels index them unconditionally, so always bind
+    // 128-float arrays (zeros when no audio state is supplied).
+    uniforms.audioWaveform = audioState ? audioState.waveform : new Float32Array(128)
+    uniforms.audioSpectrum = audioState ? audioState.spectrum : new Float32Array(128)
+    if (passInputNames.has('midiNoteGrid')) {
+      const grid = midiState ? midiState.noteGrid : new Float32Array(128 * 16 * 4)
+      textures.midiNoteGrid = externalDataSurface(Surface, grid, 128, 16, 'rgba32f')
+    }
+  }
+  const meshNames = [...passInputNames].filter((name) => name.startsWith('global_mesh0_'))
+  if (meshNames.length > 0) {
+    const meshData = externalInputs.meshData
+    if (!meshData) {
+      throw new Error(`${definition.id} requires external mesh data (renderOptions.externalInputs.meshData)`)
+    }
+    const texWidth = meshData.texWidth ?? MESH_TEX_WIDTH
+    const texHeight = meshData.texHeight ?? MESH_TEX_HEIGHT
+    if (meshNames.includes('global_mesh0_positions')) {
+      textures.global_mesh0_positions = externalDataSurface(Surface, meshData.positionData, texWidth, texHeight, 'rgba32f')
+    }
+    if (meshNames.includes('global_mesh0_normals')) {
+      textures.global_mesh0_normals = externalDataSurface(Surface, meshData.normalData, texWidth, texHeight, 'rgba32f')
+    }
+    if (meshNames.includes('global_mesh0_uvs')) {
+      textures.global_mesh0_uvs = externalDataSurface(Surface, meshData.uvData, texWidth, texHeight, 'rgba32f')
+    }
+  }
+}
+
 export class CpuRenderer {
   constructor(options = {}) {
     if (!options.registry) throw new TypeError('CpuRenderer requires an EffectRegistry')
@@ -325,6 +379,7 @@ export class CpuRenderer {
       }
     }
     if (definition.id === 'synth/remap') uniforms.data = remapUniformData(uniforms, renderOptions.width, renderOptions.height)
+    bindExternalInputs(definition, uniforms, textures, renderOptions)
     return { uniforms, textures }
   }
 
@@ -428,8 +483,10 @@ export class CpuRenderer {
 
   initializeCanonicalResources(definition, params, resources, renderOptions, owned) {
     const produced = new Set(definition.passes.flatMap((pass) => Object.values(pass.outputs ?? {})))
+    const consumed = new Set(definition.passes.flatMap((pass) => Object.values(pass.inputs ?? {})))
     for (const name of Object.keys(definition.textures)) {
-      if (resources.has(name) || produced.has(name)) continue
+      if (resources.has(name)) continue
+      if (produced.has(name) && !(consumed.has(name) && name.startsWith('_'))) continue
       if (name === 'overlayTex' && ['filter/fibers', 'filter/scratches', 'filter/strayHair'].includes(definition.id)) {
         if (renderOptions.oneShot === 'initial') {
           const surface = this.canonicalDestination(definition, name, params, renderOptions)
@@ -1271,6 +1328,31 @@ export class CpuRenderer {
         continue
       }
 
+      if (pass.drawMode === 'triangles') {
+        const outputName = Object.values(pass.outputs ?? {})[0]
+        if (!outputName) throw new Error(`${step.definition.id} pass "${pass.name}" has no fragment output`)
+        const meshKey = `${step.definition.id}:${pass.program}`
+        const adapter = resolveMeshAdapter(meshKey)
+        if (typeof adapter !== 'function') throw new Error(`Missing CPU mesh adapter "${meshKey}"`)
+        for (let iteration = 0; iteration < repeat; iteration += 1) {
+          const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions, pass, resources)
+          owned.add(destination)
+          const textures = this.canonicalTextures(step.definition, pass, resources)
+          const previous = resources.get(outputName)
+          if (previous?.data && previous.data.length === destination.data.length) destination.data.set(previous.data)
+          else destination.clear()
+          const passUniformValues = this.passUniforms(pass, params, bindings.uniforms)
+          const scatterBindings = this.buildScatterBindings(destination, renderOptions)
+          const passStats = adapter({ pass, uniforms: passUniformValues, bindings: scatterBindings, inputs: textures, destination, params, externalInputs: renderOptions.externalInputs })
+          quantizeTexture(destination, destination.format)
+          stats.passes += 1
+          stats.pixels += passStats.pixels
+          this.replaceCanonicalResource(outputName, destination, resources, surfaces, owned)
+          lastOutput = destination
+        }
+        continue
+      }
+
       const factory = this.resolveCanonicalFactory(step.definition, pass)
       if (pass.drawBuffers >= 2 && Array.isArray(factory.outputNames)) {
         for (let iteration = 0; iteration < repeat; iteration += 1) {
@@ -1407,6 +1489,31 @@ export class CpuRenderer {
           const passUniformValues = this.passUniforms(pass, params, bindings.uniforms)
           const scatterBindings = this.buildScatterBindings(destination, renderOptions)
           const passStats = adapter({ pass, uniforms: passUniformValues, bindings: scatterBindings, inputs: textures, destination, params })
+          quantizeTexture(destination, destination.format)
+          stats.passes += 1
+          stats.pixels += passStats.pixels
+          this.replaceCanonicalResource(outputName, destination, resources, surfaces, owned)
+          lastOutput = destination
+        }
+        continue
+      }
+
+      if (pass.drawMode === 'triangles') {
+        const outputName = Object.values(pass.outputs ?? {})[0]
+        if (!outputName) throw new Error(`${step.definition.id} pass "${pass.name}" has no fragment output`)
+        const meshKey = `${step.definition.id}:${pass.program}`
+        const adapter = resolveMeshAdapter(meshKey)
+        if (typeof adapter !== 'function') throw new Error(`Missing CPU mesh adapter "${meshKey}"`)
+        for (let iteration = 0; iteration < repeat; iteration += 1) {
+          const destination = this.canonicalDestination(step.definition, outputName, params, renderOptions, pass, resources)
+          owned.add(destination)
+          const textures = this.canonicalTextures(step.definition, pass, resources)
+          const previous = resources.get(outputName)
+          if (previous?.data && previous.data.length === destination.data.length) destination.data.set(previous.data)
+          else destination.clear()
+          const passUniformValues = this.passUniforms(pass, params, bindings.uniforms)
+          const scatterBindings = this.buildScatterBindings(destination, renderOptions)
+          const passStats = adapter({ pass, uniforms: passUniformValues, bindings: scatterBindings, inputs: textures, destination, params, externalInputs: renderOptions.externalInputs })
           quantizeTexture(destination, destination.format)
           stats.passes += 1
           stats.pixels += passStats.pixels

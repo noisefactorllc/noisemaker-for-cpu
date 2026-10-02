@@ -8,6 +8,7 @@ import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories, compileDs
 import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng, writePng } from '../../src/node/png.js'
 import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect, NEW_CPU_EFFECT_IDS } from './lib.js'
+import { externalInputsForCase } from './reactive-fixtures.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -119,6 +120,7 @@ async function main() {
       time: options.time,
       seed: options.seed,
       externalTextures: { imageTex: blank, textTex: blank },
+      externalInputs: externalInputsForCase(definition.id),
       oneShot: 'initial',
     })
     const suite = suiteFor(definition)

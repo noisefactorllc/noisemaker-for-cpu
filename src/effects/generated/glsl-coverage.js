@@ -2381,6 +2381,36 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 545
   },
   {
+    "effectId": "render/meshLoader",
+    "program": "preview",
+    "file": "preview.glsl",
+    "status": "generated",
+    "sourceSha256": "ab3377a09a9dc38c652d4e9636a89ad9f0e8842971a5ed86bcae0ee8a16493aa",
+    "sourceBytes": 1455,
+    "normalizedBytes": 1436,
+    "generatedBytes": 1396
+  },
+  {
+    "effectId": "render/meshRender",
+    "program": "clear",
+    "file": "clear.glsl",
+    "status": "generated",
+    "sourceSha256": "baa677b16c7d4be78f20274420f7e3220bc54101db555290688d056104060f7c",
+    "sourceBytes": 239,
+    "normalizedBytes": 220,
+    "generatedBytes": 291
+  },
+  {
+    "effectId": "render/meshRender",
+    "program": "render",
+    "file": "render.frag",
+    "status": "generated",
+    "sourceSha256": "b39386c2cb0877e2381fd04c8fc9cb6e51f7126801f91faac11fb75e54d6c873",
+    "sourceBytes": 2047,
+    "normalizedBytes": 2019,
+    "generatedBytes": 2532
+  },
+  {
     "effectId": "render/pointsBillboardRender",
     "program": "blend",
     "file": "blend.glsl",
@@ -2881,6 +2911,26 @@ export const programCoverage = Object.freeze([
     "generatedBytes": 4805
   },
   {
+    "effectId": "synth/roll",
+    "program": "copy",
+    "file": "copy.glsl",
+    "status": "generated",
+    "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
+    "sourceBytes": 351,
+    "normalizedBytes": 486,
+    "generatedBytes": 545
+  },
+  {
+    "effectId": "synth/roll",
+    "program": "roll",
+    "file": "roll.glsl",
+    "status": "generated",
+    "sourceSha256": "92b426fa60df51c3db057b8f93ce3c6525cf087fd2398c6e038046f9ede1d8c9",
+    "sourceBytes": 2305,
+    "normalizedBytes": 2261,
+    "generatedBytes": 2339
+  },
+  {
     "effectId": "synth/sacredGeometry",
     "program": "sacredGeometry",
     "file": "sacredGeometry.glsl",
@@ -2889,6 +2939,16 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 9710,
     "normalizedBytes": 9422,
     "generatedBytes": 8953
+  },
+  {
+    "effectId": "synth/scope",
+    "program": "scope",
+    "file": "scope.glsl",
+    "status": "generated",
+    "sourceSha256": "e5e4d09db8e884a41f1cc2ce908f438dc4cff9f2f22741c30877e3f9aae91b90",
+    "sourceBytes": 1124,
+    "normalizedBytes": 1105,
+    "generatedBytes": 1080
   },
   {
     "effectId": "synth/shape",
@@ -2909,6 +2969,16 @@ export const programCoverage = Object.freeze([
     "sourceBytes": 273,
     "normalizedBytes": 254,
     "generatedBytes": 269
+  },
+  {
+    "effectId": "synth/spectrum",
+    "program": "spectrum",
+    "file": "spectrum.glsl",
+    "status": "generated",
+    "sourceSha256": "552157fb5fad42e56c767a38468e0b04095f5d93e1c6ede55044d5da76cb78fb",
+    "sourceBytes": 1104,
+    "normalizedBytes": 1085,
+    "generatedBytes": 1162
   },
   {
     "effectId": "synth/subdivide",

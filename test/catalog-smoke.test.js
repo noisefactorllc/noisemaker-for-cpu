@@ -4,6 +4,8 @@ import test from 'node:test'
 import { createDefaultRegistry, effectCatalog, kernelFactories, kernels } from '../src/effects/catalog.js'
 import { eligibleEffectIds } from '../src/effects/generated/upstream-snapshot.js'
 import { resolveScatterAdapter } from '../src/effects/cpu/scatter-registry.js'
+import { resolveMeshAdapter } from '../src/effects/cpu/mesh-render.js'
+import { parseOBJ, packMeshDataForTextures } from '../src/runtime/external-input.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { Surface } from '../src/runtime/surface.js'
 
@@ -68,10 +70,24 @@ function choiceProgram(effect, name, value) {
   return smokeProgram(effect, [[name, value]])
 }
 
-test('default catalog contains the exact canonical 205-effect coverage set', () => {
+// A tiny deterministic OBJ fixture (tetrahedron with explicit normals) parsed and packed
+// through the same external-input module the renderer consumes.
+function defaultMeshFixture() {
+  const obj = [
+    'v 0 0 0', 'v 1 0 0', 'v 0 1 0', 'v 0 0 1',
+    'vn 0 0 1', 'vn 0 -1 0', 'vn -1 0 0', 'vn 0.5773503 0.5773503 0.5773503',
+    'f 1//1 3//1 2//1', 'f 1//2 2//2 4//2', 'f 1//3 4//3 3//3', 'f 2//4 3//4 4//4',
+    '',
+  ].join('\n')
+  const parsed = parseOBJ(obj)
+  const packed = packMeshDataForTextures(parsed.positions, parsed.normals, parsed.uvs, 256, 256)
+  return { ...packed, texWidth: 256, texHeight: 256 }
+}
+
+test('default catalog contains the exact canonical 210-effect coverage set', () => {
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
-  assert.equal(createDefaultRegistry().list().length, 205)
-  assert.equal(kernelFactories.size, 295)
+  assert.equal(createDefaultRegistry().list().length, 210)
+  assert.equal(kernelFactories.size, 302)
   assert.ok(kernels.size >= 33)
   for (const effect of effectCatalog) {
     for (const pass of effect.passes) {
@@ -79,10 +95,13 @@ test('default catalog contains the exact canonical 205-effect coverage set', () 
       // Vertex-stage scatter passes (`drawMode: 'points'|'billboards'`) are dispatched through
       // the hand-written adapter registry, never through a transpiled fragment kernel - they
       // rasterize a variable point/quad count rather than filling every destination pixel once
-      // (see src/effects/cpu/scatter-registry.js). Every other pass has a generated or
-      // hand-adapted entry in kernelFactories.
+      // (see src/effects/cpu/scatter-registry.js). Triangle-draw passes (`drawMode: 'triangles'`,
+      // render/meshRender) go through the hand-written CPU rasterizer in mesh-render.js the
+      // same way. Every other pass has a generated or hand-adapted entry in kernelFactories.
       if (pass.drawMode === 'points' || pass.drawMode === 'billboards') {
         assert.equal(typeof resolveScatterAdapter(key), 'function', key)
+      } else if (pass.drawMode === 'triangles') {
+        assert.equal(typeof resolveMeshAdapter(key), 'function', key)
       } else {
         assert.equal(typeof kernelFactories.get(key), 'function', key)
       }
@@ -94,6 +113,10 @@ test('every eligible canonical effect renders finite default pixels', () => {
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories, tileRows: 2 })
   const external = new Surface(2, 2)
   external.clear([0.2, 0.4, 0.6, 1])
+  // Deterministic default external inputs for the mesh effects: a small triangle-soup
+  // OBJ parsed and packed exactly like the upstream loadOBJFromURL path (the reactive
+  // effects need no inputs — silent MIDI/audio zero state is their default).
+  const meshData = defaultMeshFixture()
   for (const effect of effectCatalog) {
     // Iterated effects default iterationCount to 60; override to a small fixed value so this
     // sweep stays fast, and render at 16x16 (rather than 2x2) so their pass graphs - some of
@@ -106,6 +129,7 @@ test('every eligible canonical effect renders finite default pixels', () => {
       seed: 3,
       time: 0.25,
       externalTextures: { imageTex: external, textTex: external },
+      externalInputs: { meshData },
     })
     assert.equal(result.width, size, effect.id)
     assert.ok(result.surface.data.every(Number.isFinite), `${effect.id} produced non-finite pixels`)

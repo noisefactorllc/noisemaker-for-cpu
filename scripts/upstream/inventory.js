@@ -13,12 +13,17 @@ const effectsRoot = resolve(referenceRoot, 'shaders', 'effects')
 const outputPath = resolve(projectRoot, 'src', 'effects', 'generated', 'upstream-snapshot.js')
 
 const namespaces = ['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d']
+// The reactive (MIDI/audio) and mesh (OBJ) effects are imported into the catalog and
+// graded through host-fed external-input fixtures (GAP-003 closing contract counts
+// them as expected cases); see src/runtime/external-input.js for the CPU-side state.
 const reactive = Object.freeze(['synth/roll', 'synth/scope', 'synth/spectrum'])
 const mesh = Object.freeze(['render/meshLoader', 'render/meshRender'])
-const excluded = new Set([...reactive, ...mesh])
+const excluded = new Set([])
 const renderAllowlist = new Set([
   'loopBegin',
   'loopEnd',
+  'meshLoader',
+  'meshRender',
   'pointsEmit',
   'pointsRender',
   'pointsBillboardRender',

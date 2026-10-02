@@ -32,6 +32,7 @@ import {
 import { sourceEffectIds, UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng } from '../../src/node/png.js'
 import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect } from './lib.js'
+import { externalInputsForCase } from './reactive-fixtures.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -189,6 +190,7 @@ export async function runSummary(options = {}) {
       time: meta.time,
       seed: meta.seed,
       externalTextures: { imageTex: blank, textTex: blank },
+      externalInputs: externalInputsForCase(id),
       oneShot: 'initial',
     })
     const golden = await readPng(goldenPath(id))

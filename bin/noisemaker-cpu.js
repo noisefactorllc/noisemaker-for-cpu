@@ -13,6 +13,14 @@ import { CpuRenderer } from '../src/runtime/renderer.js'
 import { Surface } from '../src/runtime/surface.js'
 import { readPng, writePng } from '../src/node/png.js'
 
+// Reactive/mesh effects require external inputs the CLI binds no fixture for
+// (`--effect random` must not select them — same exclusion rationale as iterated
+// and externalTexture effects). Keep the id list in sync with the catalog imports.
+const EXTERNAL_INPUT_EFFECT_IDS = new Set(['synth/roll', 'synth/scope', 'synth/spectrum', 'render/meshLoader', 'render/meshRender'])
+function needsExternalInputs(effect) {
+  return EXTERNAL_INPUT_EFFECT_IDS.has(effect.id)
+}
+
 const execFileAsync = promisify(execFile)
 
 const HELP = `Usage: noisemaker-cpu COMMAND [OPTIONS]
@@ -184,12 +192,11 @@ function resolveEffect(name) {
 function pickEffect(name, kind) {
   if (name !== 'random') return resolveEffect(name)
   const pool = effectCatalog.filter(
-    (effect) => effect.kind === kind && effect.domain === 'image' && !effect.iterated && !effect.externalTexture,
+    (effect) => effect.kind === kind && effect.domain === 'image' && !effect.iterated && !effect.externalTexture && !needsExternalInputs(effect),
   )
   if (pool.length === 0) throw new Error(`No ${kind} effects available`)
   return pool[Math.floor(Math.random() * pool.length)]
 }
-
 // Turn --param assignments into DSL args, defaulting seed to --seed when the
 // effect exposes a seed parameter and the caller did not pass one explicitly.
 function withSeed(effect, options) {
