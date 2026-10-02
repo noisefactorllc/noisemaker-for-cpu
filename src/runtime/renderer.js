@@ -927,7 +927,18 @@ export class CpuRenderer {
   }
 
   runIteratedGroupSync(group, groupInput, surfaces, owned, renderOptions, stats) {
-    const iterationCount = group.steps[0].params.iterationCount
+    // Upstream (shaders/src/runtime/pipeline.js render()) executes each pass exactly
+    // resolveRepeatCount(pass) times per frame — there is no group-level multiplier.
+    // For effects whose passes carry a `repeat` (synth/reactionDiffusion, synth/navierStokes,
+    // synth3d/reactionDiffusion3d) the pass repeat IS the per-frame iteration count, so the
+    // group loop must not multiply it again; the documented iterationCount:0 bypass
+    // (zero passes run) is still honored. All other iterated effects keep the established
+    // `iterationCount` group loop (filter/temporalAberration requires N=60).
+    const owner = group.steps[0]
+    const requested = owner.params.iterationCount
+    const iterationCount = owner.definition.passes.some((pass) => pass.repeat)
+      ? Math.min(requested ?? 1, 1)
+      : requested
     const N = Number.isFinite(iterationCount) ? iterationCount : 60
     if (!(N > 0)) return this.zeroIterationGroupOutput(group, groupInput, renderOptions, owned)
 
@@ -970,7 +981,12 @@ export class CpuRenderer {
   }
 
   async runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler) {
-    const iterationCount = group.steps[0].params.iterationCount
+    // Mirror of runIteratedGroupSync's pass-repeat rule (see its comment).
+    const owner = group.steps[0]
+    const requested = owner.params.iterationCount
+    const iterationCount = owner.definition.passes.some((pass) => pass.repeat)
+      ? Math.min(requested ?? 1, 1)
+      : requested
     const N = Number.isFinite(iterationCount) ? iterationCount : 60
     if (!(N > 0)) return this.zeroIterationGroupOutput(group, groupInput, renderOptions, owned)
 

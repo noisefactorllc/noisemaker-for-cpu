@@ -1185,6 +1185,13 @@
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
       "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
+    "defaults/synth3d__reactionDiffusion3d.golden.png": {
+      "sha256": "02ae9349ce0b515e5a52e5e862c398bcfa354b133d09eab5848dcce452a41bf3",
+      "bytes": 118,
+      "introducedIn": "4e5904c06d285305718ef1e4c834d3aea13dad9f",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-rd3d-passrepeat",
+      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture (parity/upstream-defaults/synth3d__reactionDiffusion3d.dsl: reactionDiffusion3d(seed: 1, volumeSize: x32).render3d(volumeSize: v32).write(o0); render(o0)), time 0.25, readPixels('global_o0_write') twice with identical bytes; the CPU port reproduces these bytes only after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount (each pass executes its repeat-count per frame; no group-level multiplier); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (rd3d-auth-reply.json, rd3d-capture-reply.json)"
+    },
     "defaults/synth__bitwise.golden.png": {
       "sha256": "ebfcc6c3f5d579d5b631acc0163dd40e39de61dff0796e0aa09b0a855221353d",
       "bytes": 86,

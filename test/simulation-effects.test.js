@@ -35,6 +35,13 @@ const ITERATED = [
   'synth/reactionDiffusion',
 ]
 
+// Effects whose passes carry a `repeat` uniform (navierStokes pressure, reactionDiffusion
+// simulate). Upstream (shaders/src/runtime/pipeline.js render(), resolveRepeatCount) executes
+// those passes exactly `iterations` times per frame — there is NO group-level multiplier — so
+// the CPU group's `iterationCount` is inert above 0 for these: the per-frame evolution is
+// governed by the pass's `iterations` uniform instead.
+const REPEAT_CARRIED = new Set(['synth/navierStokes', 'synth/reactionDiffusion'])
+
 // Effects whose N=4 vs N=8 default-program output is empirically byte-identical at this file's
 // test scale (16x16 or 8x8, stateSize 64, seed/time pinned by the fixture) — re-verified directly
 // against the live catalog, not assumed. Two DIFFERENT, non-interchangeable reasons
@@ -149,10 +156,11 @@ function fixtureSource(id) {
 // `CpuRenderer` pools its surfaces, so a later `render()` call on the same renderer can recycle
 // the exact buffer a previous result pointed at — every other determinism check in this codebase
 // spreads/copies out for the same reason (see e.g. test/iterated-effects.test.js).
-function renderDefault(renderer, id, { iterationCount } = {}) {
+function renderDefault(renderer, id, { iterationCount, iterations } = {}) {
   let source = fixtureSource(id)
   const ownerFunc = ownerFuncFor(id, source)
   if (iterationCount !== undefined) source = withNamedArg(source, ownerFunc, 'iterationCount', iterationCount)
+  if (iterations !== undefined) source = withNamedArg(source, ownerFunc, 'iterations', iterations)
   if (ownerFunc === 'pointsEmit') source = withNamedArg(source, 'pointsEmit', 'stateSize', 64)
   if (ZOOM_OVERRIDE.has(id)) source = withNamedArg(source, ownerFunc, 'zoom', ZOOM_OVERRIDE.get(id))
   const size = sizeFor(id)
@@ -162,6 +170,19 @@ function renderDefault(renderer, id, { iterationCount } = {}) {
 
 function allFinite(data) {
   return data.every(Number.isFinite)
+}
+
+// Renders a default program the same way `renderDefault` does (same fixture, overrides, size,
+// time and seed) and returns the executed-pass count from the render's stats — the observable
+// for pass `repeat` machinery (see the navierStokes branch in the test below).
+function passCount(renderer, id, opts = {}) {
+  let source = fixtureSource(id)
+  const ownerFunc = ownerFuncFor(id, source)
+  if (opts.iterationCount !== undefined) source = withNamedArg(source, ownerFunc, 'iterationCount', opts.iterationCount)
+  if (opts.iterations !== undefined) source = withNamedArg(source, ownerFunc, 'iterations', opts.iterations)
+  if (ZOOM_OVERRIDE.has(id)) source = withNamedArg(source, ownerFunc, 'zoom', ZOOM_OVERRIDE.get(id))
+  const size = sizeFor(id)
+  return renderer.render(source, { width: size, height: size, time: 0.25, seed: 1, oneShot: 'initial' }).stats.passes
 }
 
 function nonZeroPixels(surface) {
@@ -197,6 +218,27 @@ test('every iterated effect default program renders finite bytes and evolves wit
         ? `${id} has genuinely settled (byte-identical from iterationCount:4 through :60, re-verified)`
         : `${id} is on a deterministic plateau at this test scale (byte-identical N=4..8, but resumes changing at a larger iterationCount or canvas - this is NOT settling)`
       assert.deepEqual(four, eight, reason)
+    } else if (REPEAT_CARRIED.has(id)) {
+      // Upstream semantics: the group loop is inert above 0 for these (the pass `repeat`
+      // uniform is the per-frame multiplier), so N=4 and N=8 must be byte-identical — and the
+      // `iterations` uniform must be the real, observable driver of per-frame evolution.
+      // navierStokes' nsPressure is a single Jacobi step that converges at these scales — see
+      // the branch below for how its repeat machinery is observed instead.
+      if (id === 'synth/navierStokes') {
+        // nsPressure is ONE Jacobi relaxation step repeated `iterations` times per frame, and
+        // the pressure field measurably converges within 4 iterations at every tested scale
+        // (8x8, 16x16, 32x32): iterations:8/:12/:40 render byte-identical to :4 through the
+        // final dye pass. That byte-identity is convergence physics, not missing wiring — the
+        // executed-pass count is the observable that proves the repeat consumes the uniform.
+        const base = passCount(renderer, id, { iterationCount: 4, iterations: 4 })
+        const more = passCount(renderer, id, { iterationCount: 4, iterations: 12 })
+        assert.equal(more - base, 8, `${id} nsPressure pass must execute once per iterations unit`)
+      } else {
+        const it4 = renderDefault(renderer, id, { iterationCount: 4, iterations: 4 })
+        const it12 = renderDefault(renderer, id, { iterationCount: 4, iterations: 12 })
+        assert.ok(allFinite(it4) && allFinite(it12), `${id} iterations:4/:12 produced non-finite pixels`)
+        assert.notDeepEqual(it4, it12, `${id} pass iterations uniform must drive per-frame evolution`)
+      }
     } else {
       assert.notDeepEqual(four, eight, `${id} state must still be advancing between iterationCount:4 and iterationCount:8`)
     }
