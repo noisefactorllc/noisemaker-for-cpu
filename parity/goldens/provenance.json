@@ -1104,14 +1104,14 @@
     "defaults/render__meshLoader.golden.png": {
       "sha256": "ffaf764868498300e5d22b120d1d491cd3e6170380a76fbb478068e79ff647e3",
       "bytes": 97,
-      "introducedIn": "bf80e23c9e64a1b97a3a8628ad6b055f2b86d65e",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/render__meshRender.golden.png": {
       "sha256": "e83481ab9a87953c5850b6d816132786927f8b8c675f7ce903b4579c6d6bc49e",
       "bytes": 84,
-      "introducedIn": "bf80e23c9e64a1b97a3a8628ad6b055f2b86d65e",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
@@ -1307,7 +1307,7 @@
     "defaults/synth__roll.golden.png": {
       "sha256": "9ea0d5e619371f0d707fc5df2e6e7a7e0ac80e5e930f7518e4cb09fd24a8b51e",
       "bytes": 81,
-      "introducedIn": "bf80e23c9e64a1b97a3a8628ad6b055f2b86d65e",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
@@ -1321,7 +1321,7 @@
     "defaults/synth__scope.golden.png": {
       "sha256": "72b436f2b0797755f5d1f02acc26d506a70988e8e9dcbeae12e3405e9dcb8ac6",
       "bytes": 138,
-      "introducedIn": "bf80e23c9e64a1b97a3a8628ad6b055f2b86d65e",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
@@ -1342,7 +1342,7 @@
     "defaults/synth__spectrum.golden.png": {
       "sha256": "8bcfbd41b7608c1536c5b8111844b09643a240481f2c21480f92248ecbafb716",
       "bytes": 128,
-      "introducedIn": "bf80e23c9e64a1b97a3a8628ad6b055f2b86d65e",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
