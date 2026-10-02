@@ -70,9 +70,7 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 // temporalAberration, feedback) now have committed goldens captured byte-exact
 // (feedback within ±2, max 1) and are graded.
 export const NEW_CPU_EFFECT_IDS = Object.freeze(new Set([
-  'classicNoisedeck/shapes3d',
   'filter3d/flow3d',
-  'render/loopBegin', 'render/loopEnd',
   'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
   'synth3d/fractal3d', 'synth3d/shape3d',
 ]))
@@ -81,10 +79,8 @@ export const NEW_CPU_EFFECT_IDS = Object.freeze(new Set([
 // show real CPU divergence (the recorded sin-hash / feedback-chain / volume-iteration
 // classes); every other iterated effect is graded against its committed golden.
 export const ITERATED_SKIP_IDS = Object.freeze(new Set([
-  'filter/convolutionFeedback', 'filter/motionBlur',
-  'points/attractor', 'points/buddhabrot', 'points/lenia',
-  'render/pointsBillboardRender',
-  'synth/cellularAutomata', 'synth/mnca', 'synth/navierStokes', 'synth/reactionDiffusion',
+  'points/buddhabrot', 'points/lenia',
+  'synth/navierStokes',
 ]))
 
 export function isSkippedEffect(definition) {

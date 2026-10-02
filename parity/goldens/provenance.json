@@ -128,6 +128,13 @@
       "captureRevision": null,
       "captureRecord": null
     },
+    "classic/classicNoisedeck__shapes3d.golden.png": {
+      "sha256": "ba319e2b6d3fb55959a27b2527583198acc839df9ba244717b3eaea93bf156e3",
+      "bytes": 121,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
+    },
     "classic/classicNoisedeck__splat.golden.png": {
       "sha256": "88a8b5faa37ed34ba278c8186e92b99bd62cf169de7199d9f376cdaec9c970ab",
       "bytes": 332,
@@ -232,6 +239,13 @@
       "introducedIn": "79c3ad626f82939247317d77909080b25f05c6a9",
       "captureRevision": null,
       "captureRecord": null
+    },
+    "defaults/filter__convolutionFeedback.golden.png": {
+      "sha256": "a609be31c6154826556f4354cd4dcab3639b5a811193ba905d0465b6f66e2062",
+      "bytes": 289,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate-60frame",
+      "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
     },
     "defaults/filter__corrupt.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
@@ -470,6 +484,13 @@
       "introducedIn": "79c3ad626f82939247317d77909080b25f05c6a9",
       "captureRevision": null,
       "captureRecord": null
+    },
+    "defaults/filter__motionBlur.golden.png": {
+      "sha256": "2600e08a5c1c67918fb7b8a9239f5c6fed8b6e9b603a7b48d2ea61753634e230",
+      "bytes": 332,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate-60frame",
+      "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
     },
     "defaults/filter__normalMap.golden.png": {
       "sha256": "df34eeff74245c539a75c8b4a48c9a0382e1b238361c6f415c3bb813a9c09bc0",
@@ -1045,6 +1066,13 @@
       "captureRevision": null,
       "captureRecord": null
     },
+    "defaults/points__attractor.golden.png": {
+      "sha256": "e8f4ab8c00fea3116f6227e8ca727a65af6cfd7e37ba3acd9dec11574dbeb85a",
+      "bytes": 199,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate-60frame",
+      "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
+    },
     "defaults/points__dla.golden.png": {
       "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
       "bytes": 72,
@@ -1101,6 +1129,20 @@
       "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
       "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
+    "defaults/render__loopBegin.golden.png": {
+      "sha256": "5b24366cd775a0462ce06a9fbfa9d8430a158bd4ed67fdd8d917884ca86758c1",
+      "bytes": 295,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate-60frame",
+      "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
+    },
+    "defaults/render__loopEnd.golden.png": {
+      "sha256": "5b24366cd775a0462ce06a9fbfa9d8430a158bd4ed67fdd8d917884ca86758c1",
+      "bytes": 295,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate-60frame",
+      "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
+    },
     "defaults/render__meshLoader.golden.png": {
       "sha256": "ffaf764868498300e5d22b120d1d491cd3e6170380a76fbb478068e79ff647e3",
       "bytes": 97,
@@ -1114,6 +1156,13 @@
       "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    },
+    "defaults/render__pointsBillboardRender.golden.png": {
+      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+      "bytes": 72,
+      "introducedIn": "9e202113c4fa1830c5cbdc697c8363b92259515d",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
     },
     "defaults/render__pointsEmit.golden.png": {
       "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
@@ -1188,7 +1237,7 @@
     "defaults/synth3d__reactionDiffusion3d.golden.png": {
       "sha256": "02ae9349ce0b515e5a52e5e862c398bcfa354b133d09eab5848dcce452a41bf3",
       "bytes": 118,
-      "introducedIn": "4e5904c06d285305718ef1e4c834d3aea13dad9f",
+      "introducedIn": "ea4abf3f12215e8c884d364b764342bd42ac5c01",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-rd3d-passrepeat",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture (parity/upstream-defaults/synth3d__reactionDiffusion3d.dsl: reactionDiffusion3d(seed: 1, volumeSize: x32).render3d(volumeSize: v32).write(o0); render(o0)), time 0.25, readPixels('global_o0_write') twice with identical bytes; the CPU port reproduces these bytes only after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount (each pass executes its repeat-count per frame; no group-level multiplier); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (rd3d-auth-reply.json, rd3d-capture-reply.json)"
     },
@@ -1205,6 +1254,13 @@
       "introducedIn": "79c3ad626f82939247317d77909080b25f05c6a9",
       "captureRevision": null,
       "captureRecord": null
+    },
+    "defaults/synth__cellularAutomata.golden.png": {
+      "sha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
+      "bytes": 74,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
     },
     "defaults/synth__curl.golden.png": {
       "sha256": "567cd6207b62e13988437e94baf825fab1285370d1d3eaae6452ec212520dbb2",
@@ -1255,6 +1311,13 @@
       "captureRevision": null,
       "captureRecord": null
     },
+    "defaults/synth__mnca.golden.png": {
+      "sha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
+      "bytes": 74,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
+    },
     "defaults/synth__modPattern.golden.png": {
       "sha256": "fdf61afdc036a884e02dd7ce745e6ca534ced039df5f6821d9f267ca33c54819",
       "bytes": 143,
@@ -1303,6 +1366,13 @@
       "introducedIn": "79c3ad626f82939247317d77909080b25f05c6a9",
       "captureRevision": null,
       "captureRecord": null
+    },
+    "defaults/synth__reactionDiffusion.golden.png": {
+      "sha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
+      "bytes": 74,
+      "introducedIn": "8fb79ba50bbbb8436f14cdcfcbca12a3b5741a0b",
+      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
     },
     "defaults/synth__remap.golden.png": {
       "sha256": "9dc681968c63ee057c802937fc0a6ea19ce3e6c582db817567a88d93e6e686f8",
