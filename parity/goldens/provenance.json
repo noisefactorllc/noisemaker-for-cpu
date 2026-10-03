@@ -1223,7 +1223,7 @@
     "defaults/synth3d__fractal3d.golden.png": {
       "sha256": "e473d5eae1191f1d09f0d25b14e44733a237790085b36db0fee215fb72e94e7d",
       "bytes": 109,
-      "introducedIn": "890d6b62036729a34e48368f1db2a201ad33f114",
+      "introducedIn": "390071fa078fbc3bb3ba4836a3cbb63320e61df5",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-graduate-60f",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) authority frames then readPixels of the fixture's own final render target twice with identical bytes (the settled-state span the CPU iterates per render; synth3d/fractal3d is frame-static so this equals its single-frame state); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
@@ -1247,6 +1247,13 @@
       "introducedIn": "ea4abf3f12215e8c884d364b764342bd42ac5c01",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-rd3d-passrepeat",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture (parity/upstream-defaults/synth3d__reactionDiffusion3d.dsl: reactionDiffusion3d(seed: 1, volumeSize: x32).render3d(volumeSize: v32).write(o0); render(o0)), time 0.25, readPixels('global_o0_write') twice with identical bytes; the CPU port reproduces these bytes only after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount (each pass executes its repeat-count per frame; no group-level multiplier); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (rd3d-auth-reply.json, rd3d-capture-reply.json)"
+    },
+    "defaults/synth3d__shape3d.golden.png": {
+      "sha256": "439777d3b5a406385660f37b7e36e7a68110afba8b0f7be6fe7efa6b41e67375",
+      "bytes": 191,
+      "introducedIn": "265721913459a38df5fe8b9ffa877ebd43212b0e",
+      "captureRevision": "2026-10-03-m4-metal-webgl2-worker-elves-3be6cc6a-intdiv-shape3d",
+      "captureRecord": "2026-10-03 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) frame (synth3d/shape3d is frame-static and non-iterated, so this equals its settled state) read back twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth__bitwise.golden.png": {
       "sha256": "ebfcc6c3f5d579d5b631acc0163dd40e39de61dff0796e0aa09b0a855221353d",

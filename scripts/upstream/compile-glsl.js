@@ -215,7 +215,7 @@ function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
   return out
 }
 
-function restoreIntegerDivision(transpiled, originalSource) {
+function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // GLSL int/int division truncates toward zero; the transpiler loses int typing on
   // component-indexed operands (e.g. `int z = pixelCoord.y / volSize;` inside the volume
   // atlas mapping) and emits a raw float64 division, shifting every sampled coordinate.
@@ -230,10 +230,24 @@ function restoreIntegerDivision(transpiled, originalSource) {
   for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:=|;)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bivec[234]\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
   if (intNames.size === 0) return transpiled
-  return transpiled.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*)\[(\d+)\] \/ ([A-Za-z_$]\w*);/g, (m, name, vec, idx, divisor) => {
+  let out = transpiled.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*)\[(\d+)\] \/ ([A-Za-z_$]\w*);/g, (m, name, vec, idx, divisor) => {
     if (!intNames.has(divisor)) return m
     return `var ${name} = Math.trunc(${vec}[${idx}] / ${divisor});`
   })
+  // Statement-level scalar/scalar form (synth3d/shape3d: `int z = yAtlas / volumeSize;` where
+  // yAtlas is a scalar int local). Both operands are provably int-typed GLSL identifiers, so
+  // GLSL truncates toward zero; the transpiler's raw float64 division shifted every volume
+  // z-slice coordinate. filter/spookyTicker is EXEMPT: its pinned M4/Metal authority capture
+  // matches the untruncated lowering for `glyph_idx = lx / cell_stride` (measured, see the
+  // GAP-003 record), so truncating it regresses the gate.
+  if (effectId !== 'filter/spookyTicker') {
+    out = out.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*) \/ ([A-Za-z_$]\w*);/g, (m, name, dividend, divisor) => {
+      if (!intNames.has(divisor) || !intNames.has(dividend)) return m
+      if (dividend === divisor) return m
+      return `var ${name} = Math.trunc(${dividend} / ${divisor});`
+    })
+  }
+  return out
 }
 
 function preserveIntCastPrecedence(transpiled) {
@@ -660,7 +674,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   if (effectId !== 'filter/scatter') transpiled = lowerFloatLiterals(transpiled)
   transpiled = preserveIntCastPrecedence(transpiled)
   transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
-  transpiled = restoreIntegerDivision(transpiled, originalSource)
+  transpiled = restoreIntegerDivision(transpiled, originalSource, effectId)
   transpiled = copyAliasedVectorDeclarations(transpiled)
   transpiled = poolLocalVectors(transpiled)
   const called = new Set([...transpiled.matchAll(/\b([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))

@@ -16283,7 +16283,7 @@ function canonicalFactory91($bindings, $runtime) {
   	var mask = 0;
   	if ((lx >= 0) && (lx < overlay_w) && (ly >= 0) && (ly < overlay_h)) {
   	var cell_stride = CELL_W + GAP;
-  	var glyph_idx = lx / cell_stride;
+  	var glyph_idx = Math.trunc(lx / cell_stride);
   	var within_glyph_x = lx - glyph_idx * cell_stride;
   	if ((within_glyph_x < CELL_W) && (glyph_idx < glyph_count)) {
   	var local_y = (CELL_H - 1) - ly;
@@ -22657,7 +22657,7 @@ function canonicalFactory180($bindings, $runtime) {
   	} else {
   	if (BEHAVIOR == 5) {
   	var quarterSize = max(1, totalAgents / 4);
-  	var band = agentIndex / quarterSize;
+  	var band = Math.trunc(agentIndex / quarterSize);
   	if (band <= 0) {
   	return baseHeading;
   	} else {
@@ -26134,7 +26134,7 @@ function canonicalFactory211($bindings, $runtime) {
   	} else {
   	if (behaviorMode == 5) {
   	var quarterSize = max(1, totalAgents / 4);
-  	var band = agentIndex / quarterSize;
+  	var band = Math.trunc(agentIndex / quarterSize);
   	if (band <= 0) {
   	return baseHeading;
   	} else {
@@ -36953,7 +36953,7 @@ function canonicalFactory297($bindings, $runtime) {
   	var x = gl_FragCoord[0]|0;
   	var yAtlas = gl_FragCoord[1]|0;
   	var y = yAtlas % volSize;
-  	var z = yAtlas / volSize;
+  	var z = Math.trunc(yAtlas / volSize);
   	var p = new $runtime.PooledFloat32Array([(x) / (volSizeF - 1), (y) / (volSizeF - 1), (z) / (volSizeF - 1)]);
   	var lf1 = map(loopAScale, 1, 100, 6, 1);
   	var lf2 = map(loopBScale, 1, 100, 6, 1);

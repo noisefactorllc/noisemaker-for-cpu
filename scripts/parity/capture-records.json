@@ -156,5 +156,11 @@
     "bytes": 109,
     "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-graduate-60f",
     "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) authority frames then readPixels of the fixture's own final render target twice with identical bytes (the settled-state span the CPU iterates per render; synth3d/fractal3d is frame-static so this equals its single-frame state); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+  },
+  "defaults/synth3d__shape3d.golden.png": {
+    "sha256": "439777d3b5a406385660f37b7e36e7a68110afba8b0f7be6fe7efa6b41e67375",
+    "bytes": 191,
+    "captureRevision": "2026-10-03-m4-metal-webgl2-worker-elves-3be6cc6a-intdiv-shape3d",
+    "captureRecord": "2026-10-03 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) frame (synth3d/shape3d is frame-static and non-iterated, so this equals its settled state) read back twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
   }
 }
