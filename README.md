@@ -20,6 +20,18 @@ The renderer is designed to reproduce a frame anywhere JavaScript runs, with the
 
 Node.js 22 or newer is required for the CLI and the ESM entry.
 
+The browser entry and the `examples/browser` demo run on plain ESM and the DOM
+canvas — no WebGL, WebGPU, or native addons. The declared browser floor is
+Chromium 93, Firefox 92, and Safari 15.4: the oldest engines that implement the
+ES2022 features the shipped code uses (`Array.prototype.at`, `Object.hasOwn`,
+private class methods, nullish assignment). In a repository checkout,
+`node scripts/browser-check.mjs` serves the root, opens
+`examples/browser/index.html` headlessly in a Chromium-family browser, and
+verifies that the demo initializes, every same-origin module loads, and the
+first frame renders non-blank. Measured on Linux x86_64: Chromium 154 passes
+the shipped check, and Firefox 155 rendered the demo in a separate
+Playwright-based run. Windows and real Safari remain unqualified.
+
 The supported distribution is the npm package `noisemaker-cpu`. It is not
 published yet (`npm view noisemaker-cpu` returns E404), so install from this
 repository in the meantime:
