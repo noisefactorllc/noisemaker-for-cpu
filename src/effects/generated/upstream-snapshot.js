@@ -212,17 +212,7 @@ export const sourceEffectIds = Object.freeze([
   "synth3d/reactionDiffusion3d",
   "synth3d/shape3d"
 ])
-export const excludedEffects = Object.freeze({
-  "reactive": [
-    "synth/roll",
-    "synth/scope",
-    "synth/spectrum"
-  ],
-  "mesh": [
-    "render/meshLoader",
-    "render/meshRender"
-  ]
-})
+export const excludedEffects = Object.freeze({})
 export const effectRecords = Object.freeze([
   {
     "id": "classicNoisedeck/bitEffects",

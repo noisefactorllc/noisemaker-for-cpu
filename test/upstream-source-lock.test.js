@@ -111,12 +111,11 @@ test('committed kernel records match the pinned-source manifest hashes', async (
   // Every pinned GLSL/fragment source that the port compiles must be
   // accounted for by a coverage record, so a manifest-only drift (effect
   // added/removed upstream) cannot hide an unported kernel change in either
-  // direction. Excluded are the deliberately unported upstream trees
-  // (mesh/reactive, mirrored from the generated snapshot's excludedEffects)
-  // and shared include fragments under _shared/, which compile-glsl.js never
-  // records as effect programs.
+  // direction. Only current snapshot exclusions and shared include fragments
+  // under _shared/ (which compile-glsl.js never records as effect programs)
+  // are outside this check.
   const snapshot = await import('../src/effects/generated/upstream-snapshot.js')
-  const excludedIds = new Set([...snapshot.excludedEffects.mesh, ...snapshot.excludedEffects.reactive])
+  const excludedIds = new Set(Object.values(snapshot.excludedEffects).flat())
   const eligible = new Set(snapshot.effectRecords.map((record) => record.id))
   const covered = new Set(coverageModule.programCoverage.map((record) => `shaders/effects/${record.effectId}/glsl/${record.file}`))
   for (const entry of manifest.entries) {

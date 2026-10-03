@@ -252,18 +252,6 @@ const EXPECTED_ITERATED = [
   'synth3d/reactionDiffusion3d',
 ]
 
-const REACTIVE = [
-  'synth/roll',
-  'synth/scope',
-  'synth/spectrum',
-]
-
-const EXCLUDED = [
-  'render/meshLoader',
-  'render/meshRender',
-  ...REACTIVE,
-].sort()
-
 test('upstream snapshot imports the exact 210-effect source tree with no exclusions', () => {
   assert.equal(UPSTREAM_REVISION, 'e24c844f8dada85551ab084f41db8944fbc176c8')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
@@ -274,12 +262,7 @@ test('upstream snapshot imports the exact 210-effect source tree with no exclusi
     ])),
     { classicNoisedeck: 20, filter: 113, filter3d: 2, mixer: 15, points: 11, render: 12, synth: 29, synth3d: 8 },
   )
-  // The formerly excluded reactive/mesh trees are imported and graded through host-fed
-  // external-input fixtures (GAP-003 closing contract counts them as expected cases);
-  // excludedEffects is retained as an informational record of that former exclusion.
-  assert.deepEqual(excludedEffects.reactive, REACTIVE)
-  assert.deepEqual(excludedEffects.mesh, ['render/meshLoader', 'render/meshRender'])
-  assert.deepEqual(Object.values(excludedEffects).flat().filter((id) => !eligibleEffectIds.includes(id)), [])
+  assert.deepEqual(excludedEffects, {})
   assert.equal(sourceEffectIds.length, 210)
   assert.equal(eligibleEffectIds.length, 210)
   assert.deepEqual([...eligibleEffectIds].sort(), [...sourceEffectIds].sort())
@@ -398,5 +381,5 @@ test('stateful and particle records carry CPU iteration metadata', () => {
   assert.equal('stateful' in excludedEffects, false)
   assert.equal('particles' in excludedEffects, false)
   assert.equal('control' in excludedEffects, false)
-  assert.deepEqual(excludedEffects.mesh, ['render/meshLoader', 'render/meshRender'])
+  assert.equal('mesh' in excludedEffects, false)
 })

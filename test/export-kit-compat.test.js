@@ -10,8 +10,10 @@ import { eligibleEffectIds, excludedEffects, sourceEffectIds } from '../src/effe
 // reactive/mesh trees are imported with the catalog (GAP-003), so the compat list covers the
 // full 210-effect source inventory.
 test('export kit compat list names exactly the effects the snapshot renders', async () => {
+  const excluded = new Set(Object.values(excludedEffects).flat())
   const derived = [...eligibleEffectIds].sort()
-  assert.deepEqual(derived, [...sourceEffectIds].sort())
+  assert.deepEqual(derived, sourceEffectIds.filter(id => !excluded.has(id)).sort())
+  assert.deepEqual([...excluded], [], 'all source effects are implemented; no active exclusions remain')
   const listed = JSON.parse(await readFile(new URL('../export-kit/compat-effects.json', import.meta.url), 'utf8'))
   assert.deepEqual(listed, derived)
 })
