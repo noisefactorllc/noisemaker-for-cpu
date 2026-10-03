@@ -124,6 +124,8 @@ export class GlslCpuRuntime {
   }
 
   copy(value) {
+    // GLSL array parameters can contain vectors; retain their shape and value semantics.
+    if (Array.isArray(value) && isVector(value[0])) return value.map(row => this.copy(row))
     const out = this.alloc(value.length)
     out.set(value)
     return out

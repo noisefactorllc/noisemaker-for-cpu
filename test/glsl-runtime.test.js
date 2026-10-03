@@ -56,6 +56,19 @@ test('integer constructors and PCG registers reuse pools across pixels', () => {
   assert.equal(runtime.stdlib.pcg3d(firstUnsigned), firstPcg)
 })
 
+test('GLSL array parameter copies preserve vector rows and isolate mutations', () => {
+  const runtime = new GlslCpuRuntime()
+  const palette = [new Float32Array([0, 0, 0]), new Float32Array([1, 0.5, 1])]
+  const copied = runtime.copy(palette)
+  assert.ok(Array.isArray(copied))
+  assert.deepEqual(copied, palette)
+  copied[0][0] = 0.75
+  copied[1][1] = 0.25
+  assert.deepEqual([...palette[0]], [0, 0, 0])
+  assert.deepEqual([...palette[1]], [1, 0.5, 1])
+  assert.deepEqual([...runtime.copy(new Float32Array([1, 2, 3]))], [1, 2, 3])
+})
+
 test('generated kernels lower GLSL decimal literals to float32 constants', () => {
   const source = canonicalKernelFactories['filter/stipple:stipple'].toString()
   assert.match(source, /0\.1031000018119812/)

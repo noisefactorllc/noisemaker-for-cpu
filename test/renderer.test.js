@@ -43,6 +43,26 @@ function fixture() {
   return new CpuRenderer({ registry, kernels, tileRows: 2 })
 }
 
+test('Dither palette arrays render their nearest colors without mutating shared palettes', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  // Nearest colors to white and black from the canonical palette definitions.
+  const endpoints = [
+    [[1, 1, 1], [0, 0, 0]],
+    [[0.61, 0.74, 0.06], [0.06, 0.22, 0.06]],
+    [[1, 0.6, 0], [0, 0, 0]],
+    [[1, 0.945, 0.91], [0, 0, 0]],
+    ...Array.from({ length: 5 }, () => [[1, 1, 1], [0, 0, 0]]),
+  ]
+  for (let palette = 1; palette <= 9; palette += 1) {
+    for (const color of [1, 0, 1, 0]) {
+      const frame = renderer.render(`search synth, filter\nsolid(color: [${color}, ${color}, ${color}]).dither(palette: ${palette}, threshold: ${color ? 0.5 : -0.5}).write(o0)\nrender(o0)`, { width: 3, height: 2 })
+      const expected = [...endpoints[palette - 1][color ? 0 : 1].map(value => Math.round(Math.fround(value) * 255)), 255]
+      assert.ok(frame.surface.data.every(Number.isFinite), `palette ${palette} must be finite`)
+      assert.deepEqual([...frame.toRgba8()], Array.from({ length: 6 }, () => expected).flat(), `palette ${palette}, color ${color}`)
+    }
+  }
+})
+
 test('CpuRenderer executes generator and filter chains', () => {
   const result = fixture().render(`
     search synth, filter
