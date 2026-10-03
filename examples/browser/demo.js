@@ -20,7 +20,7 @@ import {
   kernels,
   kernelFactories,
   renderToCanvasAsync,
-} from 'noisemaker-cpu'
+} from '../../src/index.js'
 import { buildDsl, stateDefault, namespaceOf, funcOf } from './pipeline.js'
 import { widgetKindForParam, createControl } from './control-factory.js'
 
