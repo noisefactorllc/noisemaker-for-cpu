@@ -165,7 +165,7 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 See [the current completion gap register](docs/COMPLETION_GAPS.md) for audited evidence and remaining limits.
 
-The catalog is the exact eligible collection from Noisemaker revision `e24c844f8dada85551ab084f41db8944fbc176c8`:
+The catalog is the exact eligible collection from Noisemaker revision `d143cb51dbed7d99784746f3323d350400018083`:
 
 - 210 effects: 20 `classicNoisedeck`, 113 `filter`, 2 `filter3d`, 15 `mixer`, 11 `points`, 12 `render`, 29 `synth`, and 8 `synth3d`
 - 308 canonical programs: 298 generated from canonical GLSL, plus 10 full CPU adapters (4 fragment-kernel replacements, 5 vertex+fragment scatter-pass pairs, and 1 struct-typed program `glsl-transpiler` can't represent — see [docs/CSL.md](docs/CSL.md))

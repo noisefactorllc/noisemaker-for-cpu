@@ -1,5 +1,5 @@
 {
- "revision": "e24c844f8dada85551ab084f41db8944fbc176c8",
+ "revision": "d143cb51dbed7d99784746f3323d350400018083",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -3893,7 +3893,7 @@
   {
    "path": "shaders/effects/points/heightGrid/parity-attestation.json",
    "size": 792,
-   "sha256": "5fb019dacc9b3a03526e30bcd7caf11d7a008680a4fda92843aece4d440f195d"
+   "sha256": "c3a22fcbb24743a7fcad43f89867239a95f07807750e07dfada774f692aa5b40"
   },
   {
    "path": "shaders/effects/points/heightGrid/parity-case.json",
@@ -4288,7 +4288,7 @@
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-attestation.json",
    "size": 803,
-   "sha256": "9da4570032a77d88239cf746c2da410d49be6b3fd706030c9e726650a339d20d"
+   "sha256": "c5284de97fc9d5e34413f9b33e3af1fc9f59fbbf57eae5772d7c8e8ce0826507"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-case.json",
@@ -4342,8 +4342,8 @@
   },
   {
    "path": "shaders/effects/render/pointsEmit/definition.js",
-   "size": 4427,
-   "sha256": "2119a3b90c6807e6f03f34f7e208f7b49e775ad45bcb888fed5ece5ef0df3b82"
+   "size": 4607,
+   "sha256": "b0453214494848e85261038fec0e4be74428f85ea8f746a9f621d3c8fc5fcac3"
   },
   {
    "path": "shaders/effects/render/pointsEmit/glsl/init.glsl",
@@ -4357,8 +4357,8 @@
   },
   {
    "path": "shaders/effects/render/pointsEmit/help.md",
-   "size": 954,
-   "sha256": "e01b56ca3792a10179e7642669c6dd7373b197f626c6ad64515e79d27efd82df"
+   "size": 1113,
+   "sha256": "e72c8d52309861b2b7091dcfd00214784aa17027b9ae489aca59eff47223534b"
   },
   {
    "path": "shaders/effects/render/pointsEmit/wgsl/init.wgsl",
@@ -4408,7 +4408,7 @@
   {
    "path": "shaders/effects/render/pointsRender/parity-attestation.json",
    "size": 794,
-   "sha256": "56a7a0806904944e50326948ed389e2d51fa879dc8c35e740f740564b660f84b"
+   "sha256": "85b464cbf37a8d6bd477d2237a5bb7f60d97b33d3f674632ce911ba33bd45c79"
   },
   {
    "path": "shaders/effects/render/pointsRender/parity-case.json",
@@ -5302,8 +5302,8 @@
   },
   {
    "path": "shaders/effects/synth3d/cellularAutomata3d/definition.js",
-   "size": 4830,
-   "sha256": "4198b4f4622e99640898e2cfc92f1ff1b9d02068e6dad13534d69bbb64d5e682"
+   "size": 4917,
+   "sha256": "e675ad8e2c76e42b9a4c1b1891f5fbc6065958caec416015245dd64159c9459f"
   },
   {
    "path": "shaders/effects/synth3d/cellularAutomata3d/glsl/simulate.glsl",
@@ -5312,8 +5312,8 @@
   },
   {
    "path": "shaders/effects/synth3d/cellularAutomata3d/help.md",
-   "size": 815,
-   "sha256": "834ac05c719dd6048ae0ba8e7c405011e9b489b31cec8d4e70b549bf04b3c2e8"
+   "size": 957,
+   "sha256": "846fc7aad4ea319e3a6e1e7417246e38fc4b11ff010d82e29e890495126d7106"
   },
   {
    "path": "shaders/effects/synth3d/cellularAutomata3d/wgsl/simulate.wgsl",
@@ -5537,8 +5537,8 @@
   },
   {
    "path": "shaders/src/lang/validator.js",
-   "size": 77206,
-   "sha256": "8a890d451dcbacef7ad9679390955a680f730f8bb1cdb761bf465d6c47a1883c"
+   "size": 77913,
+   "sha256": "36cfbaad89da2b9add277906df3f156266a4f62dbbfd1d2623772a3cd455662e"
   },
   {
    "path": "shaders/src/palettes.js",
@@ -5547,8 +5547,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 82048,
-   "sha256": "77c92784eaa4c06a3a6c8dcdb01b713bbf4ae5a6713b9960d8508535424a47a7"
+   "size": 88557,
+   "sha256": "29af25fae579bba03a6b40cfc06ffaf341549b01f0a00a2e1296bb64f33f6bb5"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",
@@ -5602,18 +5602,18 @@
   },
   {
    "path": "shaders/src/runtime/effect-validator.js",
-   "size": 48033,
-   "sha256": "e6ce6c5663c952e91ba4310c160da5596494fc5090930afe8e8d1fc9cbd603d1"
+   "size": 48206,
+   "sha256": "dc20b882eaf1a63b127256753b298d144b2379c76993812942a3cafca3dcae13"
   },
   {
    "path": "shaders/src/runtime/effect.js",
-   "size": 7787,
-   "sha256": "a16a5ad8b73f6894f9dd9969d85e712e74e78aa7ede6e353f9f4abb3ceb4a41d"
+   "size": 8002,
+   "sha256": "1f9e80bf689edb806d5acbf970c2db8bec6777d5cb7fd026339d77667040aa32"
   },
   {
    "path": "shaders/src/runtime/expander.js",
-   "size": 70410,
-   "sha256": "a7cef9e4821fff0d14a3fb82c0e2a05e47d31be26f2ad2bb29004c393a5494c5"
+   "size": 70841,
+   "sha256": "e362ceb21eba5b3cd461a23671d31ae3048fa49551b68e33dd02f4a71aa153af"
   },
   {
    "path": "shaders/src/runtime/external-input.js",
@@ -5664,6 +5664,11 @@
    "path": "shaders/src/runtime/tags.js",
    "size": 12112,
    "sha256": "d65e361be1b2f91d735a519abe1d41887841f5ae200120635cfd91e4105ef3de"
+  },
+  {
+   "path": "shaders/src/runtime/uniform-aliases.js",
+   "size": 1300,
+   "sha256": "de6bbfffbb05d341b00c8d47764a7153cc3dfe11f61f8a4364067d86ba23d273"
   }
  ]
 }
