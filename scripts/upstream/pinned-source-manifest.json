@@ -1,5 +1,5 @@
 {
- "revision": "058d15dc742f91dbab067229dae196d1477adad1",
+ "revision": "e443e8b9265abbb3dcec437059dfd69fe1807325",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5502,8 +5502,8 @@
   },
   {
    "path": "shaders/src/lang/enums.js",
-   "size": 2385,
-   "sha256": "796ecec41ba2eaf478d9547409717bb4d82cd653279ae13e9271b31254024fbb"
+   "size": 2527,
+   "sha256": "ccf4177aace3e6ef7a6491c5e9a3ba48a0b15306199ce768fc4c533b3f0f715a"
   },
   {
    "path": "shaders/src/lang/error-formatter.js",
@@ -5552,13 +5552,13 @@
   },
   {
    "path": "shaders/src/lang/unparser.js",
-   "size": 53053,
-   "sha256": "a81abf37fefb7174848c7b3a9787fb7bd6b027a257498de6130112f62e18ee67"
+   "size": 54848,
+   "sha256": "e97b958136a934c6c731c900236d87d58f971603ba4e30e97a1dea04b6afa6b1"
   },
   {
    "path": "shaders/src/lang/validator.js",
-   "size": 77913,
-   "sha256": "36cfbaad89da2b9add277906df3f156266a4f62dbbfd1d2623772a3cd455662e"
+   "size": 77916,
+   "sha256": "f3ae5afd066acc3388cdfe89cdda5afcce4f64be24478638b313846ba49d00cb"
   },
   {
    "path": "shaders/src/palettes.js",
@@ -5567,8 +5567,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 88557,
-   "sha256": "29af25fae579bba03a6b40cfc06ffaf341549b01f0a00a2e1296bb64f33f6bb5"
+   "size": 90740,
+   "sha256": "51424a8c46dc63492bbf61b2889fdc836d688a7075cb6fcca3604f3414aa3dff"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",
@@ -5612,8 +5612,8 @@
   },
   {
    "path": "shaders/src/runtime/compiler.js",
-   "size": 8795,
-   "sha256": "5151a7f07994c828c99d2729393627cffe701328d81a9f0ccdfbd9948f249d49"
+   "size": 8888,
+   "sha256": "9a66ca9b7871450b8d3d6776bfb2d38e5ca00925e04270b48b82a92bb96cc3da"
   },
   {
    "path": "shaders/src/runtime/default-shaders.js",
@@ -5632,8 +5632,8 @@
   },
   {
    "path": "shaders/src/runtime/expander.js",
-   "size": 70841,
-   "sha256": "e362ceb21eba5b3cd461a23671d31ae3048fa49551b68e33dd02f4a71aa153af"
+   "size": 71854,
+   "sha256": "9b55b3cf8be04a6904ff655bdf1fdc234941258c31084314b56a4fae74d3cb65"
   },
   {
    "path": "shaders/src/runtime/external-input.js",
@@ -5657,8 +5657,8 @@
   },
   {
    "path": "shaders/src/runtime/pipeline.js",
-   "size": 124928,
-   "sha256": "4696cbea38d0f37ff890826be0932127a56dcf9e2d723c00007d08c8912b3ab3"
+   "size": 126329,
+   "sha256": "570f257455393f16947decfd7d807a3ce469151c80bf833b6963f5f4c4bd0210"
   },
   {
    "path": "shaders/src/runtime/preflight.js",
