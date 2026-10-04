@@ -15763,7 +15763,7 @@ function canonicalFactory88($bindings, $runtime) {
   function pcg (value) { return $runtime.stdlib.pcg3d(value); };
   function hash21 (p) {
   	p = $runtime.copy(p);
-  	var v = cpu_uvec3(p[0] >= 0 ? p[0] * 2 : -p[0] * 2 + 1|0, p[1] >= 0 ? p[1] * 2 : -p[1] * 2 + 1|0, seed|0);
+  	var v = cpu_uvec3((abs(p[0]) * 2|0) + (p[0] < 0|0), (abs(p[1]) * 2|0) + (p[1] < 0|0), abs(seed)|0);
   	return cpu_float(pcg(v)[0]) / 4294967296;
   };
   function noise (p) {
@@ -25247,7 +25247,7 @@ function canonicalFactory200($bindings, $runtime) {
   	var pos = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var col = texelFetch(rgbaTex, coord, 0);
-  	var agentSeed = coord[0] + coord[1] * (stateSize|0) + seed|0;
+  	var agentSeed = (coord[0] + coord[1] * stateSize|0) + (seed|0);
   	var needs3DInit = (pos[3] >= 0.5) && (pos[2] == 0) && (pos[0] >= 0) && (pos[0] <= 1) && (pos[1] >= 0) && (pos[1] <= 1);
   	if (needs3DInit) {
   	var initSeed = agentSeed + time * 1000|0;
@@ -25906,7 +25906,7 @@ function canonicalFactory209($bindings, $runtime) {
   	};
   	var cellSeed = checkCell[1] * GRID_SIZE + checkCell[0]|0;
   	for (var s = 0; s < 8; s++) {
-  	var sampleSeed = cpu_umul(cellSeed, 31) + (s|0) + time * 10|0;
+  	var sampleSeed = cpu_umul(cellSeed, 31) + (s|0) + (time * 10|0);
   	var sampleIdx = hash_uint(sampleSeed) % totalBoids|0|0;
   	var sx = sampleIdx % stateSize[0];
   	var sy = sampleIdx / stateSize[0];
@@ -26844,7 +26844,7 @@ function canonicalFactory221($bindings, $runtime) {
   	(checkCell[0] = (checkCell[0] + GRID_SIZE) % GRID_SIZE, checkCell[1] = (checkCell[1] + GRID_SIZE) % GRID_SIZE, checkCell);
   	var cellSeed = checkCell[1] * GRID_SIZE + checkCell[0]|0;
   	for (var s = 0; s < 12; s++) {
-  	var sampleSeed = cpu_umul(cellSeed, 31) + (s|0) + time * 7|0;
+  	var sampleSeed = cpu_umul(cellSeed, 31) + (s|0) + (time * 7|0);
   	var sampleIdx = hash_uint(sampleSeed) % totalParticles|0|0;
   	var sx = sampleIdx % stateSize[0];
   	var sy = sampleIdx / stateSize[0];
@@ -26973,9 +26973,9 @@ function canonicalFactory222($bindings, $runtime) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	return;
   	};
-  	var seed = matrixSeed * (1000|0) + typeA * 31 + typeB * 17|0;
+  	var seed = (matrixSeed * 1000|0) + (typeA * 31 + typeB * 17|0);
   	if (symmetricForces && (typeB < typeA)) {
-  	seed = matrixSeed * (1000|0) + typeB * 31 + typeA * 17|0;
+  	seed = (matrixSeed * 1000|0) + (typeB * 31 + typeA * 17|0);
   	};
   	var strength = 0;
   	if (typeA == typeB) {
@@ -27853,7 +27853,7 @@ function canonicalFactory242($bindings, $runtime) {
   function main () {
   	var stateCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / (stateSize), gl_FragCoord[1] / (stateSize)]);
-  	var agentSeed = stateCoord[0] + stateCoord[1] * (stateSize|0) + seed|0;
+  	var agentSeed = (stateCoord[0] + stateCoord[1] * stateSize|0) + (seed|0);
   	var pPos = texelFetch(xyzTex, stateCoord, 0);
   	var pVel = texelFetch(velTex, stateCoord, 0);
   	var pCol = texelFetch(rgbaTex, stateCoord, 0);

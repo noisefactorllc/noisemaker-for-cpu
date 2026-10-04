@@ -1,5 +1,5 @@
 {
- "revision": "48d25116def5e59aa729c68015aa7971bf437a1f",
+ "revision": "058d15dc742f91dbab067229dae196d1477adad1",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -1672,8 +1672,8 @@
   },
   {
    "path": "shaders/effects/filter/octaveWarp/glsl/octaveWarp.glsl",
-   "size": 4902,
-   "sha256": "ced7dca971a24fb3d8a48641c7bb66c4af637a57984d45ddc9e51f0492a59bea"
+   "size": 4889,
+   "sha256": "193ed3406281cde12a460560438c9ce839f07e9f7a96f11aac50c23d3a31039f"
   },
   {
    "path": "shaders/effects/filter/octaveWarp/help.md",
@@ -1681,9 +1681,19 @@
    "sha256": "c74ae212668817793f5b431936d7b4162c275403e3d8fa727ddae1411d7c0f87"
   },
   {
+   "path": "shaders/effects/filter/octaveWarp/parity-attestation.json",
+   "size": 792,
+   "sha256": "5372598480844dc87fd5ca0817a9224635283e8158bc856f52c3b2fdd0bd6b29"
+  },
+  {
+   "path": "shaders/effects/filter/octaveWarp/parity-case.json",
+   "size": 327,
+   "sha256": "d42bf3fa9aff8368169731a1f5ae670b203492bae9fc3fcaa71b29a4ebd81aed"
+  },
+  {
    "path": "shaders/effects/filter/octaveWarp/wgsl/octaveWarp.wgsl",
-   "size": 5230,
-   "sha256": "ca6971a08ca61ede42d7d64931206b9364cdb3983ad7d2d457ce21684688284c"
+   "size": 5227,
+   "sha256": "cb73969f43293e9b50099b6ceaf9513b192691c29f09b395c1dbc83d630b700d"
   },
   {
    "path": "shaders/effects/filter/oilPaint/definition.js",

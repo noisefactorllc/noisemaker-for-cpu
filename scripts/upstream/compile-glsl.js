@@ -250,6 +250,55 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   return out
 }
 
+// GLSL `uint(A) <op> uint(B)` flattens to the raw JS `A|0 <op> B|0`. `|` binds
+// looser than every arithmetic and comparison operator, so the left cast's
+// `|0` never closes at its own operand: the operator and the right operand
+// merge into it (octaveWarp's `uint(abs(p.x) * 2.0) + uint(p.x < 0.0)`
+// evaluated as the comparison `(abs(p.x) * 2 + p.x) < 0` — a 0/1 flag instead
+// of a hash seed). Parenthesize each flattened cast unit so the emitted
+// expression reproduces the GLSL tree. Only sources containing a both-cast
+// pair are touched; literal left casts emit without `|0` and already parse
+// correctly (the LCG constants), and every rewrite must find the transpiler's
+// verbatim operand emission (component swizzles become indexed reads) or the
+// build fails instead of shipping a silently miscompiled kernel.
+function preserveUintCastOperands(transpiled, originalSource) {
+  if (!/\buint\s*\(/.test(originalSource)) return transpiled
+  const calls = []
+  for (const open of originalSource.matchAll(/\buint\s*\(/g)) {
+    let depth = 1
+    let cursor = open.index + open[0].length
+    while (cursor < originalSource.length && depth > 0) {
+      if (originalSource[cursor] === '(') depth += 1
+      else if (originalSource[cursor] === ')') depth -= 1
+      cursor += 1
+    }
+    if (depth !== 0) break
+    calls.push({ outerStart: open.index, innerStart: open.index + open[0].length, innerEnd: cursor - 1 })
+  }
+  const emitted = (expression) => expression.replace(/\.([xyzw])\b/g, (_, component) => `[${'xyzw'.indexOf(component)}]`)
+  const escaped = (text) => text.replace(/[^A-Za-z0-9_ ]/g, (char) => `\\${char}`)
+  const literal = (expression) => /^-?\s*\d+(?:\.\d+)?\s*$/.test(expression)
+  let output = transpiled
+  for (let index = 0; index + 1 < calls.length; index += 1) {
+    const between = originalSource.slice(calls[index].innerEnd + 1, calls[index + 1].outerStart)
+    const operator = between.match(/^\s*([+\-*/%])\s*$/)?.[1]
+    if (!operator) continue
+    const leftInner = originalSource.slice(calls[index].innerStart, calls[index].innerEnd)
+    const rightInner = originalSource.slice(calls[index + 1].innerStart, calls[index + 1].innerEnd)
+    index += 1
+    if (literal(leftInner)) continue
+    const left = emitted(leftInner)
+    const right = emitted(rightInner)
+    const rightUnit = literal(rightInner) ? right : `(${right}|0)`
+    const needle = new RegExp(`(?<![A-Za-z0-9_.$)\\]])${escaped(left)}\\|0\\s*${escaped(operator)}\\s*${escaped(right)}(?:\\|0)?(?![A-Za-z0-9_.$])`)
+    if (!needle.test(output)) {
+      throw new Error(`Unable to preserve uint cast operands for GLSL \`uint(${leftInner}) ${operator} uint(${rightInner})\`: the flattened emission was not found`)
+    }
+    output = output.replace(needle, () => `(${left}|0) ${operator} ${rightUnit}`)
+  }
+  return output
+}
+
 function preserveIntCastPrecedence(transpiled) {
   const operatorAfterCast = /^(?:\s*)(?:[+\-*/%^]|<<|>>)/
   let output = transpiled
@@ -668,6 +717,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
       )
   }
   transpiled = lowerUnsignedJavaScript(transpiled, originalSource)
+  transpiled = preserveUintCastOperands(transpiled, originalSource)
   // ANGLE's optimized scatter hash straddles a nearest-sampling boundary in
   // the canonical default. Its original scalar lowering matches that backend;
   // strict literal lowering moves one texel to the opposite side.

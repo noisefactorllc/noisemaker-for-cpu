@@ -905,10 +905,10 @@ export const programCoverage = Object.freeze([
     "program": "octaveWarp",
     "file": "octaveWarp.glsl",
     "status": "generated",
-    "sourceSha256": "ced7dca971a24fb3d8a48641c7bb66c4af637a57984d45ddc9e51f0492a59bea",
-    "sourceBytes": 4902,
-    "normalizedBytes": 5081,
-    "generatedBytes": 5490
+    "sourceSha256": "193ed3406281cde12a460560438c9ce839f07e9f7a96f11aac50c23d3a31039f",
+    "sourceBytes": 4889,
+    "normalizedBytes": 5066,
+    "generatedBytes": 5467
   },
   {
     "effectId": "filter/oilPaint",
