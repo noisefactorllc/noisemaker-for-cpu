@@ -12,6 +12,7 @@ import { renderCanonicalWormOverlay } from '../effects/cpu/worm-overlay.js'
 import { resolveScatterAdapter } from '../effects/cpu/scatter-registry.js'
 import { resolveMeshAdapter } from '../effects/cpu/mesh-render.js'
 import { externalDataSurface } from './external-textures.js'
+import { isAutomationValue, resolveAutomationUniform } from './automation.js'
 import { paletteData } from '../effects/generated/canonical-adapter-data.js'
 import { computeIterationGroups, isParticleStateName, wrap01, ITERATION_DELTA_TIME } from './iteration.js'
 
@@ -116,6 +117,52 @@ function inheritVolumeSize(definition, params, inputBundle) {
     throw new Error(`${definition.id} input volume atlas expected ${volumeSize}x${volumeSize ** 2}, received ${volume.width}x${volume.height}`)
   }
   return params.volumeSize === volumeSize ? params : { ...params, volumeSize }
+}
+
+// The consumer-range spec upstream's expander builds for automation scaling
+// (shaders/src/runtime/expander.js uniformSpecs): a float/int parameter without
+// choices scales the 0..1 automation output into its declared min..max (0..100
+// when undeclared); an int parameter with choices (a conditional selector) is
+// only rounded to the selected integer, scaled into its declared range when it
+// declares one. Everything else gets no spec, so an automation value resolves
+// unscaled.
+function automationParamSpec(param) {
+  if (!param) return undefined
+  if ((param.type === 'float' || param.type === 'int') && !param.choices) {
+    return { min: param.min ?? 0, max: param.max ?? 100 }
+  }
+  if (param.type === 'int' && param.choices) {
+    const spec = { type: 'int' }
+    if (Number.isFinite(param.min) && Number.isFinite(param.max)) {
+      spec.min = param.min
+      spec.max = param.max
+    }
+    return spec
+  }
+  return undefined
+}
+
+// Resolves `osc(...)` automation values in a step's params to concrete numbers
+// for this render, using renderOptions.time (the normalized 0..1 loop time the
+// canonical kernels receive). Returns the params object unchanged when no param
+// carries automation, so every pre-existing program keeps its exact identity
+// and byte-identical render path.
+function resolveEffectAutomation(definition, params, renderOptions) {
+  let hasAutomation = false
+  for (const value of Object.values(params)) {
+    if (isAutomationValue(value)) {
+      hasAutomation = true
+      break
+    }
+  }
+  if (!hasAutomation) return params
+  const resolved = {}
+  for (const [name, value] of Object.entries(params)) {
+    resolved[name] = isAutomationValue(value)
+      ? resolveAutomationUniform(value, renderOptions.time, automationParamSpec(definition.params[name]))
+      : value
+  }
+  return Object.freeze(resolved)
 }
 
 function bundleOutput(name, input, resources) {
@@ -384,8 +431,10 @@ export class CpuRenderer {
   }
 
   effectParams(step, renderOptions) {
-    if (!Object.hasOwn(step.params, 'seed') || step.explicitParams.includes('seed')) return step.params
-    return { ...step.params, seed: renderOptions.seed }
+    const base = (!Object.hasOwn(step.params, 'seed') || step.explicitParams.includes('seed'))
+      ? step.params
+      : { ...step.params, seed: renderOptions.seed }
+    return resolveEffectAutomation(step.definition, base, renderOptions)
   }
 
   cachedCpuTexture(key) {
@@ -750,7 +799,24 @@ export class CpuRenderer {
       resources.set('selfTex', selfTexSurface)
       resources.set('feedback', selfTexSurface)
     }
-    return { step, definition, params, resources, selfTexSurface }
+    return { step, definition, params, rawStep: sourceStep, resources, selfTexSurface }
+  }
+
+  // Automation-driven params (`osc(...)`) re-resolve against each iteration's own
+  // normalized time: the port's iteration loop rewinds time to emulate the upstream
+  // frames the persistent-texture feedback accumulated, so an osc param must read
+  // the same per-iteration time the kernels receive. Returns null when the step
+  // carries no automation, leaving the init-time params object authoritative.
+  refreshIterationParams(state, inputBundle, iterationOptions) {
+    let hasAutomation = false
+    for (const value of Object.values(state.rawStep.params)) {
+      if (isAutomationValue(value)) {
+        hasAutomation = true
+        break
+      }
+    }
+    if (!hasAutomation) return null
+    return inheritVolumeSize(state.definition, this.effectParams(state.rawStep, iterationOptions), inputBundle)
   }
 
   // Resolves the `{definition, params}` pair whose OWN `textures[name]` spec (and own, already
@@ -1037,6 +1103,8 @@ export class CpuRenderer {
     const definition = state.definition
     const inputWasBundle = isChainBundle(iterationInput)
     const inputBundle = chainBundle(iterationInput)
+    const refreshedParams = this.refreshIterationParams(state, inputBundle, iterationOptions)
+    if (refreshedParams) state.params = refreshedParams
     const bindings = this.buildBindings(definition, state.params, state.step.explicitParams, inputBundle.image, surfaces, iterationOptions)
     for (const [name, surface] of Object.entries(bindings.textures)) state.resources.set(name, surface)
     if (inputBundle.volume) state.resources.set('inputTex3d', inputBundle.volume)
@@ -1170,6 +1238,8 @@ export class CpuRenderer {
     const definition = state.definition
     const inputWasBundle = isChainBundle(iterationInput)
     const inputBundle = chainBundle(iterationInput)
+    const refreshedParams = this.refreshIterationParams(state, inputBundle, iterationOptions)
+    if (refreshedParams) state.params = refreshedParams
     const bindings = this.buildBindings(definition, state.params, state.step.explicitParams, inputBundle.image, surfaces, iterationOptions)
     for (const [name, surface] of Object.entries(bindings.textures)) state.resources.set(name, surface)
     if (inputBundle.volume) state.resources.set('inputTex3d', inputBundle.volume)

@@ -199,6 +199,14 @@ class Parser {
         this.consume(')')
         return { kind: 'vector', width: Number(name.at(-1)), values, loc: location(token) }
       }
+      // `osc(...)` is the one value-position call the DSL supports (oscillator
+      // automation, matching upstream's parser); it parses as a regular call and
+      // the compiler turns it into an Oscillator automation value. Every other
+      // call in a value position stays a parse error via the dangling '('.
+      if (name === 'osc' && this.peek().lexeme === '(') {
+        this.current -= 1
+        return this.parseCall()
+      }
       let path = name
       while (this.match('.')) path += `.${this.identifier('Expected enum member').lexeme}`
       return { kind: 'identifier', name: path, loc: location(token) }

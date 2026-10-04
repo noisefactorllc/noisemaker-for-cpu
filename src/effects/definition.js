@@ -1,3 +1,5 @@
+import { isAutomationValue } from '../runtime/automation.js'
+
 function cloneValue(value) {
   if (Array.isArray(value)) return Object.freeze(value.map(cloneValue))
   if (value && typeof value === 'object') {
@@ -29,6 +31,12 @@ function colorValue(value, name) {
 }
 
 function normalizeValue(param, value, name) {
+  // An `osc(...)` automation value (numeric params only, matching upstream's
+  // uniformSpecs contract) is kept as-is here and resolved to a concrete number
+  // per render in CpuRenderer.effectParams; static values validate as before.
+  if (isAutomationValue(value) && (param.type === 'float' || param.type === 'int')) {
+    return cloneValue(value)
+  }
   switch (param.type) {
     case 'float':
       if (typeof value !== 'number' || !Number.isFinite(value)) throw new TypeError(`Parameter "${name}" must be a finite number`)

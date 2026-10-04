@@ -173,6 +173,8 @@ render(o2)
 
 The frontend preserves the canonical effect schemas, aliases, defaults, compile-time choices, pass graphs, named surfaces, generators, filters, and mixers. It supports explicit search order, positional or named arguments, value/effect partial bindings, `read(oN)`, chainable `.write(oN)`, and `render(oN)`. Stateful, particle, flattened-volume, and balanced `loopBegin`/`loopEnd` operations compile and render through the same DSL (see [docs/EFFECTS.md](docs/EFFECTS.md)). `render` doubles as both the `render(oN)` directive keyword and the namespace owning render effects — `search ..., render` resolves the namespace without disturbing the directive.
 
+Numeric parameters accept `osc(kind, min?, max?, speed?, offset?, seed?)` automation values, evaluated against the render's normalized `time` on every render: `kind` is one of `sine`, `tri`, `saw`, `sawInv`, `square`, `noise`/`noise1d`, or `noise2d`, fields may nest further `osc(...)` values, and the resolved number scales into the parameter's declared range (integer choice selectors round, matching the upstream contract).
+
 One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initialized overlay on the first requested frame. Pass `oneShot: 'initial'` to reproduce the upstream pre-initialization first frame used by the parity fixtures.
 
 ## Collection parity

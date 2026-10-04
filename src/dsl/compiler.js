@@ -1,10 +1,95 @@
 import { DslError } from './error.js'
 import { parseDsl } from './parser.js'
 
-function evaluateValue(value, bindings) {
-  if (Array.isArray(value)) return value.map((item) => evaluateValue(item, bindings))
+// Mirrors upstream std_enums.js oscKind (sine..noise2d; noise/noise1d alias kind 5,
+// noise2d is the two-stage periodic noise added upstream at eabb537e).
+const OSC_KINDS = { sine: 0, tri: 1, saw: 2, sawInv: 3, square: 4, noise: 5, noise1d: 5, noise2d: 6 }
+const OSC_PARAM_ORDER = ['type', 'min', 'max', 'speed', 'offset', 'seed']
+const MAX_AUTOMATION_DEPTH = 8
+
+function isOscValue(value) {
+  return !!value && typeof value === 'object' && value.type === 'Oscillator'
+}
+
+function clamp01(value) {
+  return Math.max(0, Math.min(1, value))
+}
+
+// Compiles an `osc(...)` value-position call into the automation value shape the
+// runtime evaluator consumes ({type: 'Oscillator', oscType, min, max, speed,
+// offset, seed}), mirroring upstream's parser transformOscInvocation plus the
+// validator's compileAutomationDescriptor: positional args fill
+// type/min/max/speed/offset/seed in order, kwargs select by name, every field
+// defaults as upstream defaults, min/max clamp into [0,1], nested osc() fields
+// are allowed, and the oscType resolves from an integer 0..6 or an oscKind name
+// (bare or oscKind-qualified). Invalid programs throw DslError, as everywhere
+// else in this compiler.
+function compileOscillator(call, bindings, depth) {
+  if (depth > MAX_AUTOMATION_DEPTH) {
+    throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
+  }
+  const fields = {}
+  if (call.argMode === 'named') {
+    for (const arg of call.args) {
+      if (!OSC_PARAM_ORDER.includes(arg.name)) {
+        throw new DslError(`osc() unknown parameter '${arg.name}'; valid: ${OSC_PARAM_ORDER.join(', ')}`, call.loc)
+      }
+      fields[arg.name] = arg.value
+    }
+  } else {
+    call.args.forEach((arg, index) => {
+      if (index < OSC_PARAM_ORDER.length) fields[OSC_PARAM_ORDER[index]] = arg.value
+    })
+  }
+
+  const rawType = fields.type === undefined ? 0 : evaluateValue(fields.type, bindings, depth + 1)
+  let oscType
+  if (typeof rawType === 'number') {
+    if (!Number.isInteger(rawType) || rawType < 0 || rawType > 6) {
+      throw new DslError('osc() type must resolve to a supported oscKind value (0-6)', call.loc)
+    }
+    oscType = rawType
+  } else if (typeof rawType === 'string') {
+    const kindName = rawType.startsWith('oscKind.') ? rawType.slice('oscKind.'.length) : rawType
+    if (!(kindName in OSC_KINDS)) {
+      throw new DslError(`osc() type must resolve to a supported oscKind value; got "${rawType}"`, call.loc)
+    }
+    oscType = OSC_KINDS[kindName]
+  } else {
+    throw new DslError('osc() type must resolve to a supported oscKind value', call.loc)
+  }
+
+  const numberField = (node, name, fallback, clamp) => {
+    if (node === undefined) return fallback
+    const value = evaluateValue(node, bindings, depth + 1)
+    if (isOscValue(value)) return value
+    if (value === true) return 1
+    if (value === false) return 0
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      throw new DslError(`osc() ${name} must be a number or a nested osc()`, call.loc)
+    }
+    return clamp ? clamp01(value) : value
+  }
+
+  return {
+    type: 'Oscillator',
+    oscType,
+    min: numberField(fields.min, 'min', 0, true),
+    max: numberField(fields.max, 'max', 1, true),
+    speed: numberField(fields.speed, 'speed', 1, false),
+    offset: numberField(fields.offset, 'offset', 0, false),
+    seed: numberField(fields.seed, 'seed', 1, false),
+  }
+}
+
+function evaluateValue(value, bindings, oscDepth = 0) {
+  if (Array.isArray(value)) return value.map((item) => evaluateValue(item, bindings, oscDepth))
   if (!value || typeof value !== 'object') return value
   if (value.kind === 'surface') return value
+  if (value.kind === 'Call') {
+    if (value.name === 'osc') return compileOscillator(value, bindings, oscDepth)
+    throw new DslError(`Unsupported DSL value ${value.kind} "${value.name}"`, value.loc)
+  }
   if (value.kind === 'identifier') {
     if (bindings.has(value.name)) {
       const binding = bindings.get(value.name)
@@ -58,7 +143,7 @@ export function compileDsl(source, registry, options = {}) {
   const bindings = new Map()
   for (const binding of ast.bindings) {
     if (bindings.has(binding.name)) throw new DslError(`Duplicate binding "${binding.name}"`, binding.loc)
-    if (binding.value?.kind === 'Call') {
+    if (binding.value?.kind === 'Call' && binding.value.name !== 'osc') {
       bindings.set(binding.name, { kind: 'partial', call: { ...binding.value, args: resolveArgs(binding.value.args, bindings) } })
     } else {
       bindings.set(binding.name, { kind: 'value', value: evaluateValue(binding.value, bindings) })
