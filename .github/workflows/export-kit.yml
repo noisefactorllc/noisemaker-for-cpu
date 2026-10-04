@@ -18,6 +18,8 @@ on:
       - "src/**"
       - "bin/noisemaker-cpu.js"
 
+permissions: {}
+
 concurrency:
   group: export-kit-${{ github.ref }}
   cancel-in-progress: false
