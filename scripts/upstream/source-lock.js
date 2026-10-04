@@ -2,16 +2,16 @@ import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
-export const PINNED_UPSTREAM_REVISION = 'd143cb51dbed7d99784746f3323d350400018083'
+export const PINNED_UPSTREAM_REVISION = '48d25116def5e59aa729c68015aa7971bf437a1f'
 export const PINNED_SOURCE_PATHS = Object.freeze(['shaders/effects', 'shaders/src'])
-export const PINNED_SOURCE_DIGEST = '4c18cd221488e77c7c6a2055386d6f569b40659c3f9eb6c6cfdace4ec3ebac42'
+export const PINNED_SOURCE_DIGEST = 'b67b2fd31ff4bfa26056fbbb42a1ec9b6b9dee28e5660787f810404cc1eceddd'
 // Digest over the committed pinned-source manifest (pinned-source-manifest.json):
 // sha256 over each entry's path, '\0', size, '\0', per-file sha256 (sorted by path).
 // This anchors the pin to a committed, machine-checkable record of the upstream
 // tree's file identities instead of a self-attested pair of strings; the
 // env-gated test cross-checks every entry against a real reference checkout.
 export const PINNED_SOURCE_MANIFEST_PATH = 'pinned-source-manifest.json'
-export const PINNED_SOURCE_MANIFEST_DIGEST = 'b616a4a1684cbf318b4ed5446eb79e687fa9d1d49260c4c762895d69e4b36c10'
+export const PINNED_SOURCE_MANIFEST_DIGEST = '6cf142c203c0bd1dd3d120b81fa84af8d28d16e66575be648f262374698e5903'
 
 function sourceFiles(path, files) {
   for (const entry of readdirSync(path, { withFileTypes: true })) {

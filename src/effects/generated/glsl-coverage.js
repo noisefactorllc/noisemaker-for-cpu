@@ -445,10 +445,10 @@ export const programCoverage = Object.freeze([
     "program": "degauss",
     "file": "degauss.glsl",
     "status": "generated",
-    "sourceSha256": "915f208e47a5bf012a3e0583e03a7ee888b7103d5834b386d32c916b8715050c",
-    "sourceBytes": 10803,
-    "normalizedBytes": 11279,
-    "generatedBytes": 13300
+    "sourceSha256": "cfefff702ef78db421c088a3b679da2c576b7f4484c777f1d414c66aef0c1a1a",
+    "sourceBytes": 11490,
+    "normalizedBytes": 11966,
+    "generatedBytes": 13341
   },
   {
     "effectId": "filter/deriv",

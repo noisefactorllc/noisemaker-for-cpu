@@ -10362,7 +10362,7 @@ function canonicalFactory43($bindings, $runtime) {
   	var noise_value = compute_noise_value(coord, width, height, freq, time, speed, channel);
   	var centered = (noise_value * 2 - 1) * mask;
   	var angle = centered * TAU;
-  	var offset = new $runtime.PooledFloat32Array([(cos(angle) * displacement) * resolution[0], (sin(angle) * displacement) * resolution[1]]);
+  	var offset = new $runtime.PooledFloat32Array([(cos(angle) * displacement) * width, (sin(angle) * displacement) * height]);
   	var dirRad = (direction * TAU) / 360;
   	var dc = cos(dirRad);
   	var ds = sin(dirRad);
@@ -10406,7 +10406,7 @@ function canonicalFactory43($bindings, $runtime) {
   	var renderScale = fullResolution[0] > 0 ? fullResolution[0] / (max(resolution[0], 1)) : 1;
   	var isTiling = renderScale > 1.0099999904632568;
   	var maxOffsetPixels = isTiling ? 256 : max(resolution[0], resolution[1]);
-  	var maxAllowedDisplacement = maxOffsetPixels / (max(resolution[0], 1));
+  	var maxAllowedDisplacement = isTiling ? maxOffsetPixels / (max(width_f, height_f)) : maxOffsetPixels / (max(resolution[0], 1));
   	var clampedDisplacement = min(displacement, maxAllowedDisplacement);
   	var freq = freq_for_shape(2, width_f, height_f);
   	var base_pos = new $runtime.PooledFloat32Array([(global_id[0]), (global_id[1])]);

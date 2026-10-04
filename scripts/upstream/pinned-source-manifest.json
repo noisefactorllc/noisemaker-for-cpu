@@ -1,5 +1,5 @@
 {
- "revision": "d143cb51dbed7d99784746f3323d350400018083",
+ "revision": "48d25116def5e59aa729c68015aa7971bf437a1f",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -847,13 +847,13 @@
   },
   {
    "path": "shaders/effects/filter/degauss/definition.js",
-   "size": 1501,
-   "sha256": "dc0a0012b6172bf7802a7bbcbc66f880f103bf6ee6e72d4bf1c69d60a65ca6d9"
+   "size": 2271,
+   "sha256": "40a57a230ad498ade013482d64c6e3ad0eff73524ed50fca32ee13b6f389b2ab"
   },
   {
    "path": "shaders/effects/filter/degauss/glsl/degauss.glsl",
-   "size": 10803,
-   "sha256": "915f208e47a5bf012a3e0583e03a7ee888b7103d5834b386d32c916b8715050c"
+   "size": 11490,
+   "sha256": "cfefff702ef78db421c088a3b679da2c576b7f4484c777f1d414c66aef0c1a1a"
   },
   {
    "path": "shaders/effects/filter/degauss/help.md",
@@ -861,9 +861,19 @@
    "sha256": "0de79c3c2db6ed11502e500145711f711ed273cdcd7de3dedacc6ce785b92a5a"
   },
   {
+   "path": "shaders/effects/filter/degauss/parity-attestation.json",
+   "size": 787,
+   "sha256": "f784a07231323194399fe32885fd1134170f7c8595c4a431238349197b6536cc"
+  },
+  {
+   "path": "shaders/effects/filter/degauss/parity-case.json",
+   "size": 296,
+   "sha256": "9696d25ddbcc1fbcde7be187fb80517a2afe19b7c0aa21797b483b16eee99e8e"
+  },
+  {
    "path": "shaders/effects/filter/degauss/wgsl/degauss.wgsl",
-   "size": 11987,
-   "sha256": "7d2c3809e15e9a57eb6de6bf6993e066d9ab4b525c8fc3548d0299597f197446"
+   "size": 13786,
+   "sha256": "0a99293fb4fa981e600873ed30b402f38361d9d1f96c8b9677b2825e574c031f"
   },
   {
    "path": "shaders/effects/filter/deriv/definition.js",
