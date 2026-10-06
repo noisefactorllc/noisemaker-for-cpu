@@ -1,5 +1,5 @@
 {
- "revision": "90dd6ca56b20e160c5dcf816d73709bab1fc3db6",
+ "revision": "888dd85f93ff7f6997802c8cdf0054b195f0642e",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -1042,13 +1042,13 @@
   },
   {
    "path": "shaders/effects/filter/fibers/parity-attestation.json",
-   "size": 782,
-   "sha256": "bd4dd4ca453e8a582e361550695a6f19d75c75e74a4f793d4ae51d17fb92ce16"
+   "size": 788,
+   "sha256": "27e80b455ecc9862408eda18324702f28820e405a8715d524d363cda3726d17d"
   },
   {
    "path": "shaders/effects/filter/fibers/parity-case.json",
-   "size": 358,
-   "sha256": "3b53c9792b69ecca9e8c87d9f02b703b4589cf64a684a063b27210c60924e63c"
+   "size": 380,
+   "sha256": "cac4c67ec5186aed3e796121103ec17e3601863ae2e10a0398233617d8680401"
   },
   {
    "path": "shaders/effects/filter/fibers/wgsl/fibersBlend.wgsl",
@@ -2382,13 +2382,13 @@
   },
   {
    "path": "shaders/effects/filter/scratches/parity-attestation.json",
-   "size": 785,
-   "sha256": "10f105a4a17b1eea6f320c530f59f2bd718049497dd9789bc4cb7486b5f900c8"
+   "size": 789,
+   "sha256": "3b722a212395b17ab0ffcc64fda025f4660956d6c9f84d67e596331f11ba3245"
   },
   {
    "path": "shaders/effects/filter/scratches/parity-case.json",
-   "size": 352,
-   "sha256": "96cb1c65b34a718b654ced657cfa38c175e6ee9e89cab1054db87096a2a85792"
+   "size": 374,
+   "sha256": "e0b5f9c2de7c741055d427be4ddf32cebba11ab3d68812b0203a2147221182e3"
   },
   {
    "path": "shaders/effects/filter/scratches/wgsl/scratchesBlend.wgsl",
@@ -2782,13 +2782,13 @@
   },
   {
    "path": "shaders/effects/filter/strayHair/parity-attestation.json",
-   "size": 785,
-   "sha256": "7aa481861fb4d980535efe6912ba43f92ddc1b5313601c8bc0074542e82a4936"
+   "size": 787,
+   "sha256": "6ddd7dcdc553a4e97bba1bfc6efc2c0706a281e9ed8cf37e05fa6360ec6d9d5e"
   },
   {
    "path": "shaders/effects/filter/strayHair/parity-case.json",
-   "size": 352,
-   "sha256": "3ac9e8764cf2bce7e0a044a57c05bfcb22708d9df5d6e3bba922af620cda6d77"
+   "size": 374,
+   "sha256": "fb7be28ea982662b2b35d6c4d7c68407092ed8cc34d8c57bc89a2a29cd94446e"
   },
   {
    "path": "shaders/effects/filter/strayHair/wgsl/strayHairBlend.wgsl",
