@@ -1,5 +1,5 @@
 {
- "revision": "41ba5e19ea2ed8a5d6dc3975b4cfbe381743b9b8",
+ "revision": "a06b897712ac6c964d3d1aa873ba253d581a39bc",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -1027,8 +1027,8 @@
   },
   {
    "path": "shaders/effects/filter/fibers/definition.js",
-   "size": 3495,
-   "sha256": "90bf2169b5080763066544a41490d6cf69f7ac4a9c5e9b1f51f26ee7d5ce93f7"
+   "size": 3804,
+   "sha256": "bc38949082a5ae4ac68005b751afaa8ceb315e3a6edf8f8a92100b56baed2f6d"
   },
   {
    "path": "shaders/effects/filter/fibers/glsl/fibersBlend.glsl",
@@ -2357,8 +2357,8 @@
   },
   {
    "path": "shaders/effects/filter/scratches/definition.js",
-   "size": 3471,
-   "sha256": "bc82400feb35bbd1f5c660a43e9efd2724e1a793f1884c0844d7005a617bbf45"
+   "size": 3780,
+   "sha256": "0668b1a3236239f98ac6ef5ed4451576eab0d5b4b982bada58995f1e2421bacc"
   },
   {
    "path": "shaders/effects/filter/scratches/glsl/scratchesBlend.glsl",
@@ -2747,8 +2747,8 @@
   },
   {
    "path": "shaders/effects/filter/strayHair/definition.js",
-   "size": 3362,
-   "sha256": "5ed633a8faf332c304b0de8815eff6d72ad2ad4835b6e77e144e80ea7226bea4"
+   "size": 3671,
+   "sha256": "848c7e11cf08a2fef08c5b08e7c1af25fc3c88d789aba4860e5e94ff801db02e"
   },
   {
    "path": "shaders/effects/filter/strayHair/glsl/strayHairBlend.glsl",
