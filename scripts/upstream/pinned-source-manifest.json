@@ -1,5 +1,5 @@
 {
- "revision": "a06b897712ac6c964d3d1aa873ba253d581a39bc",
+ "revision": "90dd6ca56b20e160c5dcf816d73709bab1fc3db6",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -1039,6 +1039,16 @@
    "path": "shaders/effects/filter/fibers/help.md",
    "size": 291,
    "sha256": "33de8eb12f2f540f2c2e307eaf9969f6d32ad79ecef71b13d3f9adf3f12e861d"
+  },
+  {
+   "path": "shaders/effects/filter/fibers/parity-attestation.json",
+   "size": 782,
+   "sha256": "bd4dd4ca453e8a582e361550695a6f19d75c75e74a4f793d4ae51d17fb92ce16"
+  },
+  {
+   "path": "shaders/effects/filter/fibers/parity-case.json",
+   "size": 358,
+   "sha256": "3b53c9792b69ecca9e8c87d9f02b703b4589cf64a684a063b27210c60924e63c"
   },
   {
    "path": "shaders/effects/filter/fibers/wgsl/fibersBlend.wgsl",
@@ -2371,6 +2381,16 @@
    "sha256": "8e65e31238da1cc6f4ebd056b04af26d6c99e03a12a3de2dc59a6ed09f637e5d"
   },
   {
+   "path": "shaders/effects/filter/scratches/parity-attestation.json",
+   "size": 785,
+   "sha256": "10f105a4a17b1eea6f320c530f59f2bd718049497dd9789bc4cb7486b5f900c8"
+  },
+  {
+   "path": "shaders/effects/filter/scratches/parity-case.json",
+   "size": 352,
+   "sha256": "96cb1c65b34a718b654ced657cfa38c175e6ee9e89cab1054db87096a2a85792"
+  },
+  {
    "path": "shaders/effects/filter/scratches/wgsl/scratchesBlend.wgsl",
    "size": 681,
    "sha256": "ace49a8d2d4a998fcfdb522b155049bc6916accaca05d1cd4a6dda9dfa3b9c90"
@@ -2759,6 +2779,16 @@
    "path": "shaders/effects/filter/strayHair/help.md",
    "size": 290,
    "sha256": "e65c88d78c0d7bb8050ce58b0c417641774696e9de12965d3b730b1a6261baf4"
+  },
+  {
+   "path": "shaders/effects/filter/strayHair/parity-attestation.json",
+   "size": 785,
+   "sha256": "7aa481861fb4d980535efe6912ba43f92ddc1b5313601c8bc0074542e82a4936"
+  },
+  {
+   "path": "shaders/effects/filter/strayHair/parity-case.json",
+   "size": 352,
+   "sha256": "3ac9e8764cf2bce7e0a044a57c05bfcb22708d9df5d6e3bba922af620cda6d77"
   },
   {
    "path": "shaders/effects/filter/strayHair/wgsl/strayHairBlend.wgsl",
