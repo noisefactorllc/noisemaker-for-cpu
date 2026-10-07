@@ -47,7 +47,7 @@ test('classifyCase maps the excluded effects, skip policy, and unexplained holes
   assert.throws(() => classifyCase({ id: 'filter/bc', inRegistry: false, hasGolden: true, skipPolicy: false }), /not an authority case/)
 })
 
-test('buildSummary arithmetic satisfies the GAP-003 closure contract invariants', () => {
+test('buildSummary arithmetic satisfies the closure contract invariants', () => {
   const rendered = [
     { exact: true, pass: true },
     { exact: false, pass: true },
@@ -110,7 +110,7 @@ test('entrypoint rejects a widened tolerance instead of counting passes', () => 
 test('emitted comparisons carry reference provenance and the summary aggregates it', () => {
   const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'filter/adjust'], { encoding: 'utf8' })
   const lines = stdout.trimEnd().split('\n')
-  assert.match(lines[0], /^Reference provenance \(GAP-008\): 0 recorded, 1 unknown/)
+  assert.match(lines[0], /^Reference provenance: 0 recorded, 1 unknown/)
   assert.match(lines[1], /reference=parity\/goldens\/defaults\/filter__adjust\.golden\.png sha256=[0-9a-f]{64} provenance=unknown/)
   const summary = JSON.parse(lines[lines.length - 1].replace(/^PARITY-SUMMARY /, ''))
   assert.deepEqual(summary.referenceProvenance, { recorded: 0, unknown: 1 })

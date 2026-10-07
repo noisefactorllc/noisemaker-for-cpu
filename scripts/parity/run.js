@@ -53,13 +53,13 @@ async function loadManifest() {
   }))
 }
 
-// GAP-008: reference-image provenance. The retained goldens are the REFERENCE captures;
+// Reference-image provenance. The retained goldens are the REFERENCE captures;
 // UPSTREAM_REVISION is the CANDIDATE source/kernel pin and must never be reported as a
 // capture revision. parity/goldens/provenance.json (regenerate with
 // scripts/parity/write-provenance.js) maps each golden to its capture record; goldens
 // recorded without one report provenance 'unknown'. The recorded sha256 is cross-checked
 // against the file bytes so a regenerated golden cannot be silently relabeled.
-// GAP-008 provenance helpers (loadGoldenProvenance / goldenReference) live in
+// Provenance helpers (loadGoldenProvenance / goldenReference) live in
 // scripts/parity/lib.js so the parity-summary entrypoint shares the same
 // relabel-prevention cross-check; behavior here is unchanged.
 
@@ -156,7 +156,7 @@ async function main() {
   if (options.json) process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`)
   else {
     process.stdout.write(`Parity ${summary.passed}/${summary.effects} within ±${summary.tolerance} RGBA bytes; ${summary.byteExact} byte-exact; ${summary.skipped.length} skipped\n`)
-    process.stdout.write(`Reference provenance (GAP-008): ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (no capture record; sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)\n`)
+    process.stdout.write(`Reference provenance: ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (no capture record; sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)\n`)
     for (const failure of failures) {
       process.stdout.write(`FAIL ${failure.id} max=${failure.maxError} mean=${failure.meanError.toFixed(4)} channels>${summary.tolerance}=${failure.channelsOverTolerance}\n`)
     }

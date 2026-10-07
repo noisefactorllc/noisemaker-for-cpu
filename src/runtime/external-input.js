@@ -1,6 +1,6 @@
 // CPU external-input state for the reactive (MIDI/audio) effects.
 //
-// GAP-003 closing contract: `synth/roll`, `synth/scope` and `synth/spectrum` are
+// Parity closure contract: `synth/roll`, `synth/scope` and `synth/spectrum` are
 // counted as expected parity cases, so the port needs the external-input state the
 // authority pipeline feeds them. This module mirrors the rendering-relevant subset
 // of the upstream `MidiState`/`AudioState` (shaders/src/runtime/external-input.js):

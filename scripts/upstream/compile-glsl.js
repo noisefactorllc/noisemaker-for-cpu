@@ -223,8 +223,8 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // provably int-typed GLSL identifier. Broader expression-level rewrites were measured
   // against fresh M4/Metal authority captures and REJECTED: the authority's rendered
   // output for filter/spookyTicker matches the untruncated lowering, not the pinned
-  // GLSL's int-division semantics, so sub-expression rewrites diverge (see the GAP-003
-  // record). Integer casts (`float(x)`) and literals are left untouched.
+  // GLSL's int-division semantics, so sub-expression rewrites diverge.
+  // Integer casts (`float(x)`) and literals are left untouched.
   const intNames = new Set()
   for (const m of originalSource.matchAll(/\buniform\s+int\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:=|;)/g)) intNames.add(m[1])
@@ -238,8 +238,8 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // yAtlas is a scalar int local). Both operands are provably int-typed GLSL identifiers, so
   // GLSL truncates toward zero; the transpiler's raw float64 division shifted every volume
   // z-slice coordinate. filter/spookyTicker is EXEMPT: its pinned M4/Metal authority capture
-  // matches the untruncated lowering for `glyph_idx = lx / cell_stride` (measured, see the
-  // GAP-003 record), so truncating it regresses the gate.
+  // matches the untruncated lowering for `glyph_idx = lx / cell_stride` (measured), so
+  // truncating it regresses the gate.
   if (effectId !== 'filter/spookyTicker') {
     out = out.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*) \/ ([A-Za-z_$]\w*);/g, (m, name, dividend, divisor) => {
       if (!intNames.has(divisor) || !intNames.has(dividend)) return m

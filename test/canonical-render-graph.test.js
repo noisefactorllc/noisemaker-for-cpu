@@ -258,7 +258,7 @@ function fixture() {
         { name: 'readBack', program: 'copy', inputs: { srcTex: '_precise' }, outputs: { fragColor: 'outputTex' } },
       ],
     }),
-    // GAP-005: viewport w/h overriding texture dimensions, scale with clamp
+    // Viewport w/h overriding texture dimensions, scale with clamp
     new EffectDefinition({
       namespace: 'filter', func: 'viewportScale', kind: 'filter', params: {},
       textures: {

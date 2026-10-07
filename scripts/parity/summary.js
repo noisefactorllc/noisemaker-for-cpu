@@ -1,4 +1,4 @@
-// GAP-003 whole-port parity summary. Counts every case of the current authority's
+// Whole-port parity summary. Counts every case of the current authority's
 // manifest (the pinned upstream source's 210 effect IDs in
 // src/effects/generated/upstream-snapshot.js `sourceEffectIds`, which includes the five
 // explicitly excluded reactive/mesh effects as expected cases) against this port and the
@@ -12,13 +12,13 @@
 //             record. Nothing records one today.
 //   skip    — the explicit, fixture-preflighted skips (NEW_CPU_EFFECT_IDS / ITERATED_SKIP_IDS)
 //             with no captured authority golden to compare against.
-//   fail    — rendered but exceeds the numerical contract (for example the accepted
-//             GAP-001 CRT approximation).
+//   fail    — rendered but exceeds the numerical contract (for example the
+//             accepted CRT approximation).
 //   missing — no implementation in this port (the five excluded effects) or an
 //             unexplained hole (registry effect without a golden and without a skip
 //             policy reason).
 // The exit code reports whether the audit ran to completion, not a parity verdict: the
-// PASS/FAIL verdict lives in the PARITY-SUMMARY JSON line, whose counts close GAP-003
+// PASS/FAIL verdict lives in the PARITY-SUMMARY JSON line, whose counts are the closure contract
 // only when executed === expected, exact + strict === expected, and near, defer, skip,
 // fail, and missing are all zero.
 import { existsSync } from 'node:fs'
@@ -111,7 +111,7 @@ export function buildSummary(rendered, skipped, missing, meta) {
     skip: skipped.length,
     fail,
     missing: missing.length,
-    // GAP-008: reference-image provenance reported separately from the candidate pin.
+    // Reference-image provenance reported separately from the candidate pin.
     referenceProvenance: {
       recorded: rendered.filter((result) => result.reference?.provenance === 'recorded').length,
       unknown: rendered.filter((result) => result.reference?.provenance !== 'recorded').length + skipped.length + missing.length,
@@ -204,7 +204,7 @@ export async function runSummary(options = {}) {
 
   const summary = buildSummary(rendered, skipped, missing, meta)
   const lines = []
-  lines.push(`Reference provenance (GAP-008): ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)`)
+  lines.push(`Reference provenance: ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)`)
   for (const result of rendered) {
     const reference = `reference=${result.reference.image} sha256=${result.reference.sha256} provenance=${result.reference.provenance}`
     lines.push(result.exact

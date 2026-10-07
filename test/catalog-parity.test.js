@@ -8,7 +8,7 @@ test('runtime catalog is the exact 210-effect canonical inventory', () => {
   assert.equal(effectCatalog.length, 210)
   assert.deepEqual(effectCatalog.map((effect) => effect.id), eligibleEffectIds)
   // The reactive effects are imported with the catalog and graded through host-fed
-  // external-input fixtures (GAP-003 closing contract counts them as expected cases).
+  // external-input fixtures (the parity closure contract counts them as expected cases).
   assert.deepEqual(effectCatalog.filter((effect) => ['synth/scope', 'synth/spectrum', 'synth/roll', 'render/meshLoader', 'render/meshRender'].includes(effect.id)).map((effect) => effect.id).sort(), ['render/meshLoader', 'render/meshRender', 'synth/roll', 'synth/scope', 'synth/spectrum'])
 })
 

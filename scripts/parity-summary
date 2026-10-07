@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// GAP-003 whole-port parity summary entrypoint. Renders every case of the current
+// Whole-port parity summary entrypoint. Renders every case of the current
 // authority's manifest (210 pinned effect IDs, including the five excluded reactive/mesh
 // effects as expected cases) with this port and compares each against the retained
 // authority golden; positional case-id arguments (either spelling, `filter/crt` or

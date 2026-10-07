@@ -5,8 +5,6 @@
 
 # noisemaker-cpu
 
-Current measured support: [compatibility report](docs/COMPATIBILITY.md).
-
 > This package supports the "Export Shader Pipeline" feature in Noisedeck.app. The feature runs shader compositions on other platforms. Noise Factor derives this package from the upstream Noisemaker Engine project and tests it for pixel-level parity.
 
 This is not the classic JS Noisemaker (Composer) library. This is a new
@@ -178,8 +176,6 @@ Numeric parameters accept `osc(kind, min?, max?, speed?, offset?, seed?)` automa
 One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initialized overlay on the first requested frame. Pass `oneShot: 'initial'` to reproduce the upstream pre-initialization first frame used by the parity fixtures.
 
 ## Collection parity
-
-See [the current completion gap register](docs/COMPLETION_GAPS.md) for audited evidence and remaining limits.
 
 The catalog is the exact eligible collection from Noisemaker revision `888dd85f93ff7f6997802c8cdf0054b195f0642e`:
 

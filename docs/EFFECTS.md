@@ -52,7 +52,7 @@ The three `points*` render effects are stateful/particle effects. `pointsEmit` i
 
 `heightmap3d` (new) is a voxel heightfield generator: it bakes separate height and diffuse-color 2D surfaces into the volume atlas, for `render/renderLandscape3d` to raymarch.
 
-## Former exclusions, imported (GAP-003)
+## Former exclusions, imported
 
 The reactive and mesh trees below used to be excluded by the CPU-port scope; they are imported with the catalog since the 2026-10-02 fourth parity leg and graded through the shared deterministic external-input fixtures (`scripts/parity/reactive-fixtures.js`) against M4/Metal authority goldens. Media and text are not excluded either: `synth/media` and `filter/text` receive browser `Surface` values or CLI PNGs through `--input` and `--texture`.
 

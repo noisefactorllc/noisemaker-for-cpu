@@ -31,7 +31,7 @@ test('CLI prints help and the effect catalog', () => {
   assert.equal(effects.status, 0, effects.stderr)
   assert.match(effects.stdout, /synth\/noise/)
   assert.match(effects.stdout, /filter\/blur/)
-  // The reactive and mesh trees are imported with the catalog (GAP-003), so the
+  // The reactive and mesh trees are imported with the catalog, so the
   // `effects` listing covers the full 210-effect inventory.
   assert.match(effects.stdout, /synth\/scope/)
   assert.match(effects.stdout, /synth\/spectrum/)
@@ -174,7 +174,7 @@ test('CLI csl command parses typed uniforms and named sampler textures', async (
 })
 
 test('CLI renders reactive effects with default silent external state and rejects audio options', () => {
-  // The reactive effects are catalog members (GAP-003); with no external state they
+  // The reactive effects are catalog members; with no external state they
   // render their silent default (zero waveform/spectrum, empty note grid).
   for (const effect of ['synth/scope', 'synth/spectrum', 'synth/roll']) {
     const result = run(['effect', effect, '--width=4', '--height=4'])

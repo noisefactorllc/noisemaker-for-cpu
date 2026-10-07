@@ -14,7 +14,7 @@ const outputPath = resolve(projectRoot, 'src', 'effects', 'generated', 'upstream
 
 const namespaces = ['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d']
 // The reactive (MIDI/audio) and mesh (OBJ) effects are imported into the catalog and
-// graded through host-fed external-input fixtures (GAP-003 closing contract counts
+// graded through host-fed external-input fixtures (the parity closure contract counts
 // them as expected cases); see src/runtime/external-input.js for the CPU-side state.
 const excluded = new Set([])
 const renderAllowlist = new Set([

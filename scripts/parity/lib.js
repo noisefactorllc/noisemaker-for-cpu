@@ -25,7 +25,7 @@ export function compareRgba8(actual, expected, tolerance = 2) {
   }
 }
 
-// GAP-008: reference-image provenance. The retained goldens are the REFERENCE captures;
+// Reference-image provenance. The retained goldens are the REFERENCE captures;
 // UPSTREAM_REVISION is the CANDIDATE source/kernel pin and must never be reported as a
 // capture revision. parity/goldens/provenance.json (regenerate with
 // scripts/parity/write-provenance.js) maps each golden to its capture record; goldens

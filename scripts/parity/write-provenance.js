@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Regenerates parity/goldens/provenance.json (GAP-008): the committed map from each
+// Regenerates parity/goldens/provenance.json: the committed map from each
 // retained golden image to its reference-capture provenance. Run this whenever a
 // golden is added or regenerated — the parity gate cross-checks the recorded sha256
 // against the file bytes and fails loudly on a mismatch, so a regenerated golden can
@@ -35,7 +35,7 @@ async function introducedIn(path) {
 }
 
 const goldensRoot = join(projectRoot, 'parity', 'goldens')
-// Explicit capture records (GAP-008): a documented GPU-session capture maps a golden key
+// Explicit capture records: a documented GPU-session capture maps a golden key
 // to its capture revision and a human-readable record (host, backend, session). Only keys
 // present here get a non-null captureRevision; everything else stays 'unknown'.
 let captureRecords = {}
@@ -59,7 +59,7 @@ for (const path of (await listGoldenPngs(goldensRoot)).sort()) {
 
 const manifest = {
   format: 1,
-  note: 'Reference-image provenance for the retained parity goldens (GAP-008). captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) — never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.',
+  note: 'Reference-image provenance for the retained parity goldens. captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) — never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.',
   goldens,
 }
 

@@ -123,7 +123,7 @@ test('every real effect param maps to a known widget kind', () => {
   }
 })
 
-// GAP-007: every generated control exposes a distinct, accurate accessible name.
+// Every generated control exposes a distinct, accurate accessible name.
 test('controlAriaLabel derives the visible param label', () => {
   assert.equal(controlAriaLabel('scaleX', noise.params.scaleX, 'slider'), 'scaleX')
   assert.equal(controlAriaLabel('ridges', noise.params.ridges, 'toggle'), 'ridges')

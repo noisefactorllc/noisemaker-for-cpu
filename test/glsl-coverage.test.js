@@ -28,7 +28,7 @@ test('every eligible canonical GLSL program is transpiled or assigned a parity a
     [...new Set(programCoverage.filter((program) => program.status === 'adapter').map((program) => `${program.effectId}:${program.program}`))].sort(),
     ADAPTER_PROGRAMS,
   )
-  // The reactive and mesh trees are imported with the catalog (GAP-003): the reactive
+  // The reactive and mesh trees are imported with the catalog: the reactive
   // fragment programs and the meshLoader preview / meshRender clear programs transpile
   // normally; meshRender's triangle-draw `render` program is driven by the hand-written
   // CPU rasterizer in src/effects/cpu/mesh-render.js (its transpiled fragment body is
