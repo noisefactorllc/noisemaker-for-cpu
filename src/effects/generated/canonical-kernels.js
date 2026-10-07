@@ -22577,7 +22577,7 @@ function canonicalFactory180($bindings, $runtime) {
   var TAU = 6.2831854820251465;
   var PI = 3.1415927410125732;
   var RIGHT_ANGLE = 1.5707963705062866;
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -25156,7 +25156,7 @@ function canonicalFactory200($bindings, $runtime) {
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -25338,7 +25338,7 @@ function canonicalFactory202($bindings, $runtime) {
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (s) {
   	return cpu_float(hash_uint(s)) / 4294967296;
   };
@@ -25558,7 +25558,7 @@ function canonicalFactory205($bindings, $runtime) {
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -25812,7 +25812,7 @@ function canonicalFactory209($bindings, $runtime) {
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -26086,7 +26086,7 @@ function canonicalFactory211($bindings, $runtime) {
   var outRGBA = new Float32Array([0, 0, 0, 0]);
   var TAU = 6.2831854820251465;
   var RIGHT_ANGLE = 1.5707963705062866;
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -26720,7 +26720,7 @@ function canonicalFactory221($bindings, $runtime) {
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
   var outData = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -26961,7 +26961,7 @@ function canonicalFactory222($bindings, $runtime) {
   var matrixSeed = $bindings["matrixSeed"];
   var symmetricForces = $bindings["symmetricForces"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -27041,7 +27041,7 @@ function canonicalFactory224($bindings, $runtime) {
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
   var TAU = 6.2831854820251465;
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -27216,7 +27216,7 @@ function canonicalFactory227($bindings, $runtime) {
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };
@@ -27843,7 +27843,7 @@ function canonicalFactory242($bindings, $runtime) {
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
-  function hash_uint (value) { return $runtime.stdlib.hashUint(value); };
+  function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
   	return cpu_float(hash_uint(seed)) / 4294967296;
   };

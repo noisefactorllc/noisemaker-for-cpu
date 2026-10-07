@@ -182,6 +182,18 @@ test('AOT canonical uint hash kernels dispatch to exact uint32 multiplication', 
   assert.doesNotMatch(factory.toString(), /x \*= 2146121005/)
 })
 
+test('AOT canonical LCG hash_uint kernels dispatch to the LCG body, not the murmur finalizer', () => {
+  // The pinned GLSL declares two different `hash_uint` bodies under one name.
+  // The pointsEmit init / points agents / flow3d agent body is the LCG-seeded
+  // mix (747796405u / 2891336453u / 277803737u); mapping it to the murmur-style
+  // stdlib.hashUint produced agent sequences the authority bytes never contain.
+  const initFactory = canonicalKernelFactories['render/pointsEmit:init']
+  assert.match(initFactory.toString(), /stdlib\.hashUintLcg/)
+  assert.doesNotMatch(initFactory.toString(), /7feb352d|846ca68b/)
+  assert.match(canonicalKernelFactories['points/buddhabrot:agent'].toString(), /stdlib\.hashUintLcg/)
+  assert.match(canonicalKernelFactories['filter3d/flow3d:agent'].toString(), /stdlib\.hashUintLcg/)
+})
+
 test('AOT matrix self-assignments preserve simultaneous GLSL component reads', () => {
   const factory = canonicalKernelFactories['filter/spinBlur:spinBlur']
   assert.match(factory.toString(), /cpu_matrix_assignment/)

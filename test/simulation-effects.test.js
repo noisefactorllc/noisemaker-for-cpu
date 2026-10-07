@@ -49,26 +49,27 @@ const REPEAT_CARRIED = new Set(['synth/navierStokes', 'synth/reactionDiffusion']
 // is itself a bug: only one of the two is genuine settling.
 //
 // `SETTLES_BY_N8`: the output is byte-identical from N=4 all the way through N=60 (re-verified) -
-// these five have genuinely reached a stable configuration:
+// these have genuinely reached a stable configuration:
 const SETTLES_BY_N8 = new Set([
   'filter/feedback', // a delay-line/blend loop that stabilizes within a handful of frames.
-  'points/physical', // shares a fixture with the two render/points* entries below.
   'render/pointsBillboardRender',
-  'render/pointsEmit',
-  'render/pointsRender', // `pointsEmit().physical().pointsRender()` - one fixture, three ids.
 ])
+// `points/physical`, `render/pointsEmit`, and `render/pointsRender` (all three share one fixture)
+// used to be listed here as settled; after the generated `hash_uint` kernels were routed to the
+// LCG body the pinned authority GLSL declares, their agent respawn sequences no longer freeze the
+// output between N=4 and N=8, so they take the strict advancing branch.
 //
 // `PLATEAUS_BY_N8`: the output is NOT stable - N=4..8 is a deterministic plateau at THIS exact
-// test scale, but iterating further resumes changing the output (re-verified: points/physarum
-// first differs at N=11, points/flow and points/life at N=10, points/lenia at N=22). This is a
-// small-scale artifact, not evidence of settling: re-run at a larger scale (32x32 canvas,
-// stateSize:128), points/physarum shows NO plateau at all - every consecutive N from 1 to 60
-// differs. Do not describe these as "settled" or "converged" in code or docs.
+// test scale, but iterating further resumes changing the output (re-verified for points/lenia:
+// first differs at N=22). This is a small-scale artifact, not evidence of settling: re-run at a
+// larger scale (32x32 canvas, stateSize:128) and the plateau disappears. Do not describe this as
+// "settled" or "converged" in code or docs.
+// `points/flow`, `points/life`, and `points/physarum` used to plateau here too (byte-identical
+// N=4..8, flow/life first differing at N=10 and physarum at N=11); after the generated
+// `hash_uint` kernels were routed to the LCG body the pinned authority GLSL declares, all three
+// measurably advance between N=4 and N=8, so they take the strict advancing branch.
 const PLATEAUS_BY_N8 = new Set([
-  'points/flow',
   'points/lenia',
-  'points/life',
-  'points/physarum',
 ])
 const CONVERGES_BY_N8 = new Set([...SETTLES_BY_N8, ...PLATEAUS_BY_N8])
 

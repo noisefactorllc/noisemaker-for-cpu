@@ -162,10 +162,23 @@ function lowerUnsignedJavaScript(transpiled, originalSource) {
     )
   }
   if (/\buint\s+hash_uint\s*\(\s*uint\b/.test(originalSource)) {
-    lowered = lowered.replace(
-      /function hash_uint \([^)]*\) \{[\s\S]*?\n\};/,
-      'function hash_uint (value) { return $runtime.stdlib.hashUint(value); };',
-    )
+    // Two distinct pinned GLSL bodies share the `hash_uint` name: the
+    // xor-shift-multiply murmur-style finalizer (filter/texture,
+    // filter/spookyTicker) and the LCG-seeded mix (render/pointsEmit init,
+    // the points/* agents, filter3d/flow3d). Route by body — mapping the LCG
+    // body to the murmur implementation produced entirely different agent
+    // sequences than the authority's bytes.
+    const hashUintReplacement = /7feb352d|846ca68b/.test(originalSource)
+      ? 'function hash_uint (value) { return $runtime.stdlib.hashUint(value); };'
+      : /747796405/.test(originalSource)
+        ? 'function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };'
+        : null
+    if (hashUintReplacement) {
+      lowered = lowered.replace(
+        /function hash_uint \([^)]*\) \{[\s\S]*?\n\};/,
+        hashUintReplacement,
+      )
+    }
   }
   lowered = lowered
     .replace(/var denom = 4294967295\.0;/g, 'var denom = cpu_float(4294967295.0);')
