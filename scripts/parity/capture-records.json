@@ -80,12 +80,12 @@
     "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
   },
   "defaults/render__renderLandscape3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-07-m4-metal-webgl2-1.0.265",
+    "captureRecord": "2026-10-07 M4/Metal authority capture: published engine 1.0.265 (source revision 8e5835932a7297d360b943200b42953224eea0a4, the pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, HeadlessChrome 155), 8x8 gate fixture, time 0.25, readPixels('global_o0_write') twice with identical bytes. The same capture method reproduces the previous 1.0.206 capture of this fixture byte for byte; the new image follows upstream 8fa067f6, which stores heightmap3d's top image row at z = 0."
   },
   "defaults/synth3d__heightmap3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-07-m4-metal-webgl2-1.0.265",
+    "captureRecord": "2026-10-07 M4/Metal authority capture: published engine 1.0.265 (source revision 8e5835932a7297d360b943200b42953224eea0a4, the pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, HeadlessChrome 155), 8x8 gate fixture, time 0.25, readPixels('global_o0_write') twice with identical bytes. The same capture method reproduces the previous 1.0.206 capture of this fixture byte for byte; the new image follows upstream 8fa067f6, which stores heightmap3d's top image row at z = 0."
   },
   "defaults/synth__roll.golden.png": {
     "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",

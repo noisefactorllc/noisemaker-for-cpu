@@ -2667,7 +2667,7 @@ function canonicalFactory7($bindings, $runtime) {
   function pixellate (uv, size) {
   	uv = $runtime.copy(uv);
   	if (size < 1) {
-  	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)))));
+  	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	};
   	size *= 4;
   	var dx = size * (1 / resolution[0]);
@@ -3156,7 +3156,7 @@ function canonicalFactory7($bindings, $runtime) {
   	loadKernels();
   	var blendy = periodicFunction(time - offsets(uv));
   	var origUV = uv instanceof Float32Array ? $runtime.copy(uv) : uv;
-  	var origcolor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var origcolor = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	(color[0] = origcolor[0], color[1] = origcolor[1], color[2] = origcolor[2], color[3] = origcolor[3], color);
   	if (EFFECT != 0) {
   	if (effectAmt != 0) {
@@ -18262,7 +18262,7 @@ function canonicalFactory125($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var c = new $runtime.PooledFloat32Array([-centerX, centerY]);
+  	var c = new $runtime.PooledFloat32Array([centerX, centerY]);
   	(st[0] -= c[0], st[1] -= c[1], st);
   	st[0] *= aspect;
   	(st[0] = st[0] / scaleX, st[1] = st[1] / scaleY, st);
@@ -30743,7 +30743,7 @@ function canonicalFactory260($bindings, $runtime) {
   var TAU = 6.2831854820251465;
   var BAILOUT = 256;
   var LOG2 = 0.6931471824645996;
-  var MAX_ITER = 500;
+  var MAX_ITER = 2048;
   function df64_quick_two_sum (a, b) {
   	var s = a + b;
   	var e = b - (s - a);
@@ -36456,7 +36456,8 @@ function canonicalFactory294($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   var geoOut = new Float32Array([0, 0, 0, 0]);
   function imageTexel (column, size) {
-  	return clamp(new $runtime.PooledFloat32Array([((column[0] * 2 + 1) * size[0]) / (volumeSize * 2), ((column[1] * 2 + 1) * size[1]) / (volumeSize * 2)]), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
+  	var image = cpu_ivec2(column[0], volumeSize - 1 - column[1]);
+  	return clamp(new $runtime.PooledFloat32Array([((image[0] * 2 + 1) * size[0]) / (volumeSize * 2), ((image[1] * 2 + 1) * size[1]) / (volumeSize * 2)]), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   };
   function columnHeight (column) {
   	var rgb = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texelFetch(heightTex, imageTexel(column, textureSize(heightTex, 0)), 0)));

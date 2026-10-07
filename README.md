@@ -177,7 +177,7 @@ One-shot CPU overlays default to `oneShot: 'ready'`, which returns their initial
 
 ## Collection parity
 
-The catalog is the exact eligible collection from Noisemaker revision `888dd85f93ff7f6997802c8cdf0054b195f0642e`:
+The catalog is the exact eligible collection from Noisemaker revision `15c9114e864fcc8cd2557669f2ac6d36f0ea080f`:
 
 - 210 effects: 20 `classicNoisedeck`, 113 `filter`, 2 `filter3d`, 15 `mixer`, 11 `points`, 12 `render`, 29 `synth`, and 8 `synth3d`
 - 308 canonical programs: 298 generated from canonical GLSL, plus 10 full CPU adapters (4 fragment-kernel replacements, 5 vertex+fragment scatter-pass pairs, and 1 struct-typed program `glsl-transpiler` can't represent — see [docs/CSL.md](docs/CSL.md))
@@ -186,7 +186,7 @@ The catalog is the exact eligible collection from Noisemaker revision `888dd85f9
 
 The formerly excluded reactive (`synth/roll`, `synth/scope`, `synth/spectrum`) and mesh (`render/meshLoader`, `render/meshRender`) trees are imported since the 2026-10-02 fourth parity leg: the renderer binds their external inputs (MIDI note grid + clock, audio waveform/spectrum, OBJ mesh textures) via `renderOptions.externalInputs`, and each is graded against a committed M4/Metal authority golden through the shared deterministic fixtures. `filter/text` and `synth/media` remain included through external `Surface`/PNG inputs. [docs/EFFECTS.md](docs/EFFECTS.md) contains the full inventory.
 
-Parity claims are enforced, not inferred. `npm run parity` keeps the established golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current whole-port result is 191 of 210 authority-manifest effects compared — 140 byte-exact, 50 further strict passes — with 19 explicit, compile-preflighted skips (10 iterated CPU-divergent effects plus 9 volume/loop effects awaiting qualification) and only `filter/crt` failing, which the operator accepted as a scoped approximation ([docs/CRT-PARITY.md](docs/CRT-PARITY.md) records the analysis and fix constraints). The reactive/mesh effects are compared against committed M4/Metal authority goldens through `renderOptions.externalInputs` fixtures. Skips never affect the pass/fail count or exit code. Historical figures at the smaller pre-sync catalog pinned at `f1d2b46` (published 2026-09-19): 166/167 with 117 byte-exact (see [docs/COMPLETION_GAPS.md](docs/COMPLETION_GAPS.md) C-002).
+Parity claims are enforced, not inferred. `npm run parity` keeps the established golden gate at 8×8, time `0.25`, seed `1`, and `oneShot: 'initial'`. The current whole-port result (`scripts/parity-summary`) is 204 of 210 authority-manifest effects compared — 153 byte-exact, 50 further strict passes — with 6 explicit, compile-preflighted skips (`filter3d/flow3d`, `synth3d/cellularAutomata3d` and `synth3d/flythrough3d` have no captured authority golden yet; `points/buddhabrot`, `points/lenia` and `synth/navierStokes` are CPU-divergent iterated effects) and only `filter/crt` failing, which the operator accepted as a scoped approximation ([docs/CRT-PARITY.md](docs/CRT-PARITY.md) records the analysis and fix constraints). The reactive/mesh effects are compared against committed M4/Metal authority goldens through `renderOptions.externalInputs` fixtures. Skips never affect the pass/fail count or exit code. CI runs the test suite on every push and the parity summary weekly; a kit is released only after both pass.
 
 ## Performance model
 

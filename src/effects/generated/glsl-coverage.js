@@ -75,10 +75,10 @@ export const programCoverage = Object.freeze([
     "program": "effects",
     "file": "effects.glsl",
     "status": "generated",
-    "sourceSha256": "e3b742be53b6b1b0dd5e089a805ff02a931cd14643d0a0abe376bd8044e8ec6c",
-    "sourceBytes": 21087,
-    "normalizedBytes": 21590,
-    "generatedBytes": 25473
+    "sourceSha256": "c837f01ab747d2363bd1bd9ffb9950e0ececcfae40a9768a3dce90fb01d83457",
+    "sourceBytes": 21279,
+    "normalizedBytes": 21782,
+    "generatedBytes": 25581
   },
   {
     "effectId": "classicNoisedeck/fractal",
@@ -1285,10 +1285,10 @@ export const programCoverage = Object.freeze([
     "program": "scale",
     "file": "scale.glsl",
     "status": "generated",
-    "sourceSha256": "a45f000ee12c498d7a11a04ecc56e911c9fc804ad9cde60cc7cea47533a19ce3",
-    "sourceBytes": 1121,
-    "normalizedBytes": 1103,
-    "generatedBytes": 1556
+    "sourceSha256": "e0902531c605af1fefd15fe7f1df7e53d892647531df8df58b3c707637b70d27",
+    "sourceBytes": 1120,
+    "normalizedBytes": 1102,
+    "generatedBytes": 1555
   },
   {
     "effectId": "filter/scanlineError",
@@ -2705,10 +2705,10 @@ export const programCoverage = Object.freeze([
     "program": "mandelbrot",
     "file": "mandelbrot.glsl",
     "status": "generated",
-    "sourceSha256": "0587dbc29f2dc8c186d7c47ebe6182e89dfe0387fc29a23826cac15499fba615",
-    "sourceBytes": 14855,
-    "normalizedBytes": 14866,
-    "generatedBytes": 11628
+    "sourceSha256": "6e6f740356f7ced1cbd40b3a991dd0ef654e39ecaeec8c52e091a08f68e3b3bd",
+    "sourceBytes": 14931,
+    "normalizedBytes": 14942,
+    "generatedBytes": 11629
   },
   {
     "effectId": "synth/media",
@@ -3045,10 +3045,10 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
-    "sourceSha256": "d43f213b09edcba90f10c14e0bae421587c56168c5823b3107a1eb183d36d759",
-    "sourceBytes": 1777,
-    "normalizedBytes": 2125,
-    "generatedBytes": 2932
+    "sourceSha256": "2a634fd3355925d3590f5857523acf185f7d77e0d32a5488c6546a5ea51e1427",
+    "sourceBytes": 1985,
+    "normalizedBytes": 2337,
+    "generatedBytes": 2993
   },
   {
     "effectId": "synth3d/noise3d",
