@@ -1,5 +1,5 @@
 {
- "revision": "1fa59423497d62f1c5f893d7bd3cfd4a04eb9b1a",
+ "revision": "247f452bfb498b916196f8a3f6375e2368cc2b3c",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -213,7 +213,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-attestation.json",
    "size": 799,
-   "sha256": "2ea8ed034cd9b8c5124f9a53e7d1156c1b8dec5c781f718421d45de1a5561dcf"
+   "sha256": "ca894174329af1579a30a2b7bcd141e72003ddbf4dabea52016db9fc8d092b2d"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-case.json",
@@ -222,8 +222,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/wgsl/effects.wgsl",
-   "size": 16317,
-   "sha256": "db68db587af56f472070ab4ccd2939e4928bb75001b8c7933da417821b6b624f"
+   "size": 15886,
+   "sha256": "a0367b3aa2ccfa429a8de468d00db615904f7fc6646e532114a8e73aa100b334"
   },
   {
    "path": "shaders/effects/classicNoisedeck/fractal/definition.js",
