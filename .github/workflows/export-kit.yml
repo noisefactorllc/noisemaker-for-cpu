@@ -7,9 +7,10 @@ name: Export kit
 
 # A push runs the test suite. The parity summary renders every catalog case on
 # the CPU and takes over ten minutes, so it runs weekly and on manual dispatch,
-# and only a green run of both dispatches the kit release. filter/crt is the
-# operator-accepted approximation documented in docs/CRT-PARITY.md: it is
-# reported as FAIL every run, and any other failing effect fails the job.
+# and only a green run of both dispatches the kit release. The release gate
+# (scripts/parity/release-gate.js) needs zero MISSING cases, exactly the declared
+# skip set, and no failure but filter/crt, the operator-accepted approximation
+# documented in docs/CRT-PARITY.md.
 on:
   workflow_dispatch:
   schedule:
@@ -70,15 +71,18 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - name: Parity summary (only the accepted filter/crt approximation may fail)
+      - name: Parity summary
+        run: ./scripts/parity-summary 2>&1 | tee "$RUNNER_TEMP/parity-summary.log"
+      # Every authority case must be reported, none MISSING, the SKIP cases must be
+      # exactly the declared set below and the FAIL cases exactly the accepted
+      # filter/crt approximation (docs/CRT-PARITY.md). Any other skip or failure,
+      # and any declared skip or accepted failure that changed verdict, fails the
+      # release until this declaration is changed here.
+      - name: Release gate (zero missing, declared skips and accepted failures only)
         run: |
-          ./scripts/parity-summary 2>&1 | tee "$RUNNER_TEMP/parity-summary.log"
-          grep -q '^PARITY-SUMMARY ' "$RUNNER_TEMP/parity-summary.log"
-          fails=$(grep -E '^FAIL ' "$RUNNER_TEMP/parity-summary.log" | awk '{print $2}' | sort | tr '\n' ' ')
-          if [ "$fails" != "filter/crt " ]; then
-            echo "::error::failing effects: ${fails:-none} (only filter/crt, docs/CRT-PARITY.md, may fail)"
-            exit 1
-          fi
+          node scripts/parity/release-gate.js "$RUNNER_TEMP/parity-summary.log" \
+            --declared-skips 'filter3d/flow3d points/buddhabrot points/lenia synth/navierStokes synth3d/cellularAutomata3d synth3d/flythrough3d' \
+            --accepted-failures 'filter/crt'
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
