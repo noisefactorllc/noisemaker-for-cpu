@@ -90,7 +90,24 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
+      # scaffold mints a new kit version for every dispatch, so a weekly run on
+      # an unchanged main must not release the same SHA again.
+      - name: Skip a SHA that is already released
+        id: released
+        env:
+          SHA: ${{ github.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          tags=$(git ls-remote --tags "https://github.com/$REPO.git" 'refs/tags/kit-*')
+          if printf '%s\n' "$tags" | awk '$2 ~ /\^\{\}$/ { print $1 }' | grep -qx "$SHA"; then
+            echo "$SHA already carries a kit tag; nothing to release."
+            echo "released=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "released=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Mint scaffold-dispatch token
+        if: steps.released.outputs.released == 'false'
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -100,6 +117,7 @@ jobs:
           repositories: scaffold
 
       - name: Dispatch export-kit-release
+        if: steps.released.outputs.released == 'false'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
