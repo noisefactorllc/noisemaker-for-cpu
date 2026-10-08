@@ -104,6 +104,20 @@ function parseHistoricPaletteEntries(source) {
   return entries
 }
 
+// glsl-transpiler types only the GLSL ES 1.0 builtins. A call to an untyped one
+// (GLSL ES 3.0's round, trunc, tanh, ...) gets no type, so `s * round(v)` is
+// emitted as a scalar product and multiplies a number by an array: NaN for every
+// component (classicNoisedeck shapes3d's and noise3d's `p -= s * round(p / s)`
+// domain repetition). These are component-wise genType functions like floor; the
+// stubs only carry that type, because the kernels call the runtime's stdlib.
+const COMPONENT_WISE_ES3_BUILTINS = ['round', 'roundEven', 'trunc', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh']
+for (const name of COMPONENT_WISE_ES3_BUILTINS) {
+  if (GLSL.prototype.stdlib[name]) continue
+  const typed = { [name]() {} }[name]
+  typed.type = GLSL.prototype.stdlib.floor.type
+  GLSL.prototype.stdlib[name] = typed
+}
+
 function transpile(source) {
   const preprocess = source.split('\n').some((line) => /^\s*#/.test(line))
   const compile = GLSL({
@@ -347,6 +361,89 @@ function copyAliasedVectorDeclarations(transpiled) {
   }).join('\n')
 }
 
+// GLSL `vecN == vecN` is one bool, true when every component is equal; `!=` is
+// true when any component differs. glsl-transpiler emits both as a component-wise
+// `new Float32Array([a[0] == b[0], ...])`, an object that is always truthy, so every
+// ternary and `if` on a vector comparison took its first branch: lensDistortion's
+// tint never applied, the coalesce/refract/feedback dodge and burn blends always
+// kept one input, colorLab's channel masks and render3d's first-voxel normal test
+// were constant. Each such literal reduces to the scalar GLSL result. A bvec
+// constructor (`bvec3(x == y, ...)`) keeps its array: the transpiler emits it with a
+// `.map(bool)` suffix, and the `equal()`/`notEqual()` builtins are function calls.
+function splitTopLevel(text) {
+  const parts = []
+  let depth = 0
+  let begin = 0
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index]
+    if ('([{'.includes(character)) depth += 1
+    else if (')]}'.includes(character)) depth -= 1
+    else if (character === ',' && depth === 0) {
+      parts.push(text.slice(begin, index))
+      begin = index + 1
+    }
+  }
+  parts.push(text.slice(begin))
+  return parts
+}
+
+function topLevelComparison(expression) {
+  let depth = 0
+  let found = null
+  for (let index = 0; index < expression.length; index += 1) {
+    const character = expression[index]
+    if ('([{'.includes(character)) depth += 1
+    else if (')]}'.includes(character)) depth -= 1
+    else if (depth === 0) {
+      if ('?&|'.includes(character)) return null
+      const pair = expression.slice(index, index + 2)
+      if ((pair === '==' || pair === '!=') && expression[index + 2] !== '=') {
+        if (found) return null
+        found = pair
+        index += 1
+      }
+    }
+  }
+  return found
+}
+
+function reduceVectorEquality(transpiled) {
+  const marker = 'new Float32Array(['
+  let output = ''
+  let cursor = 0
+  for (let start = transpiled.indexOf(marker); start >= 0; start = transpiled.indexOf(marker, cursor)) {
+    const open = start + marker.length - 1
+    let depth = 0
+    let close = -1
+    for (let index = open; index < transpiled.length; index += 1) {
+      const character = transpiled[index]
+      if ('([{'.includes(character)) depth += 1
+      else if (')]}'.includes(character)) {
+        depth -= 1
+        if (depth === 0) {
+          close = index
+          break
+        }
+      }
+    }
+    const elements = close > open ? splitTopLevel(transpiled.slice(open + 1, close)) : []
+    const operators = elements.map(topLevelComparison)
+    const operator = operators[0]
+    const reducible = elements.length >= 2 && transpiled[close + 1] === ')' &&
+      !transpiled.startsWith('.map(', close + 2) &&
+      (operator === '==' || operator === '!=') && operators.every((each) => each === operator)
+    if (!reducible) {
+      output += transpiled.slice(cursor, open + 1)
+      cursor = open + 1
+      continue
+    }
+    const joined = elements.map((element) => reduceVectorEquality(element.trim())).join(operator === '==' ? ' && ' : ' || ')
+    output += `${transpiled.slice(cursor, start)}(${joined})`
+    cursor = close + 2
+  }
+  return output + transpiled.slice(cursor)
+}
+
 function poolLocalVectors(transpiled) {
   let depth = 0
   return transpiled.split('\n').map((line) => {
@@ -496,7 +593,20 @@ function lowerPaletteStructArray(source) {
     .replaceAll('entry.phase', 'entryPhase')
 }
 
+// glsl-transpiler distributes a whole-vector `==`/`!=` per component, and once
+// that is combined with || or && no JavaScript form recovers the GLSL meaning:
+// colorLab's `coord.xy == vec2(1.0) || coord.xy == vec2(3.0)` became
+// `[(x == 1) || (x == 3), (y == 1) || (y == 3)]`, true for (1, 3). Every vector
+// comparison in the catalog tests an identifier or swizzle against a vecN
+// literal, so those become all(equal()) and any(notEqual()) before transpiling.
+// reduceVectorEquality below still reduces any other comparison literal.
+function lowerVectorEquality(source) {
+  return source.replace(/\b([A-Za-z_]\w*(?:\.\w+)*)\s*(==|!=)\s*(vec[234]\s*\([^()]*\))/g, (match, left, operator, right) =>
+    operator === '==' ? `all(equal(${left}, ${right}))` : `any(notEqual(${left}, ${right}))`)
+}
+
 function adaptCanonicalSource(effectId, source) {
+  source = lowerVectorEquality(source)
   // glsl-transpiler flattens these common hash swizzles into scalar JS inside
   // one typed-array constructor, erasing the float32 operation boundaries
   // between the add and multiply. Explicit float casts retain the GLSL hash
@@ -725,6 +835,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   transpiled = preserveIntCastPrecedence(transpiled)
   transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
   transpiled = restoreIntegerDivision(transpiled, originalSource, effectId)
+  transpiled = reduceVectorEquality(transpiled)
   transpiled = copyAliasedVectorDeclarations(transpiled)
   transpiled = poolLocalVectors(transpiled)
   const called = new Set([...transpiled.matchAll(/\b([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))

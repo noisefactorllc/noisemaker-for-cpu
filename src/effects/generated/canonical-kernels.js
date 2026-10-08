@@ -1646,7 +1646,7 @@ function canonicalFactory3($bindings, $runtime) {
 }
 
 function canonicalFactory4($bindings, $runtime) {
-  const { vec2, vec4, sin, cos, sqrt, abs, fract, mod, min, max, mix, length, add, subtract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, vec4, sin, cos, sqrt, abs, fract, mod, min, max, mix, length, equal, all, add, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -1788,10 +1788,10 @@ function canonicalFactory4($bindings, $runtime) {
   	};
   	} else {
   	if (mode == 2) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 0, color2[1] == 0, color2[2] == 0, color2[3] == 0])) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([0, 0, 0, 0])))) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 3) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 4) {
   	min(color1, color2).reduce((res,el,i)=>(res[i] = el, res), middle);
@@ -1803,7 +1803,7 @@ function canonicalFactory4($bindings, $runtime) {
   	(middle[0] = color1[0] + color2[0] - (2 * color1[0]) * color2[0], middle[1] = color1[1] + color2[1] - (2 * color1[1]) * color2[1], middle[2] = color1[2] + color2[2] - (2 * color1[2]) * color2[2], middle[3] = color1[3] + color2[3] - (2 * color1[3]) * color2[3], middle);
   	} else {
   	if (mode == 7) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 8) {
   	new $runtime.PooledFloat32Array([blendOverlay(color2[0], color1[0]), blendOverlay(color2[1], color1[1]), blendOverlay(color2[2], color1[2]), mix(color1[3], color2[3], 0.5)]).reduce((res,el,i)=>(res[i] = el, res), middle);
@@ -1827,7 +1827,7 @@ function canonicalFactory4($bindings, $runtime) {
   	vec4.add([], vec4.subtract([], min(color1, color2), max(color1, color2)), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 15) {
-  	(new $runtime.PooledFloat32Array([color1[0] == 1, color1[1] == 1, color1[2] == 1, color1[3] == 1])) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color1, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 16) {
   	(middle[0] = 1 - ((1 - color1[0]) * (1 - color2[0])), middle[1] = 1 - ((1 - color1[1]) * (1 - color2[1])), middle[2] = 1 - ((1 - color1[2]) * (1 - color2[2])), middle[3] = 1 - ((1 - color1[3]) * (1 - color2[3])), middle);
@@ -1934,7 +1934,7 @@ function canonicalFactory4($bindings, $runtime) {
 }
 
 function canonicalFactory5($bindings, $runtime) {
-  const { float, vec2, vec3, sin, cos, pow, abs, sign, floor, fract, mod, min, max, step, distance, add, multiply, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, vec3, sin, cos, pow, abs, sign, floor, fract, mod, min, max, step, distance, equal, all, add, multiply, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -2166,10 +2166,10 @@ function canonicalFactory5($bindings, $runtime) {
   	color = new $runtime.PooledFloat32Array([0, 0, 0, color[3]]);
   	} else {
   	if (bright < 0.23999999463558197) {
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (new $runtime.PooledFloat32Array([coord[0] == 1, coord[1] == 1])) ? new $runtime.PooledFloat32Array([1, 1, 1]) : new $runtime.PooledFloat32Array([0, 0, 0])));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (all(equal(coord, new $runtime.PooledFloat32Array([1, 1])))) ? new $runtime.PooledFloat32Array([1, 1, 1]) : new $runtime.PooledFloat32Array([0, 0, 0])));
   	} else {
   	if (bright < 0.36000001430511475) {
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (new $runtime.PooledFloat32Array([(coord[0] == 1) || (coord[0] == 3), (coord[1] == 1) || (coord[1] == 3)])) ? new $runtime.PooledFloat32Array([1, 1, 1]) : new $runtime.PooledFloat32Array([0, 0, 0])));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), ((all(equal(coord, new $runtime.PooledFloat32Array([1, 1])))) || (all(equal(coord, new $runtime.PooledFloat32Array([3, 3]))))) ? new $runtime.PooledFloat32Array([1, 1, 1]) : new $runtime.PooledFloat32Array([0, 0, 0])));
   	} else {
   	if (bright < 0.47999998927116394) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (((coord[0] == 1) || (coord[0] == 3)) && ((coord[1] == 1) || (coord[1] == 3))) ? new $runtime.PooledFloat32Array([1, 1, 1]) : new $runtime.PooledFloat32Array([0, 0, 0])));
@@ -2178,10 +2178,10 @@ function canonicalFactory5($bindings, $runtime) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (((coord[0] == 1) || (coord[0] == 3)) && ((coord[1] == 1) || (coord[1] == 3))) ? new $runtime.PooledFloat32Array([0, 0, 0]) : new $runtime.PooledFloat32Array([1, 1, 1])));
   	} else {
   	if (bright < 0.7200000286102295) {
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (new $runtime.PooledFloat32Array([(coord[0] == 1) || (coord[0] == 3), (coord[1] == 1) || (coord[1] == 3)])) ? new $runtime.PooledFloat32Array([0, 0, 0]) : new $runtime.PooledFloat32Array([1, 1, 1])));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), ((all(equal(coord, new $runtime.PooledFloat32Array([1, 1])))) || (all(equal(coord, new $runtime.PooledFloat32Array([3, 3]))))) ? new $runtime.PooledFloat32Array([0, 0, 0]) : new $runtime.PooledFloat32Array([1, 1, 1])));
   	} else {
   	if (bright < 0.8399999737739563) {
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (new $runtime.PooledFloat32Array([coord[0] == 1, coord[1] == 1])) ? new $runtime.PooledFloat32Array([0, 0, 0]) : new $runtime.PooledFloat32Array([1, 1, 1])));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, vec3.multiply([], new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (all(equal(coord, new $runtime.PooledFloat32Array([1, 1])))) ? new $runtime.PooledFloat32Array([0, 0, 0]) : new $runtime.PooledFloat32Array([1, 1, 1])));
   	};
   	};
   	};
@@ -4235,7 +4235,7 @@ function canonicalFactory9($bindings, $runtime) {
 }
 
 function canonicalFactory10($bindings, $runtime) {
-  const { vec3, vec4, sin, cos, pow, sqrt, abs, fract, mod, min, max, clamp, mix, length, add, multiply, texture } = $runtime.stdlib
+  const { vec3, vec4, sin, cos, pow, sqrt, abs, fract, mod, min, max, clamp, mix, length, equal, all, add, multiply, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -4473,7 +4473,7 @@ function canonicalFactory10($bindings, $runtime) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, min(vec3.add([], max(new $runtime.PooledFloat32Array([green[0] - hsv[2], green[1] - hsv[2], green[2] - hsv[2]]), 0), hsv2rgb(hsv)), 1));
   	};
   	};
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (new $runtime.PooledFloat32Array([color[0] == 1, color[1] == 1, color[2] == 1])) ? new $runtime.PooledFloat32Array([color[0], color[1], color[2]]) : min(new $runtime.PooledFloat32Array([(tint[0] * tint[0]) / (1 - color[0]), (tint[1] * tint[1]) / (1 - color[1]), (tint[2] * tint[2]) / (1 - color[2])]), new $runtime.PooledFloat32Array([1, 1, 1])), alpha * 0.009999999776482582));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), (all(equal(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), new $runtime.PooledFloat32Array([1, 1, 1])))) ? new $runtime.PooledFloat32Array([color[0], color[1], color[2]]) : min(new $runtime.PooledFloat32Array([(tint[0] * tint[0]) / (1 - color[0]), (tint[1] * tint[1]) / (1 - color[1]), (tint[2] * tint[2]) / (1 - color[2])]), new $runtime.PooledFloat32Array([1, 1, 1])), alpha * 0.009999999776482582));
   	color[3] = max(color[3], alpha * 0.009999999776482582);
   	if (vignetteAmt < 0) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0] - pow((length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * 1.125, 2), color[1] - pow((length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * 1.125, 2), color[2] - pow((length(new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]))) * 1.125, 2)]), new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), map(vignetteAmt, -100, 0, 0, 1)));
@@ -6053,7 +6053,7 @@ function canonicalFactory13($bindings, $runtime) {
   function spheres (p) {
   	p = $runtime.copy(p);
   	var q = p instanceof Float32Array ? $runtime.copy(p) : p;
-  	(p[0] = p[0] - round(p), p[1] = p[1] - round(p), p[2] = p[2] - round(p), p);
+  	vec3.subtract([], p, round(p)).reduce((res,el,i)=>(res[i] = el, res), p);
   	var ip = floor(q);
   	var fp = fract(p);
   	var r1 = prng(new $runtime.PooledFloat32Array([ip[0] + (seed), ip[1] + (seed), ip[2] + (seed)])).map(function (_) {return _ * 0.5;}).map(function (_) {return _ + 0.25;});
@@ -6063,7 +6063,7 @@ function canonicalFactory13($bindings, $runtime) {
   	p = $runtime.copy(p);
   	var s = 4;
   	p[0] -= s * 0.5;
-  	(p[0] = p[0] - s * (round(new $runtime.PooledFloat32Array([p[0] / s, p[1] / s, p[2] / s]))), p[1] = p[1] - s * (round(new $runtime.PooledFloat32Array([p[0] / s, p[1] / s, p[2] / s]))), p[2] = p[2] - s * (round(new $runtime.PooledFloat32Array([p[0] / s, p[1] / s, p[2] / s]))), p);
+  	vec3.subtract([], p, round(new $runtime.PooledFloat32Array([p[0] / s, p[1] / s, p[2] / s])).map(function (_) {return s * _;})).reduce((res,el,i)=>(res[i] = el, res), p);
   	var b = new $runtime.PooledFloat32Array([map(scale, 1, 100, 0.10000000149011612, 0.949999988079071), map(scale, 1, 100, 0.10000000149011612, 0.949999988079071), map(scale, 1, 100, 0.10000000149011612, 0.949999988079071)]);
   	var q = vec3.subtract([], abs(p), b);
   	return length(max(q, 0)) + min(max(q[0], max(q[1], q[2])), 0);
@@ -6252,7 +6252,7 @@ function canonicalFactory13($bindings, $runtime) {
 canonicalFactory13.usesDerivatives = true
 
 function canonicalFactory14($bindings, $runtime) {
-  const { vec2, vec4, sin, cos, sqrt, abs, floor, mod, min, max, clamp, mix, add, subtract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, vec4, sin, cos, sqrt, abs, floor, mod, min, max, clamp, mix, equal, all, add, subtract, divide, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -6353,10 +6353,10 @@ function canonicalFactory14($bindings, $runtime) {
   	min(new $runtime.PooledFloat32Array([color1[0] + color2[0], color1[1] + color2[1], color1[2] + color2[2], color1[3] + color2[3]]), 1).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (blendMode == 2) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 0, color2[1] == 0, color2[2] == 0, color2[3] == 0])) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([0, 0, 0, 0])))) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (blendMode == 3) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (blendMode == 4) {
   	min(color1, color2).reduce((res,el,i)=>(res[i] = el, res), middle);
@@ -6368,7 +6368,7 @@ function canonicalFactory14($bindings, $runtime) {
   	(middle[0] = color1[0] + color2[0] - (2 * color1[0]) * color2[0], middle[1] = color1[1] + color2[1] - (2 * color1[1]) * color2[1], middle[2] = color1[2] + color2[2] - (2 * color1[2]) * color2[2], middle[3] = color1[3] + color2[3] - (2 * color1[3]) * color2[3], middle);
   	} else {
   	if (blendMode == 7) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (blendMode == 8) {
   	new $runtime.PooledFloat32Array([blendOverlay(color2[0], color1[0]), blendOverlay(color2[1], color1[1]), blendOverlay(color2[2], color1[2]), mix(color1[3], color2[3], 0.5)]).reduce((res,el,i)=>(res[i] = el, res), middle);
@@ -6392,7 +6392,7 @@ function canonicalFactory14($bindings, $runtime) {
   	vec4.add([], vec4.subtract([], min(color1, color2), max(color1, color2)), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (blendMode == 15) {
-  	(new $runtime.PooledFloat32Array([color1[0] == 1, color1[1] == 1, color1[2] == 1, color1[3] == 1])) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color1, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (blendMode == 16) {
   	(middle[0] = 1 - ((1 - color1[0]) * (1 - color2[0])), middle[1] = 1 - ((1 - color1[1]) * (1 - color2[1])), middle[2] = 1 - ((1 - color1[2]) * (1 - color2[2])), middle[3] = 1 - ((1 - color1[3]) * (1 - color2[3])), middle);
@@ -8046,13 +8046,13 @@ function canonicalFactory17($bindings, $runtime) {
   	p = [null, 0, 1].map(function (idx, i) { return idx == null ? p[i] : this[idx]; }, rotate2D(new $runtime.PooledFloat32Array([p[1], p[2]]), data.staticFlip));
   	if (data.repeatBefore) {
   	var cpuRepeatSpacing = data.repeatSpacing instanceof Float32Array ? $runtime.copy(data.repeatSpacing) : data.repeatSpacing;
-  	p = p.map(function (_) {return _ - this;}, cpuRepeatSpacing * (round(new $runtime.PooledFloat32Array([p[0] / cpuRepeatSpacing, p[1] / cpuRepeatSpacing, p[2] / cpuRepeatSpacing]))));
+  	round(new $runtime.PooledFloat32Array([p[0] / cpuRepeatSpacing, p[1] / cpuRepeatSpacing, p[2] / cpuRepeatSpacing])).map(function (_) {return cpuRepeatSpacing * _;}).reduce((res,el,i)=>(res[i] -= el, res), p);
   	};
   	p = [0, null, 1].map(function (idx, i) { return idx == null ? p[i] : this[idx]; }, rotate2D(new $runtime.PooledFloat32Array([p[0], p[2]]), data.dynamicSpin));
   	p = [null, 0, 1].map(function (idx, i) { return idx == null ? p[i] : this[idx]; }, rotate2D(new $runtime.PooledFloat32Array([p[1], p[2]]), data.dynamicFlip));
   	if (data.repeatAfter) {
   	var cpuRepeatSpacing = data.repeatSpacing instanceof Float32Array ? $runtime.copy(data.repeatSpacing) : data.repeatSpacing;
-  	p = p.map(function (_) {return _ - this;}, cpuRepeatSpacing * (round(new $runtime.PooledFloat32Array([p[0] / cpuRepeatSpacing, p[1] / cpuRepeatSpacing, p[2] / cpuRepeatSpacing]))));
+  	round(new $runtime.PooledFloat32Array([p[0] / cpuRepeatSpacing, p[1] / cpuRepeatSpacing, p[2] / cpuRepeatSpacing])).map(function (_) {return cpuRepeatSpacing * _;}).reduce((res,el,i)=>(res[i] -= el, res), p);
   	};
   	return p;
   };
@@ -11572,7 +11572,7 @@ function canonicalFactory50($bindings, $runtime) {
 }
 
 function canonicalFactory51($bindings, $runtime) {
-  const { vec4, sin, cos, sqrt, abs, fract, mod, min, max, clamp, mix, length, add, subtract, texture } = $runtime.stdlib
+  const { vec4, sin, cos, sqrt, abs, fract, mod, min, max, clamp, mix, length, equal, all, add, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -11643,10 +11643,10 @@ function canonicalFactory51($bindings, $runtime) {
   	min(new $runtime.PooledFloat32Array([color1[0] + color2[0], color1[1] + color2[1], color1[2] + color2[2], color1[3] + color2[3]]), 1).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 2) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 0, color2[1] == 0, color2[2] == 0, color2[3] == 0])) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([0, 0, 0, 0])))) ? color2 : max((new $runtime.PooledFloat32Array([1 - ((1 - color1[0]) / color2[0]), 1 - ((1 - color1[1]) / color2[1]), 1 - ((1 - color1[2]) / color2[2]), 1 - ((1 - color1[3]) / color2[3])])), new $runtime.PooledFloat32Array([0, 0, 0, 0])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 3) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color2 : min(new $runtime.PooledFloat32Array([color1[0] / (1 - color2[0]), color1[1] / (1 - color2[1]), color1[2] / (1 - color2[2]), color1[3] / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 4) {
   	min(color1, color2).reduce((res,el,i)=>(res[i] = el, res), middle);
@@ -11660,7 +11660,7 @@ function canonicalFactory51($bindings, $runtime) {
   	middle[3] = max(color1[3], color2[3]);
   	} else {
   	if (mode == 7) {
-  	(new $runtime.PooledFloat32Array([color2[0] == 1, color2[1] == 1, color2[2] == 1, color2[3] == 1])) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color2, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color2 : min(new $runtime.PooledFloat32Array([(color1[0] * color1[0]) / (1 - color2[0]), (color1[1] * color1[1]) / (1 - color2[1]), (color1[2] * color1[2]) / (1 - color2[2]), (color1[3] * color1[3]) / (1 - color2[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 8) {
   	new $runtime.PooledFloat32Array([blendOverlay(color2[0], color1[0]), blendOverlay(color2[1], color1[1]), blendOverlay(color2[2], color1[2]), mix(color1[3], color2[3], 0.5)]).reduce((res,el,i)=>(res[i] = el, res), middle);
@@ -11685,7 +11685,7 @@ function canonicalFactory51($bindings, $runtime) {
   	vec4.add([], vec4.subtract([], min(color1, color2), max(color1, color2)), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 15) {
-  	(new $runtime.PooledFloat32Array([color1[0] == 1, color1[1] == 1, color1[2] == 1, color1[3] == 1])) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
+  	(all(equal(color1, new $runtime.PooledFloat32Array([1, 1, 1, 1])))) ? color1 : min(new $runtime.PooledFloat32Array([(color2[0] * color2[0]) / (1 - color1[0]), (color2[1] * color2[1]) / (1 - color1[1]), (color2[2] * color2[2]) / (1 - color1[2]), (color2[3] * color2[3]) / (1 - color1[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), middle);
   	} else {
   	if (mode == 16) {
   	(middle[0] = 1 - ((1 - color1[0]) * (1 - color2[0])), middle[1] = 1 - ((1 - color1[1]) * (1 - color2[1])), middle[2] = 1 - ((1 - color1[2]) * (1 - color2[2])), middle[3] = 1 - ((1 - color1[3]) * (1 - color2[3])), middle);
@@ -28030,7 +28030,7 @@ function canonicalFactory246($bindings, $runtime) {
 }
 
 function canonicalFactory247($bindings, $runtime) {
-  const { ivec2, ivec3, sin, cos, pow, abs, sign, floor, min, max, clamp, mix, length, dot, cross, normalize, texelFetch } = $runtime.stdlib
+  const { ivec2, ivec3, sin, cos, pow, abs, sign, floor, min, max, clamp, mix, length, dot, cross, normalize, equal, all, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -28158,7 +28158,7 @@ function canonicalFactory247($bindings, $runtime) {
   	result.dist = tStart;
   	(result.normal[0] = lastNormal[0], result.normal[1] = lastNormal[1], result.normal[2] = lastNormal[2], result.normal);
   	(result.voxel[0] = voxel[0], result.voxel[1] = voxel[1], result.voxel[2] = voxel[2], result.voxel);
-  	if (new $runtime.PooledFloat32Array([lastNormal[0] == 0, lastNormal[1] == 0, lastNormal[2] == 0])) {
+  	if (all(equal(lastNormal, new $runtime.PooledFloat32Array([0, 0, 0])))) {
   	if ((tmin[0] > tmin[1]) && (tmin[0] > tmin[2])) {
   	(result.normal[0] = -sign(rd[0]), result.normal[1] = 0, result.normal[2] = 0, result.normal);
   	} else {
@@ -28377,7 +28377,7 @@ function canonicalFactory247($bindings, $runtime) {
 canonicalFactory247.outputNames = ["fragColor","geoOut"]
 
 function canonicalFactory248($bindings, $runtime) {
-  const { ivec2, ivec3, pow, abs, sign, floor, min, max, clamp, mix, length, dot, normalize, texelFetch } = $runtime.stdlib
+  const { ivec2, ivec3, pow, abs, sign, floor, min, max, clamp, mix, length, dot, normalize, equal, all, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -28504,7 +28504,7 @@ function canonicalFactory248($bindings, $runtime) {
   	result.dist = tStart;
   	(result.normal[0] = lastNormal[0], result.normal[1] = lastNormal[1], result.normal[2] = lastNormal[2], result.normal);
   	(result.voxel[0] = voxel[0], result.voxel[1] = voxel[1], result.voxel[2] = voxel[2], result.voxel);
-  	if (new $runtime.PooledFloat32Array([lastNormal[0] == 0, lastNormal[1] == 0, lastNormal[2] == 0])) {
+  	if (all(equal(lastNormal, new $runtime.PooledFloat32Array([0, 0, 0])))) {
   	if ((tmin[0] > tmin[1]) && (tmin[0] > tmin[2])) {
   	(result.normal[0] = -sign(rd[0]), result.normal[1] = 0, result.normal[2] = 0, result.normal);
   	} else {

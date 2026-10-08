@@ -47,8 +47,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "a0f96df68ce058e5e2154c78880b5a611eaf5ab9adcd64242368978c813b6b58",
     "sourceBytes": 9962,
-    "normalizedBytes": 9984,
-    "generatedBytes": 14730
+    "normalizedBytes": 10024,
+    "generatedBytes": 14602
   },
   {
     "effectId": "classicNoisedeck/colorLab",
@@ -57,8 +57,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "4bf9ea925634ee684e01917ea3b690d332b37905d21c8aa7377bf88625570945",
     "sourceBytes": 9276,
-    "normalizedBytes": 9332,
-    "generatedBytes": 13676
+    "normalizedBytes": 9392,
+    "generatedBytes": 13698
   },
   {
     "effectId": "classicNoisedeck/composite",
@@ -117,8 +117,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "f4e6453fe233692fa67c5fdbb3eb8f7a512d21bc722e63af6fc23166a62dd444",
     "sourceBytes": 8269,
-    "normalizedBytes": 8493,
-    "generatedBytes": 11013
+    "normalizedBytes": 8503,
+    "generatedBytes": 11039
   },
   {
     "effectId": "classicNoisedeck/moodscape",
@@ -148,7 +148,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f359a11d4a3799686a554ee4dbaca725235ef38781a7b91e37628537cebb220f",
     "sourceBytes": 19654,
     "normalizedBytes": 20394,
-    "generatedBytes": 29764
+    "generatedBytes": 29680
   },
   {
     "effectId": "classicNoisedeck/refract",
@@ -157,8 +157,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "d9675b5de9c329aa619f4ef68129611faac8cbe515b6e80aa8528c593a49cfa2",
     "sourceBytes": 7973,
-    "normalizedBytes": 7936,
-    "generatedBytes": 11086
+    "normalizedBytes": 7976,
+    "generatedBytes": 10958
   },
   {
     "effectId": "classicNoisedeck/shapeMixer",
@@ -188,7 +188,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "818badfbadcf295d1863d208c0d0582a1349ff64f44dbf43f905a92fcfd4c5ad",
     "sourceBytes": 16152,
     "normalizedBytes": 16442,
-    "generatedBytes": 18035
+    "generatedBytes": 18089
   },
   {
     "effectId": "classicNoisedeck/splat",
@@ -527,8 +527,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "d0048fb91c30eafbb4532b2f02ed416e3dff61b14ce5861ce3565db81a743ca2",
     "sourceBytes": 10931,
-    "normalizedBytes": 11045,
-    "generatedBytes": 14536
+    "normalizedBytes": 11085,
+    "generatedBytes": 14408
   },
   {
     "effectId": "filter/fibers",
@@ -1455,9 +1455,9 @@ export const programCoverage = Object.freeze([
     "program": "spinBlur",
     "file": "spinBlur.glsl",
     "status": "generated",
-    "sourceSha256": "a5ee242e189066b55d4d5c3140e957418bdff582b367d1f6d4cdfee4c333b405",
-    "sourceBytes": 3077,
-    "normalizedBytes": 3180,
+    "sourceSha256": "bd83ef6a8fb02370d51c333e63285c13406ad9ef4bafa64513b2018e61050a4e",
+    "sourceBytes": 2304,
+    "normalizedBytes": 2407,
     "generatedBytes": 2522
   },
   {
@@ -2567,8 +2567,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "5ff6fc621924c7c53425c2f18202e549ace6a4ff8a96f9e908ad26bba6e0c7e2",
     "sourceBytes": 14169,
-    "normalizedBytes": 14725,
-    "generatedBytes": 14433
+    "normalizedBytes": 14735,
+    "generatedBytes": 14406
   },
   {
     "effectId": "render/renderCubemap3d",
@@ -2577,8 +2577,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "bcebff481c2d945e140870b50ce3e32e12bc3f198f75a53dc6d2450d5777db26",
     "sourceBytes": 14026,
-    "normalizedBytes": 14587,
-    "generatedBytes": 14042
+    "normalizedBytes": 14597,
+    "generatedBytes": 14015
   },
   {
     "effectId": "render/renderCubemapSurface",
