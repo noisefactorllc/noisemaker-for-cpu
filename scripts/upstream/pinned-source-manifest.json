@@ -1,5 +1,5 @@
 {
- "revision": "5976b7a6b77f69c47c41f4ee296a54d5318e1f9d",
+ "revision": "fdfda5fad8eb0b8bb10398903e68c38e924eb762",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -213,7 +213,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-attestation.json",
    "size": 799,
-   "sha256": "ca9e86196bbc2bad95d3a88c340a93fcfdc1dbe294cacbd536a260cb1653d1f3"
+   "sha256": "27042483225f4e09bbd8c9eefad451c422678c437e42d8890e29576a83f7dc1e"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-case.json",
@@ -222,8 +222,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/wgsl/effects.wgsl",
-   "size": 14216,
-   "sha256": "7f79f536ffdffc4d917faf22883c8d95699d5d894987eda96d63282a38771dd9"
+   "size": 15220,
+   "sha256": "bd320c97639ca90934831c86b548973642ca1975d6502efc074c417cba5f09ef"
   },
   {
    "path": "shaders/effects/classicNoisedeck/fractal/definition.js",
@@ -6612,8 +6612,8 @@
   },
   {
    "path": "shaders/src/lang/unparser.js",
-   "size": 54848,
-   "sha256": "e97b958136a934c6c731c900236d87d58f971603ba4e30e97a1dea04b6afa6b1"
+   "size": 55308,
+   "sha256": "1a54c539ebb53b16ff60111b8ec091861115d955ca28099e3a5b86663d4ff600"
   },
   {
    "path": "shaders/src/lang/validator.js",
@@ -6667,8 +6667,8 @@
   },
   {
    "path": "shaders/src/runtime/backends/webgpu.js",
-   "size": 167753,
-   "sha256": "90cd18dd7965ab1fd4f3f49331339c762b11881d83f3c77f51f91a65962598ca"
+   "size": 169954,
+   "sha256": "2d45735280fa9d662569a28169ed79cfb5543b6bafa04df960a5e85d1ef7c0e5"
   },
   {
    "path": "shaders/src/runtime/compiler.js",
@@ -6717,8 +6717,8 @@
   },
   {
    "path": "shaders/src/runtime/pipeline.js",
-   "size": 131154,
-   "sha256": "a2f9d47378ebb6bbf459e7a05badaf5b79c90529bad6652c276c1d157209a783"
+   "size": 132063,
+   "sha256": "04c2c4f77d879a76156c025f44b8635ce741e0e94f42598122197a3437578689"
   },
   {
    "path": "shaders/src/runtime/preflight.js",
