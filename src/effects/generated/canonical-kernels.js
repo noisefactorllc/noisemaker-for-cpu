@@ -11948,12 +11948,12 @@ function canonicalFactory53($bindings, $runtime) {
   	};
   	} else {
   	if (flipMode == 13) {
-  	if (warpedUV[1] > 0.5) {
+  	if (warpedUV[1] < 0.5) {
   	warpedUV[1] = 1 - warpedUV[1];
   	};
   	} else {
   	if (flipMode == 14) {
-  	if (warpedUV[1] < 0.5) {
+  	if (warpedUV[1] > 0.5) {
   	warpedUV[1] = 1 - warpedUV[1];
   	};
   	} else {
@@ -11961,7 +11961,7 @@ function canonicalFactory53($bindings, $runtime) {
   	if (warpedUV[0] > 0.5) {
   	warpedUV[0] = 1 - warpedUV[0];
   	};
-  	if (warpedUV[1] > 0.5) {
+  	if (warpedUV[1] < 0.5) {
   	warpedUV[1] = 1 - warpedUV[1];
   	};
   	} else {
@@ -11969,7 +11969,7 @@ function canonicalFactory53($bindings, $runtime) {
   	if (warpedUV[0] > 0.5) {
   	warpedUV[0] = 1 - warpedUV[0];
   	};
-  	if (warpedUV[1] < 0.5) {
+  	if (warpedUV[1] > 0.5) {
   	warpedUV[1] = 1 - warpedUV[1];
   	};
   	} else {
@@ -11977,7 +11977,7 @@ function canonicalFactory53($bindings, $runtime) {
   	if (warpedUV[0] < 0.5) {
   	warpedUV[0] = 1 - warpedUV[0];
   	};
-  	if (warpedUV[1] > 0.5) {
+  	if (warpedUV[1] < 0.5) {
   	warpedUV[1] = 1 - warpedUV[1];
   	};
   	} else {
@@ -11985,7 +11985,7 @@ function canonicalFactory53($bindings, $runtime) {
   	if (warpedUV[0] < 0.5) {
   	warpedUV[0] = 1 - warpedUV[0];
   	};
-  	if (warpedUV[1] < 0.5) {
+  	if (warpedUV[1] > 0.5) {
   	warpedUV[1] = 1 - warpedUV[1];
   	};
   	};
@@ -12472,9 +12472,8 @@ function canonicalFactory56($bindings, $runtime) {
   	var cellIndex = floor(new $runtime.PooledFloat32Array([pixelCoord[0] / csf, pixelCoord[1] / csf]));
   	var localPos = fract(new $runtime.PooledFloat32Array([pixelCoord[0] / csf, pixelCoord[1] / csf]));
   	var gx = floor(localPos[0] * 5)|0;
-  	var gy = floor(localPos[1] * 7)|0;
+  	var gy = 6 - clamp(floor(localPos[1] * 7)|0, 0, 6);
   	gx = clamp(gx, 0, 4);
-  	gy = clamp(gy, 0, 6);
   	var cellCenter = new $runtime.PooledFloat32Array([(cellIndex[0] + 0.5) * csf, (cellIndex[1] + 0.5) * csf]);
   	var sampleUV = new $runtime.PooledFloat32Array([(cellCenter[0] - tileOffset[0]) / resolution[0], (cellCenter[1] - tileOffset[1]) / resolution[1]]);
   	if (isTileRendering) {
@@ -28282,7 +28281,7 @@ function canonicalFactory247($bindings, $runtime) {
   	p = $runtime.copy(p);
   	rd = $runtime.copy(rd);
   	var n = calcNormal(p);
-  	var lightDir = normalize(new $runtime.PooledFloat32Array([1, 1, -1]));
+  	var lightDir = normalize(new $runtime.PooledFloat32Array([-1, 1, -1]));
   	var diff = max(dot(n, lightDir), 0);
   	var amb = 0.15000000596046448;
   	var halfVec = normalize(new $runtime.PooledFloat32Array([lightDir[0] - rd[0], lightDir[1] - rd[1], lightDir[2] - rd[2]]));
@@ -28300,7 +28299,7 @@ function canonicalFactory247($bindings, $runtime) {
   	p = $runtime.copy(p);
   	rd = $runtime.copy(rd);
   	n = $runtime.copy(n);
-  	var lightDir = normalize(new $runtime.PooledFloat32Array([1, 1, -1]));
+  	var lightDir = normalize(new $runtime.PooledFloat32Array([-1, 1, -1]));
   	var diff = max(dot(n, lightDir), 0);
   	var amb = 0.30000001192092896;
   	var volColor = sampleVoxel(voxel);
@@ -28320,12 +28319,12 @@ function canonicalFactory247($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullRes[0]) / fullRes[1], (globalCoord[1] - 0.5 * fullRes[1]) / fullRes[1]]);
   	var camDist = 3.5;
-  	var angle = (time * TAU) * (orbitSpeed);
+  	var angle = (-time * TAU) * (orbitSpeed);
   	var ro = new $runtime.PooledFloat32Array([sin(angle) * camDist, 0.5, cos(angle) * camDist]);
   	var lookAt = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var forward = normalize(new $runtime.PooledFloat32Array([lookAt[0] - ro[0], lookAt[1] - ro[1], lookAt[2] - ro[2]]));
-  	var right = normalize(cross(new $runtime.PooledFloat32Array([0, 1, 0]), forward));
-  	var up = cross(forward, right);
+  	var right = normalize(cross(forward, new $runtime.PooledFloat32Array([0, 1, 0])));
+  	var up = cross(right, forward);
   	var rd = normalize(new $runtime.PooledFloat32Array([forward[0] + uv[0] * right[0] + uv[1] * up[0], forward[1] + uv[0] * right[1] + uv[1] * up[1], forward[2] + uv[0] * right[2] + uv[1] * up[2]]));
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var normal = new $runtime.PooledFloat32Array([0, 0, 1]);

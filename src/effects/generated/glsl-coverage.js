@@ -545,9 +545,9 @@ export const programCoverage = Object.freeze([
     "program": "flipMirror",
     "file": "flipMirror.glsl",
     "status": "generated",
-    "sourceSha256": "696263e373913b7ab71430189fb7626ca966780ff645384b89509cf9d1a3fa7e",
-    "sourceBytes": 2497,
-    "normalizedBytes": 2633,
+    "sourceSha256": "ce6ddc95ded4628892f42ca6b9889234983ad91a8cf985b15d81940611835d8e",
+    "sourceBytes": 2619,
+    "normalizedBytes": 2755,
     "generatedBytes": 2297
   },
   {
@@ -575,10 +575,10 @@ export const programCoverage = Object.freeze([
     "program": "glyphMap",
     "file": "glyphMap.glsl",
     "status": "generated",
-    "sourceSha256": "853c3c15f300cf56ba3c11d5613cb91bfcb14b8b2f1be6bb5193e71397fdcea1",
-    "sourceBytes": 7838,
-    "normalizedBytes": 8104,
-    "generatedBytes": 5915
+    "sourceSha256": "35804656234712aab4ee62aad97399d287e3d2d2d566a00afe8630272a333abe",
+    "sourceBytes": 7899,
+    "normalizedBytes": 8165,
+    "generatedBytes": 5909
   },
   {
     "effectId": "filter/grade",
@@ -2565,10 +2565,10 @@ export const programCoverage = Object.freeze([
     "program": "render3d",
     "file": "render3d.glsl",
     "status": "generated",
-    "sourceSha256": "5ff6fc621924c7c53425c2f18202e549ace6a4ff8a96f9e908ad26bba6e0c7e2",
-    "sourceBytes": 14169,
-    "normalizedBytes": 14735,
-    "generatedBytes": 14406
+    "sourceSha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30",
+    "sourceBytes": 14393,
+    "normalizedBytes": 14959,
+    "generatedBytes": 14409
   },
   {
     "effectId": "render/renderCubemap3d",

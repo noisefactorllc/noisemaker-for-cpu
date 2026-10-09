@@ -253,7 +253,7 @@ const EXPECTED_ITERATED = [
 ]
 
 test('upstream snapshot imports the exact 210-effect source tree with no exclusions', () => {
-  assert.equal(UPSTREAM_REVISION, '16d97cdff4c44c06818ebe710c2ef4f12c3d2dd9')
+  assert.equal(UPSTREAM_REVISION, '700ac32e8b4f80a221754e62302e63ac76f5ecc5')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [

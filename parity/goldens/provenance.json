@@ -5,98 +5,98 @@
     "classic/classicNoisedeck__bitEffects.golden.png": {
       "sha256": "e849f194ae2f24a1f1985fc406e777902d6c2aa7bec78727adf356b33c2b8105",
       "bytes": 160,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__caustic.golden.png": {
       "sha256": "0e6505194787f39fac685dcf6efba9673ffa9cf013b5593a8ddd85a67ed7a67c",
       "bytes": 241,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__cellNoise.golden.png": {
       "sha256": "e4da467447cc550c1674d9ccbf6e2f0149b5bb134a5ac2703e423abea84e61a8",
       "bytes": 289,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__cellRefract.golden.png": {
       "sha256": "65f1e8b5175ea78251165f843c97e16af9a3b646a59a8f3c230c9deb4bae4b2b",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__coalesce.golden.png": {
       "sha256": "c1a8f410f509c0b98531e7f79a88fa39b3b9c6b6b58428f47e571a4c34a73bfc",
       "bytes": 317,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__colorLab.golden.png": {
       "sha256": "d6b61f67265e803b12b7cc42d4d02b7ad922b1260974d5a11c16f0fdf0651624",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__composite.golden.png": {
       "sha256": "ec829f1c8f35c61e22046c42e82024944e2f814eae0d49d94e0d65fcafbff66d",
       "bytes": 320,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__effects.golden.png": {
       "sha256": "65f1e8b5175ea78251165f843c97e16af9a3b646a59a8f3c230c9deb4bae4b2b",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__fractal.golden.png": {
       "sha256": "8f55457635c78f8199c7b2d3c1cc0b7d5ce72e14fd9b0d6f889c52ad1275bd50",
       "bytes": 197,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__glitch.golden.png": {
       "sha256": "65f1e8b5175ea78251165f843c97e16af9a3b646a59a8f3c230c9deb4bae4b2b",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__kaleido.golden.png": {
       "sha256": "1c44b5b54f4f614dde6c8d2784f2bc7981119560fe2f3420ae41e312be90dff2",
       "bytes": 142,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__lensDistortion.golden.png": {
       "sha256": "65f1e8b5175ea78251165f843c97e16af9a3b646a59a8f3c230c9deb4bae4b2b",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__moodscape.golden.png": {
       "sha256": "cbee6dd4162112db557fb03fb7d32037a775abd1399d4e3f143bf9fd5689867b",
       "bytes": 308,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__noise.golden.png": {
       "sha256": "ae77ea37aac902dfb5a91e21e067280619441954fc0ba616e10ef9a35dfa1812",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -110,21 +110,21 @@
     "classic/classicNoisedeck__refract.golden.png": {
       "sha256": "427dd08bc59b03ef1cd22dc115ae4f23f0090da897ed734eaac6c91ecfd6434a",
       "bytes": 316,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__shapeMixer.golden.png": {
       "sha256": "ec735b864d5046f870be306f9c4809d32210a776e8a3b77f5e2148f746bce1ed",
       "bytes": 310,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "classic/classicNoisedeck__shapes.golden.png": {
       "sha256": "2d77cf45b6562f63a6fc07343acc5b1bdc48d3dcc6d6af3bae0675c79db41f70",
       "bytes": 139,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -138,105 +138,105 @@
     "classic/classicNoisedeck__splat.golden.png": {
       "sha256": "88a8b5faa37ed34ba278c8186e92b99bd62cf169de7199d9f376cdaec9c970ab",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter3d__palette3d.golden.png": {
-      "sha256": "919806d50db6cf8a34d6af09e7ff0d53729e3a9c11a68e6b46828ed9987aefa5",
-      "bytes": 129,
+      "sha256": "f18f20c161467f82b227e753e7a73717e3cb0c882ad713268dfd523fd6281ab0",
+      "bytes": 137,
       "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
-      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/filter__adjust.golden.png": {
       "sha256": "e5daf99d76a42a7c7459ecd75baeafab74ba6407469acdb29f60c3f3c25c949c",
       "bytes": 319,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__bc.golden.png": {
       "sha256": "7ee832684df1c4cef9668408741d43fed893ae53aeb08930324165d756fe9d07",
       "bytes": 297,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__bloom.golden.png": {
       "sha256": "5343b6aae11b92a8d0dac641b53d10d4547e9fa147a9f1a946aae701c025df0b",
       "bytes": 317,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__blur.golden.png": {
       "sha256": "c6e978f8d9482f2c8adfed23b454079618d05aaf2252c4350959a8559c0bc25f",
       "bytes": 270,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__bulge.golden.png": {
       "sha256": "3d9b0c77b5019e7fd94914e85dac84d727c9e231afadc7e40d72d77c6af9226a",
       "bytes": 130,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__celShading.golden.png": {
       "sha256": "61fdf76efa6cb48c2b5354cfd929a4fa011e279962958a7ef8e4e35ba8961360",
       "bytes": 90,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__channel.golden.png": {
       "sha256": "6f6579b4d8e514a9f631ffd99e055a6d5e8c841d29b966f7be3683a0487f0b52",
       "bytes": 291,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__chroma.golden.png": {
       "sha256": "4e4c09c763bb1675ef1a30894e4dce8ad50d9bc56db50ede5228060cbea4a748",
       "bytes": 241,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__chromaticAberration.golden.png": {
       "sha256": "bb96ba76ea185eb975ec92f6e3701201366bd854070959bc41acde83ed18387f",
       "bytes": 280,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__chrome.golden.png": {
       "sha256": "bf0b51f89e33f4f2fd1f60e38c57064d4ad40be99d75f78be4386f93855cef58",
       "bytes": 183,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__clouds.golden.png": {
       "sha256": "49d17eefad0835b6370f9190326cc64d21afe7f4fd17a77f83eeabc2f83f888e",
       "bytes": 255,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__colorReplace.golden.png": {
       "sha256": "66df1aee21d14b78d9ac4e4d08f10708303d89c9d593bdb644e934def49c3dad",
       "bytes": 250,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__colorspace.golden.png": {
       "sha256": "128b699d14f0cf3c75600c841078aab24057496228102fd0614ac9b6285b0f17",
       "bytes": 296,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -250,70 +250,70 @@
     "defaults/filter__corrupt.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__craquelure.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__crt.golden.png": {
       "sha256": "908fe6f6a21e5d9e3606aafae40aaf535e918acec9aef4563a1736b9712183f2",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__degauss.golden.png": {
       "sha256": "3fe146e106239f5afa0547f1ac4fdd27b25605936ad0507245cfcf47e60dd85f",
       "bytes": 290,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__deriv.golden.png": {
       "sha256": "279dbc8245f45c5ec0a657fe401d30048c28ca36fc1e6e7d2c68bd2d6d1e6f1a",
       "bytes": 311,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__directionalBlur.golden.png": {
       "sha256": "03e0e979445062dbc15ef51aa6b35b1f1758d349ec7c89cccb9338d1d66b9553",
       "bytes": 280,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__dither.golden.png": {
       "sha256": "925ac45467558b006781657d83840e0032b1f708fd24b6cc98775d3669131f78",
       "bytes": 167,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__edge.golden.png": {
       "sha256": "f604facf615198fad6aee1366ea64b45a85819d6413e325b9b1c10817db2bf99",
       "bytes": 142,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__emboss.golden.png": {
       "sha256": "425fa437d5e71ad41c058357dffaf55a3c80c813a6e7048b712b8f6bccc33d21",
       "bytes": 251,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__extrude.golden.png": {
       "sha256": "ee69ffc51c4544fd202c887b6e4d939e221213fbbff91b020abf6c4ee748a234",
       "bytes": 93,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -327,161 +327,161 @@
     "defaults/filter__fibers.golden.png": {
       "sha256": "17f43b975a40d97983f28db4594404c2a3d499b43d4ff19f2659f1dcb965b517",
       "bytes": 74,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__flipMirror.golden.png": {
-      "sha256": "f370f611322469310cdd755bf758662de7eab34d8903fe6f7a80f9e043bc6d6b",
-      "bytes": 171,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
-      "captureRevision": null,
-      "captureRecord": null
+      "sha256": "e8aac7c70c3a7b5ac20cf05e3d6fa2c5a842385a8a8454658b8a07280034931d",
+      "bytes": 172,
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/filter__fxaa.golden.png": {
       "sha256": "6507e0024804f6fdeb4eb1eec51e69276b639b00e7cb3a9f820571d0bd84f8a0",
       "bytes": 312,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__glowingEdge.golden.png": {
       "sha256": "715677f3f2b9775554cfb42ad3263f32d2c470f2ea4c79e9943ac679d6d51008",
       "bytes": 246,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__glyphMap.golden.png": {
       "sha256": "c16fb9f50ac9301bda08713ae655866a0932fcb99661341de8001456dcdb7294",
       "bytes": 86,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__grade.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__grain.golden.png": {
       "sha256": "e4757b0c630d8279f82873e608dd24bcc37462a071df9595281993242ee812a5",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__grime.golden.png": {
       "sha256": "cbdd180a850f3898c47b552c617a7ac9f84f4bdd1544b011ac1c5833838de554",
       "bytes": 217,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__halftone.golden.png": {
       "sha256": "0ac81affaf40442d5f261905f5a1001ec64f6b283c9f0149e06efe7107ef9cec",
       "bytes": 181,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__hatch.golden.png": {
       "sha256": "7923a4c4a40f8bd2becbea1d832950cf74ac7e8ef48eba1ba6854a46bc038cdc",
       "bytes": 109,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__highPass.golden.png": {
       "sha256": "3bd63bb87583f4c09e01be10dcdf30fb2add0cb6066c9b8a93df0abc0eff3006",
       "bytes": 326,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__historicPalette.golden.png": {
       "sha256": "28ae2ff06e99bbbc82d09f0081a71aacefca77a39e6a80e356e8862d1d69da0f",
       "bytes": 149,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__hs.golden.png": {
       "sha256": "97caeac340fe55eba07749deb2d430ab2f945519921f2cca7575eac1ef60f1da",
       "bytes": 314,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__invert.golden.png": {
       "sha256": "ba13f130bd76b5f56826ba914bafa21d8beb48630c129798fd7a266abafbcf8f",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__lens.golden.png": {
       "sha256": "876499642b8007d36ebf5968ecc5115e7df714e13f66791de881ad00fb884d6a",
       "bytes": 131,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__lensFlare.golden.png": {
       "sha256": "a4ba54f5bd83101a3e23ba94eac9c54d83b9b5964f70e0c549bd2e14769fff67",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__lensWarp.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__lightLeak.golden.png": {
       "sha256": "43bcd6e5a987e33aefdebdaa5ac940d5600bf436b6ba2563c980c7c03976d8f7",
       "bytes": 318,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__lighting.golden.png": {
       "sha256": "63e53fbd26eb06f53ac17c7826a7595091c0bff5d642a43c9b5dbeeb7bcda8a0",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__lowPoly.golden.png": {
       "sha256": "4100de6e40746c310c0e9344652315c9f53d780e6b2470af75b10f77f2ccf26b",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__median.golden.png": {
       "sha256": "82850e7e7f5453fe39f95089a1e2be2b2c427666af81117f492762247a73139e",
       "bytes": 186,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__morphology.golden.png": {
       "sha256": "d78dd4e4cfaded31a8c56fac43cc726a2d0eba3e34c4add74aa883bf87a16d9a",
       "bytes": 91,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__mosaicTiles.golden.png": {
       "sha256": "b08f4f12cf3f957141d5e54eba6d0e9eb8d010055fd33087be2e378eb63fba76",
       "bytes": 181,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -495,329 +495,329 @@
     "defaults/filter__normalMap.golden.png": {
       "sha256": "df34eeff74245c539a75c8b4a48c9a0382e1b238361c6f415c3bb813a9c09bc0",
       "bytes": 327,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__normalize.golden.png": {
       "sha256": "613613f0416525ee1a29eb68758008521ae38b3f658c1750162046424022ea26",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__octaveWarp.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__oilPaint.golden.png": {
       "sha256": "d4ced3de05ff6b8d6e0c196d54d2e407fb27ae7af4b1267c94878981815f22ae",
       "bytes": 323,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__osd.golden.png": {
       "sha256": "015bb04050ee7e13392dbfa1bb93186c1c09a291194ce5ef32ec732ff7717ea9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__outline.golden.png": {
       "sha256": "7ba5238e79b4ace710c1c7f8468699b49b39117741223fb5bf0ac7fd92bf284b",
       "bytes": 112,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__palette.golden.png": {
       "sha256": "50976755c0f1f5664b70eec0c1d1496d8fa65f5b03ce968f2bbb927c13be90b7",
       "bytes": 328,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__parallax.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__patchwork.golden.png": {
       "sha256": "cc8803795161dda43182c5dbc3739d6eb3e5732499abe85d5d20ac276ea28b19",
       "bytes": 151,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__photocopy.golden.png": {
       "sha256": "d9b362c66eb97fe7b2c1666f355fba0990b68147b569c1b0475b85c2f32db889",
       "bytes": 160,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__pinch.golden.png": {
       "sha256": "63287fd0cb7f198808594b3ba7fa4f2bb2fdf8b6561a70fcb5778209d7df3639",
       "bytes": 322,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__pixelSort.golden.png": {
       "sha256": "655c3321aef83a5893dc9b747119bf46dce559a37791330afe26b54e263ee1dc",
       "bytes": 314,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__pixels.golden.png": {
       "sha256": "9063ea118b21c4a781784994443d0035eb867fc964c24a3e060bd0d6b11d2933",
       "bytes": 93,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__plasticWrap.golden.png": {
       "sha256": "2e6076ee093442b452b12b0a0ed3829f0179ead8a412a479ea8fe6eb76ad7eb5",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__polar.golden.png": {
       "sha256": "09722c7c6ca00fa765daa80219540d4f65f15730a0216b48bb27646a6419be1a",
       "bytes": 245,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__pondRipples.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__posterize.golden.png": {
       "sha256": "758f0ddd9d532b77dac34e6bc532a39ed06f19a3c9ab822ec2eac6f517b44a64",
       "bytes": 311,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__prismaticAberration.golden.png": {
       "sha256": "bb96ba76ea185eb975ec92f6e3701201366bd854070959bc41acde83ed18387f",
       "bytes": 280,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__reindex.golden.png": {
       "sha256": "3ced3de63969287d62dd8886188e460aaf5d60de6e8838bbd77f7d8bf154d440",
       "bytes": 160,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__relief.golden.png": {
       "sha256": "539098921efcef3e1e41bb4c28c094876b0aebb1d069f6f3bab6475f615a403f",
       "bytes": 266,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__repeat.golden.png": {
       "sha256": "74246cf91541571c5cc797ed0eb09d71e2cff6b1a18617dc7d16c8c250915e34",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__reverb.golden.png": {
       "sha256": "f95874c7210518c60679325d9c193b4cfdbdec4bdab4d773fbc6202cacc467d5",
       "bytes": 319,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__ridge.golden.png": {
       "sha256": "ae1d4346013a7b3357f6c50093dded60a6b4a7b797d6137bc124aac25a07f427",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__rotate.golden.png": {
       "sha256": "25156a5e1f080869cf38bdf54c13661bdc75d59af8dfbe0cdf655611bbe815f2",
       "bytes": 291,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__scale.golden.png": {
       "sha256": "d4aad2c80e9d2a8de646b39014263ece64c7cf048d6aaf632d59709f6e9d6a25",
       "bytes": 149,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__scanlineError.golden.png": {
       "sha256": "c058f133c9406fe500ed36b0868b6d16a8d9309619db75e9efaf0b3b1e476546",
       "bytes": 324,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__scatter.golden.png": {
       "sha256": "2ff6f8ffa2499cb295a12722d17b4172eb5e9173fb21d96ee38c9eac40f4eaf4",
       "bytes": 221,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__scratches.golden.png": {
       "sha256": "ee4402df7c33118eddd82c91a1c2ce86c4cdb69ae5a5f9ddad6892f2755c57d4",
       "bytes": 75,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__scroll.golden.png": {
       "sha256": "3f5c8402e47fdd741e50ae5a02724a2c8715360cfd4a3a3005f6a30c12c98c0c",
       "bytes": 86,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__seamless.golden.png": {
       "sha256": "1f6c46506e0d636ad71f41ab91afdce4fc2b5f9c12c7f3610eb932bfd44f96ad",
       "bytes": 149,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__sharpen.golden.png": {
       "sha256": "17f43b975a40d97983f28db4594404c2a3d499b43d4ff19f2659f1dcb965b517",
       "bytes": 74,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__simpleAberration.golden.png": {
       "sha256": "bb96ba76ea185eb975ec92f6e3701201366bd854070959bc41acde83ed18387f",
       "bytes": 280,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__sine.golden.png": {
       "sha256": "796eac393c8a83b024ddb51d9ff1525bcdf055c6ac57e9d37e9fdfd042655246",
       "bytes": 326,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__skew.golden.png": {
       "sha256": "605a1bc86816e36e49f28ef4ffa31f8453fcf2717fd9aee3bd2cd21671018937",
       "bytes": 93,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__smooth.golden.png": {
       "sha256": "683aef3aacd40dcf3bec2fcfe0549ef3b8cb16508bb08ae0f973687c439196fe",
       "bytes": 125,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__smoothstep.golden.png": {
       "sha256": "8d4ed156c8101358d24cb4d543da073e1fe95102eaa3bf323169da51fcdfa6ed",
       "bytes": 203,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__snow.golden.png": {
       "sha256": "63774e640bc12311d4e50373528cb91d17d5c05162497202123a9cfbfe02a4ff",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__sobel.golden.png": {
       "sha256": "3bafb913ea6d4b9eced71e62110ee94870af47f47070a414a68e46787f027ef9",
       "bytes": 248,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__spatter.golden.png": {
       "sha256": "bbef66237515ce3b71d968a1be55de23e578aec5e99bc0873e0fd230d0485e3c",
       "bytes": 91,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__spinBlur.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__spiral.golden.png": {
       "sha256": "e8d86b669f3dc70989b9f8b6322c9da1142953212b43b04288c87da27268c8ca",
       "bytes": 326,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__spookyTicker.golden.png": {
       "sha256": "fc3578b16a159ca64d083bab49c0af5e994f7903f33b07d389f51a798d832e66",
       "bytes": 314,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__stamp.golden.png": {
       "sha256": "74e17ea3a2c6ae23695d91871250cbe466c42b9583bb354cd33de63055ba68e9",
       "bytes": 104,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__step.golden.png": {
       "sha256": "4f72cc06508c322f7a6384b01051410ea43790ce77fbb2271744295265069598",
       "bytes": 293,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__stipple.golden.png": {
       "sha256": "4e407a27b4f09cba75e8ac325a0bc66088211e35e1026145fa047d13dba9f40c",
       "bytes": 257,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__strayHair.golden.png": {
       "sha256": "6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632",
       "bytes": 318,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__strokes.golden.png": {
       "sha256": "7f50d413590b9500b1cacc29fc678719c08dc212aa6ca918d9474295cfa32cd6",
       "bytes": 321,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -831,238 +831,238 @@
     "defaults/filter__tetraColorArray.golden.png": {
       "sha256": "bae9888437a9481ca1b5485384fc21f9b1539a1fd0e491df85ebc66208dcc8d4",
       "bytes": 129,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__tetraCosine.golden.png": {
       "sha256": "7a2d78391436fa988763e0ba7430eaa1beaa9a3e9f3daa553ed02ee927b659af",
       "bytes": 328,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__text.golden.png": {
       "sha256": "6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632",
       "bytes": 318,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__texture.golden.png": {
       "sha256": "2f7b82603054ae0776ac2e9be8f580e0a8145d87e5ceb79dd5c7a4842329ae74",
       "bytes": 179,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__threshold.golden.png": {
       "sha256": "99936a4fad14f10aa54bbb26cdabac3c1693f9f0127f764d5fea5af1817fb99b",
       "bytes": 293,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__tile.golden.png": {
       "sha256": "9c1869c2f108c0c346ecf58d1ed70e1ee772e1563f776915e380b41d3ed774c6",
       "bytes": 99,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__tint.golden.png": {
       "sha256": "8e48fa8ce46c52594e187d0d93dbc7ccb5360730276deb9a14275bc98b650be9",
       "bytes": 308,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__translate.golden.png": {
       "sha256": "3f5c8402e47fdd741e50ae5a02724a2c8715360cfd4a3a3005f6a30c12c98c0c",
       "bytes": 86,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__tunnel.golden.png": {
       "sha256": "f0e0612e83330360badbb9b69396230d634cbb13197afaf2f1346a580dfea99d",
       "bytes": 183,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__unsharpMask.golden.png": {
       "sha256": "36910c3876e3a724813e11ae923021771d0cf00c3a3006187ad4c12d9e497746",
       "bytes": 259,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__vaseline.golden.png": {
       "sha256": "210bffb0362037841e35b018cf8d440a065c8589218abee1dcab212513864602",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__vignette.golden.png": {
       "sha256": "b863444730b6781ffc06d24ce676daa10a6a2ef7c2b22d56212188c8ef1ec92a",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__warp.golden.png": {
       "sha256": "c6ff570aa222299f056853028b87f9f50ba4e94d07a7219970d946395c02cfe1",
       "bytes": 310,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__watercolor.golden.png": {
       "sha256": "5db234b3bfa95df68e1b74d13f6e9388428593cb6f3529f0a9c194a62195bf18",
       "bytes": 297,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__waves.golden.png": {
       "sha256": "39560ca5139cd0c541f1a207739dcf2d47f49c4051e160ccf9f74179f105616d",
       "bytes": 324,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__wind.golden.png": {
       "sha256": "f2d1dfa0e57163a7b5237f54ff26a4405f7bc6f5f022447b2bf2ccb400bfb646",
       "bytes": 323,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__wobble.golden.png": {
       "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
       "bytes": 332,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__wormhole.golden.png": {
       "sha256": "81ba6537397028b03c6c4ac2b52953600481235ee85478df105f669bc17f13bd",
       "bytes": 281,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/filter__zoomBlur.golden.png": {
       "sha256": "f6b0eec034dc169ea3a5082fe967219ed519fd87748e515abf6ae81986e08c18",
       "bytes": 329,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__alphaMask.golden.png": {
       "sha256": "5c61881f7fe1d18401637ea90c368d9b6f4f3672cf5100c5968c996e50b2854b",
       "bytes": 328,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__applyMode.golden.png": {
       "sha256": "9ab0fa60cc172e0dc5fdb379470fc79f75e203b32de0d9627fa282a23512aebf",
       "bytes": 330,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__blendMode.golden.png": {
       "sha256": "6239f5b7188f05f567d981fb5cf1ab74aee69b97075a4105c65c9ceffec7dc8a",
       "bytes": 316,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__cellSplit.golden.png": {
       "sha256": "947c8882fc7f8c0958d175d6eb1dd835e325aba0e02fa9a10f5b16a6ce5f70c1",
       "bytes": 206,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__centerMask.golden.png": {
       "sha256": "b9801f1ec028ad1b45e37b1c126b1225981f0a45b8c67987fe75dabe38938f2e",
       "bytes": 325,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__channelCombine.golden.png": {
       "sha256": "d83a9346d62698a10406507f8c93b1f740c432c6cf073189dc37d2014e92e842",
       "bytes": 313,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__distortion.golden.png": {
       "sha256": "a7b14c4c9e25efefe019da48508e7be082f0ac20d52a9e1199ad781ff4b50a6b",
       "bytes": 275,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__focusBlur.golden.png": {
       "sha256": "8d92b3d2bebac5cf82084de213ad4258cfa08ccd92aa4b66ccb962faaf53a138",
       "bytes": 293,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__mashup.golden.png": {
       "sha256": "502a9eaf8c24f86c6b112ce23eea1ff2b227715ece24f446b2685ae401e18bec",
       "bytes": 312,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__patternMix.golden.png": {
       "sha256": "b70b5241a2dcd23ce0fb644b6ff6abd948ae047ca18baee885563b0e9f10f3a9",
       "bytes": 319,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__shadow.golden.png": {
       "sha256": "077752d56191823caad8c2220a8b06488efb82bc5b9fbf60a0ff9c484fff4b95",
       "bytes": 311,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__shapeMask.golden.png": {
       "sha256": "399fc8c96c78a44269a65c849fda99bd6c9faaec74604abc11b45d080fe7f2d0",
       "bytes": 313,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__split.golden.png": {
       "sha256": "a17fbd165bd9d1e8b14ea9842df3be916001879b0316c14877960b570375e688",
       "bytes": 328,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__thresholdMix.golden.png": {
       "sha256": "11757d10c2331cf3a78217c89a3acf6d2a57644c6d03bf8ea0abadb2d7ae6eb9",
       "bytes": 189,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/mixer__uvRemap.golden.png": {
       "sha256": "3521c7e8e4c2bcc71594aa4e4468d5931d47568f510acf40f06a4a725bbf5059",
       "bytes": 75,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -1179,11 +1179,11 @@
       "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/render__render3d.golden.png": {
-      "sha256": "7a82ad70d60b737fb4197c9cbb2a3663d851ef1a2ce7a30fe1dccf2e66550f77",
-      "bytes": 199,
+      "sha256": "513c6adb51f7a1b5ca70bd5ff1c258c24e8734f941723ae8da1dd6f1915803c4",
+      "bytes": 197,
       "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
-      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/render__renderCubemap3d.golden.png": {
       "sha256": "4172ae515e38b7d16abe1da9f4e4b878851204dcf5fc5bd5632d631266aa6004",
@@ -1214,18 +1214,18 @@
       "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth3d__cell3d.golden.png": {
-      "sha256": "e0fa510bbfb8e32e7b12e650648cf9a1e61f329830b7e1eba95c6df3080bc72a",
-      "bytes": 236,
+      "sha256": "d3581678fe7196bbbb7f692c2c1557d17ef4186427450ce81f4304bc0aa6b284",
+      "bytes": 230,
       "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
-      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/synth3d__fractal3d.golden.png": {
-      "sha256": "e473d5eae1191f1d09f0d25b14e44733a237790085b36db0fee215fb72e94e7d",
-      "bytes": 109,
+      "sha256": "09340f2b257cce26698d33829957d79c742ea43b7473729f227e31c60ae84181",
+      "bytes": 111,
       "introducedIn": "390071fa078fbc3bb3ba4836a3cbb63320e61df5",
-      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-graduate-60f",
-      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) authority frames then readPixels of the fixture's own final render target twice with identical bytes (the settled-state span the CPU iterates per render; synth3d/fractal3d is frame-static so this equals its single-frame state); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/synth3d__heightmap3d.golden.png": {
       "sha256": "c98d3739546a45840ea1af9b556a1507ed43fc4fd7c05fb6c2e4b78eb72218f9",
@@ -1235,18 +1235,18 @@
       "captureRecord": "2026-10-07 M4/Metal authority capture: published engine 1.0.265 (source revision 8e5835932a7297d360b943200b42953224eea0a4, the pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, HeadlessChrome 155), 8x8 gate fixture, time 0.25, readPixels('global_o0_write') twice with identical bytes. The same capture method reproduces the previous 1.0.206 capture of this fixture byte for byte; the new image follows upstream 8fa067f6, which stores heightmap3d's top image row at z = 0."
     },
     "defaults/synth3d__noise3d.golden.png": {
-      "sha256": "7a82ad70d60b737fb4197c9cbb2a3663d851ef1a2ce7a30fe1dccf2e66550f77",
-      "bytes": 199,
+      "sha256": "513c6adb51f7a1b5ca70bd5ff1c258c24e8734f941723ae8da1dd6f1915803c4",
+      "bytes": 197,
       "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
-      "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/synth3d__reactionDiffusion3d.golden.png": {
-      "sha256": "02ae9349ce0b515e5a52e5e862c398bcfa354b133d09eab5848dcce452a41bf3",
-      "bytes": 118,
+      "sha256": "225dd65393ef570a40dd5afef18b3fe82d857ec9c63db4f79381765f2d22240b",
+      "bytes": 131,
       "introducedIn": "ea4abf3f12215e8c884d364b764342bd42ac5c01",
-      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-rd3d-passrepeat",
-      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture (parity/upstream-defaults/synth3d__reactionDiffusion3d.dsl: reactionDiffusion3d(seed: 1, volumeSize: x32).render3d(volumeSize: v32).write(o0); render(o0)), time 0.25, readPixels('global_o0_write') twice with identical bytes; the CPU port reproduces these bytes only after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount (each pass executes its repeat-count per frame; no group-level multiplier); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (rd3d-auth-reply.json, rd3d-capture-reply.json)"
+      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
+      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
     "defaults/synth3d__shape3d.golden.png": {
       "sha256": "439777d3b5a406385660f37b7e36e7a68110afba8b0f7be6fe7efa6b41e67375",
@@ -1258,14 +1258,14 @@
     "defaults/synth__bitwise.golden.png": {
       "sha256": "ebfcc6c3f5d579d5b631acc0163dd40e39de61dff0796e0aa09b0a855221353d",
       "bytes": 86,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__cell.golden.png": {
       "sha256": "3dbda0bcb16591348dc3ac042bba3374ef7fcef2cdcb5201e2c7e9c03c313c7c",
       "bytes": 292,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -1279,49 +1279,49 @@
     "defaults/synth__curl.golden.png": {
       "sha256": "567cd6207b62e13988437e94baf825fab1285370d1d3eaae6452ec212520dbb2",
       "bytes": 319,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__gabor.golden.png": {
       "sha256": "227c64c4c54b47b2673fac079351d795f8f3af0f9d5ac4b026143e2d8ea5d0ba",
       "bytes": 293,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__gradient.golden.png": {
       "sha256": "c4db6831e24f77921f774a24c257921b4acca20c21ea312b3e43c2e94fb13f99",
       "bytes": 201,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__julia.golden.png": {
       "sha256": "7a01170c1636d1837790f5da8ab8f3b270b687c48d2575591bfd3477b4ebf537",
       "bytes": 185,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__mandala.golden.png": {
       "sha256": "02eddecb19db22850638fa4fda61b92c3448c3687f86858a212db9816a9bb1d3",
       "bytes": 94,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__mandelbrot.golden.png": {
       "sha256": "35a71af5dce9800c5be16325c16deae0b9f5a945cbf29b648fb5cbd3fe2aeff6",
       "bytes": 123,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__media.golden.png": {
       "sha256": "f7384f4a77fcb038a8e41d555cb28cdb5170d0427a11932d3e8c5c7e66df71f3",
       "bytes": 70,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -1335,49 +1335,49 @@
     "defaults/synth__modPattern.golden.png": {
       "sha256": "fdf61afdc036a884e02dd7ce745e6ca534ced039df5f6821d9f267ca33c54819",
       "bytes": 143,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__newton.golden.png": {
       "sha256": "d7a16e15e41c53620f131b8d0c122f92e47b22a9f65674078a0e65036f5c0447",
       "bytes": 200,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__noise.golden.png": {
       "sha256": "96c8cdddc719bbd133b9bda4667deba53cbd5a8fdd8882aa36e2b78325460c62",
       "bytes": 329,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__osc2d.golden.png": {
       "sha256": "a75eef610ce1d234c2b7390a79387613fc281f25c47b01438e541549ded0c5e0",
       "bytes": 102,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__pattern.golden.png": {
       "sha256": "3521c7e8e4c2bcc71594aa4e4468d5931d47568f510acf40f06a4a725bbf5059",
       "bytes": 75,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__perlin.golden.png": {
       "sha256": "fc3578b16a159ca64d083bab49c0af5e994f7903f33b07d389f51a798d832e66",
       "bytes": 314,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__polygon.golden.png": {
       "sha256": "a589182b1ef63ddcfd15098af5e58f673da831b46c0d61f6af8f0444e5cbbbff",
       "bytes": 81,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -1391,7 +1391,7 @@
     "defaults/synth__remap.golden.png": {
       "sha256": "9dc681968c63ee057c802937fc0a6ea19ce3e6c582db817567a88d93e6e686f8",
       "bytes": 75,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
@@ -1405,84 +1405,84 @@
     "defaults/synth__sacredGeometry.golden.png": {
       "sha256": "9dd657f1252ea02bdf690c78ec598a0e9153d0ea8fc31926c9b973be67936529",
       "bytes": 102,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__scope.golden.png": {
       "sha256": "72b436f2b0797755f5d1f02acc26d506a70988e8e9dcbeae12e3405e9dcb8ac6",
       "bytes": 138,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth__shape.golden.png": {
       "sha256": "6f2c48e14ae2d5cccb2289a0b65b563612f70a7f1ba233983ab11a1535fe2799",
       "bytes": 140,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__solid.golden.png": {
       "sha256": "3521c7e8e4c2bcc71594aa4e4468d5931d47568f510acf40f06a4a725bbf5059",
       "bytes": 75,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__spectrum.golden.png": {
       "sha256": "8bcfbd41b7608c1536c5b8111844b09643a240481f2c21480f92248ecbafb716",
       "bytes": 128,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "796ec92f7ab82e5f8f289f63f52345ef71fcdc19",
       "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-reactive-mesh",
       "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
     },
     "defaults/synth__subdivide.golden.png": {
       "sha256": "17f43b975a40d97983f28db4594404c2a3d499b43d4ff19f2659f1dcb965b517",
       "bytes": 74,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "defaults/synth__testPattern.golden.png": {
       "sha256": "3f5c8402e47fdd741e50ae5a02724a2c8715360cfd4a3a3005f6a30c12c98c0c",
       "bytes": 86,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "probes/classic-noise-mono.golden.png": {
       "sha256": "8f34f256d65cacc694e4d68cbc3a6640e59ec274824e201c49f6375eee34482d",
       "bytes": 792,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "probes/classic-noise-static.golden.png": {
       "sha256": "92c0fef88946616f62d9eeef4d79cfcc5f186f51affa9e391984f84358fe7e68",
       "bytes": 778,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "smoke/invert.golden.png": {
       "sha256": "14a00ece07f8ae54b3cf339424e49a15fa2ecd08c40de05aa898baa096baa081",
       "bytes": 83,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "smoke/noise.golden.png": {
       "sha256": "8f34f256d65cacc694e4d68cbc3a6640e59ec274824e201c49f6375eee34482d",
       "bytes": 792,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     },
     "smoke/solid.golden.png": {
       "sha256": "6899f834c4e765d5083bc9c8f4d5f3c6655dab711240baf687da4fb83c2ac8d5",
       "bytes": 82,
-      "introducedIn": "cd0bad0ba00b68c29e15e21dd17ba6a9f9125f19",
+      "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
       "captureRevision": null,
       "captureRecord": null
     }

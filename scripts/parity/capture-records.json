@@ -1,11 +1,11 @@
 {
   "defaults/filter3d__palette3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-palette3d",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
   },
   "defaults/render__render3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-render3d",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
   },
   "defaults/render__renderCubemap3d.golden.png": {
     "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
@@ -20,12 +20,12 @@
     "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
   },
   "defaults/synth3d__cell3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-cell3d",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
   },
   "defaults/synth3d__noise3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-noise3d",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
   },
   "classic/classicNoisedeck__noise3d.golden.png": {
     "captureRevision": "2026-10-01-m4-metal-webgl2-worker-elves-3be6cc6a",
@@ -108,8 +108,8 @@
     "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, deterministic external-input fixtures (synth/roll+scope+spectrum: MIDI channel 1 noteOn 60/64/67 velocities 100/80/90, channel 2 noteOn 48 velocity 64, 24 clock pulses, audio waveform[i]=0.5+0.5*sin(2*pi*3*i/128) and spectrum[i]=(1-i/127)^2; render/meshLoader+meshRender: 12-triangle cube OBJ loaded via loadOBJFromString 'mesh0'; the meshLoader case runs its faithful standalone 'meshLoader().write(o0)' chain, not the meshRender-chained program), readPixels('global_o0_write') twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
   },
   "defaults/synth3d__reactionDiffusion3d.golden.png": {
-    "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-rd3d-passrepeat",
-    "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture (parity/upstream-defaults/synth3d__reactionDiffusion3d.dsl: reactionDiffusion3d(seed: 1, volumeSize: x32).render3d(volumeSize: v32).write(o0); render(o0)), time 0.25, readPixels('global_o0_write') twice with identical bytes; the CPU port reproduces these bytes only after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount (each pass executes its repeat-count per frame; no group-level multiplier); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (rd3d-auth-reply.json, rd3d-capture-reply.json)"
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-rd3d",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture (parity/upstream-defaults/synth3d__reactionDiffusion3d.dsl: reactionDiffusion3d(seed: 1, volumeSize: x32).render3d(volumeSize: v32).write(o0); render(o0); each pass executes its repeat-count per frame, no group-level multiplier, matching upstream pipeline.js render()/resolveRepeatCount). Residual: the CPU port's evolved sim state matches this capture's authority volume atlas at 99.3% of bytes and the port's render3d reproduces the authority output byte-exact given the authority volume, but the port's sim (hash3 seed threshold straddlers plus 8-iteration fp drift, the docs/CRT-PARITY.md capture-backend transcendental-provenance class) renders one pixel of 64 at level 163 versus the authority's 177, outside the port's +/-2 contract; diagnostics archived with the job evidence (gpu-rd-frames, cpu-r3d-isolate, hash variants)"
   },
   "defaults/synth__cellularAutomata.golden.png": {
     "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
@@ -152,15 +152,17 @@
     "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
   },
   "defaults/synth3d__fractal3d.golden.png": {
-    "sha256": "e473d5eae1191f1d09f0d25b14e44733a237790085b36db0fee215fb72e94e7d",
-    "bytes": 109,
-    "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-graduate-60f",
-    "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) authority frames then readPixels of the fixture's own final render target twice with identical bytes (the settled-state span the CPU iterates per render; synth3d/fractal3d is frame-static so this equals its single-frame state); Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-fractal3d",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture (synth3d/fractal3d is frame-static, so the single-frame capture equals the prior capture's 60 render(0.25) settled-state span; the port reproduces this capture byte-exact)"
   },
   "defaults/synth3d__shape3d.golden.png": {
     "sha256": "439777d3b5a406385660f37b7e36e7a68110afba8b0f7be6fe7efa6b41e67375",
     "bytes": 191,
     "captureRevision": "2026-10-03-m4-metal-webgl2-worker-elves-3be6cc6a-intdiv-shape3d",
     "captureRecord": "2026-10-03 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) frame (synth3d/shape3d is frame-static and non-iterated, so this equals its settled state) read back twice with identical bytes; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+  },
+  "defaults/filter__flipMirror.golden.png": {
+    "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-flipmirror",
+    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture (parity/upstream-defaults/filter__flipMirror.dsl; flipMirror mode semantics changed upstream in 16d97cdf..700ac32e, so this golden's first capture is this re-capture; the port reproduces it byte-exact)"
   }
 }
