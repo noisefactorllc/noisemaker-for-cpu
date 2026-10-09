@@ -26268,7 +26268,7 @@ function canonicalFactory213($bindings, $runtime) {
   	var uv = new $runtime.PooledFloat32Array([(coord[0] + 0.5) / stateSize[0], (coord[1] + 0.5) / stateSize[1]]);
   	var heightColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(heightTex, uv)));
   	var elevation = dot(heightColor, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
-  	(outXYZ[0] = (uv[0] - 0.5) * gridScale, outXYZ[1] = elevation * heightScale + heightOffset, outXYZ[2] = (uv[1] - 0.5) * gridScale, outXYZ[3] = 1, outXYZ);
+  	(outXYZ[0] = (uv[0] - 0.5) * gridScale, outXYZ[1] = elevation * heightScale + heightOffset, outXYZ[2] = (0.5 - uv[1]) * gridScale, outXYZ[3] = 1, outXYZ);
   	new $runtime.PooledFloat32Array([0, 0, 0, texelFetch(velTex, coord, 0)[3]]).reduce((res,el,i)=>(res[i] = el, res), outVel);
   	texture(diffuseTex, uv).reduce((res,el,i)=>(res[i] = el, res), outRGBA);
   };

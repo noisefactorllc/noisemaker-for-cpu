@@ -2185,9 +2185,9 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "40edcf1e02d2ee47a25404c5f4f0e809a5243c5b639bb301b823217b9fda1e77",
-    "sourceBytes": 1037,
-    "normalizedBytes": 1109,
+    "sourceSha256": "9edb336514439c0cbe2c29eb38ad8acb26586bd5d59ac0f68ed999ba2ce9024a",
+    "sourceBytes": 1180,
+    "normalizedBytes": 1252,
     "generatedBytes": 1427
   },
   {

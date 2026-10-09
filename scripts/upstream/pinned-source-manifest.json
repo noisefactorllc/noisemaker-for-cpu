@@ -1,5 +1,5 @@
 {
- "revision": "aff293f2a24982a8aad3a18ada13ceb913445d04",
+ "revision": "6b2d5d6d76e899012d01f0eac7d4ce81ccb7319e",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -4697,8 +4697,8 @@
   },
   {
    "path": "shaders/effects/points/heightGrid/glsl/agent.glsl",
-   "size": 1037,
-   "sha256": "40edcf1e02d2ee47a25404c5f4f0e809a5243c5b639bb301b823217b9fda1e77"
+   "size": 1180,
+   "sha256": "9edb336514439c0cbe2c29eb38ad8acb26586bd5d59ac0f68ed999ba2ce9024a"
   },
   {
    "path": "shaders/effects/points/heightGrid/glsl/passthrough.glsl",
@@ -4713,7 +4713,7 @@
   {
    "path": "shaders/effects/points/heightGrid/parity-attestation.json",
    "size": 792,
-   "sha256": "bc9c22640e31f0b274cdca0f3f631e315907833c28e568740dbfc5901ce977e8"
+   "sha256": "5889192ba6bbb5d958d091003798d073f3fefe5f9c69afc496dbfcdbeffcea37"
   },
   {
    "path": "shaders/effects/points/heightGrid/parity-case.json",
@@ -4722,8 +4722,8 @@
   },
   {
    "path": "shaders/effects/points/heightGrid/wgsl/agent.wgsl",
-   "size": 1410,
-   "sha256": "5f9e7ca188ae2a257ba2df8ad18a1d7cd5f165ef7991c958d7804cc407f0db09"
+   "size": 1553,
+   "sha256": "192fe39d51e1752025cc905067b35b1ae7f74d6ae7bb9af22d92950c49979e24"
   },
   {
    "path": "shaders/effects/points/heightGrid/wgsl/passthrough.wgsl",
@@ -5148,7 +5148,7 @@
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-attestation.json",
    "size": 803,
-   "sha256": "bf877631e617af9cf3d1aea8c9e15b601e98e3a8d4515af85db1bef2b1bf757d"
+   "sha256": "1e9647c1b8a00e9548b275a92c9c68d0aa1b7cd38556d158a197ba12c97d1903"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-case.json",
@@ -5278,7 +5278,7 @@
   {
    "path": "shaders/effects/render/pointsRender/parity-attestation.json",
    "size": 794,
-   "sha256": "fe78b8d92a28fe6a62764d972b2d93ef68693190b887d2c41b50eb4b9da84938"
+   "sha256": "85e1681bae09036a7b859ac8952afabaf8249337061e2aae24554cd5400f072c"
   },
   {
    "path": "shaders/effects/render/pointsRender/parity-case.json",
