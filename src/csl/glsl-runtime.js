@@ -264,9 +264,13 @@ export class GlslCpuRuntime {
     })
 
     const dot = (left, right) => {
+      // GPU backends (ANGLE/Metal) fold a dot product into a fused-multiply-add
+      // chain with one rounding per term; emulate that provenance exactly by
+      // rounding each accumulated term to f32 (f64 products of f32 values are
+      // exact, so the f64 add keeps the single final rounding of an fma).
       let sum = 0
-      for (let index = 0; index < left.length; index += 1) sum += left[index] * right[index]
-      return F32(sum)
+      for (let index = 0; index < left.length; index += 1) sum = F32(left[index] * right[index] + sum)
+      return sum
     }
     const cross = (left, right) => {
       const out = this.alloc(3)
