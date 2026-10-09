@@ -1,5 +1,5 @@
 {
- "revision": "247f452bfb498b916196f8a3f6375e2368cc2b3c",
+ "revision": "49182caa6cb5d979f2068cbcb7333271e0c8cfc4",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -303,7 +303,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/kaleido/parity-attestation.json",
    "size": 797,
-   "sha256": "22c651f2132186b82d1df5e047e3fda8b9a785b4788866a95b4382b6ce87f191"
+   "sha256": "d0df93551780c0a6b8ddc2b60e89d1a7a3dc96eda62e7e8c6a4f17fa7c310288"
   },
   {
    "path": "shaders/effects/classicNoisedeck/kaleido/parity-case.json",
@@ -312,8 +312,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/kaleido/wgsl/kaleido.wgsl",
-   "size": 21552,
-   "sha256": "304e6d7c4d4823d9201efdf0aed58be0fa554be099c7642ece9628a310a5e87d"
+   "size": 21607,
+   "sha256": "0b3e970e03afbf54f59227d3b1cc9f424badb59f014831d7bfafb43aef056d8e"
   },
   {
    "path": "shaders/effects/classicNoisedeck/lensDistortion/definition.js",
@@ -2701,9 +2701,19 @@
    "sha256": "f5754d8403888bddbd34e2f3a053846642ad3aa0bb5943c13eece198c570c576"
   },
   {
+   "path": "shaders/effects/filter/rotate/parity-attestation.json",
+   "size": 788,
+   "sha256": "f8bb1dd760a061b3334d1a8056ee177c2b77eff0be386b92a3d8304996e6d9ad"
+  },
+  {
+   "path": "shaders/effects/filter/rotate/parity-case.json",
+   "size": 341,
+   "sha256": "cc3bc8a164b42eff5e8811ff03f11acddcb0902c2fd800bc801f1d1720273abb"
+  },
+  {
    "path": "shaders/effects/filter/rotate/wgsl/rot.wgsl",
-   "size": 1462,
-   "sha256": "e85827d379970f96e60310a7b8b350847ebbfcd6f2402067c4e6c579ecfb75b8"
+   "size": 1598,
+   "sha256": "ecc00ff67da0c864fbff67c9fcfcc6f9b7636af2ebeab9dda9f41d2c8679dcd9"
   },
   {
    "path": "shaders/effects/filter/scale/definition.js",
