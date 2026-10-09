@@ -2461,6 +2461,8 @@ function canonicalFactory7($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var tileOffset = $bindings["tileOffset"];
   var fullResolution = $bindings["fullResolution"];
+  var invFullResolution = $bindings["invFullResolution"];
+  var aspectInv = $bindings["aspectInv"];
   var renderScale = $bindings["renderScale"];
   var time = $bindings["time"];
   var effectAmt = $bindings["effectAmt"];
@@ -2554,18 +2556,29 @@ function canonicalFactory7($bindings, $runtime) {
   	return cpu_float(pcg(cpu_uvec3_vec3(p2))[0]) / 4294967296;
   };
   function map (value, inMin, inMax, outMin, outMax) {
-  	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+  	var span = inMax - inMin;
+  	var rmul = 1 / span;
+  	var mc = min(max(span * rmul, -9.999999680285692e+37), 9.999999680285692e+37);
+  	return outMin + (outMax - outMin) * ((value - inMin) * (rmul * (2 - mc)));
   };
   function rotate2D (st, rot) {
   	st = $runtime.copy(st);
   	st[0] *= fullResolution[0] / fullResolution[1];
+  	st[0] = min(max(st[0], -9.999999680285692e+37), 9.999999680285692e+37);
   	rot = map(rot, 0, 360, 0, 2);
   	var angle = rot * 3.1415927410125732;
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
-  	var cpu_matrix_assignment_0 = new $runtime.PooledFloat32Array([cos(angle) * st[0] + sin(angle) * st[1], -sin(angle) * st[0] + cos(angle) * st[1]]);
-  	(st[0] = cpu_matrix_assignment_0[0], st[1] = cpu_matrix_assignment_0[1], st);
-  	(st[0] += (0.5 * fullResolution[0]) / fullResolution[1], st[1] += 0.5, st);
-  	st[0] /= fullResolution[0] / fullResolution[1];
+  	var ox = min(max((0.5 * fullResolution[0]) / fullResolution[1], -9.999999680285692e+37), 9.999999680285692e+37);
+  	(st[0] -= ox, st[1] -= 0.5, st);
+  	var ca = cos(angle);
+  	var sa = sin(angle);
+  	var px = min(max(ca * st[0], -9.999999680285692e+37), 9.999999680285692e+37);
+  	var py = min(max(sa * st[1], -9.999999680285692e+37), 9.999999680285692e+37);
+  	var qx = min(max(-sa * st[0], -9.999999680285692e+37), 9.999999680285692e+37);
+  	var qy = min(max(ca * st[1], -9.999999680285692e+37), 9.999999680285692e+37);
+  	(st[0] = px + py, st[1] = qx + qy, st);
+  	(st[0] += ox, st[1] += 0.5, st);
+  	st[0] *= aspectInv;
+  	min(max(st, new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37])).reduce((res,el,i)=>(res[i] = el, res), st);
   	return st;
   };
   function brightnessContrast (color) {
@@ -3048,15 +3061,26 @@ function canonicalFactory7($bindings, $runtime) {
   	var total = 0;
   	var toCenter = new $runtime.PooledFloat32Array([st[0] - 0.5, st[1] - 0.5]);
   	var offset = prng(new $runtime.PooledFloat32Array([12.989800453186035, 78.23300170898438, 151.71820068359375]))[0];
+  	var products = [new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0])];
   	for (var t = 0; t <= 40; t++) {
   	var percent = (t + offset) / 40;
-  	var weight = 4 * (percent - percent * percent);
+  	var percentSq = min(max(percent * percent, -9.999999680285692e+37), 9.999999680285692e+37);
+  	var weight = 4 * (percent - percentSq);
   	var strength = map(effectAmt, 0, 20, 0, 1);
-  	var tex = texture(inputTex, new $runtime.PooledFloat32Array([st[0] + (toCenter[0] * percent) * strength, st[1] + (toCenter[1] * percent) * strength]));
-  	(color[0] += tex[0] * weight, color[1] += tex[1] * weight, color[2] += tex[2] * weight, color);
-  	total += weight;
+  	var tapA = new $runtime.PooledFloat32Array([toCenter[0] * percent, toCenter[1] * percent]);
+  	var tap = min(max(tapA, new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37])).map(function (_) {return _ * strength;});
+  	var tapB = min(max(tap, new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37]));
+  	var tex = texture(inputTex, new $runtime.PooledFloat32Array([st[0] + tapB[0], st[1] + tapB[1]]));
+  	min(max(new $runtime.PooledFloat32Array([tex[0] * weight, tex[1] * weight, tex[2] * weight]), new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37, 9.999999680285692e+37])).reduce((res,el,i)=>(res[i] = el, res), products[t|0]);
+  	total += min(max(weight, -9.999999680285692e+37), 9.999999680285692e+37);
   	};
-  	color = new $runtime.PooledFloat32Array([color[0] / total, color[1] / total, color[2] / total]);
+  	for (var i = 0; i < 41; i++) {
+  	(color[0] += products[i][0], color[1] += products[i][1], color[2] += products[i][2], color);
+  	};
+  	var r = 1 / total;
+  	var tr = min(max(total * r, -9.999999680285692e+37), 9.999999680285692e+37);
+  	r = r * (2 - tr);
+  	color = new $runtime.PooledFloat32Array([color[0] * r, color[1] * r, color[2] * r]);
   	return color;
   };
   function offsets (st) {
@@ -3065,21 +3089,25 @@ function canonicalFactory7($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] * invFullResolution[0], globalCoord[1] * invFullResolution[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
-  	var scale = 100 / scaleAmt;
+  	var sR = 1 / scaleAmt;
+  	var sC = min(max(scaleAmt * sR, -9.999999680285692e+37), 9.999999680285692e+37);
+  	var scale = 100 * (sR * (2 - sC));
   	if (scale == 0) {
   	scale = 1;
   	};
   	rotate2D(uv, rotation).reduce((res,el,i)=>(res[i] = el, res), uv);
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
   	uv = new $runtime.PooledFloat32Array([uv[0] * scale, uv[1] * scale]);
+  	min(max(uv, new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37])).reduce((res,el,i)=>(res[i] = el, res), uv);
   	uv = new $runtime.PooledFloat32Array([uv[0] + 0.5, uv[1] + 0.5]);
   	var imageSize = resolution instanceof Float32Array ? $runtime.copy(resolution) : resolution;
-  	uv[0] -= ceil((((resolution[0] / imageSize[0]) * scale) * 0.5) - (0.5 - ((1 / imageSize[0]) * scale)));
-  	uv[1] += ceil((((resolution[1] / imageSize[1]) * scale) * 0.5) + (0.5 - ((1 / imageSize[1]) * scale)) - (scale));
-  	uv[0] -= (map(offsetX, -100, 100, (-resolution[0] / imageSize[0]) * scale, (resolution[0] / imageSize[0]) * scale)) * 1.5;
-  	uv[1] -= (map(offsetY, -100, 100, (-resolution[1] / imageSize[1]) * scale, (resolution[1] / imageSize[1]) * scale)) * 1.5;
+  	uv[0] -= ceil((scale * 0.5) - (0.5 - ((1 / imageSize[0]) * scale)));
+  	uv[1] += ceil((scale * 0.5) + (0.5 - ((1 / imageSize[1]) * scale)) - (scale));
+  	var shiftXv = min(max((map(offsetX, -100, 100, -scale, scale)) * 1.5, -9.999999680285692e+37), 9.999999680285692e+37);
+  	var shiftYv = min(max((map(offsetY, -100, 100, -scale, scale)) * 1.5, -9.999999680285692e+37), 9.999999680285692e+37);
+  	(uv[0] -= shiftXv, uv[1] -= shiftYv, uv);
   	fract(uv).reduce((res,el,i)=>(res[i] = el, res), uv);
   	if (FLIP == 1) {
   	uv[0] = 1 - uv[0];
@@ -3102,12 +3130,12 @@ function canonicalFactory7($bindings, $runtime) {
   	};
   	} else {
   	if (FLIP == 13) {
-  	if (uv[1] > 0.5) {
+  	if (uv[1] < 0.5) {
   	uv[1] = 1 - uv[1];
   	};
   	} else {
   	if (FLIP == 14) {
-  	if (uv[1] < 0.5) {
+  	if (uv[1] > 0.5) {
   	uv[1] = 1 - uv[1];
   	};
   	} else {
@@ -3115,7 +3143,7 @@ function canonicalFactory7($bindings, $runtime) {
   	if (uv[0] > 0.5) {
   	uv[0] = 1 - uv[0];
   	};
-  	if (uv[1] > 0.5) {
+  	if (uv[1] < 0.5) {
   	uv[1] = 1 - uv[1];
   	};
   	} else {
@@ -3123,7 +3151,7 @@ function canonicalFactory7($bindings, $runtime) {
   	if (uv[0] > 0.5) {
   	uv[0] = 1 - uv[0];
   	};
-  	if (uv[1] < 0.5) {
+  	if (uv[1] > 0.5) {
   	uv[1] = 1 - uv[1];
   	};
   	} else {
@@ -3131,7 +3159,7 @@ function canonicalFactory7($bindings, $runtime) {
   	if (uv[0] < 0.5) {
   	uv[0] = 1 - uv[0];
   	};
-  	if (uv[1] > 0.5) {
+  	if (uv[1] < 0.5) {
   	uv[1] = 1 - uv[1];
   	};
   	} else {
@@ -3139,7 +3167,7 @@ function canonicalFactory7($bindings, $runtime) {
   	if (uv[0] < 0.5) {
   	uv[0] = 1 - uv[0];
   	};
-  	if (uv[1] < 0.5) {
+  	if (uv[1] > 0.5) {
   	uv[1] = 1 - uv[1];
   	};
   	};
@@ -5240,8 +5268,8 @@ function canonicalFactory12($bindings, $runtime) {
   	var C = new $runtime.PooledFloat32Array([0.21132487058639526, 0.3660254180431366, -0.5773502588272095, 0.024390242993831635]);
   	var uv = new $runtime.PooledFloat32Array([st[0] * freq[0], st[1] * freq[1]]);
   	uv[0] += s;
-  	var i = floor(new $runtime.PooledFloat32Array([uv[0] + dot(uv, new $runtime.PooledFloat32Array([C[1], C[1]])), uv[1] + dot(uv, new $runtime.PooledFloat32Array([C[1], C[1]]))]));
-  	var x0 = new $runtime.PooledFloat32Array([uv[0] - i[0] + dot(i, new $runtime.PooledFloat32Array([C[0], C[0]])), uv[1] - i[1] + dot(i, new $runtime.PooledFloat32Array([C[0], C[0]]))]);
+  	var i = floor(new $runtime.PooledFloat32Array([uv[0] + min(max(dot(uv, new $runtime.PooledFloat32Array([C[1], C[1]])), -9.999999680285692e+37), 9.999999680285692e+37), uv[1] + min(max(dot(uv, new $runtime.PooledFloat32Array([C[1], C[1]])), -9.999999680285692e+37), 9.999999680285692e+37)]));
+  	var x0 = new $runtime.PooledFloat32Array([uv[0] - i[0] + min(max(dot(i, new $runtime.PooledFloat32Array([C[0], C[0]])), -9.999999680285692e+37), 9.999999680285692e+37), uv[1] - i[1] + min(max(dot(i, new $runtime.PooledFloat32Array([C[0], C[0]])), -9.999999680285692e+37), 9.999999680285692e+37)]);
   	var i1 = new $runtime.PooledFloat32Array([0, 0]);
   	if (x0[0] > x0[1]) {
   	(i1[0] = 1, i1[1] = 0, i1);
@@ -5252,17 +5280,17 @@ function canonicalFactory12($bindings, $runtime) {
   	x12 = new $runtime.PooledFloat32Array([x12[0] - i1[0], x12[1] - i1[1], x12[2], x12[3]]);
   	mod289_vec2(i).reduce((res,el,i)=>(res[i] = el, res), i);
   	var p = permute(vec3.add([], permute(new $runtime.PooledFloat32Array([i[1], i[1] + i1[1], i[1] + 1])).map(function (_) {return _ + i[0];}), new $runtime.PooledFloat32Array([0, i1[0], 1])));
-  	var m = max(new $runtime.PooledFloat32Array([0.5 - dot(x0, x0), 0.5 - dot(new $runtime.PooledFloat32Array([x12[0], x12[1]]), new $runtime.PooledFloat32Array([x12[0], x12[1]])), 0.5 - dot(new $runtime.PooledFloat32Array([x12[2], x12[3]]), new $runtime.PooledFloat32Array([x12[2], x12[3]]))]), 0);
+  	var m = max(min(max(new $runtime.PooledFloat32Array([dot(x0, x0), dot(new $runtime.PooledFloat32Array([x12[0], x12[1]]), new $runtime.PooledFloat32Array([x12[0], x12[1]])), dot(new $runtime.PooledFloat32Array([x12[2], x12[3]]), new $runtime.PooledFloat32Array([x12[2], x12[3]]))]), new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37, 9.999999680285692e+37])).map(function (_) {return 0.5 - _;}), 0);
   	(m[0] = m[0] * m[0], m[1] = m[1] * m[1], m[2] = m[2] * m[2], m);
   	(m[0] = m[0] * m[0], m[1] = m[1] * m[1], m[2] = m[2] * m[2], m);
   	var x = fract(new $runtime.PooledFloat32Array([p[0] * C[3], p[1] * C[3], p[2] * C[3]])).map(function (_) {return 2 * _;}).map(function (_) {return _ - 1;});
   	var h = abs(x).map(function (_) {return _ - 0.5;});
   	var ox = floor(new $runtime.PooledFloat32Array([x[0] + 0.5, x[1] + 0.5, x[2] + 0.5]));
   	var a0 = new $runtime.PooledFloat32Array([x[0] - ox[0], x[1] - ox[1], x[2] - ox[2]]);
-  	(m[0] *= 1.7928428649902344 - 0.8537347316741943 * (a0[0] * a0[0] + h[0] * h[0]), m[1] *= 1.7928428649902344 - 0.8537347316741943 * (a0[1] * a0[1] + h[1] * h[1]), m[2] *= 1.7928428649902344 - 0.8537347316741943 * (a0[2] * a0[2] + h[2] * h[2]), m);
+  	min(max((vec3.add([], min(max(new $runtime.PooledFloat32Array([a0[0] * a0[0], a0[1] * a0[1], a0[2] * a0[2]]), -9.999999680285692e+37), 9.999999680285692e+37), min(max(new $runtime.PooledFloat32Array([h[0] * h[0], h[1] * h[1], h[2] * h[2]]), -9.999999680285692e+37), 9.999999680285692e+37))).map(function (_) {return 0.8537347316741943 * _;}), -9.999999680285692e+37), 9.999999680285692e+37).map(function (_) {return 1.7928428649902344 - _;}).reduce((res,el,i)=>(res[i] *= el, res), m);
   	var g = new $runtime.PooledFloat32Array([0, 0, 0]);
-  	g[0] = a0[0] * x0[0] + h[0] * x0[1];
-  	g = new $runtime.PooledFloat32Array([g[0], a0[1] * x12[0] + h[1] * x12[1], a0[2] * x12[2] + h[2] * x12[3]]);
+  	g[0] = min(max(a0[0] * x0[0], -9.999999680285692e+37), 9.999999680285692e+37) + min(max(h[0] * x0[1], -9.999999680285692e+37), 9.999999680285692e+37);
+  	g = [null, 0, 1].map(function (idx, i) { return idx == null ? g[i] : this[idx]; }, vec2.add([], min(max(new $runtime.PooledFloat32Array([a0[1] * x12[0], a0[2] * x12[2]]), -9.999999680285692e+37), 9.999999680285692e+37), min(max(new $runtime.PooledFloat32Array([h[1] * x12[1], h[2] * x12[3]]), -9.999999680285692e+37), 9.999999680285692e+37)));
   	var v = 130 * (dot(m, g));
   	return periodicFunction(map(v, -1, 1, 0, 1) - blend);
   };
@@ -5648,7 +5676,9 @@ function canonicalFactory12($bindings, $runtime) {
   	};
   	color = new $runtime.PooledFloat32Array([color[0] + layer[0] / multiplier, color[1] + layer[1] / multiplier, color[2] + layer[2] / multiplier]);
   	};
-  	color = new $runtime.PooledFloat32Array([color[0] / multiplicand, color[1] / multiplicand, color[2] / multiplicand]);
+  	var rmul = 1 / multiplicand;
+  	var mc = min(max(multiplicand * rmul, -9.999999680285692e+37), 9.999999680285692e+37);
+  	color = new $runtime.PooledFloat32Array([color[0] * (rmul * (2 - mc)), color[1] * (rmul * (2 - mc)), color[2] * (rmul * (2 - mc))]);
   	if (COLOR_MODE == 0) {
   	if (ridges) {
   	color[2] = 1 - abs(color[2] * 2 - 1);
@@ -29462,7 +29492,7 @@ function canonicalFactory251($bindings, $runtime) {
   	};
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullRes[0]) / fullRes[1], (globalCoord[1] - 0.5 * fullRes[1]) / fullRes[1]]);
-  	var ro = new $runtime.PooledFloat32Array([(cameraPosition[0] * -1) * 3.5, cameraPosition[1] * 3.5, cameraPosition[2] * 3.5]);
+  	var ro = new $runtime.PooledFloat32Array([cameraPosition[0] * 3.5, cameraPosition[1] * 3.5, cameraPosition[2] * 3.5]);
   	var forward = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (length(ro) < 0.0010000000474974513) {
   	(forward[0] = 0, forward[1] = 0, forward[2] = -1, forward);
@@ -29471,13 +29501,13 @@ function canonicalFactory251($bindings, $runtime) {
   	};
   	var worldUp = new $runtime.PooledFloat32Array([0, 1, 0]);
   	if ((abs(dot(forward, worldUp))) > 0.9990000128746033) {
-  	(worldUp[0] = 0, worldUp[1] = 0, worldUp[2] = 1, worldUp);
+  	(worldUp[0] = 0, worldUp[1] = 0, worldUp[2] = sign(forward[1]), worldUp);
   	};
-  	var right = normalize(cross(worldUp, forward));
-  	var up = cross(forward, right);
+  	var right = normalize(cross(forward, worldUp));
+  	var up = cross(right, forward);
   	var rd = normalize(new $runtime.PooledFloat32Array([forward[0] + uv[0] * right[0] + uv[1] * up[0], forward[1] + uv[0] * right[1] + uv[1] * up[1], forward[2] + uv[0] * right[2] + uv[1] * up[2]]));
-  	var worldLightDir = normalize(new $runtime.PooledFloat32Array([lightDirection[0] * -1, lightDirection[1], lightDirection[2]]));
-  	var angle = (time * TAU) * (orbitSpeed);
+  	var worldLightDir = normalize(lightDirection);
+  	var angle = (-time * TAU) * (orbitSpeed);
   	var c = cos(angle);
   	var s = sin(angle);
   	var roVol = new $runtime.PooledFloat32Array([ro[0] * c + ro[2] * s, ro[1], -ro[0] * s + ro[2] * c]);
@@ -36213,7 +36243,7 @@ function canonicalFactory292($bindings, $runtime) {
 canonicalFactory292.outputNames = ["fragColor","geoOut"]
 
 function canonicalFactory293($bindings, $runtime) {
-  const { vec3, ivec2, sin, cos, acos, atan, pow, log, abs, mod, min, clamp, length, dot, normalize, subtract } = $runtime.stdlib
+  const { vec3, ivec2, sin, cos, acos, atan, pow, log, abs, min, clamp, length, dot, normalize, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -36229,8 +36259,6 @@ function canonicalFactory293($bindings, $runtime) {
   var juliaY = $bindings["juliaY"];
   var juliaZ = $bindings["juliaZ"];
   var colorMode = $bindings["colorMode"];
-  var tileOffset = $bindings["tileOffset"];
-  var renderScale = $bindings["renderScale"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   var geoOut = new Float32Array([0, 0, 0, 0]);
   var PI = 3.1415927410125732;
@@ -36387,19 +36415,17 @@ function canonicalFactory293($bindings, $runtime) {
   };
   function main () {
   	var volSize = volumeSize instanceof Float32Array ? $runtime.copy(volumeSize) : volumeSize;
-  	var scaledVolSize = (volSize) * renderScale|0;
-  	var scaledVolSizeF = (scaledVolSize);
-  	var globalPixelCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var pixelCoord = cpu_ivec2_vec2(globalPixelCoord);
-  	var x = mod((pixelCoord[0]), scaledVolSizeF)|0;
-  	var y = pixelCoord[1] % scaledVolSize;
-  	var z = Math.trunc(pixelCoord[1] / scaledVolSize);
-  	if ((x >= scaledVolSize) || (y >= scaledVolSize) || (z >= scaledVolSize)) {
+  	var volSizeF = (volSize);
+  	var pixelCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var x = pixelCoord[0];
+  	var y = pixelCoord[1] % volSize;
+  	var z = Math.trunc(pixelCoord[1] / volSize);
+  	if ((x >= volSize) || (y >= volSize) || (z >= volSize)) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
   	return;
   	};
-  	var p = new $runtime.PooledFloat32Array([((x) / (scaledVolSizeF - 1) * 2 - 1) * 1.5, ((y) / (scaledVolSizeF - 1) * 2 - 1) * 1.5, ((z) / (scaledVolSizeF - 1) * 2 - 1) * 1.5]);
+  	var p = new $runtime.PooledFloat32Array([((x) / (volSizeF - 1) * 2 - 1) * 1.5, ((y) / (volSizeF - 1) * 2 - 1) * 1.5, ((z) / (volSizeF - 1) * 2 - 1) * 1.5]);
   	var juliaC = new $runtime.PooledFloat32Array([juliaX * 0.009999999776482582, juliaY * 0.009999999776482582, juliaZ * 0.009999999776482582]);
   	var result = computeFractal(p, juliaC);
   	var dist = result[0];

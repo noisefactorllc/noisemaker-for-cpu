@@ -1,5 +1,5 @@
 {
- "revision": "700ac32e8b4f80a221754e62302e63ac76f5ecc5",
+ "revision": "a3d96b664e32c72095ee325871a0221fa35f320c",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -202,8 +202,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/glsl/effects.glsl",
-   "size": 21279,
-   "sha256": "c837f01ab747d2363bd1bd9ffb9950e0ececcfae40a9768a3dce90fb01d83457"
+   "size": 26106,
+   "sha256": "1a5d9684bef39715572e85aa24419cd002e592b6192cd2dbc3b0f7d53d836a90"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/help.md",
@@ -213,7 +213,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-attestation.json",
    "size": 799,
-   "sha256": "ca894174329af1579a30a2b7bcd141e72003ddbf4dabea52016db9fc8d092b2d"
+   "sha256": "172dd0fb2aaaabbd21c6a4f98614d6d53459870b9c882407244325c846b62494"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-case.json",
@@ -222,8 +222,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/wgsl/effects.wgsl",
-   "size": 15886,
-   "sha256": "a0367b3aa2ccfa429a8de468d00db615904f7fc6646e532114a8e73aa100b334"
+   "size": 20258,
+   "sha256": "3710f48b36018d19bbe8937db1c3ad31e2ed38a961d4e3701ac9e8db31d51854"
   },
   {
    "path": "shaders/effects/classicNoisedeck/fractal/definition.js",
@@ -273,7 +273,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/glitch/parity-attestation.json",
    "size": 810,
-   "sha256": "66ecbaabdaf4259704d2da79aa3b9f997723aa7976e164eb1f299bbb17c1e4c3"
+   "sha256": "63af409b75d5709b8c3e3e0fb00d1cd47b0a41e3488af8cda8bdd9913a22135d"
   },
   {
    "path": "shaders/effects/classicNoisedeck/glitch/parity-case.json",
@@ -372,8 +372,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/noise/glsl/noise.glsl",
-   "size": 31461,
-   "sha256": "e8eeb7d9134b7c08901df12f041767151b26b23ee534d038d1b71b6e47f69586"
+   "size": 32527,
+   "sha256": "d86306e285a2f80dae86fe79cde92ceb89ec898ef78e6a15d140bfdf0e030bb2"
   },
   {
    "path": "shaders/effects/classicNoisedeck/noise/help.md",
@@ -383,7 +383,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/noise/parity-attestation.json",
    "size": 809,
-   "sha256": "68ba536dd0c7e5306009764afd103a778d52dd05d6d8cef2bff8dd78fb18cf63"
+   "sha256": "2227efbb1f7ceb7e8bf2f08faacea6bcd8269dde35b248e9932cd37c460ac0eb"
   },
   {
    "path": "shaders/effects/classicNoisedeck/noise/parity-case.json",
@@ -392,8 +392,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/noise/wgsl/noise.wgsl",
-   "size": 30535,
-   "sha256": "3d421df8ca81cf90e97b4278faa2e16ba2115e7cdc4fcc8bbc77ba7fb30b8365"
+   "size": 31738,
+   "sha256": "8c61492f48a1f4f2ecff9165530f31b8bd43da3ffcaa0734c43b91cf36b20ac1"
   },
   {
    "path": "shaders/effects/classicNoisedeck/noise3d/definition.js",
@@ -563,7 +563,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/splat/parity-attestation.json",
    "size": 797,
-   "sha256": "76d5a61a675cce71b8a714972cda194a334de2064d10835936bd1d994410741f"
+   "sha256": "57e0f4b090873174375cdfae509a11b71c3278c0ccf74280d9badbf35b80e890"
   },
   {
    "path": "shaders/effects/classicNoisedeck/splat/parity-case.json",
@@ -5442,8 +5442,8 @@
   },
   {
    "path": "shaders/effects/render/renderLit3d/glsl/renderLit3d.glsl",
-   "size": 12143,
-   "sha256": "77460fb4a9e53f7776d7a3d73cb3fcc1840dce577c6f0989354eeb540011529f"
+   "size": 12406,
+   "sha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627"
   },
   {
    "path": "shaders/effects/render/renderLit3d/help.md",
@@ -5453,7 +5453,7 @@
   {
    "path": "shaders/effects/render/renderLit3d/parity-attestation.json",
    "size": 791,
-   "sha256": "9a7cc94ad273b893fb2c4b2caf93df0ffcb15a46a07305b0598620aec6e14452"
+   "sha256": "d19cf36071dcaf18f4e4c78cb73a4f25c556a194e089a137c4de98e1b5aa215e"
   },
   {
    "path": "shaders/effects/render/renderLit3d/parity-case.json",
@@ -5462,8 +5462,8 @@
   },
   {
    "path": "shaders/effects/render/renderLit3d/wgsl/renderLit3d.wgsl",
-   "size": 13831,
-   "sha256": "e6fada664f4ef8cedf88eed57b4f18eeb1762a92d243a20b70346b4524b58b0d"
+   "size": 14092,
+   "sha256": "44d5b629fc50b9f3d3a6f960099695a2ef28dd861576ecc81653f68018ced45a"
   },
   {
    "path": "shaders/effects/strings.de.json",
@@ -6428,7 +6428,7 @@
   {
    "path": "shaders/effects/synth3d/flythrough3d/parity-attestation.json",
    "size": 795,
-   "sha256": "811b8fe8389a95ad9e8b8b43e6cb07dbf2a03d65baf9cd469a6dda047d01a446"
+   "sha256": "397a7b9e7f69ecba95dad3adca92cbb7ded0636d3cbeab986e38dd7973db0556"
   },
   {
    "path": "shaders/effects/synth3d/flythrough3d/parity-case.json",
@@ -6447,8 +6447,8 @@
   },
   {
    "path": "shaders/effects/synth3d/fractal3d/glsl/precompute.glsl",
-   "size": 6912,
-   "sha256": "8ab3dfe63e16d4406deee719c1f822d405c712bae21bd1348ae5b75b79a14d41"
+   "size": 6882,
+   "sha256": "4bc39fb7920cf0829cc6a6fc4670cdac9f5ea68c5438f569050a4732c1e6de19"
   },
   {
    "path": "shaders/effects/synth3d/fractal3d/help.md",
@@ -6457,8 +6457,8 @@
   },
   {
    "path": "shaders/effects/synth3d/fractal3d/parity-attestation.json",
-   "size": 786,
-   "sha256": "6fd3bc5a795c9bf59daf0d81fd75c22f8c3763e3647c4fde0f2c3e756c07779a"
+   "size": 788,
+   "sha256": "83434955f2e750b5cfe050e30119ec9ff6fdd0bb64f57549a83a052ff2f6d7ff"
   },
   {
    "path": "shaders/effects/synth3d/fractal3d/parity-case.json",
@@ -6467,8 +6467,8 @@
   },
   {
    "path": "shaders/effects/synth3d/fractal3d/wgsl/precompute.wgsl",
-   "size": 10460,
-   "sha256": "66204d495bf65b77f5036b408fd5e593c2d48a631e2a6c838a44fbb941d61d29"
+   "size": 10140,
+   "sha256": "455c3c1f519586bd38d82848717c49e7f478ab7a6fe51d655ef23e13e0efa66b"
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/definition.js",
@@ -6717,8 +6717,8 @@
   },
   {
    "path": "shaders/src/runtime/backends/webgpu.js",
-   "size": 170805,
-   "sha256": "0688ea5e1e215a2959d320ff1ef51d9161ee7c31f0aa977921d46e2a4bf0d638"
+   "size": 176841,
+   "sha256": "c1860ebf52eb32c7b01b8312318f09acf2c880c091b4a4d632048a51d75a2061"
   },
   {
    "path": "shaders/src/runtime/compiler.js",
@@ -6767,8 +6767,8 @@
   },
   {
    "path": "shaders/src/runtime/pipeline.js",
-   "size": 133184,
-   "sha256": "da430a3a921ca849ffdaa1787373d7422b5ee5ef8a12b763e57579884edc5b91"
+   "size": 134155,
+   "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
   },
   {
    "path": "shaders/src/runtime/preflight.js",

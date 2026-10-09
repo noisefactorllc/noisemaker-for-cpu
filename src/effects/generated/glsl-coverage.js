@@ -75,10 +75,10 @@ export const programCoverage = Object.freeze([
     "program": "effects",
     "file": "effects.glsl",
     "status": "generated",
-    "sourceSha256": "c837f01ab747d2363bd1bd9ffb9950e0ececcfae40a9768a3dce90fb01d83457",
-    "sourceBytes": 21279,
-    "normalizedBytes": 21782,
-    "generatedBytes": 25581
+    "sourceSha256": "1a5d9684bef39715572e85aa24419cd002e592b6192cd2dbc3b0f7d53d836a90",
+    "sourceBytes": 26106,
+    "normalizedBytes": 26507,
+    "generatedBytes": 27941
   },
   {
     "effectId": "classicNoisedeck/fractal",
@@ -135,10 +135,10 @@ export const programCoverage = Object.freeze([
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
-    "sourceSha256": "e8eeb7d9134b7c08901df12f041767151b26b23ee534d038d1b71b6e47f69586",
-    "sourceBytes": 31461,
-    "normalizedBytes": 32381,
-    "generatedBytes": 30877
+    "sourceSha256": "d86306e285a2f80dae86fe79cde92ceb89ec898ef78e6a15d140bfdf0e030bb2",
+    "sourceBytes": 32527,
+    "normalizedBytes": 33447,
+    "generatedBytes": 31501
   },
   {
     "effectId": "classicNoisedeck/noise3d",
@@ -2605,10 +2605,10 @@ export const programCoverage = Object.freeze([
     "program": "renderLit3d",
     "file": "renderLit3d.glsl",
     "status": "generated",
-    "sourceSha256": "77460fb4a9e53f7776d7a3d73cb3fcc1840dce577c6f0989354eeb540011529f",
-    "sourceBytes": 12143,
-    "normalizedBytes": 12586,
-    "generatedBytes": 12956
+    "sourceSha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627",
+    "sourceBytes": 12406,
+    "normalizedBytes": 12849,
+    "generatedBytes": 12899
   },
   {
     "effectId": "synth/bitwise",
@@ -3035,10 +3035,10 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
-    "sourceSha256": "8ab3dfe63e16d4406deee719c1f822d405c712bae21bd1348ae5b75b79a14d41",
-    "sourceBytes": 6912,
-    "normalizedBytes": 6959,
-    "generatedBytes": 6937
+    "sourceSha256": "4bc39fb7920cf0829cc6a6fc4670cdac9f5ea68c5438f569050a4732c1e6de19",
+    "sourceBytes": 6882,
+    "normalizedBytes": 6939,
+    "generatedBytes": 6644
   },
   {
     "effectId": "synth3d/heightmap3d",

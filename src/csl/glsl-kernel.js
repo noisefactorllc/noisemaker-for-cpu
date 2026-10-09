@@ -36,6 +36,13 @@ export function createCanonicalBindings(options) {
 
   const resolution = new Float32Array([width, height])
   const completeResolution = fullResolution ?? resolution
+  // Upstream's Pipeline computes these scalar reciprocals on the CPU and
+  // uploads them as uniforms instead of dividing in-shader (relaxed-math
+  // backends lower a division to an approximate reciprocal multiply). The
+  // transpiled kernels read them as plain bindings, so build them the same
+  // way: tiling uses the full image's aspect and dimensions, otherwise the
+  // render's own.
+  const aspectValue = completeResolution[0] / completeResolution[1]
   return Object.freeze({
     renderScale: 1,
     speed: 0,
@@ -51,8 +58,13 @@ export function createCanonicalBindings(options) {
     resolution,
     fullResolution: completeResolution,
     tileOffset: tileOffset ?? new Float32Array(2),
-    aspectRatio: f32(width / height),
-    aspect: f32(width / height),
+    aspectRatio: f32(aspectValue),
+    aspect: f32(aspectValue),
+    aspectInv: f32(1 / aspectValue),
+    invFullResolution: new Float32Array([
+      f32(1 / completeResolution[0]),
+      f32(1 / completeResolution[1]),
+    ]),
     time: f32(time),
     globalTime: f32(time),
     deltaTime: f32(deltaTime),
