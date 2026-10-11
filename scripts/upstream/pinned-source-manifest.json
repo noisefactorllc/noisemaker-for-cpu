@@ -1,5 +1,5 @@
 {
- "revision": "ea33502fd99a04213102edd0a5ce95b6bf7ff0c1",
+ "revision": "38064f6c61f5bd77c88a5ee967e1865b70157c9b",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5467,38 +5467,38 @@
   },
   {
    "path": "shaders/effects/strings.de.json",
-   "size": 190175,
-   "sha256": "04bd5165c77a14efe91110fc359b75b954df85008bb7addcaa5ca7601dd133a3"
+   "size": 190045,
+   "sha256": "bbe7fe9b64bdc1c5233ae04208fd854bb3f648ed7357882cd805282e4a9efa94"
   },
   {
    "path": "shaders/effects/strings.en.json",
-   "size": 183744,
-   "sha256": "667b230356ae277153aef663cea5c723a86be48efbf37c4d9912d9e51a93a1cd"
+   "size": 183613,
+   "sha256": "45848cfde65c50e23236e0e13775923336a52e1bcc0bc971314cdac5b209e10c"
   },
   {
    "path": "shaders/effects/strings.es.json",
-   "size": 192557,
-   "sha256": "31a81e9be25e0308e3902436bfb72494ccb2011906cd49399b112626aba8848a"
+   "size": 192423,
+   "sha256": "7abb3726588bc30fdb5feab61af8ee2fb9780b50cfc11cfa299afaf318595848"
   },
   {
    "path": "shaders/effects/strings.fr.json",
-   "size": 193678,
-   "sha256": "0a844fa14844f10421e9cc5ef7df59381710a2f9faeb62fc7193481e06acb028"
+   "size": 193542,
+   "sha256": "f1c1ffe78c64b655d04ef4dd9a8e9710231f5073aae902339231c31121df2513"
   },
   {
    "path": "shaders/effects/strings.it.json",
-   "size": 191812,
-   "sha256": "9a183e2fc75873b51517bc95516d47e8f46719afd355575c26a84294f4e0df68"
+   "size": 191675,
+   "sha256": "198ea1148f56106b4c2d3fcc7fdbe8a1f0ffd4e918ac3be7ee8c9dc1112cdcc1"
   },
   {
    "path": "shaders/effects/strings.ja.json",
-   "size": 200241,
-   "sha256": "d740fc409c194e6aa0a8935c7f8658b4820f60a392199d143678650816554c2f"
+   "size": 200102,
+   "sha256": "90f32bbcc169158b50b0a7e95d26842127c4989ee184b33fd2afe772ceaa3282"
   },
   {
    "path": "shaders/effects/strings.pt.json",
-   "size": 192768,
-   "sha256": "cf4fda89a7a8b3621b4609d0803c391aae69548dba43120ba4663aea2c9c62d4"
+   "size": 192636,
+   "sha256": "1d400a53bb1bf71d0bb4181a68d832abc6581fa832f562e9d8b99aedf4618851"
   },
   {
    "path": "shaders/effects/synth/bitwise/definition.js",
