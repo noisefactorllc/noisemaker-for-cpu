@@ -31,7 +31,7 @@ test('every retained golden has a provenance manifest entry whose sha256 matches
 
 test('provenance entries never borrow the generated kernel pin as a capture revision', async () => {
   const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
-  const { UPSTREAM_REVISION } = await import(join(projectRoot, 'src/effects/generated/upstream-snapshot.js'))
+  const { UPSTREAM_REVISION } = await import(new URL('../src/effects/generated/upstream-snapshot.js', import.meta.url))
   for (const [key, entry] of Object.entries(manifest.goldens)) {
     if (entry.captureRevision !== null) {
       assert.notEqual(entry.captureRevision, UPSTREAM_REVISION, `${key}: the kernel pin must not be recorded as the reference capture revision`)

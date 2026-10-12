@@ -29,8 +29,15 @@ current engines render too — Chromium 154 passes the checkout's
 `node scripts/browser-check.mjs` (a Chromium-family raw-CDP check that serves
 the root and asserts a non-blank first frame with every same-origin module
 loaded) and Firefox 155 renders in a separate Playwright-based run. The
-Safari 15.4 minimum is derived from feature support, not executed here — no
-runnable WebKit host — and Windows and real Safari remain unqualified.
+Safari 15.4 minimum remains feature-derived and has not been executed. The
+dedicated `.github/workflows/platform-browser.yml` runs `npm test` and the
+demo check on Windows Chrome and real Safari (`node scripts/browser-check.mjs
+--browser safari`). At source `8c146483`, macOS
+26.6.2 with Safari 26.6.2 passed the real Safari check: HTTP 200, a 256 × 256
+non-blank canvas, and no same-origin module failures or page errors
+([CI run](https://github.com/noisefactorllc/noisemaker-for-cpu/actions/runs/38214471227)).
+Each workflow run records the exact source, operating system, browser and Node
+versions with its test output.
 
 The supported distribution is the npm package `noisemaker-cpu`. It is not
 published yet (`npm view noisemaker-cpu` returns E404), so install from this

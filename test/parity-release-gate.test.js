@@ -120,8 +120,8 @@ test('the CLI requires explicit declarations', () => {
 
 // The parity job's own shell steps from .github/workflows/export-kit.yml, run in
 // order after `npm ci` with the summary command replaced by the given output.
-function parityJobSteps() {
-  const lines = readFileSync('.github/workflows/export-kit.yml', 'utf8').split('\n')
+function parityJobSteps(workflow = readFileSync('.github/workflows/export-kit.yml', 'utf8')) {
+  const lines = workflow.split(/\r?\n/)
   const start = lines.indexOf('  parity:')
   assert.notEqual(start, -1, 'export-kit.yml has a parity job')
   let end = lines.findIndex((line, index) => index > start && /^ {2}\S/.test(line))
@@ -146,15 +146,30 @@ function parityJobSteps() {
   return steps.filter((step) => step !== 'npm ci')
 }
 
+function bashPath(path, platform = process.platform) {
+  return platform === 'win32'
+    ? path.replace(/^([A-Za-z]):[\\/]/, (_match, drive) => `/${drive.toLowerCase()}/`).replaceAll('\\', '/')
+    : path
+}
+
+test('Windows temporary files use drive-mounted paths in the Bash gate fixture', () => {
+  assert.equal(bashPath('D:\\a\\_temp\\summary-output.txt', 'win32'), '/d/a/_temp/summary-output.txt')
+})
+
+test('the export-kit parity job has the same executable steps with Windows line endings', () => {
+  const workflow = readFileSync('.github/workflows/export-kit.yml', 'utf8')
+  assert.deepEqual(parityJobSteps(workflow.replace(/\r?\n/g, '\r\n')), parityJobSteps(workflow))
+})
+
 function runParityJob(output) {
   const runnerTemp = mkdtempSync(join(tmpdir(), 'cpu-release-gate-'))
   const fakeSummary = join(runnerTemp, 'summary-output.txt')
   writeFileSync(fakeSummary, output)
   for (const step of parityJobSteps()) {
     assert.doesNotMatch(step, /\.\/scripts\/parity-summary(?!\s*(?:2>&1|\||$))/m, 'the job runs the summary over every case')
-    const script = step.replaceAll('./scripts/parity-summary', `cat ${JSON.stringify(fakeSummary)}`)
+    const script = step.replaceAll('./scripts/parity-summary', 'cat "$FAKE_SUMMARY"')
     const result = spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', '-c', script], {
-      encoding: 'utf8', env: { ...process.env, RUNNER_TEMP: runnerTemp },
+      encoding: 'utf8', env: { ...process.env, RUNNER_TEMP: bashPath(runnerTemp), FAKE_SUMMARY: bashPath(fakeSummary) },
     })
     if (result.status !== 0) return { status: result.status, output: result.stdout + result.stderr }
   }
