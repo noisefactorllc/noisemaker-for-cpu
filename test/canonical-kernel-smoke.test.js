@@ -34,6 +34,67 @@ function renderMedianFactory(factory, input) {
   return destination
 }
 
+test('billboard depth merge preserves integer run boundaries and stable depth ordering', () => {
+  const factory = canonicalKernelFactories['render/pointsBillboardRender:depthMerge']
+  const cases = [
+    { keys: [3, 1, 4, 2], stages: [
+      [[1, 1], [3, 0], [2, 3], [4, 2]],
+      [[1, 1], [2, 3], [3, 0], [4, 2]],
+    ] },
+    { keys: [3, 1, 3, 1], stages: [
+      [[1, 1], [3, 0], [1, 3], [3, 2]],
+      [[1, 1], [1, 3], [3, 0], [3, 2]],
+    ] },
+    { keys: [5, 1, 4, 2, 3], stages: [
+      [[1, 1], [5, 0], [2, 3], [4, 2], [3, 4]],
+      [[1, 1], [2, 3], [4, 2], [5, 0], [3, 4]],
+      [[1, 1], [2, 3], [3, 4], [4, 2], [5, 0]],
+    ] },
+  ]
+
+  for (const { keys, stages } of cases) {
+    let records = keys.map((key, index) => [key, index])
+    for (const [stage, expected] of stages.entries()) {
+      const width = records.length
+      const orderTex = new Surface(width, 1)
+      records.forEach(([key, index], position) => {
+        orderTex.data.set([key, index, 0, 1], position * 4)
+      })
+      const kernel = bindCanonicalKernel(factory, {
+        width, height: 1,
+        uniforms: { runLength: 2 ** stage },
+        textures: { orderTex },
+      })
+      const actual = []
+      for (let x = 0; x < width; x += 1) {
+        const out = new Float32Array(4)
+        kernel({
+          fragCoord: new Float32Array([x + 0.5, 0.5]),
+          uv: new Float32Array([(x + 0.5) / width, 0.5]),
+          resolution: new Float32Array([width, 1]),
+        }, out)
+        actual.push([out[0], out[1]])
+      }
+      assert.deepEqual(actual, expected, `depth merge width ${width}, run length ${2 ** stage}`)
+      records = actual
+    }
+  }
+})
+
+test('billboard alpha blend converts premultiplied trail RGB to straight RGB', () => {
+  const factory = canonicalKernelFactories['render/pointsBillboardRender:blend']
+  const inputTex = new Surface(1, 1, new Float32Array([0, 0, 0, 0]))
+  const trailTex = new Surface(1, 1, new Float32Array([0.1666259765625, 0.2666015625, 0.39990234375, 0.5]))
+  const destination = new Surface(1, 1)
+  const kernel = bindCanonicalKernel(factory, {
+    width: 1, height: 1,
+    uniforms: { inputIntensity: 0, blendMode: 1 },
+    textures: { inputTex, trailTex },
+  })
+  runPass({ kernel, destination })
+  assert.deepEqual(Array.from(destination.data), [0.333251953125, 0.533203125, 0.7998046875, 0.5])
+})
+
 test('classic palette parameters expand to canonical shader uniforms', () => {
   const registry = createDefaultRegistry()
   const renderer = new CpuRenderer({ registry, kernels, kernelFactories })

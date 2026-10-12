@@ -2417,8 +2417,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "c057535d715351b5f725248f7d16982cd30398fbf4f2cce2d6230e5d057aa527",
     "sourceBytes": 1302,
-    "normalizedBytes": 1354,
-    "generatedBytes": 1871
+    "normalizedBytes": 1378,
+    "generatedBytes": 1896
   },
   {
     "effectId": "render/pointsBillboardRender",

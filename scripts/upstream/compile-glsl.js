@@ -264,7 +264,8 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // provably int-typed GLSL identifier. Broader expression-level rewrites were measured
   // against fresh M4/Metal authority captures and REJECTED: the authority's rendered
   // output for filter/spookyTicker matches the untruncated lowering, not the pinned
-  // GLSL's int-division semantics, so sub-expression rewrites diverge.
+  // GLSL's int-division semantics, so broad sub-expression rewrites diverge. The
+  // billboard depth-merge topology below has its own source-checked exception.
   // Integer casts (`float(x)`) and literals are left untouched.
   const intNames = new Set()
   for (const m of originalSource.matchAll(/\buniform\s+int\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
@@ -291,6 +292,19 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
       if (dividend === divisor) return m
       return `var ${name} = Math.trunc(${dividend} / ${divisor});`
     })
+  }
+  if (effectId === 'render/pointsBillboardRender' && originalSource.includes('int start = (index / (2 * runLength)) * (2 * runLength);')) {
+    // The merge run's start and binary-search midpoint are GLSL int expressions.
+    // Leaving either fractional changes the partition and duplicates depth keys.
+    const rewrites = [
+      ['var start = (index / (2 * runLength)) * (2 * runLength);', 'var start = Math.trunc(index / (2 * runLength)) * (2 * runLength);'],
+      ['var mid = (low + high) / 2;', 'var mid = Math.trunc((low + high) / 2);'],
+    ]
+    if (!originalSource.includes('int mid = (low + high) / 2;')) throw new Error('Billboard depth merge midpoint source changed')
+    for (const [before, after] of rewrites) {
+      if (!out.includes(before)) throw new Error(`Billboard depth merge lowering changed: ${before}`)
+      out = out.replace(before, after)
+    }
   }
   return out
 }
@@ -712,6 +726,14 @@ function adaptCanonicalSource(effectId, source) {
   }
   if (effectId === 'synth/remap') {
     source = source.replace('getZonePack(zoneIdx, vertIdx / 2)', 'getZonePack(zoneIdx, vertIdx >> 1)')
+  }
+  if (effectId === 'render/pointsBillboardRender') {
+    // glsl-transpiler attaches its vector-copy reducer only to the false arm
+    // of this ternary, leaving outRGB unchanged when outAlpha is positive.
+    source = source.replace(
+      'outRGB = outAlpha > 0.0 ? outRGB_pre / outAlpha : vec3(0.0);',
+      'if (outAlpha > 0.0) { outRGB = outRGB_pre / outAlpha; } else { outRGB = vec3(0.0); }',
+    )
   }
   if (effectId === 'filter/smooth') {
     source = source.replace(

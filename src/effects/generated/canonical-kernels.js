@@ -27537,7 +27537,11 @@ function canonicalFactory234($bindings, $runtime) {
   	if (blendMode == 1) {
   	outAlpha = trailColor[3] + scaledInput[3] * (1 - trailColor[3]);
   	var outRGB_pre = new $runtime.PooledFloat32Array([trailColor[0] + (scaledInput[0] * scaledInput[3]) * (1 - trailColor[3]), trailColor[1] + (scaledInput[1] * scaledInput[3]) * (1 - trailColor[3]), trailColor[2] + (scaledInput[2] * scaledInput[3]) * (1 - trailColor[3])]);
-  	outAlpha > 0 ? new $runtime.PooledFloat32Array([outRGB_pre[0] / outAlpha, outRGB_pre[1] / outAlpha, outRGB_pre[2] / outAlpha]) : new $runtime.PooledFloat32Array([0, 0, 0]).reduce((res,el,i)=>(res[i] = el, res), outRGB);
+  	if (outAlpha > 0) {
+  	(outRGB[0] = outRGB_pre[0] / outAlpha, outRGB[1] = outRGB_pre[1] / outAlpha, outRGB[2] = outRGB_pre[2] / outAlpha, outRGB);
+  	} else {
+  	(outRGB[0] = 0, outRGB[1] = 0, outRGB[2] = 0, outRGB);
+  	};
   	} else {
   	var trail = clamp(new $runtime.PooledFloat32Array([trailColor[0], trailColor[1], trailColor[2]]), 0, 1);
   	var trailPresence = max(max(trail[0], trail[1]), trail[2]);
@@ -27667,14 +27671,14 @@ function canonicalFactory238($bindings, $runtime) {
   	fragColor = texelFetch(orderTex, coord, 0);
   	return;
   	};
-  	var start = (index / (2 * runLength)) * (2 * runLength);
+  	var start = Math.trunc(index / (2 * runLength)) * (2 * runLength);
   	var lengthA = min(runLength, count - start);
   	var lengthB = min(runLength, count - start - lengthA);
   	var diagonal = index - start;
   	var low = max(0, diagonal - lengthB);
   	var high = min(diagonal, lengthA);
   	for (var step = 0; (step < 22) && (low < high); step++) {
-  	var mid = (low + high) / 2;
+  	var mid = Math.trunc((low + high) / 2);
   	var other = diagonal - mid;
   	if ((mid < lengthA) && (other > 0) && (before(keyAt(start + mid, dims[0]), keyAt(start + lengthA + other - 1, dims[0])))) {
   	low = mid + 1;
