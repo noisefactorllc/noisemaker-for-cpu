@@ -1,4 +1,0 @@
-#!/bin/sh
-# Runs the repository's test suite (same as `npm test`), accepting the same
-# optional path arguments so callers can scope a subset.
-exec node --test "$@"

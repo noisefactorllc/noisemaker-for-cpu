@@ -1210,8 +1210,7 @@
       "sha256": "d044e5f3cdd2a1ecd2dfccf7f5658cc89629cdf2e0e311ce34c3fc137ce73164",
       "bytes": 164,
       "introducedIn": "a146f22839dc33f5998db47ec9188050ebd3177f",
-      "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-f51967dd-renderlit3d",
-      "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision a3d96b664e32c72095ee325871a0221fa35f320c (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job f51967dd-95e1-42bf-9301-6761384816f1; the port reproduces this capture byte-exact"
+      "captureRevision": "m4-metal-webgl2-chromium-headless-shell-1243"
     },
     "defaults/synth3d__cell3d.golden.png": {
       "sha256": "d3581678fe7196bbbb7f692c2c1557d17ef4186427450ce81f4304bc0aa6b284",
