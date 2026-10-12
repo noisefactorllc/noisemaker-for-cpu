@@ -1,5 +1,5 @@
 {
- "revision": "38064f6c61f5bd77c88a5ee967e1865b70157c9b",
+ "revision": "3f5775c64d55c31906eab114087e09827cb2a1cc",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -4723,7 +4723,7 @@
   {
    "path": "shaders/effects/points/heightGrid/parity-attestation.json",
    "size": 792,
-   "sha256": "5889192ba6bbb5d958d091003798d073f3fefe5f9c69afc496dbfcdbeffcea37"
+   "sha256": "86c2e8cae3b0dd8bba13f1c6460eb9063654961ca713ec993dd6455073c144b8"
   },
   {
    "path": "shaders/effects/points/heightGrid/parity-case.json",
@@ -5142,18 +5142,18 @@
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/glsl/deposit.vert",
-   "size": 8537,
-   "sha256": "b16dde6e0e89d1fea3bc2278c35f2a96583cbd815373ea9f127ad8973cda5ba4"
+   "size": 8564,
+   "sha256": "77e027d2917305a9955c58d321e02b57c3d70b2a01de17458a22b5bf6a9688cf"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/glsl/depthKeys.glsl",
-   "size": 1134,
-   "sha256": "e8c0dbd5acf0aa5a695b07f091d653165d50b5a35ba51b49e60ae34cee906e89"
+   "size": 1161,
+   "sha256": "70435ced4eaad1f78853ff17996a72d3b212330f3c95dc32503221f061f44fa9"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/glsl/depthMerge.glsl",
-   "size": 1570,
-   "sha256": "e023d00bddd8dc5b94ce8eafe76b668f0dca06254f6db56fb1513f08bc8bbd6e"
+   "size": 1597,
+   "sha256": "7579a796b29b63d5e728762a8758384868d8c26d5822472e482d4eb0ba3b42f9"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/glsl/diffuse.glsl",
@@ -5178,7 +5178,7 @@
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-attestation.json",
    "size": 803,
-   "sha256": "1e9647c1b8a00e9548b275a92c9c68d0aa1b7cd38556d158a197ba12c97d1903"
+   "sha256": "931b7799bce76e5acf2bfb4fbeb591be56a67a66d2ebe09a0ab860766d84e20e"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-case.json",

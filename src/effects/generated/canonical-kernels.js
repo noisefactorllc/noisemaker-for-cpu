@@ -27606,6 +27606,7 @@ function canonicalFactory237($bindings, $runtime) {
   function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
   
   
+  
   var VIEW_MODE = $bindings["VIEW_MODE"];
   var BLEND_MODE = $bindings["BLEND_MODE"];
   var BLUR_LAYER = $bindings["BLUR_LAYER"];
@@ -27646,6 +27647,7 @@ function canonicalFactory238($bindings, $runtime) {
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
   function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
   function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  
   
   
   var VIEW_MODE = $bindings["VIEW_MODE"];

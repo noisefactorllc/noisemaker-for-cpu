@@ -2455,20 +2455,20 @@ export const programCoverage = Object.freeze([
     "program": "depthKeys",
     "file": "depthKeys.glsl",
     "status": "generated",
-    "sourceSha256": "e8c0dbd5acf0aa5a695b07f091d653165d50b5a35ba51b49e60ae34cee906e89",
-    "sourceBytes": 1134,
-    "normalizedBytes": 1518,
-    "generatedBytes": 1791
+    "sourceSha256": "70435ced4eaad1f78853ff17996a72d3b212330f3c95dc32503221f061f44fa9",
+    "sourceBytes": 1161,
+    "normalizedBytes": 1545,
+    "generatedBytes": 1792
   },
   {
     "effectId": "render/pointsBillboardRender",
     "program": "depthMerge",
     "file": "depthMerge.glsl",
     "status": "generated",
-    "sourceSha256": "e023d00bddd8dc5b94ce8eafe76b668f0dca06254f6db56fb1513f08bc8bbd6e",
-    "sourceBytes": 1570,
-    "normalizedBytes": 1787,
-    "generatedBytes": 2023
+    "sourceSha256": "7579a796b29b63d5e728762a8758384868d8c26d5822472e482d4eb0ba3b42f9",
+    "sourceBytes": 1597,
+    "normalizedBytes": 1814,
+    "generatedBytes": 2024
   },
   {
     "effectId": "render/pointsBillboardRender",
