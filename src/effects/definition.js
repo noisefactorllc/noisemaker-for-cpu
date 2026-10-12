@@ -129,7 +129,6 @@ export class EffectDefinition {
     this.name = spec.name ?? spec.func
     this.tags = cloneValue(spec.tags ?? [])
     this.description = spec.description ?? ''
-    this.paramAliases = cloneValue(spec.paramAliases ?? {})
     this.params = cloneValue(spec.params ?? {})
     this.paramNames = Object.freeze(Object.keys(this.params))
     this.passes = cloneValue(spec.passes)
@@ -151,11 +150,10 @@ export class EffectDefinition {
     const named = args.length > 0 && args[0].name !== null
     for (let index = 0; index < args.length; index += 1) {
       const suppliedName = named ? args[index].name : this.paramNames[index]
-      const name = this.paramAliases[suppliedName] ?? suppliedName
+      const name = suppliedName
       if (!name || !(name in this.params)) {
         const badName = suppliedName ?? `argument ${index + 1}`
-        const accepted = [...this.paramNames, ...Object.keys(this.paramAliases)]
-        throw new TypeError(`Unknown parameter "${badName}" for ${this.id}; accepted: ${accepted.join(', ')}`)
+        throw new TypeError(`Unknown parameter "${badName}" for ${this.id}; accepted: ${this.paramNames.join(', ')}`)
       }
       values[name] = normalizeValue(this.params[name], args[index].value, name)
     }

@@ -16,7 +16,6 @@ function fixture() {
     }),
     new EffectDefinition({
       namespace: 'synth', func: 'seedProbe', kind: 'generator',
-      paramAliases: { probeSeed: 'seed' },
       params: { seed: { type: 'int', default: 1 } },
       passes: [{ kernel: 'seedProbe' }],
     }),
@@ -83,11 +82,10 @@ test('CpuRenderer preserves canonical effect seed defaults and explicit override
   const renderer = fixture()
   const inherited = renderer.render('search synth\nseedProbe().write(o0)\nrender(o0)', { width: 1, height: 1, seed: 7 })
   const explicit = renderer.render('search synth\nseedProbe(seed: 2).write(o0)\nrender(o0)', { width: 1, height: 1, seed: 7 })
-  const explicitAlias = renderer.render('search synth\nseedProbe(probeSeed: 3).write(o0)\nrender(o0)', { width: 1, height: 1, seed: 7 })
+  assert.throws(() => renderer.render('search synth\nseedProbe(probeSeed: 3).write(o0)\nrender(o0)', { width: 1, height: 1, seed: 7 }), /Unknown parameter "probeSeed"/)
 
   assert.ok(Math.abs(inherited.surface.data[0] - 0.7) < 1e-6)
   assert.ok(Math.abs(explicit.surface.data[0] - 0.2) < 1e-6)
-  assert.ok(Math.abs(explicitAlias.surface.data[0] - 0.3) < 1e-6)
 })
 
 test('CpuRenderer validates finite time and integer render seeds', () => {

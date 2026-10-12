@@ -222,8 +222,7 @@ export function compileDsl(source, registry, options = {}) {
         throw new DslError(error.message, call.loc)
       }
       const explicitParams = Object.freeze(args.map((arg, argumentIndex) => {
-        const suppliedName = arg.name ?? definition.paramNames[argumentIndex]
-        return definition.paramAliases[suppliedName] ?? suppliedName
+        return arg.name ?? definition.paramNames[argumentIndex]
       }))
       steps.push({ kind: 'effect', definition, params, explicitParams, loc: call.loc })
     }

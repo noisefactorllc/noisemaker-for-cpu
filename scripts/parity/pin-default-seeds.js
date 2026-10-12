@@ -15,7 +15,6 @@ const seededCalls = new Map()
 for (const effect of effectCatalog) {
   if (!effect.params.seed) continue
   const explicitNames = new Set(['seed'])
-  for (const [alias, canonical] of Object.entries(effect.paramAliases)) if (canonical === 'seed') explicitNames.add(alias)
   seededCalls.set(effect.id, { defaultValue: effect.params.seed.default, explicitNames })
 }
 

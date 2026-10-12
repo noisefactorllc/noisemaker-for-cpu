@@ -95,10 +95,10 @@ export const programCoverage = Object.freeze([
     "program": "glitch",
     "file": "glitch.glsl",
     "status": "generated",
-    "sourceSha256": "9ed4cce15c5d4358f191d8beeaae93624520530f1c4181dd7a5895e47821cc0e",
-    "sourceBytes": 8195,
-    "normalizedBytes": 8326,
-    "generatedBytes": 11128
+    "sourceSha256": "4bb633e963eed011c4724d9b18470baed3ac474eadce98e06288ace5c382846a",
+    "sourceBytes": 8268,
+    "normalizedBytes": 8399,
+    "generatedBytes": 11410
   },
   {
     "effectId": "classicNoisedeck/kaleido",
@@ -435,10 +435,10 @@ export const programCoverage = Object.freeze([
     "program": "crt",
     "file": "crt.glsl",
     "status": "generated",
-    "sourceSha256": "62d915eda8e20a458b1df91198cee3e85f0f0b9676cd4d0777264e9cd8b99b7c",
-    "sourceBytes": 19560,
-    "normalizedBytes": 20156,
-    "generatedBytes": 20884
+    "sourceSha256": "dfbba2918a68889c5b82ef619bf472387acec116b4d72bf76d62f35a60c9aa7f",
+    "sourceBytes": 19644,
+    "normalizedBytes": 20240,
+    "generatedBytes": 21054
   },
   {
     "effectId": "filter/degauss",

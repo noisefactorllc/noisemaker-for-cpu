@@ -31,7 +31,7 @@ function summaryOutput({ verdicts = {}, counts = {}, drop = [], extra = [] } = {
     if (verdict === 'SKIP') tally.skip += 1
     if (verdict === 'MISSING') tally.missing += 1
     lines.push(verdict === 'FAIL'
-      ? `FAIL ${id} max=80 mean=5.0586 channels>2=89 (fixture=parity/upstream-defaults/x.dsl)`
+      ? `FAIL ${id} max=80 mean=5.0391 channels>2=88 (fixture=parity/upstream-defaults/x.dsl)`
       : `${verdict} ${id} (synthetic)`)
   }
   lines.push(...extra)

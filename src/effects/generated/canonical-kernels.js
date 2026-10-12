@@ -3383,6 +3383,7 @@ function canonicalFactory8($bindings, $runtime) {
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	var blendy = periodicFunction(time - offsets(uv));
   	glitch(uv).reduce((res,el,i)=>(res[i] = el, res), color);
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, floor(clamp(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), 0, 1).map(function (_) {return _ * 255;}).map(function (_) {return _ + 0.5;})).map(function (_) {return _ / 255;}));
   	if (scanlinesAmt != 0) {
   	scanlines(color, uv).reduce((res,el,i)=>(res[i] = el, res), color);
   	};
@@ -10161,7 +10162,8 @@ function canonicalFactory42($bindings, $runtime) {
   	};
   	var local_mean = (color[0] + color[1] + color[2]) * INV_THREE;
   	clamp(new $runtime.PooledFloat32Array([(color[0] - local_mean) * 1.25 + local_mean, (color[1] - local_mean) * 1.25 + local_mean, (color[2] - local_mean) * 1.25 + local_mean]), new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([1, 1, 1])).reduce((res,el,i)=>(res[i] = el, res), color);
-  	mix(base_color, color, alphaVal).reduce((res,el,i)=>(res[i] = el, res), color);
+  	var effectColor8 = floor(clamp(color, 0, 1).map(function (_) {return _ * 255;}).map(function (_) {return _ + 0.5;})).map(function (_) {return _ / 255;});
+  	mix(base_color, effectColor8, alphaVal).reduce((res,el,i)=>(res[i] = el, res), color);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = base_sample[3], fragColor);
   };
   return function canonicalKernel(context, out) {

@@ -203,7 +203,6 @@ async function inventory() {
         domain: inferDomain(id, namespace),
         tags: definition.tags ?? [],
         description: definition.description ?? '',
-        paramAliases: definition.paramAliases ?? {},
         params: Object.fromEntries(Object.entries(definition.globals ?? {}).map(([name, param]) => [name, projectParam(param, stdEnums)])),
         passes: (definition.passes ?? []).map(projectPass),
         textures: projectTextures(definition.textures),

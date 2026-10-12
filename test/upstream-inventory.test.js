@@ -253,7 +253,7 @@ const EXPECTED_ITERATED = [
 ]
 
 test('upstream snapshot imports the exact 210-effect source tree with no exclusions', () => {
-  assert.equal(UPSTREAM_REVISION, '3f5775c64d55c31906eab114087e09827cb2a1cc')
+  assert.equal(UPSTREAM_REVISION, 'a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15')
   assert.deepEqual(eligibleEffectIds, EXPECTED_IDS)
   assert.deepEqual(
     Object.fromEntries(['classicNoisedeck', 'filter', 'filter3d', 'mixer', 'points', 'render', 'synth', 'synth3d'].map((namespace) => [
@@ -293,7 +293,6 @@ test('upstream snapshot preserves parity-critical definition metadata', () => {
   assert.equal(text.externalTexture, 'textTex')
   assert.equal(text.params.text.type, 'string')
   assert.equal(text.params.text.default, 'Hello World')
-  assert.deepEqual(text.paramAliases, { bgOpacity: 'matteOpacity', bgAlpha: 'matteOpacity', bgColor: 'matteColor' })
 
   const channel = byId.get('filter/channel')
   assert.deepEqual(channel.params.channel.choices, { r: 0, g: 1, b: 2, a: 3 })

@@ -20,7 +20,6 @@ test('runtime definitions preserve canonical metadata and pass schemas', () => {
     const definition = catalog.get(id)
     const record = records.get(id)
     assert.equal(definition.name, record.name)
-    assert.deepEqual(definition.paramAliases, record.paramAliases)
     assert.deepEqual(definition.passes, record.passes)
     assert.deepEqual(definition.textures, record.textures)
     assert.equal(definition.externalTexture, record.externalTexture)
@@ -54,7 +53,7 @@ test('runtime definitions deeply freeze shared catalog metadata', () => {
 test('canonical aliases, member enums, strings, booleans, and hex colors normalize without schema drift', () => {
   const catalog = new Map(effectCatalog.map((effect) => [effect.id, effect]))
   const noise = catalog.get('synth/noise').normalizeArguments([
-    { name: 'noiseType', value: 'simplex' },
+    { name: 'type', value: 'simplex' },
   ])
   assert.equal(noise.type, 10)
   assert.equal(noise.wrap, true)

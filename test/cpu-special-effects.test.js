@@ -86,12 +86,12 @@ test('cosine-wrap configurations: no-op on metalSine, two-variable delta on plai
   const wrappedMetrics = compareRgba8(wrapped, goldenData, 2)
   const rawMetrics = compareRgba8(rawWrapped, goldenData, 2)
   assert.deepEqual([...wrapped], [...plain])
-  assert.equal(plainMetrics.channelsOverTolerance, 89)
+  assert.equal(plainMetrics.channelsOverTolerance, 88)
   assert.equal(plainMetrics.maxError, 80)
-  assert.equal(plainMetrics.meanError, 5.05859375)
+  assert.equal(plainMetrics.meanError, 5.0390625)
   assert.equal(rawMetrics.channelsOverTolerance, 94)
   assert.equal(rawMetrics.maxError, 105)
-  assert.equal(rawMetrics.meanError, 5.86328125)
+  assert.equal(rawMetrics.meanError, 5.8671875)
 })
 
 test('bitEffects uses its scalar bit-mask adapter and matches the canonical first pixel', () => {
