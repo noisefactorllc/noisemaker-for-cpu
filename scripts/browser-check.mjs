@@ -5,15 +5,16 @@
  *
  * Serves a directory root (the repository checkout or an installed
  * `noisemaker-cpu` package root) over local HTTP, opens
- * `examples/browser/index.html` in a headless Chromium-family browser over the
- * raw DevTools protocol (no browser-automation dependency), waits for the
+ * `examples/browser/index.html` in a Chromium-family browser over the raw
+ * DevTools protocol, or in Safari over its built-in WebDriver, waits for the
  * demo's first render to complete, and asserts that the demo initialized,
  * every same-origin module loaded, and the canvas carries a rendered frame.
  *
  * Options:
  *   --root <dir>        Directory to serve (default: repository root)
  *   --url <url>         Check this URL directly instead of serving --root
- *   --executable <path> Chromium-family binary (default: discovered on PATH)
+ *   --browser <name>    chromium (default) or safari
+ *   --executable <path> Browser or safaridriver binary (default: discovered)
  *   --timeout <ms>      Render wait budget (default: 120000)
  *
  * Prints one `BROWSER-CHECK {…}` JSON line. Exit 0 on pass, 1 on failure.
@@ -22,33 +23,45 @@
 import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
-import { existsSync, mkdtempSync, statSync } from 'node:fs'
+import { mkdtempSync, statSync } from 'node:fs'
+import { createServer as createTcpServer } from 'node:net'
 import { tmpdir } from 'node:os'
-import { dirname, join, normalize, resolve, sep } from 'node:path'
+import { delimiter, dirname, isAbsolute, join, normalize, resolve, sep, win32 } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(scriptDir, '..')
 
 function parseArgs(argv) {
-  const args = { root: repoRoot, timeout: 120000 }
+  const args = { root: repoRoot, timeout: 120000, browser: 'chromium' }
   for (let i = 0; i < argv.length; i++) {
     const key = argv[i]
     if (key === '--root') args.root = resolve(argv[++i])
     else if (key === '--url') args.url = argv[++i]
     else if (key === '--executable') args.executable = argv[++i]
+    else if (key === '--browser') args.browser = argv[++i]
     else if (key === '--timeout') args.timeout = Number(argv[++i])
     else throw new Error(`unknown argument: ${key}`)
   }
+  if (!['chromium', 'safari'].includes(args.browser)) throw new Error(`unsupported browser: ${args.browser}`)
+  if (!Number.isFinite(args.timeout) || args.timeout <= 0) throw new Error('timeout must be positive')
   return args
 }
 
-function findChromiumExecutable(explicit) {
-  const candidates = explicit ? [explicit] : ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable']
-  const pathDirs = (process.env.PATH || '').split(':')
+export function findExecutable(explicit, browser, { platform = process.platform, env = process.env } = {}) {
+  const candidates = explicit ? [explicit] : browser === 'safari'
+    ? ['/usr/bin/safaridriver', 'safaridriver']
+    : [
+      env.CHROME,
+      platform === 'win32' && env.ProgramFiles && join(env.ProgramFiles, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      platform === 'win32' && env['ProgramFiles(x86)'] && join(env['ProgramFiles(x86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      platform === 'win32' && env.LOCALAPPDATA && join(env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      'chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable', 'chrome.exe',
+    ].filter(Boolean)
+  const pathDirs = (env.PATH || '').split(platform === 'win32' ? ';' : delimiter)
   for (const candidate of candidates) {
-    if (candidate.includes('/')) {
-      if (existsSync(candidate)) return resolve(candidate)
+    if (isAbsolute(candidate) || win32.isAbsolute(candidate) || /[\\/]/.test(candidate)) {
+      try { if (statSync(candidate).isFile()) return resolve(candidate) } catch {}
       continue
     }
     for (const dir of pathDirs) {
@@ -77,23 +90,42 @@ const MIME = {
   '.wasm': 'application/wasm',
 }
 
-function serve(rootDir) {
+const SAFARI_ERROR_RECORDER = `<script>
+window.__browserCheckErrors = [];
+window.addEventListener('error', event => {
+  window.__browserCheckErrors.push(String(event.message || event.error || 'page error').slice(0, 300));
+});
+window.addEventListener('unhandledrejection', event => {
+  window.__browserCheckErrors.push(String(event.reason || 'unhandled rejection').slice(0, 300));
+});
+</script>`
+
+export function serve(rootDir, { safari = false, requests = [] } = {}) {
   return new Promise((resolveServe, rejectServe) => {
     const server = createServer(async (req, res) => {
+      const requestURL = new URL(req.url, 'http://127.0.0.1')
+      const finish = (status) => { requests.push({ path: requestURL.pathname, status }) }
       try {
-        const url = new URL(req.url, 'http://127.0.0.1')
-        let pathname = decodeURIComponent(url.pathname)
+        let pathname = decodeURIComponent(requestURL.pathname)
         if (pathname.endsWith('/')) pathname += 'index.html'
         const resolved = normalize(join(rootDir, pathname))
         if (resolved !== rootDir && !resolved.startsWith(rootDir + sep)) {
           res.writeHead(403).end()
+          finish(403)
           return
         }
-        const body = await readFile(resolved)
+        let body = await readFile(resolved)
+        if (safari && requestURL.pathname === '/examples/browser/index.html') {
+          const html = body.toString('utf8')
+          if (!html.includes('<script type="module"')) throw new Error('demo module tag missing')
+          body = Buffer.from(html.replace('<script type="module"', `${SAFARI_ERROR_RECORDER}\n<script type="module"`))
+        }
         res.writeHead(200, { 'content-type': MIME[resolved.slice(resolved.lastIndexOf('.'))] || 'application/octet-stream' })
         res.end(body)
+        finish(200)
       } catch {
         res.writeHead(404).end()
+        finish(404)
       }
     })
     server.on('error', rejectServe)
@@ -175,28 +207,164 @@ const STATUS_PROBE = `(() => {
     status: status.trim(),
     appContainer: !!app && app.offsetParent !== null,
     canvas: canvasStats,
+    pageErrors: window.__browserCheckErrors || [],
   })
 })()`
+
+async function availablePort() {
+  const server = createTcpServer()
+  await new Promise((resolvePort, rejectPort) => {
+    server.once('error', rejectPort)
+    server.listen(0, '127.0.0.1', resolvePort)
+  })
+  const port = server.address().port
+  await new Promise((resolveClose) => server.close(resolveClose))
+  return port
+}
+
+async function webdriverRequest(port, path, method = 'GET', body, timeout = 15000) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method,
+    headers: body === undefined ? undefined : { 'content-type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(timeout),
+  })
+  const result = await response.json()
+  if (!response.ok || result.value?.error) {
+    throw new Error(`WebDriver ${method} ${path}: ${result.value?.message || response.status}`)
+  }
+  return result.value
+}
+
+export async function inspectSafari({ port, targetURL, requests, executable, timeout }) {
+  let sessionId
+  let primaryError
+  try {
+    const session = await webdriverRequest(port, '/session', 'POST', {
+      capabilities: { alwaysMatch: { browserName: 'safari', pageLoadStrategy: 'eager' } },
+    }, 30000)
+    sessionId = session.sessionId
+    if (!sessionId) throw new Error('safaridriver returned no session id')
+    await webdriverRequest(port, `/session/${encodeURIComponent(sessionId)}/url`, 'POST', { url: targetURL }, 30000)
+
+    const deadline = Date.now() + timeout
+    let probe = null
+    while (Date.now() < deadline) {
+      const value = await webdriverRequest(port, `/session/${encodeURIComponent(sessionId)}/execute/sync`, 'POST', {
+        script: `return ${STATUS_PROBE};`, args: [],
+      })
+      probe = JSON.parse(value)
+      if (!probe.rendering && /passes/.test(probe.status)) break
+      await sleep(500)
+    }
+    const mainFrameStatus = requests.find((request) => request.path === '/examples/browser/index.html')?.status ?? null
+    const moduleFailures = requests.filter((request) => request.status >= 400)
+      .map((request) => `${request.status} ${new URL(request.path, targetURL)}`)
+    const pageErrors = probe?.pageErrors || []
+    const renderCompleted = !!probe && /passes/.test(probe.status)
+    const canvas = probe?.canvas || null
+    const nonBlank = !!canvas && !canvas.error && canvas.nonZeroPixels > canvas.width * canvas.height * 0.5
+    const pass = renderCompleted && nonBlank && probe.appContainer && mainFrameStatus === 200 &&
+      moduleFailures.length === 0 && pageErrors.length === 0
+    return {
+      pass,
+      browser: { product: `Safari ${session.capabilities?.browserVersion || 'unknown'}`, executable },
+      platform: process.platform,
+      url: targetURL,
+      httpStatus: mainFrameStatus,
+      render: { completed: renderCompleted, statusText: probe ? probe.status.slice(0, 120) : null },
+      canvas,
+      appContainer: !!probe && probe.appContainer,
+      moduleFailures,
+      pageErrors,
+    }
+  } catch (error) {
+    primaryError = error
+    throw error
+  } finally {
+    if (sessionId) {
+      try {
+        await webdriverRequest(port, `/session/${encodeURIComponent(sessionId)}`, 'DELETE', undefined, 10000)
+      } catch (cleanupError) {
+        if (!primaryError) throw cleanupError
+        throw new AggregateError([primaryError, cleanupError], 'Safari check and session cleanup failed')
+      }
+    }
+  }
+}
+
+async function runSafari(args, executable, server, targetURL, requests) {
+  let driver
+  let driverError = ''
+  let driverSpawnError = null
+  try {
+    const port = await availablePort()
+    driver = spawn(executable, ['-p', String(port)], { stdio: ['ignore', 'ignore', 'pipe'] })
+    driver.stderr.on('data', (data) => { driverError = (driverError + String(data)).slice(-1000) })
+    driver.on('error', (error) => { driverSpawnError = error })
+    const readyUntil = Date.now() + 30000
+    let ready = false
+    while (Date.now() < readyUntil) {
+      if (driverSpawnError) throw driverSpawnError
+      if (driver.exitCode !== null) throw new Error(`safaridriver exited early: ${driverError}`)
+      try {
+        const status = await webdriverRequest(port, '/status', 'GET', undefined, 1000)
+        if (status.ready) { ready = true; break }
+      } catch {}
+      await sleep(250)
+    }
+    if (!ready) throw new Error(`safaridriver did not become ready: ${driverError}`)
+    const result = await inspectSafari({ port, targetURL, requests, executable, timeout: args.timeout })
+    console.log(`BROWSER-CHECK ${JSON.stringify(result)}`)
+    process.exitCode = result.pass ? 0 : 1
+  } catch (error) {
+    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: String(error).slice(0, 500) })}`)
+    process.exitCode = 1
+  } finally {
+    if (driver) {
+      const exited = () => driver.exitCode !== null || driver.signalCode !== null
+      if (!exited()) {
+        const exit = new Promise((resolveExit) => driver.once('exit', resolveExit))
+        driver.kill('SIGTERM')
+        await Promise.race([exit, sleep(5000)])
+      }
+      if (!exited()) driver.kill('SIGKILL')
+    }
+    await new Promise((resolveClose) => server.close(resolveClose))
+  }
+}
 
 async function run() {
   const args = parseArgs(process.argv.slice(2))
   const demoPath = '/examples/browser/index.html'
 
+  if (args.browser === 'safari' && args.url) {
+    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: 'Safari --url cannot capture pre-module page errors; use --root' })}`)
+    process.exitCode = 1
+    return
+  }
+
+  const executable = findExecutable(args.executable, args.browser)
+  if (!executable) {
+    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: `no ${args.browser} executable found` })}`)
+    process.exitCode = 1
+    return
+  }
+
   let server = null
   let baseURL
+  const requests = []
   if (args.url) {
     baseURL = args.url
   } else {
-    server = await serve(args.root)
+    server = await serve(args.root, { safari: args.browser === 'safari', requests })
     const { port } = server.address()
     baseURL = `http://127.0.0.1:${port}`
   }
   const targetURL = args.url || `${baseURL}${demoPath}`
 
-  const executable = findChromiumExecutable(args.executable)
-  if (!executable) {
-    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: 'no chromium-family executable found' })}`)
-    process.exitCode = 1
+  if (args.browser === 'safari') {
+    await runSafari(args, executable, server, targetURL, requests)
     return
   }
 
@@ -310,4 +478,4 @@ async function run() {
   }
 }
 
-await run()
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await run()
