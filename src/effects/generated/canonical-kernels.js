@@ -16229,9 +16229,9 @@ function canonicalFactory91($bindings, $runtime) {
   var BASE_SCALE = 3;
   var BASE_PADDING = 25;
   function pcg (v_in) {
-  	var state = cpu_umul(v_in, 747796405) + 2891336453;
-  	var word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
-  	return (word >> 22) ^ word;
+  	var state = (cpu_umul(v_in, 747796405) + 2891336453) >>> 0;
+  	var word = cpu_umul(((state >>> ((state >>> 28) + 4)) ^ state) >>> 0, 277803737);
+  	return ((word >>> 22) ^ word) >>> 0;
   };
   function hash2 (a, b) {
   	return pcg(a ^ (cpu_umul(b, 2654435769) + 1663821211));
@@ -16240,8 +16240,8 @@ function canonicalFactory91($bindings, $runtime) {
   	return pcg((hash2(a, b)) ^ (cpu_umul(c, 2496678331) + 1542469173));
   };
   function sample_glyph (digit, localX, localY, iScale) {
-  	var gx = localX / iScale;
-  	var gy = localY / iScale;
+  	var gx = Math.trunc(localX / iScale);
+  	var gy = Math.trunc(localY / iScale);
   	if ((gx < 0) || (gx >= GLYPH_W) || (gy < 0) || (gy >= GLYPH_H)) {
   	return 0;
   	};
@@ -26362,12 +26362,12 @@ function canonicalFactory215($bindings, $runtime) {
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
   function hash2 (seed) {
-  	var state = cpu_umul(seed, 747796405) + 2891336453;
-  	var word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
-  	var x_bits = (word >> 22) ^ word;
-  	state = cpu_umul(x_bits, 747796405) + 2891336453;
-  	word = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
-  	var y_bits = (word >> 22) ^ word;
+  	var state = (cpu_umul(seed, 747796405) + 2891336453) >>> 0;
+  	var word = cpu_umul(((state >>> ((state >>> 28) + 4)) ^ state) >>> 0, 277803737);
+  	var x_bits = ((word >>> 22) ^ word) >>> 0;
+  	state = (cpu_umul(x_bits, 747796405) + 2891336453) >>> 0;
+  	word = cpu_umul(((state >>> ((state >>> 28) + 4)) ^ state) >>> 0, 277803737);
+  	var y_bits = ((word >>> 22) ^ word) >>> 0;
   	return new $runtime.PooledFloat32Array([(x_bits) / 4294967296, (y_bits) / 4294967296]);
   };
   function wrap_float (value, size) {

@@ -236,6 +236,20 @@ function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
     'cpu_float(((q[$1] ^ q[$2]) ^ q[$3]) >>> 0)')
   out = out.replace(/cpu_float\(\(q\[(\d+)\] \^ q\[(\d+)\]\)\)/g,
     'cpu_float(((q[$1] ^ q[$2])) >>> 0)')
+  // Scalar uint state chains (filter/osd's and the agents' single-lane pcg):
+  // `state = cpu_umul(x, 747796405) + 2891336453` must wrap mod 2^32 (the add
+  // alone exceeds uint), the `(state >> (…))` shifts are logical, the
+  // `* 277803737` product wraps through cpu_umul instead of a float64 multiply
+  // that loses the low bits past 2^53, and the returned hash is the unsigned
+  // bit pattern (a signed `word` makes `% 10` negative and the digit lookup
+  // reads past the glyph table).
+  out = out.replace(/(var )?([A-Za-z_$]\w*) = cpu_umul\(([A-Za-z_$][\w$]*), 747796405\) \+ 2891336453;/g,
+    (m, v, name, operand) => `${v ?? ''}${name} = (cpu_umul(${operand}, 747796405) + 2891336453) >>> 0;`)
+  out = out.replace(/(var )?([A-Za-z_$]\w*) = \(\(([A-Za-z_$][\w$]*) >> \(\(\3 >> 28\) \+ 4\)\) \^ \3\) \* 277803737;/g,
+    (m, v, name, state) => `${v ?? ''}${name} = cpu_umul(((${state} >>> ((${state} >>> 28) + 4)) ^ ${state}) >>> 0, 277803737);`)
+  out = out.replace(/(var )?([A-Za-z_$]\w*) = \(([A-Za-z_$][\w$]*) >> 22\) \^ \3;/g,
+    (m, v, name, state) => `${v ?? ''}${name} = ((${state} >>> 22) ^ ${state}) >>> 0;`)
+  out = out.replace(/return \(([A-Za-z_$]\w*) >> 22\) \^ \1;/g, (m, name) => `return ((${name} >>> 22) ^ ${name}) >>> 0;`)
   if (/cpu_umul\(/.test(out) && !/function cpu_umul\s*\(/.test(out)) {
     out = `function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };\n${out}`
   }
@@ -256,6 +270,10 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   for (const m of originalSource.matchAll(/\buniform\s+int\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:=|;)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bivec[234]\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
+  // `int` function parameters are int-typed GLSL identifiers too: sample_glyph's
+  // `int gx = localX / iScale;` (filter/osd) loses its row mapping when the
+  // transpiler emits a raw float64 division for the parameter operands.
+  for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:,|\))/g)) intNames.add(m[1])
   if (intNames.size === 0) return transpiled
   let out = transpiled.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*)\[(\d+)\] \/ ([A-Za-z_$]\w*);/g, (m, name, vec, idx, divisor) => {
     if (!intNames.has(divisor)) return m
