@@ -122,6 +122,16 @@ test('generated canonical noise kernel executes with pooled vector type operatio
   assert.ok(result.surface.data.every(Number.isFinite))
 })
 
+test('testPattern numbered glyph matches the M4 Metal authority at 64x64', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const result = renderer.render(
+    'search synth\ntestPattern().write(o0)\nrender(o0)',
+    { width: 64, height: 64, seed: 1, time: 0.25, oneShot: 'initial' },
+  )
+  const hash = createHash('sha256').update(result.toRgba8()).digest('hex')
+  assert.equal(hash, '4bdd1636dd6bccdb3e16c3b57a19bd55dbf867887b72f8d628fa0e57b0f8932d')
+})
+
 test('canonical bindings contain no reactive-only inputs', () => {
   const bindings = createCanonicalBindings({ width: 1, height: 1 })
   assert.equal(Object.hasOwn(bindings, 'audioWaveform'), false)

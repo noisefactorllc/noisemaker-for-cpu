@@ -293,6 +293,15 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
       return `var ${name} = Math.trunc(${dividend} / ${divisor});`
     })
   }
+  if (effectId === 'synth/testPattern') {
+    // The numbered checkerboard divides an int digit accumulator in place.
+    // Raw JS `/=` leaves a fractional digit and drops glyph-table lookups.
+    if (!originalSource.includes('int temp = number;') || !originalSource.includes('temp /= 10;')) {
+      throw new Error('testPattern digit division source changed')
+    }
+    if (!out.includes('\ttemp /= 10;')) throw new Error('testPattern digit division lowering changed')
+    out = out.replace('\ttemp /= 10;', '  temp = Math.trunc(temp / 10);')
+  }
   if (effectId === 'render/pointsBillboardRender' && originalSource.includes('int start = (index / (2 * runLength)) * (2 * runLength);')) {
     // The merge run's start and binary-search midpoint are GLSL int expressions.
     // Leaving either fractional changes the partition and duplicates depth keys.

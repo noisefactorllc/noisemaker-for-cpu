@@ -35530,7 +35530,7 @@ function canonicalFactory289($bindings, $runtime) {
   	var temp = number instanceof Float32Array ? $runtime.copy(number) : number;
   	for (var i = 0; i < 3; i++) {
   	digits[i] = temp % 10;
-  	temp /= 10;
+    temp = Math.trunc(temp / 10);
   	};
   	for (var d = 0; d < numDigits; d++) {
   	var digitX = startX + (d) * (glyphWidth + spacing);
