@@ -378,6 +378,89 @@ test('flow3d deposit maps a 3D agent position into the flattened volume atlas', 
   assert.deepEqual(pixelAt(destination, 10, 1), [0, 0, 0, 0], 'unflipped row stays untouched')
 })
 
+test('flow3d deposit places integer atlas boundaries in the lower GL pixel', () => {
+  const stateTex1 = makeAgentSurface(2, 1)
+  const stateTex2 = makeAgentSurface(2, 1)
+  pokeAgent(stateTex1, 0, 0, [20, 1.9599609375, 5.7421875, 0])
+  pokeAgent(stateTex1, 1, 0, [20.71875, 17, 29.671875, 0])
+  pokeAgent(stateTex2, 0, 0, [0.5, 0, 0, 1])
+  pokeAgent(stateTex2, 1, 0, [0.25, 0, 0, 1])
+  const destination = new Surface(32, 1024)
+
+  flow3dDepositAdapter({
+    uniforms: { density: 100, volumeSize: 32 },
+    inputs: { stateTex1, stateTex2 },
+    destination,
+  })
+
+  assert.deepEqual(pixelAt(destination, 862, 19), [0.5, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 862, 20), [0, 0, 0, 0])
+  assert.deepEqual(pixelAt(destination, 79, 20), [0.25, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 78, 20), [0, 0, 0, 0])
+})
+
+test('flow3d deposit rounds atlas addition as GLSL float before raster placement', () => {
+  const stateTex1 = makeAgentSurface(1, 1)
+  const stateTex2 = makeAgentSurface(1, 1)
+  pokeAgent(stateTex1, 0, 0, [1.25, 0.0001220703125, 63, 0])
+  pokeAgent(stateTex2, 0, 0, [0.5, 0, 0, 1])
+  const destination = new Surface(64, 4096)
+
+  flow3dDepositAdapter({
+    uniforms: { density: 100, volumeSize: 64 },
+    inputs: { stateTex1, stateTex2 },
+    destination,
+  })
+
+  assert.deepEqual(pixelAt(destination, 64, 1), [0.5, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 63, 1), [0, 0, 0, 0])
+})
+
+test('flow3d deposit culls points inside the M4 viewport subpixel edge', () => {
+  for (const [volumeSize, position] of [
+    [32, [0.00032138824462890625, 22.546875, 13.6015625, 0]],
+    [32, [1 / 512, 22.546875, 13.6015625, 0]],
+    [64, [1.25, 0.00006103515625, 0, 0]],
+    [64, [1.25, 1 / 512, 0, 0]],
+  ]) {
+    const stateTex1 = makeAgentSurface(1, 1)
+    const stateTex2 = makeAgentSurface(1, 1)
+    pokeAgent(stateTex1, 0, 0, position)
+    pokeAgent(stateTex2, 0, 0, [0.5, 0, 0, 1])
+    const destination = new Surface(volumeSize, volumeSize ** 2)
+
+    const result = flow3dDepositAdapter({
+      uniforms: { density: 100, volumeSize },
+      inputs: { stateTex1, stateTex2 },
+      destination,
+    })
+
+    assert.equal(result.pixels, 0)
+    assert.ok(destination.data.every((value) => value === 0))
+  }
+})
+
+test('flow3d deposit snaps near-integer atlas positions to the M4 subpixel grid', () => {
+  const stateTex1 = makeAgentSurface(2, 1)
+  const stateTex2 = makeAgentSurface(2, 1)
+  pokeAgent(stateTex1, 0, 0, [1.0009765625, 0.25, 1.1, 0])
+  pokeAgent(stateTex1, 1, 0, [2.25, 1.0009765625, 1.1, 0])
+  pokeAgent(stateTex2, 0, 0, [0.5, 0, 0, 1])
+  pokeAgent(stateTex2, 1, 0, [0.25, 0, 0, 1])
+  const destination = new Surface(32, 1024)
+
+  flow3dDepositAdapter({
+    uniforms: { density: 100, volumeSize: 32 },
+    inputs: { stateTex1, stateTex2 },
+    destination,
+  })
+
+  assert.deepEqual(pixelAt(destination, 991, 0), [0.5, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 991, 1), [0, 0, 0, 0])
+  assert.deepEqual(pixelAt(destination, 991, 2), [0.25, 0, 0, 1])
+  assert.deepEqual(pixelAt(destination, 990, 2), [0, 0, 0, 0])
+})
+
 test('flow3d deposit additively accumulates colliding agent colors with opaque alpha', () => {
   const stateTex1 = makeAgentSurface(2, 1)
   const stateTex2 = makeAgentSurface(2, 1)

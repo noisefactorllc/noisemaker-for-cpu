@@ -132,6 +132,20 @@ test('testPattern numbered glyph matches the M4 Metal authority at 64x64', () =>
   assert.equal(hash, '4bdd1636dd6bccdb3e16c3b57a19bd55dbf867887b72f8d628fa0e57b0f8932d')
 })
 
+test('flow3d one-iteration output retains the recorded M4 Metal first-frame capture', () => {
+  // Pinned authority a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15;
+  // capture evidence: https://github.com/noisefactorllc/noisemaker-for-cpu/issues/2#issuecomment-6152344030
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const blank = new Surface(8, 8)
+  blank.format = 'rgba16f'
+  const result = renderer.render(
+    'search synth3d, filter3d, render\nnoise3d(seed: 0, volumeSize: x32).flow3d(iterationCount: 1).render3d().write(o0)\nrender(o0)',
+    { width: 8, height: 8, seed: 1, time: 0.25, oneShot: 'initial', externalTextures: { imageTex: blank, textTex: blank } },
+  )
+  const hash = createHash('sha256').update(result.toRgba8()).digest('hex')
+  assert.equal(hash, '4feb5a3d4f3eda830e094da91bf3e009aef28d419ad8028ac02af38e1a918bf0')
+})
+
 test('canonical bindings contain no reactive-only inputs', () => {
   const bindings = createCanonicalBindings({ width: 1, height: 1 })
   assert.equal(Object.hasOwn(bindings, 'audioWaveform'), false)

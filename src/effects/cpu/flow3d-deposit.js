@@ -1,4 +1,4 @@
-import { scatterPointPixel, texelFetchAgent } from './points-deposit.js'
+import { texelFetchAgent } from './points-deposit.js'
 
 // `filter3d/flow3d:deposit` <- deposit.vert + deposit.frag.
 // Agents carry voxel-space xyz positions in stateTex1 and RGB in stateTex2.
@@ -25,11 +25,16 @@ export function flow3dDepositAdapter({ pass, uniforms, inputs, destination }) {
     const state2 = texelFetchAgent(stateTex2, stateX, stateY)
 
     const atlasX = state1[0]
-    const atlasY = state1[1] + Math.floor(state1[2]) * volumeSize
-    const clipX = (atlasX / volumeSize) * 2 - 1
-    const clipY = (atlasY / atlasHeight) * 2 - 1
-    const offset = scatterPointPixel(clipX, clipY, 1, destination.width, destination.height)
-    if (offset === null) continue
+    const atlasY = Math.fround(state1[1] + Math.floor(state1[2]) * volumeSize)
+    // The M4/Metal point rasterizer snaps window positions to 1/256 pixel
+    // and assigns an integer boundary to the lower GL pixel. A center within
+    // half a subpixel step at the left or bottom edge produces no fragment.
+    if (atlasX <= 1 / 512 || atlasY <= 1 / 512) continue
+    const glCol = Math.ceil(Math.round(atlasX * 256) / 256) - 1
+    const glRow = Math.ceil(Math.round(atlasY * 256) / 256) - 1
+    if (!Number.isFinite(glCol) || !Number.isFinite(glRow)) continue
+    if (glCol < 0 || glCol >= volumeSize || glRow < 0 || glRow >= atlasHeight) continue
+    const offset = ((atlasHeight - 1 - glRow) * volumeSize + glCol) * 4
 
     data[offset] += state2[0]
     data[offset + 1] += state2[1]
