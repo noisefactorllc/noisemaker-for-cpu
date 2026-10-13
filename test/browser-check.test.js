@@ -1,20 +1,17 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createServer } from 'node:http'
+import { createServer, get as httpGet } from 'node:http'
 import { spawnSync } from 'node:child_process'
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findExecutable, inspectSafari, serve } from '../scripts/browser-check.mjs'
+import { findExecutable, inspectSafari, listenWithFallback, serve } from '../scripts/browser-check.mjs'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
 async function listen(server) {
-  await new Promise((resolve, reject) => {
-    server.once('error', reject)
-    server.listen(0, '127.0.0.1', resolve)
-  })
+  await listenWithFallback(server)
   return server.address().port
 }
 
@@ -32,6 +29,13 @@ async function runFakeSafari(mode) {
       res.writeHead(status, { 'content-type': 'application/json' })
       res.end(JSON.stringify({ value }))
     }
+    const fetchText = (target) => new Promise((resolveText, rejectText) => {
+      httpGet(target, { agent: false }, (response) => {
+        const chunks = []
+        response.on('data', (chunk) => chunks.push(chunk))
+        response.on('end', () => resolveText(Buffer.concat(chunks).toString('utf8')))
+      }).on('error', rejectText)
+    })
     const path = req.url
     if (path === '/status') return reply({ ready: true })
     if (path === '/session' && req.method === 'POST') {
@@ -41,14 +45,14 @@ async function runFakeSafari(mode) {
       let input = ''
       for await (const chunk of req) input += chunk
       const url = JSON.parse(input).url
-      const html = await (await fetch(url)).text()
+      const html = await fetchText(url)
       const recorder = html.indexOf('__browserCheckErrors')
       const module = html.indexOf('<script type="module"')
       if (recorder < 0 || recorder > module) {
         return reply({ error: 'javascript error', message: 'error recorder was not installed before modules' }, 500)
       }
-      await fetch(new URL('/examples/browser/demo.js', url))
-      if (mode === 'missing-module') await fetch(new URL('/examples/browser/missing-module.mjs', url))
+      await fetchText(new URL('/examples/browser/demo.js', url))
+      if (mode === 'missing-module') await fetchText(new URL('/examples/browser/missing-module.mjs', url))
       return reply(null)
     }
     if (path === '/session/fake-session/execute/sync' && req.method === 'POST') {

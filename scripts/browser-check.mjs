@@ -21,7 +21,7 @@
  */
 
 import { spawn } from 'node:child_process'
-import { createServer } from 'node:http'
+import { createServer, request as httpRequest } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { mkdtempSync, statSync } from 'node:fs'
 import { createServer as createTcpServer } from 'node:net'
@@ -100,9 +100,34 @@ window.addEventListener('unhandledrejection', event => {
 });
 </script>`
 
-export function serve(rootDir, { safari = false, requests = [] } = {}) {
-  return new Promise((resolveServe, rejectServe) => {
-    const server = createServer(async (req, res) => {
+// Restricted runners permit only fixed loopback ports (observed 43117-43126);
+// an ephemeral listen fails with EPERM. Try the forced port, then ephemeral,
+// then the fixed range, keeping every registered handler and assertion intact.
+export async function listenWithFallback(server) {
+  const candidates = []
+  const forced = Number(process.env.NM_TS_PORT)
+  if (Number.isInteger(forced) && forced > 0) candidates.push(forced)
+  candidates.push(0)
+  for (let port = 43117; port <= 43126; port += 1) candidates.push(port)
+  let lastError
+  for (const port of candidates) {
+    try {
+      await new Promise((resolve, reject) => {
+        server.once('error', reject)
+        server.listen(port, '127.0.0.1', resolve)
+      })
+      return server.address().port
+    } catch (error) {
+      lastError = error
+      server.removeAllListeners('error')
+      if (server.listening) await new Promise((resolve) => server.close(resolve))
+    }
+  }
+  throw lastError
+}
+
+export async function serve(rootDir, { safari = false, requests = [] } = {}) {
+  const server = createServer(async (req, res) => {
       const requestURL = new URL(req.url, 'http://127.0.0.1')
       const finish = (status) => { requests.push({ path: requestURL.pathname, status }) }
       try {
@@ -128,9 +153,8 @@ export function serve(rootDir, { safari = false, requests = [] } = {}) {
         finish(404)
       }
     })
-    server.on('error', rejectServe)
-    server.listen(0, '127.0.0.1', () => resolveServe(server))
-  })
+    await listenWithFallback(server)
+    return server
 }
 
 function sleep(ms) {
@@ -213,27 +237,47 @@ const STATUS_PROBE = `(() => {
 
 async function availablePort() {
   const server = createTcpServer()
-  await new Promise((resolvePort, rejectPort) => {
-    server.once('error', rejectPort)
-    server.listen(0, '127.0.0.1', resolvePort)
-  })
-  const port = server.address().port
+  const port = await listenWithFallback(server)
   await new Promise((resolveClose) => server.close(resolveClose))
   return port
 }
 
 async function webdriverRequest(port, path, method = 'GET', body, timeout = 15000) {
-  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
-    method,
-    headers: body === undefined ? undefined : { 'content-type': 'application/json' },
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(timeout),
+  // A one-shot agent keeps pooled keep-alive sockets from going stale when
+  // consecutive servers reuse the same fixed loopback port.
+  const payload = body === undefined ? null : JSON.stringify(body)
+  return await new Promise((resolveRequest, rejectRequest) => {
+    const request = httpRequest(
+      {
+        host: '127.0.0.1',
+        port,
+        path,
+        method,
+        headers: payload === null ? undefined : { 'content-type': 'application/json', 'content-length': Buffer.byteLength(payload) },
+        agent: false,
+      },
+      (response) => {
+        const chunks = []
+        response.on('data', (chunk) => chunks.push(chunk))
+        response.on('end', () => {
+          let result
+          try {
+            result = JSON.parse(Buffer.concat(chunks).toString('utf8'))
+          } catch {
+            return rejectRequest(new Error(`WebDriver ${method} ${path}: invalid JSON ${response.statusCode}`))
+          }
+          if (response.statusCode >= 400 || result.value?.error) {
+            return rejectRequest(new Error(`WebDriver ${method} ${path}: ${result.value?.message || response.statusCode}`))
+          }
+          resolveRequest(result.value)
+        })
+      },
+    )
+    request.on('timeout', () => request.destroy(new Error(`WebDriver ${method} ${path}: timed out`)))
+    request.on('error', rejectRequest)
+    if (payload !== null) request.write(payload)
+    request.end()
   })
-  const result = await response.json()
-  if (!response.ok || result.value?.error) {
-    throw new Error(`WebDriver ${method} ${path}: ${result.value?.message || response.status}`)
-  }
-  return result.value
 }
 
 export async function inspectSafari({ port, targetURL, requests, executable, timeout }) {
