@@ -575,10 +575,10 @@ export const programCoverage = Object.freeze([
     "program": "glyphMap",
     "file": "glyphMap.glsl",
     "status": "generated",
-    "sourceSha256": "35804656234712aab4ee62aad97399d287e3d2d2d566a00afe8630272a333abe",
-    "sourceBytes": 7899,
-    "normalizedBytes": 8165,
-    "generatedBytes": 5909
+    "sourceSha256": "dc0af9a6a6fb4d0cd62ea25c4508a714a36a1dc66923f5578d91ac190d9f4dd6",
+    "sourceBytes": 8145,
+    "normalizedBytes": 8411,
+    "generatedBytes": 5926
   },
   {
     "effectId": "filter/grade",

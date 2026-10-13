@@ -12243,7 +12243,7 @@ function canonicalFactory55($bindings, $runtime) {
 }
 
 function canonicalFactory56($bindings, $runtime) {
-  const { float, ivec2, floor, fract, min, max, clamp, length, dot, texture, textureSize } = $runtime.stdlib
+  const { float, ivec2, floor, fract, min, max, clamp, dot, notEqual, any, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -12500,7 +12500,7 @@ function canonicalFactory56($bindings, $runtime) {
   	var resolution = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var pixelCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var cs = max((cellSize) * renderScale|0, 1);
-  	var isTileRendering = length(tileOffset) > 0;
+  	var isTileRendering = any(notEqual(fullResolution, resolution));
   	if (isTileRendering) {
   	cs = min(cs, 512);
   	};
