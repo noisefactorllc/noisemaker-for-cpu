@@ -1,5 +1,5 @@
 {
- "revision": "a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15",
+ "revision": "d54a808b0feac4cc33df716c46b748cd026d2259",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -212,8 +212,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/glsl/effects.glsl",
-   "size": 26106,
-   "sha256": "1a5d9684bef39715572e85aa24419cd002e592b6192cd2dbc3b0f7d53d836a90"
+   "size": 28403,
+   "sha256": "b4f4279698ce60bd3c0c45f8339a4869cd6c2f0714f219ee6b2e997328057316"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/help.md",
@@ -222,18 +222,18 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-attestation.json",
-   "size": 799,
-   "sha256": "d726404130e1251ba63057d10e53414934f4f5739538d2c7de56a1917c4a6b9a"
+   "size": 797,
+   "sha256": "601934a6f815336969feed0df4b23ab56d9cec90a0b346d2a9d46a994d08be1a"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/parity-case.json",
-   "size": 440,
-   "sha256": "58764a413e71a860546c481d02f84dbb8c380934c3079c2e935561d6581e8093"
+   "size": 547,
+   "sha256": "14ad3178524d61f05c0ffc7c8265e166897fd01c054b65dad792baae2b825b90"
   },
   {
    "path": "shaders/effects/classicNoisedeck/effects/wgsl/effects.wgsl",
-   "size": 20258,
-   "sha256": "3710f48b36018d19bbe8937db1c3ad31e2ed38a961d4e3701ac9e8db31d51854"
+   "size": 22840,
+   "sha256": "2254e588c10f1e840cee56c70cd2898a83c0e95ce1cd5cc0d54fa5430c8b8fdd"
   },
   {
    "path": "shaders/effects/classicNoisedeck/fractal/definition.js",
@@ -4817,8 +4817,8 @@
   },
   {
    "path": "shaders/effects/points/heightGrid/help.md",
-   "size": 1302,
-   "sha256": "63ae47bb821f42d0cb0f0b3cffa63852af578d2735dba90abb02905614f41714"
+   "size": 1444,
+   "sha256": "e620b4a96e7e74358cd22fc2032b347fb049981b7d9a89ce9bcfd10f7a86e3cc"
   },
   {
    "path": "shaders/effects/points/heightGrid/parity-attestation.json",
@@ -5852,8 +5852,8 @@
   },
   {
    "path": "shaders/effects/synth/media/help.md",
-   "size": 991,
-   "sha256": "831d2607b9bce8a5570df5b89d848c58f6a5782bb7c78666d9a423b1e15ff21c"
+   "size": 973,
+   "sha256": "faee8f798278ad9720e30329f51bee35028b62ec34a6a583100fc2057fb063b0"
   },
   {
    "path": "shaders/effects/synth/media/parity-attestation.json",

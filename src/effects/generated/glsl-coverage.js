@@ -75,10 +75,10 @@ export const programCoverage = Object.freeze([
     "program": "effects",
     "file": "effects.glsl",
     "status": "generated",
-    "sourceSha256": "1a5d9684bef39715572e85aa24419cd002e592b6192cd2dbc3b0f7d53d836a90",
-    "sourceBytes": 26106,
-    "normalizedBytes": 26507,
-    "generatedBytes": 27941
+    "sourceSha256": "b4f4279698ce60bd3c0c45f8339a4869cd6c2f0714f219ee6b2e997328057316",
+    "sourceBytes": 28403,
+    "normalizedBytes": 28804,
+    "generatedBytes": 28954
   },
   {
     "effectId": "classicNoisedeck/fractal",
