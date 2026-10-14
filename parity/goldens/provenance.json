@@ -2,6 +2,13 @@
   "format": 1,
   "note": "Reference-image provenance for the retained parity goldens. captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) — never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.",
   "goldens": {
+    "defaults/filter3d__flow3d.golden.png": {
+      "sha256": "0e25ec0cab45888569a74411b55bb36855f48674e0bd4abf52155f10007fa1da",
+      "bytes": 178,
+      "introducedIn": "bb1a726c574af696d27cd5c343bae04859fcb9e3",
+      "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-flow3d-timed60",
+      "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 authority capture from source revision a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15. The noise3d, flow3d, render3d, runtime pipeline, and shader demo files have no diff through the current CPU source pin 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d. The default 8x8 fixture has noise seed 0, renderer seed 1, and final time 0.25. After resetting textures and ping-pong surfaces, the authority pipeline rendered 60 frames at times 0.1516666667 through 0.25 in steps of 1/600, with the preceding animated noise3d generator rerun each frame. Two independent captures produced identical PNG bytes (SHA-256 0e25ec0cab45888569a74411b55bb36855f48674e0bd4abf52155f10007fa1da). The CPU oneShot initial output recomputes noise3d per flow3d tick and matches all 256 RGBA channels. A two-frame capture at final time 0.1533333333 also matches byte-for-byte."
+    },
     "classic/classicNoisedeck__bitEffects.golden.png": {
       "sha256": "e849f194ae2f24a1f1985fc406e777902d6c2aa7bec78727adf356b33c2b8105",
       "bytes": 160,
