@@ -26,6 +26,8 @@
 // is square (`stateSize` sizes both dimensions the same) - it would diverge from upstream's own
 // indexing for a hypothetical non-square state texture.
 
+import { float16Truncate } from '../../runtime/texture-format.js'
+
 // `fract(float(gl_VertexID) * GOLDEN_RATIO_CONJUGATE)` is the golden-ratio low-discrepancy
 // sequence upstream uses for density-based culling (`render/pointsRender`'s and
 // `render/pointsBillboardRender`'s deposit.vert, byte-identical literal in both). Exported so
@@ -232,6 +234,7 @@ export function leniaDepositAdapter({ uniforms, inputs, destination }) {
   const destHeight = destination.height
   const data = destination.data
   const depositAmount = uniforms.depositAmount
+  const halfFloatBlend = destination.format === 'rgba16f' || destination.format === 'rgba16float'
   let pixels = 0
 
   for (let v = 0; v < count; v += 1) {
@@ -245,10 +248,11 @@ export function leniaDepositAdapter({ uniforms, inputs, destination }) {
     const offset = scatterPointPixel(clipX, clipY, 1, destWidth, destHeight)
     if (offset === null) continue
 
-    data[offset] += depositAmount
+    // Additive blending writes back to the half-float attachment after every point.
+    data[offset] = halfFloatBlend ? float16Truncate(data[offset] + depositAmount) : data[offset] + depositAmount
     data[offset + 1] += 0
     data[offset + 2] += 0
-    data[offset + 3] += 1
+    data[offset + 3] = halfFloatBlend ? float16Truncate(data[offset + 3] + 1) : data[offset + 3] + 1
     pixels += 1
   }
 

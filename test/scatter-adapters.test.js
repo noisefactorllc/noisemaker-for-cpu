@@ -283,6 +283,20 @@ test('lenia deposit writes a constant (depositAmount,0,0,1) per alive agent and 
   )
 })
 
+test('lenia deposit rounds each additive blend into an rgba16f target', () => {
+  const xyzTex = makeAgentSurface(64, 64)
+  for (let y = 0; y < 64; y += 1) {
+    for (let x = 0; x < 64; x += 1) pokeAgent(xyzTex, x, y, [0.5, 0.5, 0, 1])
+  }
+  const destination = new Surface(4, 4)
+  destination.format = 'rgba16f'
+
+  const result = leniaDepositAdapter({ uniforms: { depositAmount: 3.6 }, inputs: { xyzTex }, destination })
+
+  assert.equal(result.pixels, 4096)
+  assert.deepEqual(pixelAt(destination, 1, 2), [4096, 0, 0, 2048])
+})
+
 test('lenia deposit discards a NaN clip position instead of writing a NaN offset', () => {
   const xyzTex = makeAgentSurface(1, 1)
   pokeAgent(xyzTex, 0, 0, [NaN, 0.5, 0, 1])
