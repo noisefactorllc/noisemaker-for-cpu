@@ -29,6 +29,15 @@ test('every retained golden has a provenance manifest entry whose sha256 matches
   }
 })
 
+test('a re-added golden records the current addition rather than its deleted predecessor', async () => {
+  const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
+  const path = 'parity/goldens/defaults/filter3d__flow3d.golden.png'
+  const { stdout } = await execFileAsync('git', ['log', '--diff-filter=A', '--follow', '--format=%H', '--', path], { cwd: projectRoot })
+  const latestAddition = stdout.trim().split('\n').filter(Boolean)[0]
+  assert.ok(latestAddition)
+  assert.equal(manifest.goldens['defaults/filter3d__flow3d.golden.png'].introducedIn, latestAddition)
+})
+
 test('provenance entries never borrow the generated kernel pin as a capture revision', async () => {
   const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
   const { UPSTREAM_REVISION } = await import(new URL('../src/effects/generated/upstream-snapshot.js', import.meta.url))

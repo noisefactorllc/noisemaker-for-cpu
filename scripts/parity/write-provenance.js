@@ -29,7 +29,7 @@ async function listGoldenPngs(directory) {
 
 async function introducedIn(path) {
   const { stdout } = await execFileAsync('git', ['log', '--diff-filter=A', '--follow', '--format=%H', '--', relative(projectRoot, path)], { cwd: projectRoot })
-  const full = stdout.trim().split('\n').filter(Boolean).pop()
+  const full = stdout.trim().split('\n').filter(Boolean)[0]
   if (!full) throw new Error(`${relative(projectRoot, path)} has no introducing commit; is this a git checkout?`)
   return full
 }
