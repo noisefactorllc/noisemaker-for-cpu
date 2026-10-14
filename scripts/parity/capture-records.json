@@ -1,6 +1,6 @@
 {
   "defaults/synth3d__flythrough3d.golden.png": {
-    "captureRevision": "a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15",
+    "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap002-flythrough3d",
     "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 authority capture from source revision a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15. The source files for flythrough3d, render3d, runtime pipeline, and shader demo match that revision byte-for-byte. The Godot parity export-and-render harness captured the CPU fixture at 8x8, time 0.25, with DSL effect seed 0 and blank imageTex and textTex, after resetting textures and ping-pong surfaces and rendering 8 frames. Two separate captures produced identical PNG bytes (SHA-256 57ad324735faaccc20350b9dc4a7fd5a34fdbdffd995ef6326ce2a3cf7cfc044). The CPU oneShot initial output, called with renderer seed 1, matches all 256 RGBA channels."
   },
   "defaults/filter3d__palette3d.golden.png": {
