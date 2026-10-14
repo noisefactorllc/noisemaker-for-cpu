@@ -32,10 +32,14 @@ test('every retained golden has a provenance manifest entry whose sha256 matches
 test('a re-added golden records the current addition rather than its deleted predecessor', async () => {
   const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
   const path = 'parity/goldens/defaults/filter3d__flow3d.golden.png'
+  const currentAddition = 'a39f94f24fd9550a74384867334fbd55cf173a84'
+  assert.equal(manifest.goldens['defaults/filter3d__flow3d.golden.png'].introducedIn, currentAddition)
+  const { stdout: shallow } = await execFileAsync('git', ['rev-parse', '--is-shallow-repository'], { cwd: projectRoot })
+  if (shallow.trim() === 'true') return
   const { stdout } = await execFileAsync('git', ['log', '--diff-filter=A', '--follow', '--format=%H', '--', path], { cwd: projectRoot })
   const latestAddition = stdout.trim().split('\n').filter(Boolean)[0]
   assert.ok(latestAddition)
-  assert.equal(manifest.goldens['defaults/filter3d__flow3d.golden.png'].introducedIn, latestAddition)
+  assert.equal(currentAddition, latestAddition)
 })
 
 test('provenance entries never borrow the generated kernel pin as a capture revision', async () => {
