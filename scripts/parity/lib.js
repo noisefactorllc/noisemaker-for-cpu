@@ -71,7 +71,7 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 // (feedback within ±2, max 1) and are graded.
 export const NEW_CPU_EFFECT_IDS = Object.freeze(new Set([
   'filter3d/flow3d',
-  'synth3d/cellularAutomata3d', 'synth3d/flythrough3d',
+  'synth3d/cellularAutomata3d',
 ]))
 
 // Iterated (CPU-only per-frame loop) effects whose fresh M4/Metal authority captures
