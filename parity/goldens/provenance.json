@@ -142,6 +142,13 @@
       "captureRevision": null,
       "captureRecord": null
     },
+    "defaults/filter3d__flow3d.golden.png": {
+      "sha256": "2d96063a7f324085bd85059f608325fb4f78f0d0b867df4b1fb4a5eba4aa6972",
+      "bytes": 191,
+      "introducedIn": "269761e7178b95215ca81b35ca09a6eba721b861",
+      "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-flow3d-60f",
+      "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 authority capture from source revision a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15. The source files for noise3d, flow3d, render3d, runtime pipeline, and shader demo match that revision byte-for-byte. The CPU fixture at 8x8 and time 0.25 has DSL noise seed 0. After resetting textures and ping-pong surfaces, the authority pipeline rendered 60 frames at fixed time 0.25, matching the CPU default iterationCount 60. Two independent captures produced identical PNG bytes (SHA-256 2d96063a7f324085bd85059f608325fb4f78f0d0b867df4b1fb4a5eba4aa6972). The CPU oneShot initial output, called with renderer seed 1, matches all 256 RGBA channels. One-frame and eight-frame captures do not match and are not used as goldens."
+    },
     "defaults/filter3d__palette3d.golden.png": {
       "sha256": "f18f20c161467f82b227e753e7a73717e3cb0c882ad713268dfd523fd6281ab0",
       "bytes": 137,
