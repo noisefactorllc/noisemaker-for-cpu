@@ -72,7 +72,6 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 // show real CPU divergence (the recorded sin-hash / feedback-chain / volume-iteration
 // classes); every other iterated effect is graded against its committed golden.
 export const ITERATED_SKIP_IDS = Object.freeze(new Set([
-  'filter3d/flow3d',
   'points/buddhabrot', 'points/lenia',
   'synth/navierStokes',
 ]))

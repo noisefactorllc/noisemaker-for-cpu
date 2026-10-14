@@ -146,6 +146,18 @@ test('flow3d one-iteration output retains the recorded M4 Metal first-frame capt
   assert.equal(hash, '4feb5a3d4f3eda830e094da91bf3e009aef28d419ad8028ac02af38e1a918bf0')
 })
 
+test('flow3d two-iteration output follows the animated noise3d authority input', () => {
+  const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
+  const blank = new Surface(8, 8)
+  blank.format = 'rgba16f'
+  const result = renderer.render(
+    'search synth3d, filter3d, render\nnoise3d(seed: 0, volumeSize: x32).flow3d(iterationCount: 2).render3d().write(o0)\nrender(o0)',
+    { width: 8, height: 8, seed: 1, time: 0.15333333333333332, oneShot: 'initial', externalTextures: { imageTex: blank, textTex: blank } },
+  )
+  const hash = createHash('sha256').update(result.toRgba8()).digest('hex')
+  assert.equal(hash, '0165ffddf3120854c80c0e36e8446253a00733b776ff45a5ecd004bd408e5fb1')
+})
+
 test('canonical bindings contain no reactive-only inputs', () => {
   const bindings = createCanonicalBindings({ width: 1, height: 1 })
   assert.equal(Object.hasOwn(bindings, 'audioWaveform'), false)

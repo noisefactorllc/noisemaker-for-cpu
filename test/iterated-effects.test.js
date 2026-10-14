@@ -59,6 +59,16 @@ test('computeIterationGroups leaves a chain with no particle/stateful steps as o
   assert.deepEqual(groups.map((g) => [g.iterated, g.steps.length]), [[false, 1], [false, 1]])
 })
 
+test('flow3d re-evaluates animated noise3d per tick while preserving static and zero-iteration chains', () => {
+  const flow = step('filter3d/flow3d', {}, [], true, { iterationCount: 2 })
+  const animated = step('synth3d/noise3d', {}, [], false, { speed: 1 })
+  const staticNoise = step('synth3d/noise3d', {}, [], false, { speed: 0 })
+  const zeroFlow = step('filter3d/flow3d', {}, [], true, { iterationCount: 0 })
+  assert.deepEqual(computeIterationGroups([animated, flow]).map((group) => [group.iterated, group.steps.length]), [[true, 2]])
+  assert.deepEqual(computeIterationGroups([staticNoise, flow]).map((group) => [group.iterated, group.steps.length]), [[false, 1], [true, 1]])
+  assert.deepEqual(computeIterationGroups([animated, zeroFlow]).map((group) => [group.iterated, group.steps.length]), [[false, 1], [true, 1]])
+})
+
 test('computeIterationGroups makes a balanced loop region one iteration-owned group', () => {
   // Break caught: leaving loopBegin/loopEnd as independent groups runs the enclosed blur once
   // instead of once per accumulator iteration.

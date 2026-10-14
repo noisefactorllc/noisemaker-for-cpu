@@ -1000,7 +1000,7 @@ export class CpuRenderer {
     // group loop must not multiply it again; the documented iterationCount:0 bypass
     // (zero passes run) is still honored. All other iterated effects keep the established
     // `iterationCount` group loop (filter/temporalAberration requires N=60).
-    const owner = group.steps[0]
+    const owner = group.steps.find((step) => step.definition?.iterated) ?? group.steps[0]
     const requested = owner.params.iterationCount
     const iterationCount = owner.definition.passes.some((pass) => pass.repeat)
       ? Math.min(requested ?? 1, 1)
@@ -1048,7 +1048,7 @@ export class CpuRenderer {
 
   async runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler) {
     // Mirror of runIteratedGroupSync's pass-repeat rule (see its comment).
-    const owner = group.steps[0]
+    const owner = group.steps.find((step) => step.definition?.iterated) ?? group.steps[0]
     const requested = owner.params.iterationCount
     const iterationCount = owner.definition.passes.some((pass) => pass.repeat)
       ? Math.min(requested ?? 1, 1)

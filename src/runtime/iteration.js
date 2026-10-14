@@ -96,6 +96,15 @@ export function computeIterationGroups(steps) {
       openGroup.steps.push(step)
       continue
     }
+    // The authority re-runs animated noise3d before every flow3d tick.
+    const previous = groups.at(-1)
+    if (!openGroup && step.definition?.id === 'filter3d/flow3d' && step.params.iterationCount > 0 &&
+        previous?.steps.length === 1 && previous.steps[0].definition?.id === 'synth3d/noise3d' &&
+        previous.steps[0].params.speed !== 0) {
+      groups.pop()
+      groups.push({ steps: [previous.steps[0], step], iterated: true })
+      continue
+    }
     closeOpenGroup()
     groups.push({ steps: [step], iterated: step.definition.iterated === true })
   }
