@@ -1125,7 +1125,7 @@
     "defaults/points__lenia.golden.png": {
       "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
       "bytes": 72,
-      "introducedIn": null,
+      "introducedIn": "9d8fc85e7468c21bde6acbb2c54971924c925a85",
       "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-lenia-timed60",
       "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 capture from an exact regular-file archive of authority source 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d. The default points/lenia fixture rendered at 8x8 with perlin and pointsEmit seed 0 and 60 frame times from 0.1516666667 through 0.25 in steps of 1/600. The CPU comparison used renderer seed 1. Readback of global_o0_write was 256 white RGBA channels, raw SHA-256 3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546, encoded PNG SHA-256 f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda. Separate M4 captures returned the same raw hash. The CPU fixture is byte-exact after rounding every additive rgba16f Lenia deposit to half precision. The white final image does not distinguish one from 60 group ticks; the retained density 0.1 variant does."
     },
@@ -1516,7 +1516,7 @@
     "variants/points__lenia_density01.golden.png": {
       "sha256": "69d87be57f63ba9327bbc1b48349ac82fab7981a4dc4c5debc7b71b7283f4142",
       "bytes": 113,
-      "introducedIn": null,
+      "introducedIn": "9d8fc85e7468c21bde6acbb2c54971924c925a85",
       "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-lenia-density01-timed60",
       "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 capture from authority source 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d. The default points/lenia fixture changed only pointsRender density to 0.1. At 8x8 with perlin and pointsEmit seed 0, the authority rendered 60 frame times from 0.1516666667 through 0.25 in steps of 1/600; the CPU comparison used renderer seed 1. Two independent readbacks had raw SHA-256 f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a and encoded PNG SHA-256 69d87be57f63ba9327bbc1b48349ac82fab7981a4dc4c5debc7b71b7283f4142. The CPU 60-frame output differs in one RGBA channel by 1, inside the unchanged tolerance of 2. One frame produces a different authority raw SHA-256 6296b722becb73bfa53865ae433f532d8b94d2a9ee0ded5cfc88506a723e2a10, so this capture distinguishes one from 60 group ticks."
     }
