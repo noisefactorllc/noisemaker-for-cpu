@@ -33,7 +33,7 @@ test('classifyCase maps the excluded effects, skip policy, and unexplained holes
     { id: 'synth/roll', verdict: 'missing', reason: 'excluded from this port (upstream reactive/mesh effect; no CPU implementation)' },
   )
   assert.equal(
-    classifyCase({ id: 'points/lenia', inRegistry: true, hasGolden: false, skipPolicy: true }).verdict,
+    classifyCase({ id: 'points/buddhabrot', inRegistry: true, hasGolden: false, skipPolicy: true }).verdict,
     'skip',
   )
   assert.equal(
@@ -87,12 +87,19 @@ test('entrypoint runs a former excluded case (synth/roll) through its fixture to
 })
 
 test('entrypoint run on one skipped case preflights the fixture and reports skip', () => {
-  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'points/lenia'], { encoding: 'utf8' })
+  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'points/buddhabrot'], { encoding: 'utf8' })
   const lastLine = stdout.trimEnd().split('\n').pop()
   const summary = JSON.parse(lastLine.replace(/^PARITY-SUMMARY /, ''))
   assert.equal(summary.expected, 1)
   assert.equal(summary.skip, 1)
   assert.equal(summary.executed, 0)
+})
+
+test('entrypoint grades the default points/lenia fixture against its authority golden', () => {
+  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'points/lenia'], { encoding: 'utf8' })
+  const lastLine = stdout.trimEnd().split('\n').pop()
+  const summary = JSON.parse(lastLine.replace(/^PARITY-SUMMARY /, ''))
+  assert.deepEqual([summary.expected, summary.executed, summary.exact, summary.skip, summary.fail], [1, 1, 1, 0, 0])
 })
 
 test('entrypoint fails loudly on an unknown case id', () => {

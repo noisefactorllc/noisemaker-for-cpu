@@ -322,7 +322,7 @@ export function pointsRenderDepositAdapter({ uniforms, inputs, destination }) {
   let pixels = 0
 
   for (let v = 0; v < count; v += 1) {
-    const particleRandom = fract(v * GOLDEN_RATIO_CONJUGATE)
+    const particleRandom = fract(Math.fround(v * Math.fround(GOLDEN_RATIO_CONJUGATE)))
     if (particleRandom > cullThreshold) continue // ported literally: cull on `>`, keep on `<=`
 
     const sx = v % width
@@ -345,4 +345,3 @@ export function pointsRenderDepositAdapter({ uniforms, inputs, destination }) {
 
   return { pixels }
 }
-

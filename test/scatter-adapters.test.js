@@ -99,6 +99,24 @@ test('pointsRender deposit writes one additive pixel per live, non-culled agent'
   )
 })
 
+test('pointsRender density cull matches M4 highp float at 65536 agents', () => {
+  const xyzTex = makeAgentSurface(256, 256)
+  const rgbaTex = makeAgentSurface(256, 256)
+  for (let i = 0; i < xyzTex.data.length; i += 4) {
+    xyzTex.data[i] = 0.5
+    xyzTex.data[i + 1] = 0.5
+    xyzTex.data[i + 3] = 1
+    rgbaTex.data[i] = 1
+    rgbaTex.data[i + 3] = 1
+  }
+  const destination = new Surface(8, 8)
+
+  const result = pointsRenderDepositAdapter({ uniforms: { density: 0.1, viewMode: 0 }, inputs: { xyzTex, rgbaTex }, destination })
+
+  assert.equal(result.pixels, 142)
+  assert.deepEqual(pixelAt(destination, 3, 4), [142, 0, 0, 142])
+})
+
 test('pointsRender deposit discards an agent whose position rasterizes outside the destination', () => {
   const xyzTex = makeAgentSurface(1, 1)
   const rgbaTex = makeAgentSurface(1, 1)
