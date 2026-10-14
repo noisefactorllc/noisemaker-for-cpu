@@ -61,18 +61,13 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
   return { image: `parity/goldens/${key}`, sha256, captureRevision: null, provenance: 'unknown' }
 }
 
-// Shared skip policy for the parity gate and the parity-summary entrypoint: the
-// pre-existing CPU-divergent simulation effects and the ported volume/loop effects
-// still lacking a byte-consistent pinned GPU golden are explicit, preflighted skips.
+// Shared skip policy for the parity gate and the parity-summary entrypoint:
+// remaining CPU-divergent simulation effects are explicit, preflighted skips.
 // Graduated, 2026-10-01 M4/Metal campaign (Worker Elves job 3be6cc6a): the 3
 // landscape/heightfield effects from reference 0ed489ec and 11 iterated effects
 // (dla, flock, flow, hydraulic, life, physarum, physical, pointsEmit, pointsRender,
 // temporalAberration, feedback) now have committed goldens captured byte-exact
 // (feedback within ±2, max 1) and are graded.
-export const NEW_CPU_EFFECT_IDS = Object.freeze(new Set([
-  'synth3d/cellularAutomata3d',
-]))
-
 // Iterated (CPU-only per-frame loop) effects whose fresh M4/Metal authority captures
 // show real CPU divergence (the recorded sin-hash / feedback-chain / volume-iteration
 // classes); every other iterated effect is graded against its committed golden.
@@ -82,5 +77,5 @@ export const ITERATED_SKIP_IDS = Object.freeze(new Set([
 ]))
 
 export function isSkippedEffect(definition) {
-  return ITERATED_SKIP_IDS.has(definition.id) || NEW_CPU_EFFECT_IDS.has(definition.id)
+  return ITERATED_SKIP_IDS.has(definition.id)
 }

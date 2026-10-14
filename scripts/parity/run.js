@@ -7,14 +7,13 @@ import { fileURLToPath } from 'node:url'
 import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories, compileDsl } from '../../src/index.js'
 import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { readPng, writePng } from '../../src/node/png.js'
-import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect, NEW_CPU_EFFECT_IDS } from './lib.js'
+import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect } from './lib.js'
 import { externalInputsForCase } from './reactive-fixtures.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
 
-// Shared skip policy (NEW_CPU_EFFECT_IDS) lives in scripts/parity/lib.js; see the
-// comment there for the 21 CPU-divergent + 20 ported volume/loop skip accounting.
+// Shared skip policy lives in scripts/parity/lib.js.
 
 function parseArgs(argv) {
   const options = { suite: 'all', size: 8, time: 0.25, seed: 1, tolerance: 2, writeCpu: false, json: false, only: null }
@@ -78,7 +77,7 @@ async function main() {
     return true
   })
   // Keep the established golden parity gate unchanged. The skip policy lives in
-  // scripts/parity/lib.js (NEW_CPU_EFFECT_IDS + ITERATED_SKIP_IDS via isSkippedEffect).
+  // scripts/parity/lib.js (ITERATED_SKIP_IDS via isSkippedEffect).
   const shouldSkip = isSkippedEffect
   const definitions = candidates.filter((definition) => !shouldSkip(definition))
   const skipped = candidates.filter(shouldSkip)
@@ -161,8 +160,7 @@ async function main() {
       process.stdout.write(`FAIL ${failure.id} max=${failure.maxError} mean=${failure.meanError.toFixed(4)} channels>${summary.tolerance}=${failure.channelsOverTolerance}\n`)
     }
     for (const id of summary.skipped) {
-      const reason = NEW_CPU_EFFECT_IDS.has(id) ? 'newly ported, no GPU golden' : 'cpu-divergent, no GPU golden'
-      process.stdout.write(`SKIP ${id} (${reason})\n`)
+      process.stdout.write(`SKIP ${id} (cpu-divergent, no GPU golden)\n`)
     }
   }
   if (failures.length > 0) process.exitCode = 1

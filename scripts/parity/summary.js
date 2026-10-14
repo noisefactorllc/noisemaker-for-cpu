@@ -10,7 +10,7 @@
 //             explicitly recorded per-case tolerance accepts. Nothing records one today.
 //   defer   — reserved: explicitly recorded per-case deferrals with their own acceptance
 //             record. Nothing records one today.
-//   skip    — the explicit, fixture-preflighted skips (NEW_CPU_EFFECT_IDS / ITERATED_SKIP_IDS)
+//   skip    — the explicit, fixture-preflighted ITERATED_SKIP_IDS
 //             with no captured authority golden to compare against.
 //   fail    — rendered but exceeds the numerical contract (for example the
 //             accepted CRT approximation).
@@ -38,7 +38,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
 const fixturesRoot = resolve(projectRoot, 'parity', 'upstream-defaults')
 
-const SKIPPED_NO_GOLDEN = 'no captured authority golden (explicit skip policy: cpu-divergent or newly ported volume/loop effect)'
+const SKIPPED_NO_GOLDEN = 'no captured authority golden (explicit skip policy: cpu-divergent simulation effect)'
 const MISSING_EXCLUDED = 'excluded from this port (upstream reactive/mesh effect; no CPU implementation)'
 
 function fixtureSurface(width, height) {
