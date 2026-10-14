@@ -1233,6 +1233,13 @@
       "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c",
       "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, chrome-headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70"
     },
+    "defaults/synth3d__cellularAutomata3d.golden.png": {
+      "sha256": "36c4fc8d1152588a4db0335572117be0f87eb560ee93f015ffe9be0f2453f1d1",
+      "bytes": 180,
+      "introducedIn": "bd5c7b7968780c1d16716e6e4dd66f9e4a79be8a",
+      "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-cellularAutomata3d-60f",
+      "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 authority capture from source revision a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15. The source files for cellularAutomata3d, render3d, runtime pipeline, and shader demo match that revision byte-for-byte. The CPU fixture at 8x8 and time 0.25 has DSL effect seed 1. After resetting textures and ping-pong surfaces, the authority pipeline rendered 60 frames at fixed time 0.25, matching the CPU default iterationCount 60. Two independent captures produced identical PNG bytes (SHA-256 36c4fc8d1152588a4db0335572117be0f87eb560ee93f015ffe9be0f2453f1d1). The CPU oneShot initial output, called with renderer seed 1, differs in three RGBA channels by at most 1 and passes the published tolerance of 2."
+    },
     "defaults/synth3d__flythrough3d.golden.png": {
       "sha256": "57ad324735faaccc20350b9dc4a7fd5a34fdbdffd995ef6326ce2a3cf7cfc044",
       "bytes": 153,
