@@ -154,8 +154,11 @@ function julia(x, y, b, aspect) {
   const cx = F32(Math.sin(F32(F32(time) * F32(TAU))) * speed + mapF32(b.offsetX, -100, 100, -0.5, 0.5))
   const cy = F32(Math.cos(F32(F32(time) * F32(TAU))) * speed + mapF32(b.offsetY, -100, 100, -1, 1))
   ;[x, y] = rotateF32(x, y, F32(b.rotation), aspect)
-  x = F32(F32(x * zoom) + mapF32(b.centerX, -100, 100, 1, -1))
-  y = F32(F32(y * zoom) + mapF32(b.centerY, -100, 100, 1, -1))
+  // Metal contracts the zoom multiply with the center add into one fma; the
+  // separate rounding is invisible at zoom 2 (the multiply is exact there)
+  // and surfaces at other zooms.
+  x = F32(x * zoom + mapF32(b.centerX, -100, 100, 1, -1))
+  y = F32(y * zoom + mapF32(b.centerY, -100, 100, 1, -1))
   const count = b.iterations * 2
   let iteration = 0
   for (let index = 0; index < count; index += 1) {
