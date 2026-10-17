@@ -11,6 +11,7 @@ import { normalizeCanonicalGlsl } from '../../src/csl/glsl-normalize.js'
 import { GLSL_STDLIB_NAMES } from '../../src/csl/glsl-kernel.js'
 import { UPSTREAM_REVISION, effectRecords } from '../../src/effects/generated/upstream-snapshot.js'
 import { PINNED_UPSTREAM_REVISION, assertPinnedSource } from './source-lock.js'
+import { stageVectorComponentWrites } from './vector-writes.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const referenceRoot = resolve(process.env.NM_REFERENCE_ROOT ?? resolve(projectRoot, '..', 'noisemaker'))
@@ -899,6 +900,9 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   transpiled = restoreIntegerDivision(transpiled, originalSource, effectId)
   transpiled = reduceVectorEquality(transpiled)
   transpiled = copyAliasedVectorDeclarations(transpiled)
+  // GLSL evaluates a vector assignment's whole right-hand side before it writes
+  // the target; see scripts/upstream/vector-writes.js.
+  transpiled = stageVectorComponentWrites(transpiled)
   transpiled = poolLocalVectors(transpiled)
   const called = new Set([...transpiled.matchAll(/\b([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))
   const defined = new Set([...transpiled.matchAll(/function\s+([A-Za-z_$]\w*)\s*\(/g)].map((match) => match[1]))
