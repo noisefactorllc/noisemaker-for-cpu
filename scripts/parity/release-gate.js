@@ -9,8 +9,7 @@
 //   - no case is MISSING or deferred, and every NEAR case has its reviewed evidence;
 //   - the SKIP cases are exactly the declared skip set (an undeclared skip fails,
 //     and a declared skip that is no longer skipped fails until it is undeclared);
-//   - the FAIL cases are exactly the accepted failures (filter/crt today, see
-//     docs/CRT-PARITY.md);
+//   - the FAIL cases are exactly the accepted failures (none today);
 //   - the PARITY-SUMMARY counts agree with the per-case lines.
 //
 // The declared skip set and the accepted failures are arguments, so the

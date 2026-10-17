@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { canonicalAdapterFactories, canonicalKernelFactories, createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
-import { crtFactory } from '../src/effects/adapters/crt.js'
+import { canonicalAdapterFactories, createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
+import { crtFactory, fma32 } from '../src/effects/adapters/crt.js'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { readPng } from '../src/node/png.js'
 import { compareRgba8 } from '../scripts/parity/lib.js'
@@ -32,66 +32,93 @@ test('snow uses its float32 semantic adapter for GPU operation boundaries', () =
   )
 })
 
-test('CRT uses its reduced-turn sine adapter for Metal fast-math range reduction', () => {
+test('CRT uses its float32 Metal-semantics adapter', () => {
   assert.equal(kernelFactories.get('filter/crt:crt'), canonicalAdapterFactories['filter/crt:crt'])
+  assert.equal(canonicalAdapterFactories['filter/crt:crt'], crtFactory)
 })
 
-test('cosine-wrap configurations: no-op on metalSine, two-variable delta on plain sin', async () => {
-  // Characterization evidence for docs/CRT-PARITY.md. Three configurations, measured
-  // 2026-09-26:
-  //   plain     — committed adapter (metalSine, no cos wrap): the recorded baseline.
-  //   wrapped   — metalSine + turn-based metalCosine (the reverted 8debec5 configuration,
-  //               rebuilt through crtFactory with a cos-extended stdlib): byte-identical to
-  //               plain, so the cos wrap is a no-op on top of the retained sine adapter.
-  //   rawWrap   — plain runtime sin + metalCosine (no sine adapter): the two-variable
-  //               configuration behind the earlier 94/105/5.86328125 figures; its delta from
-  //               plain confounds the sine and cosine variables and is pinned only to keep
-  //               the measured numbers honest.
-  const F32 = Math.fround
-  const TAU = F32(6.283185307179586)
-  const INV_TAU = F32(1 / 6.283185307179586)
-  const metalCosine = (value) => {
-    const turns = F32(value * INV_TAU)
-    const phase = turns - Math.floor(turns)
-    return F32(Math.cos(phase * TAU))
-  }
-  const cosWrappedAdapterFactory = ($bindings, $runtime) => {
-    const runtime = Object.create($runtime)
-    const cos = (value) => {
-      if (!ArrayBuffer.isView(value) && !Array.isArray(value)) return metalCosine(value)
-      const out = $runtime.alloc(value.length)
-      for (let index = 0; index < value.length; index += 1) out[index] = metalCosine(value[index])
-      return out
+test('the CRT fused multiply-add rounds once like the GPU', () => {
+  // Reference: exact rational a*b + c, rounded to the nearest float32 (ties to even).
+  const exactFma = (a, b, c) => {
+    const scale = 2n ** 300n
+    const big = (value) => {
+      const [mantissa, exponent] = (() => {
+        if (value === 0) return [0n, 0]
+        let e = 0
+        let m = Math.abs(value)
+        while (!Number.isInteger(m)) { m *= 2; e -= 1 }
+        return [BigInt(m) * (value < 0 ? -1n : 1n), e]
+      })()
+      return exponent >= 0 ? mantissa * scale * 2n ** BigInt(exponent) : mantissa * scale / 2n ** BigInt(-exponent)
     }
-    runtime.stdlib = Object.freeze({ ...$runtime.stdlib, cos })
-    // Route through the committed adapter so metalSine stays in effect: crtFactory builds
-    // its stdlib from $runtime.stdlib, so the canonical kernel's cos destructure resolves to
-    // metalCosine while sin resolves to the adapter's metalSine — exactly the 8debec5 config.
-    const composedRuntime = Object.create($runtime)
-    composedRuntime.stdlib = runtime.stdlib
-    return crtFactory($bindings, composedRuntime)
+    const exact = big(a) * big(b) / scale + big(c)
+    const approx = Math.fround(Number(exact) / Number(scale))
+    const candidates = [approx]
+    const view = new Float32Array(1)
+    const bits = new Int32Array(view.buffer)
+    for (const step of [-1, 1]) { view[0] = approx; bits[0] += step; candidates.push(view[0]) }
+    let best = candidates[0]
+    let bestError = null
+    for (const candidate of candidates) {
+      const error = big(candidate) - exact
+      const magnitude = error < 0n ? -error : error
+      if (bestError === null || magnitude < bestError) { best = candidate; bestError = magnitude }
+      else if (magnitude === bestError) {
+        view[0] = candidate
+        if ((bits[0] & 1) === 0) best = candidate
+      }
+    }
+    return best
   }
-  const rawCosAdapterFactory = ($bindings, $runtime) => {
-    const runtime = Object.create($runtime)
-    runtime.stdlib = Object.freeze({ ...$runtime.stdlib, cos: metalCosine })
-    return canonicalKernelFactories['filter/crt:crt']($bindings, runtime)
+  let state = 12345
+  const next = () => { state = (Math.imul(state, 1103515245) + 12345) >>> 0; return state / 4294967296 }
+  // A float64 a*b + c lands exactly on a float32 midpoint here, so rounding it
+  // again would double-round; fma32 must round the exact value once.
+  const doubleRounding = [
+    [1.1836352348327637, 1.7818914651870728, -1.931027560075904e-9],
+    [1.715787649154663, 1.694210410118103, -3.285236749306364e-9],
+    [1.5398544073104858, 1.8304558992385864, -9.061266736942741e-10],
+  ]
+  for (const [a, b, c] of doubleRounding.map((values) => values.map(Math.fround))) {
+    assert.notEqual(Math.fround(a * b + c), exactFma(a, b, c))
+    assert.equal(fma32(a, b, c), exactFma(a, b, c))
   }
-  const source = 'search synth, filter\nnoise(seed: 1, ridges: true).crt(seed: 1).write(o0)\nrender(o0)'
-  const options = { width: 8, height: 8, time: 0.25, seed: 1, oneShot: 'initial' }
-  const plain = renderer().render(source, options).toRgba8()
-  const wrapped = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories: new Map(kernelFactories).set('filter/crt:crt', cosWrappedAdapterFactory), tileRows: 8 }).render(source, options).toRgba8()
-  const rawWrapped = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories: new Map(kernelFactories).set('filter/crt:crt', rawCosAdapterFactory), tileRows: 8 }).render(source, options).toRgba8()
-  const goldenData = await readGoldenCrt()
-  const plainMetrics = compareRgba8(plain, goldenData, 2)
-  const wrappedMetrics = compareRgba8(wrapped, goldenData, 2)
-  const rawMetrics = compareRgba8(rawWrapped, goldenData, 2)
-  assert.deepEqual([...wrapped], [...plain])
-  assert.equal(plainMetrics.channelsOverTolerance, 88)
-  assert.equal(plainMetrics.maxError, 80)
-  assert.equal(plainMetrics.meanError, 5.0390625)
-  assert.equal(rawMetrics.channelsOverTolerance, 94)
-  assert.equal(rawMetrics.maxError, 105)
-  assert.equal(rawMetrics.meanError, 5.8671875)
+  for (const [a, b, c] of [[1, 1 + 2 ** -23, 2 ** -24], [3, 1 / 3, -1]].map((values) => values.map(Math.fround))) {
+    assert.equal(fma32(a, b, c), exactFma(a, b, c))
+  }
+  for (let index = 0; index < 2000; index += 1) {
+    const a = Math.fround((next() - 0.5) * 2 ** Math.floor(next() * 20 - 10))
+    const b = Math.fround((next() - 0.5) * 2 ** Math.floor(next() * 20 - 10))
+    const c = Math.fround((next() - 0.5) * 2 ** Math.floor(next() * 40 - 20))
+    assert.equal(fma32(a, b, c), exactFma(a, b, c), `fma32(${a}, ${b}, ${c})`)
+  }
+})
+
+test('CRT reproduces the Apple Metal capture bytes and stays within the golden tolerance', async () => {
+  // Readbacks of global_o0_write from the pinned upstream CanvasRenderer (WebGL2,
+  // ANGLE Metal Renderer: Apple M2, macOS 14.8.3, HeadlessChrome 143 through 156,
+  // identical bytes on every build), upstream 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d.
+  // The default fixture's capture matches the retained golden within one byte in 18
+  // channels; see docs/CRT-PARITY.md.
+  const { createHash } = await import('node:crypto')
+  const cases = [
+    ['noise(seed: 1, ridges: true).crt(seed: 1)', 0.25, '7fc77bf05a97bf7d891f0b6e341676c31fb3deb0f2dc850ebdb662aecfe032db'],
+    ['noise(seed: 1, ridges: true).crt(seed: 2)', 0.25, '6677be3188d91baa90e644a0af41800b6d9d3a39aeebbb89f7b5badc1acdad64'],
+    ['noise(seed: 1, ridges: true).crt(seed: 1)', 0.6, '8140c3f73a50c7d04ee83c65e494be22962e1a362347fb094bac328a5914b02e'],
+    ['noise(seed: 1, ridges: true).crt(seed: 5, speed: 2.5)', 0.4, '6a70fb196c0b09d3220b97afcd23a85ba25d3094240a03b62c437361e4e2c2f7'],
+    ['noise(seed: 2).crt(seed: 9, alpha: 1)', 0.25, 'ba012872440d1480d7a54b9cc6bfc116cd919897574e688c37ca702500970983'],
+  ]
+  for (const [program, time, sha256] of cases) {
+    const source = `search filter, synth\n\n${program}\n  .write(o0)\n\nrender(o0)\n`
+    const rgba = renderer().render(source, { width: 8, height: 8, time, seed: 1, oneShot: 'initial' }).toRgba8()
+    assert.equal(createHash('sha256').update(rgba).digest('hex'), sha256, program)
+  }
+  const fixture = 'search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .crt(seed: 1)\n  .write(o0)\n\nrender(o0)\n'
+  const rgba = renderer().render(fixture, { width: 8, height: 8, time: 0.25, seed: 1, oneShot: 'initial' }).toRgba8()
+  const metrics = compareRgba8(rgba, await readGoldenCrt(), 2)
+  assert.equal(metrics.pass, true)
+  assert.equal(metrics.maxError, 1)
+  assert.equal(metrics.differingChannels, 18)
 })
 
 test('bitEffects uses its scalar bit-mask adapter and matches the canonical first pixel', () => {

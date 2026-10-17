@@ -106,16 +106,15 @@ test('release gate accepts the reviewed NEAR evidence and rejects altered or abs
   const lines = sourceEffectIds.map((caseId) => {
     if (caseId === id) return `NEAR ${id} review=${JSON.stringify(review)}`
     if (caseId === 'synth/navierStokes') return `NEAR ${caseId} review=${JSON.stringify(navier)}`
-    if (caseId === 'filter/crt') return `FAIL ${caseId}`
     return `EXACT ${caseId}`
   })
   lines.push(`PARITY-SUMMARY ${JSON.stringify({
     sourceRevision: authorityRevision, ...meta,
-    expected: 210, executed: 210, exact: 207, strict: 0, near: 2,
-    defer: 0, skip: 0, fail: 1, missing: 0,
+    expected: 210, executed: 210, exact: 208, strict: 0, near: 2,
+    defer: 0, skip: 0, fail: 0, missing: 0,
   })}`)
   const output = `${lines.join('\n')}\n`
-  const policy = { declaredSkips: [], acceptedFailures: ['filter/crt'] }
+  const policy = { declaredSkips: [], acceptedFailures: [] }
   assert.deepEqual(evaluateReleaseGate(output, policy).errors, [])
   assert.equal(evaluateReleaseGate(output.replace('"maxError":25', '"maxError":26'), policy).ok, false)
   assert.equal(evaluateReleaseGate(output.replace('"maxError":6', '"maxError":5'), policy).ok, false)

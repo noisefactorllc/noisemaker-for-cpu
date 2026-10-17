@@ -9,11 +9,11 @@ import { sourceEffectIds } from '../src/effects/generated/upstream-snapshot.js'
 import { evaluateReleaseGate, parseArgs } from '../scripts/parity/release-gate.js'
 
 const DECLARED_SKIPS = []
-const ACCEPTED_FAILURES = ['filter/crt']
+const ACCEPTED_FAILURES = []
 const POLICY = { declaredSkips: DECLARED_SKIPS, acceptedFailures: ACCEPTED_FAILURES }
 
 // A summary output shaped like the real weekly run: every authority case
-// graded, no skip, and the accepted filter/crt failure.
+// graded, no skip, and no accepted failure.
 function summaryOutput({ verdicts = {}, counts = {}, drop = [], extra = [] } = {}) {
   const lines = ['Reference provenance: 0 recorded, 210 unknown']
   const tally = { expected: 0, executed: 0, exact: 0, strict: 0, near: 0, defer: 0, skip: 0, fail: 0, missing: 0 }
@@ -37,11 +37,11 @@ function summaryOutput({ verdicts = {}, counts = {}, drop = [], extra = [] } = {
   return `${lines.join('\n')}\n`
 }
 
-test('the real-shaped summary (no skip, filter/crt failing, 0 missing) passes', () => {
+test('the real-shaped summary (no skip, no failure, 0 missing) passes', () => {
   const result = evaluateReleaseGate(summaryOutput(), POLICY)
   assert.deepEqual(result.errors, [])
   assert.equal(result.ok, true)
-  assert.deepEqual(result.counts, { reported: 210, missing: 0, skip: 0, fail: 1 })
+  assert.deepEqual(result.counts, { reported: 210, missing: 0, skip: 0, fail: 0 })
 })
 
 test('a MISSING case fails the gate even when its counts are consistent', () => {
@@ -64,10 +64,18 @@ test('a declared skip that is graded fails until the declaration drops it', () =
   assert.ok(result.errors.some((error) => /^declared skip synth\/navierStokes was reported EXACT/.test(error)), result.errors.join('\n'))
 })
 
-test('a failure other than the accepted filter/crt fails the gate', () => {
-  const result = evaluateReleaseGate(summaryOutput({ verdicts: { 'filter/adjust': 'FAIL' } }), POLICY)
+test('any unaccepted failure fails the gate', () => {
+  for (const id of ['filter/adjust', 'filter/crt']) {
+    const result = evaluateReleaseGate(summaryOutput({ verdicts: { [id]: 'FAIL' } }), POLICY)
+    assert.equal(result.ok, false)
+    assert.ok(result.errors.includes(`FAIL ${id} is not an accepted failure`), result.errors.join('\n'))
+  }
+})
+
+test('an accepted failure that passes fails until the declaration drops it', () => {
+  const result = evaluateReleaseGate(summaryOutput(), { declaredSkips: DECLARED_SKIPS, acceptedFailures: ['filter/crt'] })
   assert.equal(result.ok, false)
-  assert.ok(result.errors.includes('FAIL filter/adjust is not an accepted failure'), result.errors.join('\n'))
+  assert.ok(result.errors.some((error) => /^accepted failure filter\/crt was reported EXACT/.test(error)), result.errors.join('\n'))
 })
 
 test('near and deferred cases fail the gate', () => {

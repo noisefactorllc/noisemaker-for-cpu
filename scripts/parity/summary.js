@@ -11,8 +11,7 @@
 //             record. Nothing records one today.
 //   skip    — the explicit, fixture-preflighted ITERATED_SKIP_IDS
 //             with no captured authority golden to compare against.
-//   fail    — rendered but exceeds the numerical contract (for example the
-//             accepted CRT approximation).
+//   fail    — rendered but exceeds the numerical contract.
 //   missing — no implementation in this port (the five excluded effects) or an
 //             unexplained hole (registry effect without a golden and without a skip
 //             policy reason).
