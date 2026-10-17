@@ -29,10 +29,14 @@ current engines render too — Chromium 154 passes the checkout's
 `node scripts/browser-check.mjs` (a Chromium-family raw-CDP check that serves
 the root and asserts a non-blank first frame with every same-origin module
 loaded) and Firefox 155 renders in a separate Playwright-based run. The
-Safari 15.4 minimum remains feature-derived and has not been executed. The
-dedicated `.github/workflows/platform-browser.yml` runs `npm test` and the
+Safari 15.4 floor runs on the nearest available WebKit build, Playwright
+1.22.2's WebKit 15.4, because no hosted macOS image still ships Safari 15.4. At
+source `076c31a`, it rendered the demo with HTTP 200, a 256 × 256 non-blank
+canvas, and no module failures or page errors
+([CI run](https://github.com/noisefactorllc/noisemaker-for-cpu/actions/runs/39053714268)).
+The dedicated `.github/workflows/platform-browser.yml` runs `npm test` and the
 demo check on Windows Chrome and real Safari (`node scripts/browser-check.mjs
---browser safari`). At source `8c146483`, macOS
+--browser safari`). It runs the check on WebKit 15.4 too (`--browser webkit`). At source `8c146483`, macOS
 26.6.2 with Safari 26.6.2 passed the real Safari check: HTTP 200, a 256 × 256
 non-blank canvas, and no same-origin module failures or page errors
 ([CI run](https://github.com/noisefactorllc/noisemaker-for-cpu/actions/runs/38214471227)).
