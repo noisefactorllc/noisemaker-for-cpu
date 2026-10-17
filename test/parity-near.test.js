@@ -65,6 +65,14 @@ test('reviewed NEAR rejects another fixture, authority, reference, or capture pr
   ]) assert.equal(await compare(overrides), null)
 })
 
+test('reviewed NEAR accepts the fixture through a CRLF checkout and nothing else', async () => {
+  const lf = fixture.replace(/\r\n/g, '\n')
+  assert.equal((await compare({ source: lf })).accepted, true)
+  assert.equal((await compare({ source: lf.replace(/\n/g, '\r\n') })).accepted, true)
+  assert.equal(await compare({ source: lf.replace(/\n/g, '\r') }), null)
+  assert.equal(await compare({ source: `${lf}\r\n` }), null)
+})
+
 test('reviewed NEAR rejects new pixels, larger differences, and alpha changes', async () => {
   for (const index of [0, 220, 35]) {
     const actual = candidate()

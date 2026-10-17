@@ -72,6 +72,9 @@ const POLICIES = new Map([
 export const NEAR_CASE_IDS = Object.freeze([...POLICIES.keys()])
 
 const sha256 = (value) => createHash('sha256').update(value).digest('hex')
+// The recorded fixture hash is of the committed LF bytes. A checkout that converts
+// line endings (Git for Windows' default autocrlf) holds the same program.
+const fixtureSha256Of = (source) => sha256(source.replace(/\r\n/g, '\n'))
 
 function expectedReview(policy) {
   return {
@@ -114,7 +117,7 @@ export function validateNearReview(caseId, review, meta) {
 export async function reviewedNearComparison({ id: caseId, actual, source, meta, reference, authorityRevision: authority }) {
   const policy = POLICIES.get(caseId)
   if (!policy || !matchesProtocol(policy, meta) || authority !== authorityRevision ||
-      sha256(source) !== policy.fixtureSha256 || sha256(actual) !== policy.candidateSha256 ||
+      fixtureSha256Of(source) !== policy.fixtureSha256 || sha256(actual) !== policy.candidateSha256 ||
       reference?.sha256 !== policy.captures[0].pngSha256 || reference.captureRevision !== policy.captureRevision ||
       reference.provenance !== 'recorded') return null
 
