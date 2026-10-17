@@ -209,5 +209,35 @@
         }
       ]
     }
+  },
+  "defaults/synth__navierStokes.golden.png": {
+    "captureRevision": "2026-10-17-m4-metal-webgl2-gap035-navierstokes",
+    "captureRecord": {
+      "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+      "fixtureSha256": "3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "browser": "HeadlessChrome/156.0.8078.4",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "surface": {
+        "read": "global_o1_read",
+        "write": "global_o1_write",
+        "presented": "global_o1_write"
+      },
+      "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source. Load the manifest and every effect, compile the fixture, stop automatic rendering, render(0.25) once, and read each o1 texture as top-down RGBA8 through WebGL2Backend.readPixels. Two renderers in each of two headless browser sessions.",
+      "readbacks": [
+        {
+          "id": "global_o1_write",
+          "sha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3",
+          "repeatSha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3"
+        },
+        {
+          "id": "global_o1_read",
+          "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+        }
+      ]
+    }
   }
 }

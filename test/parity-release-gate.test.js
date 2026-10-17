@@ -8,14 +8,12 @@ import test from 'node:test'
 import { sourceEffectIds } from '../src/effects/generated/upstream-snapshot.js'
 import { evaluateReleaseGate, parseArgs } from '../scripts/parity/release-gate.js'
 
-const DECLARED_SKIPS = [
-  'synth/navierStokes',
-]
+const DECLARED_SKIPS = []
 const ACCEPTED_FAILURES = ['filter/crt']
 const POLICY = { declaredSkips: DECLARED_SKIPS, acceptedFailures: ACCEPTED_FAILURES }
 
 // A summary output shaped like the real weekly run: every authority case
-// graded, the declared skip, and the accepted filter/crt failure.
+// graded, no skip, and the accepted filter/crt failure.
 function summaryOutput({ verdicts = {}, counts = {}, drop = [], extra = [] } = {}) {
   const lines = ['Reference provenance: 0 recorded, 210 unknown']
   const tally = { expected: 0, executed: 0, exact: 0, strict: 0, near: 0, defer: 0, skip: 0, fail: 0, missing: 0 }
@@ -39,11 +37,11 @@ function summaryOutput({ verdicts = {}, counts = {}, drop = [], extra = [] } = {
   return `${lines.join('\n')}\n`
 }
 
-test('the real-shaped summary (1 declared skip, filter/crt failing, 0 missing) passes', () => {
+test('the real-shaped summary (no skip, filter/crt failing, 0 missing) passes', () => {
   const result = evaluateReleaseGate(summaryOutput(), POLICY)
   assert.deepEqual(result.errors, [])
   assert.equal(result.ok, true)
-  assert.deepEqual(result.counts, { reported: 210, missing: 0, skip: 1, fail: 1 })
+  assert.deepEqual(result.counts, { reported: 210, missing: 0, skip: 0, fail: 1 })
 })
 
 test('a MISSING case fails the gate even when its counts are consistent', () => {
@@ -60,7 +58,8 @@ test('an undeclared skip fails the gate', () => {
 })
 
 test('a declared skip that is graded fails until the declaration drops it', () => {
-  const result = evaluateReleaseGate(summaryOutput({ verdicts: { 'synth/navierStokes': 'EXACT' } }), POLICY)
+  const policy = { declaredSkips: ['synth/navierStokes'], acceptedFailures: ACCEPTED_FAILURES }
+  const result = evaluateReleaseGate(summaryOutput({ verdicts: { 'synth/navierStokes': 'EXACT' } }), policy)
   assert.equal(result.ok, false)
   assert.ok(result.errors.some((error) => /^declared skip synth\/navierStokes was reported EXACT/.test(error)), result.errors.join('\n'))
 })
@@ -102,7 +101,7 @@ test('a missing or repeated PARITY-SUMMARY line fails the gate', () => {
 test('summary counts that disagree with the case lines fail the gate', () => {
   const result = evaluateReleaseGate(summaryOutput({ counts: { skip: 3, expected: 209 } }), POLICY)
   assert.equal(result.ok, false)
-  assert.ok(result.errors.includes('PARITY-SUMMARY skip=3, expected 1'))
+  assert.ok(result.errors.includes('PARITY-SUMMARY skip=3, expected 0'))
   assert.ok(result.errors.includes('PARITY-SUMMARY expected=209, expected 210'))
 })
 

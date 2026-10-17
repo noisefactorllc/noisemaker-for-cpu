@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
+import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories } from '../src/index.js'
 import { readPng } from '../src/node/png.js'
 import { reviewedNearComparison, validateNearReview } from '../scripts/parity/near.js'
 import { runSummary } from '../scripts/parity/summary.js'
@@ -92,23 +93,29 @@ test('NEAR evidence must retain both complete surface measurements and their bou
 
 test('release gate accepts the reviewed NEAR evidence and rejects altered or absent evidence', async () => {
   const review = await compare()
+  const navier = (await runSummary({ requested: ['synth/navierStokes'] })).rendered[0].near
+  assert.equal(navier.accepted, true)
   const lines = sourceEffectIds.map((caseId) => {
     if (caseId === id) return `NEAR ${id} review=${JSON.stringify(review)}`
-    if (caseId === 'synth/navierStokes') return `SKIP ${caseId}`
+    if (caseId === 'synth/navierStokes') return `NEAR ${caseId} review=${JSON.stringify(navier)}`
     if (caseId === 'filter/crt') return `FAIL ${caseId}`
     return `EXACT ${caseId}`
   })
   lines.push(`PARITY-SUMMARY ${JSON.stringify({
     sourceRevision: authorityRevision, ...meta,
-    expected: 210, executed: 209, exact: 207, strict: 0, near: 1,
-    defer: 0, skip: 1, fail: 1, missing: 0,
+    expected: 210, executed: 210, exact: 207, strict: 0, near: 2,
+    defer: 0, skip: 0, fail: 1, missing: 0,
   })}`)
   const output = `${lines.join('\n')}\n`
-  const policy = { declaredSkips: ['synth/navierStokes'], acceptedFailures: ['filter/crt'] }
+  const policy = { declaredSkips: [], acceptedFailures: ['filter/crt'] }
   assert.deepEqual(evaluateReleaseGate(output, policy).errors, [])
   assert.equal(evaluateReleaseGate(output.replace('"maxError":25', '"maxError":26'), policy).ok, false)
-  assert.equal(evaluateReleaseGate(output.replace(/^NEAR .*$/m, `NEAR ${id}`), policy).ok, false)
+  assert.equal(evaluateReleaseGate(output.replace('"maxError":6', '"maxError":5'), policy).ok, false)
+  assert.equal(evaluateReleaseGate(output.replace(/^NEAR points.*$/m, `NEAR ${id}`), policy).ok, false)
+  assert.equal(evaluateReleaseGate(output.replace(/^NEAR synth.*$/m, 'NEAR synth/navierStokes'), policy).ok, false)
   assert.equal(evaluateReleaseGate(output.replace('"seed":1', '"seed":2'), policy).ok, false)
+  // One case's review never qualifies another case.
+  assert.equal(evaluateReleaseGate(output.replace(/^NEAR synth\/navierStokes review=.*$/m, `NEAR synth/navierStokes review=${JSON.stringify(review)}`), policy).ok, false)
 })
 
 test('buddhabrot summary renders the unchanged candidate and reports one reviewed NEAR case', async () => {
@@ -120,4 +127,52 @@ test('buddhabrot summary renders the unchanged candidate and reports one reviewe
   assert.equal(result.rendered[0].pass, false)
   assert.equal(result.rendered[0].near.candidateSha256, '6a61efff531cc10845fb436d51ae96ce97470c3f7c5c316be4e3151ff02f0f99')
   assert.match(result.lines[1], /^NEAR points\/buddhabrot max=12 .*channels>2=24 .*review=/)
+})
+
+test('navierStokes summary renders the reviewed candidate and reports one reviewed NEAR case', async () => {
+  const result = await runSummary({ requested: ['synth/navierStokes'] })
+  assert.deepEqual([
+    result.summary.expected, result.summary.executed, result.summary.exact,
+    result.summary.strict, result.summary.near, result.summary.skip, result.summary.fail,
+  ], [1, 1, 0, 0, 1, 0, 0])
+  const [rendered] = result.rendered
+  assert.equal(rendered.pass, false)
+  assert.equal(rendered.near.policy, '2026-10-17-m4-metal-webgl2-gap035-navierstokes')
+  assert.equal(rendered.near.candidateSha256, 'ecf1c94478b607be4eecca8371ca201a213d53a8a9fdeb54a024360570dd52a4')
+  assert.deepEqual(rendered.near.surfaces.map((surface) => [
+    surface.surface, surface.maxError, surface.meanError, surface.differingChannels,
+    surface.channelsOverTolerance, surface.differingPixels,
+  ]), [['global_o1_write', 6, 0.55078125, 75, 18, 25]])
+  assert.ok(validateNearReview('synth/navierStokes', rendered.near, { ...meta, sourceRevision: authorityRevision }))
+  assert.equal(validateNearReview('points/buddhabrot', rendered.near, { ...meta, sourceRevision: authorityRevision }), false)
+  assert.match(result.lines[1], /^NEAR synth\/navierStokes max=6 .*channels>2=18 .*review=/)
+})
+
+test('navierStokes NEAR rejects a changed candidate byte or another reference', async () => {
+  const source = await readFile(new URL('../parity/upstream-defaults/synth__navierStokes.dsl', import.meta.url), 'utf8')
+  const goldenUrl = new URL('../parity/goldens/defaults/synth__navierStokes.golden.png', import.meta.url)
+  const navierGolden = await readPng(goldenUrl)
+  const navierReference = {
+    image: 'parity/goldens/defaults/synth__navierStokes.golden.png',
+    sha256: createHash('sha256').update(await readFile(goldenUrl)).digest('hex'),
+    captureRevision: '2026-10-17-m4-metal-webgl2-gap035-navierstokes',
+    provenance: 'recorded',
+  }
+  const blank = new Surface(8, 8)
+  blank.format = 'rgba16f'
+  const actual = new CpuRenderer({ registry: createDefaultRegistry(), kernelFactories }).render(source, {
+    width: 8, height: 8, time: 0.25, seed: 1, externalTextures: { imageTex: blank, textTex: blank }, oneShot: 'initial',
+  }).toRgba8()
+  const base = { id: 'synth/navierStokes', source, meta, reference: navierReference, authorityRevision }
+  assert.equal((await reviewedNearComparison({ ...base, actual })).accepted, true)
+  for (const index of [0, 28, 31]) {
+    const changed = Uint8Array.from(actual)
+    changed[index] += 1
+    assert.equal(await reviewedNearComparison({ ...base, actual: changed }), null)
+  }
+  // The golden itself is not the reviewed candidate.
+  assert.equal(await reviewedNearComparison({ ...base, actual: Uint8Array.from(navierGolden.data) }), null)
+  assert.equal(await reviewedNearComparison({ ...base, actual, reference: { ...navierReference, provenance: 'unknown' } }), null)
+  assert.equal(await reviewedNearComparison({ ...base, actual, source: `${source}\n` }), null)
+  assert.equal(await reviewedNearComparison({ ...base, actual, meta: { ...meta, time: 0.5 } }), null)
 })

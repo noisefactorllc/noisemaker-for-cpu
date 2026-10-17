@@ -8,58 +8,97 @@ import { readPng } from '../../src/node/png.js'
 import { compareRgba8 } from './lib.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
-const id = 'points/buddhabrot'
-const captureRevision = '2026-10-16-m4-metal-webgl2-gap035-buddhabrot'
-const candidateSha256 = '6a61efff531cc10845fb436d51ae96ce97470c3f7c5c316be4e3151ff02f0f99'
-const fixtureSha256 = '553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a'
 const authorityRevision = '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d'
-const protocol = {
-  size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial',
-  frames: 60, frameTimeStep: 1 / 600,
-  renderer: 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)',
-}
-const pixels = [8, 23, 24, 31, 48, 55, 56, 63]
-const captures = [
-  {
-    surface: 'global_o0_read',
-    image: 'parity/goldens/defaults/points__buddhabrot.golden.png',
-    pngSha256: 'd5f2d4316afeb89d1cc3fc92295ae6b2dc4a9d912f91f1308eb19a90deb130df',
-    rawSha256: 'd131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65',
-    maxError: 12, meanError: 0.69921875,
-  },
-  {
-    surface: 'global_o0_write',
-    image: 'parity/goldens/reviewed/points__buddhabrot.write.png',
-    pngSha256: '1e8da1cb4d660bb1c27006ea921a69ce64ed6d673416e908a6fd3438295b25fc',
-    rawSha256: 'e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113',
-    maxError: 25, meanError: 0.86328125,
-  },
-]
+const renderer = 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)'
+
+// One reviewed NEAR policy per case. Each binds the case fixture, the reviewed CPU
+// candidate bytes, the pinned authority, the capture protocol, and every retained
+// authority surface with its measured differences. The pinned reference capture
+// and the candidate capture looked the same side by side at native size.
+const POLICIES = new Map([
+  ['points/buddhabrot', {
+    captureRevision: '2026-10-16-m4-metal-webgl2-gap035-buddhabrot',
+    reviewedCandidateRevision: '5e93c23c6cd8c2b3f777bedc40142798be185ba8',
+    candidateSha256: '6a61efff531cc10845fb436d51ae96ce97470c3f7c5c316be4e3151ff02f0f99',
+    fixtureSha256: '553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a',
+    protocol: {
+      size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial',
+      frames: 60, frameTimeStep: 1 / 600, renderer,
+    },
+    captures: [
+      {
+        surface: 'global_o0_read',
+        image: 'parity/goldens/defaults/points__buddhabrot.golden.png',
+        pngSha256: 'd5f2d4316afeb89d1cc3fc92295ae6b2dc4a9d912f91f1308eb19a90deb130df',
+        rawSha256: 'd131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65',
+        maxError: 12, meanError: 0.69921875,
+        differingChannels: 24, channelsOverTolerance: 24,
+        pixels: [8, 23, 24, 31, 48, 55, 56, 63],
+      },
+      {
+        surface: 'global_o0_write',
+        image: 'parity/goldens/reviewed/points__buddhabrot.write.png',
+        pngSha256: '1e8da1cb4d660bb1c27006ea921a69ce64ed6d673416e908a6fd3438295b25fc',
+        rawSha256: 'e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113',
+        maxError: 25, meanError: 0.86328125,
+        differingChannels: 24, channelsOverTolerance: 24,
+        pixels: [8, 23, 24, 31, 48, 55, 56, 63],
+      },
+    ],
+  }],
+  // The residual comes from the M4 sine, which is within 2 ULP of the correctly
+  // rounded value: the nine nsSplat vortex hashes amplify it. With the measured
+  // M4 sine values substituted, the CPU frame is byte-exact.
+  ['synth/navierStokes', {
+    captureRevision: '2026-10-17-m4-metal-webgl2-gap035-navierstokes',
+    reviewedCandidateRevision: '2cf3427a48721b0f5d4362d3eb220096b0b61a00',
+    candidateSha256: 'ecf1c94478b607be4eecca8371ca201a213d53a8a9fdeb54a024360570dd52a4',
+    fixtureSha256: '3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3',
+    protocol: { size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial', frames: 1, renderer },
+    captures: [
+      {
+        surface: 'global_o1_write',
+        image: 'parity/goldens/defaults/synth__navierStokes.golden.png',
+        pngSha256: '9bac02b87364fbca263f6c63f92c9c9f1e995f41b430a17fa841708b77a4e9bc',
+        rawSha256: 'ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3',
+        maxError: 6, meanError: 0.55078125,
+        differingChannels: 75, channelsOverTolerance: 18,
+        pixels: [7, 12, 13, 15, 19, 20, 21, 22, 28, 30, 32, 33, 35, 36, 37, 38, 40, 41, 43, 44, 47, 55, 61, 62, 63],
+      },
+    ],
+  }],
+])
+
+export const NEAR_CASE_IDS = Object.freeze([...POLICIES.keys()])
+
 const sha256 = (value) => createHash('sha256').update(value).digest('hex')
 
-function expectedReview() {
+function expectedReview(policy) {
   return {
     accepted: true,
-    policy: captureRevision,
-    reviewedCandidateRevision: '5e93c23c6cd8c2b3f777bedc40142798be185ba8',
-    candidateSha256, fixtureSha256, authorityRevision,
-    protocol: { ...protocol },
+    policy: policy.captureRevision,
+    reviewedCandidateRevision: policy.reviewedCandidateRevision,
+    candidateSha256: policy.candidateSha256,
+    fixtureSha256: policy.fixtureSha256,
+    authorityRevision,
+    protocol: { ...policy.protocol },
     visualVerdict: 'indistinguishable at native size',
-    surfaces: captures.map((capture) => ({
+    surfaces: policy.captures.map(({ differingChannels, channelsOverTolerance, pixels, ...capture }) => ({
       ...capture,
       exact: false, pass: false,
-      differingChannels: 24, channelsOverTolerance: 24,
-      differingPixels: 8, pixels: [...pixels],
+      differingChannels, channelsOverTolerance,
+      differingPixels: pixels.length, pixels: [...pixels],
       bounds: {
         maxError: capture.maxError, meanError: capture.meanError,
-        differingChannels: 24, channelsOverTolerance: 24,
-        differingPixels: 8, pixels: [...pixels],
+        differingChannels, channelsOverTolerance,
+        differingPixels: pixels.length, pixels: [...pixels],
       },
     })),
   }
 }
 
-function matchesProtocol(meta) {
+function matchesProtocol(policy, meta) {
+  const { protocol } = policy
   return meta?.size === protocol.size && meta.time === protocol.time &&
     meta.seed === protocol.seed && meta.tolerance === protocol.tolerance &&
     (meta.oneShot ?? 'initial') === protocol.oneShot
@@ -67,24 +106,26 @@ function matchesProtocol(meta) {
 
 // Only these reviewed bytes qualify. Any changed candidate or capture needs a new review.
 export function validateNearReview(caseId, review, meta) {
-  return caseId === id && matchesProtocol(meta) && meta.sourceRevision === authorityRevision &&
-    isDeepStrictEqual(review, expectedReview())
+  const policy = POLICIES.get(caseId)
+  return policy !== undefined && matchesProtocol(policy, meta) && meta.sourceRevision === authorityRevision &&
+    isDeepStrictEqual(review, expectedReview(policy))
 }
 
 export async function reviewedNearComparison({ id: caseId, actual, source, meta, reference, authorityRevision: authority }) {
-  if (caseId !== id || !matchesProtocol(meta) || authority !== authorityRevision ||
-      sha256(source) !== fixtureSha256 || sha256(actual) !== candidateSha256 ||
-      reference?.sha256 !== captures[0].pngSha256 || reference.captureRevision !== captureRevision ||
+  const policy = POLICIES.get(caseId)
+  if (!policy || !matchesProtocol(policy, meta) || authority !== authorityRevision ||
+      sha256(source) !== policy.fixtureSha256 || sha256(actual) !== policy.candidateSha256 ||
+      reference?.sha256 !== policy.captures[0].pngSha256 || reference.captureRevision !== policy.captureRevision ||
       reference.provenance !== 'recorded') return null
 
-  const review = expectedReview()
+  const review = expectedReview(policy)
   for (const capture of review.surfaces) {
     const path = resolve(root, capture.image)
     if (sha256(await readFile(path)) !== capture.pngSha256) return null
     const expected = await readPng(path)
-    if (expected.width !== protocol.size || expected.height !== protocol.size ||
+    if (expected.width !== policy.protocol.size || expected.height !== policy.protocol.size ||
         sha256(expected.data) !== capture.rawSha256) return null
-    const measured = compareRgba8(actual, expected.data, protocol.tolerance)
+    const measured = compareRgba8(actual, expected.data, policy.protocol.tolerance)
     for (const key of ['exact', 'pass', 'maxError', 'meanError', 'differingChannels', 'channelsOverTolerance']) {
       if (measured[key] !== capture[key]) return null
     }
@@ -95,7 +136,7 @@ export async function reviewedNearComparison({ id: caseId, actual, source, meta,
         changedPixels.push(pixel)
       }
     }
-    if (!isDeepStrictEqual(changedPixels, pixels)) return null
+    if (!isDeepStrictEqual(changedPixels, capture.pixels)) return null
   }
   return review
 }

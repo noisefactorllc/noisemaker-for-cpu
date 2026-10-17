@@ -5,6 +5,7 @@ import test from 'node:test'
 
 import { sourceEffectIds } from '../src/effects/generated/upstream-snapshot.js'
 import { buildSummary, classifyCase, runSummary, selectCases } from '../scripts/parity/summary.js'
+import { ITERATED_SKIP_IDS } from '../scripts/parity/lib.js'
 
 const ENTRYPOINT = 'scripts/parity-summary'
 
@@ -99,13 +100,13 @@ test('entrypoint runs a former excluded case (synth/roll) through its fixture to
   assert.deepEqual([summary.near, summary.defer, summary.fail], [0, 0, 0])
 })
 
-test('entrypoint run on one skipped case preflights the fixture and reports skip', () => {
+test('no case is skipped, and the former skip synth/navierStokes renders against its golden', () => {
+  assert.deepEqual([...ITERATED_SKIP_IDS], [])
   const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'synth/navierStokes'], { encoding: 'utf8' })
   const lastLine = stdout.trimEnd().split('\n').pop()
   const summary = JSON.parse(lastLine.replace(/^PARITY-SUMMARY /, ''))
-  assert.equal(summary.expected, 1)
-  assert.equal(summary.skip, 1)
-  assert.equal(summary.executed, 0)
+  assert.deepEqual([summary.expected, summary.executed, summary.skip, summary.near, summary.fail], [1, 1, 0, 1, 0])
+  assert.match(stdout, /^NEAR synth\/navierStokes max=6 /m)
 })
 
 test('entrypoint grades the default points/lenia fixture against its authority golden', () => {

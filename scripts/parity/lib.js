@@ -71,9 +71,8 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 // Iterated (CPU-only per-frame loop) effects whose fresh M4/Metal authority captures
 // show real CPU divergence (the recorded sin-hash / feedback-chain / volume-iteration
 // classes); every other iterated effect is graded against its committed golden.
-export const ITERATED_SKIP_IDS = Object.freeze(new Set([
-  'synth/navierStokes',
-]))
+// Empty since synth/navierStokes gained its 2026-10-17 M4/Metal golden.
+export const ITERATED_SKIP_IDS = Object.freeze(new Set([]))
 
 export function isSkippedEffect(definition) {
   return ITERATED_SKIP_IDS.has(definition.id)
