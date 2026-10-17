@@ -51,7 +51,7 @@ const POLICIES = new Map([
   // M4 sine values substituted, the CPU frame is byte-exact.
   ['synth/navierStokes', {
     captureRevision: '2026-10-17-m4-metal-webgl2-gap035-navierstokes',
-    reviewedCandidateRevision: '2cf3427a48721b0f5d4362d3eb220096b0b61a00',
+    reviewedCandidateRevision: '6acab0af38cd49ce75ea9cef4df185b81f751183',
     candidateSha256: 'ecf1c94478b607be4eecca8371ca201a213d53a8a9fdeb54a024360570dd52a4',
     fixtureSha256: '3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3',
     protocol: { size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial', frames: 1, renderer },

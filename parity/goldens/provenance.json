@@ -1523,7 +1523,7 @@
     "defaults/points__buddhabrot.golden.png": {
       "sha256": "d5f2d4316afeb89d1cc3fc92295ae6b2dc4a9d912f91f1308eb19a90deb130df",
       "bytes": 128,
-      "introducedIn": "a85be34121aed65047066307d54f6fc14dc2f5eb",
+      "introducedIn": "662eec0932d8548bde1494ef38eafed03834639c",
       "captureRevision": "2026-10-16-m4-metal-webgl2-gap035-buddhabrot",
       "captureRecord": {
         "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
@@ -1555,7 +1555,7 @@
     "defaults/synth__navierStokes.golden.png": {
       "sha256": "9bac02b87364fbca263f6c63f92c9c9f1e995f41b430a17fa841708b77a4e9bc",
       "bytes": 273,
-      "introducedIn": "e70a1eae828a9d524cd3cab68ae69788eabb5645",
+      "introducedIn": "deff194f4e3da035a0d92aa1f7417bd70c56303d",
       "captureRevision": "2026-10-17-m4-metal-webgl2-gap035-navierstokes",
       "captureRecord": {
         "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
