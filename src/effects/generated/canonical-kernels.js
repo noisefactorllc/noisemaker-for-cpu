@@ -32174,10 +32174,11 @@ function canonicalFactory270($bindings, $runtime) {
 }
 
 function canonicalFactory271($bindings, $runtime) {
-  const { ivec2, sin, exp, fract, clamp, dot, texture, textureSize } = $runtime.stdlib
+  const { float, ivec2, sin, exp, fract, clamp, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   var cpu_vector_write_0_0, cpu_vector_write_0_1;
   
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
   function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
   function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -32193,7 +32194,7 @@ function canonicalFactory271($bindings, $runtime) {
   var inputTex = $bindings["inputTex"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function hash11 (x) {
-  	return fract((sin(x * 12.989800453186035)) * 43758.546875);
+  	return fract(cpu_float((cpu_float(sin(cpu_float(cpu_float(x) * 12.989800453186035)))) * 43758.546875));
   };
   function hash22 (p) {
   	p = $runtime.copy(p);

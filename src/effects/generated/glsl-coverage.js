@@ -2817,8 +2817,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "c3e88bac9c8afa8ed31baec34756db36ad30dd0e73588b35ffc320cba36d3f37",
     "sourceBytes": 3251,
-    "normalizedBytes": 3336,
-    "generatedBytes": 3077
+    "normalizedBytes": 3427,
+    "generatedBytes": 3168
   },
   {
     "effectId": "synth/newton",

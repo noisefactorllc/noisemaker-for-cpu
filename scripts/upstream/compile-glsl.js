@@ -843,6 +843,15 @@ function adaptCanonicalSource(effectId, source) {
       )
     source = preserveScalarFloatDeclarations(source)
   }
+  if (effectId === 'synth/navierStokes' && source.includes('float hash11(float x) {')) {
+    // nsSplat's hash11 seeds each vortex sign and radius. The authority evaluates
+    // its argument, the scaled sine input, the sine and the 43758.5453 product in
+    // float32 before fract; JavaScript scalars stay float64 there, which moves the
+    // hashed values by whole float32 steps (1/256 at this magnitude).
+    const hash = 'return fract(sin(x * 12.9898) * 43758.5453);'
+    if (!source.includes(hash)) throw new Error('Unable to find the canonical navierStokes hash11 body')
+    source = source.replace(hash, 'return fract(float(float(sin(float(float(x) * 12.9898))) * 43758.5453));')
+  }
   if (effectId === 'synth/reactionDiffusion') {
     // glsl-transpiler's `optimize: true` constant folder emits a literal `NaN` in place of the
     // `a2`/`b2` locals when they reach `fragColor = vec4(a2, b2, 0.0, 1.0);` in rdFb.glsl — a
