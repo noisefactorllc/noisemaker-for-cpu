@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findExecutable, inspectSafari, listenWithFallback, serve } from '../scripts/browser-check.mjs'
+import { findExecutable, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
@@ -142,4 +142,101 @@ test('missing Safari driver fails promptly without opening a test server', () =>
     { cwd: root, encoding: 'utf8', timeout: 5000 })
   assert.equal(result.status, 1)
   assert.match(result.stdout, /BROWSER-CHECK .*no safari executable found/)
+})
+
+// A stand-in for a Playwright browser type: it loads the served page through
+// the real test server (so the recorder injection and request log are the real
+// ones), answers the status probe, and records whether the browser closed.
+function fakeWebkit(mode) {
+  const state = { closed: false, launched: null }
+  const engine = {
+    async launch(options) {
+      state.launched = options
+      const handlers = {}
+      const page = {
+        on(event, handler) { handlers[event] = handler },
+        async goto(url) {
+          const html = await new Promise((resolveText, rejectText) => {
+            httpGet(url, { agent: false }, (response) => {
+              const chunks = []
+              response.on('data', (chunk) => chunks.push(chunk))
+              response.on('end', () => resolveText(Buffer.concat(chunks).toString('utf8')))
+            }).on('error', rejectText)
+          })
+          if (html.indexOf('__browserCheckErrors') < 0 || html.indexOf('__browserCheckErrors') > html.indexOf('<script type="module"')) {
+            throw new Error('error recorder was not installed before modules')
+          }
+          if (mode === 'page-error') handlers.pageerror?.(new Error('uncaught module exception'))
+          if (mode === 'request-failed') handlers.requestfailed?.({ url: () => new URL('/examples/browser/demo.js', url).href, failure: () => ({ errorText: 'net::ERR_ABORTED' }) })
+          if (mode === 'goto-error') throw new Error('navigation timed out')
+        },
+        async evaluate(expression) {
+          if (expression === 'navigator.userAgent') return 'Mozilla/5.0 AppleWebKit/605.1.15 Version/15.4 Safari/605.1.15'
+          if (!expression.includes('__browserCheckErrors') || !expression.includes('canvas')) throw new Error('status probe omitted diagnostics or canvas')
+          return JSON.stringify({ rendering: false, status: '20 passes', appContainer: true,
+            canvas: { width: 10, height: 10, nonZeroPixels: mode === 'blank' ? 0 : 100 }, pageErrors: [] })
+        },
+      }
+      return { version: () => '15.4', newPage: async () => page, close: async () => { state.closed = true } }
+    },
+  }
+  return { engine, state }
+}
+
+async function runFakeWebkit(mode) {
+  const requests = []
+  const web = await serve(root, { safari: true, requests })
+  const baseURL = `http://127.0.0.1:${web.address().port}`
+  const { engine, state } = fakeWebkit(mode)
+  try {
+    try {
+      const result = await inspectWebkit({ engine, targetURL: `${baseURL}/examples/browser/index.html`, baseURL, requests, timeout: 3000 })
+      return { result, state }
+    } catch (error) {
+      return { error, state }
+    }
+  } finally {
+    await close(web)
+  }
+}
+
+test('Playwright WebKit checks the rendered canvas and reports the engine version', async () => {
+  const { result, state } = await runFakeWebkit('pass')
+  assert.equal(result.pass, true)
+  assert.equal(result.browser.product, 'WebKit 15.4')
+  assert.match(result.browser.userAgent, /Version\/15\.4/)
+  assert.equal(result.httpStatus, 200)
+  assert.deepEqual(state.launched, { headless: true })
+  assert.equal(state.closed, true)
+})
+
+test('Playwright WebKit rejects an engine page error even when canvas rendered', async () => {
+  const { result, state } = await runFakeWebkit('page-error')
+  assert.equal(result.pass, false)
+  assert.deepEqual(result.pageErrors, ['uncaught module exception'])
+  assert.equal(state.closed, true)
+})
+
+test('Playwright WebKit rejects a failed same-origin request', async () => {
+  const { result } = await runFakeWebkit('request-failed')
+  assert.equal(result.pass, false)
+  assert.match(result.moduleFailures.join(' '), /failed .*demo\.js :: net::ERR_ABORTED/)
+})
+
+test('Playwright WebKit rejects a blank canvas', async () => {
+  const { result } = await runFakeWebkit('blank')
+  assert.equal(result.pass, false)
+})
+
+test('Playwright WebKit closes the browser after a navigation error', async () => {
+  const { error, state } = await runFakeWebkit('goto-error')
+  assert.match(String(error), /navigation timed out/)
+  assert.equal(state.closed, true)
+})
+
+test('webkit without a Playwright package fails at argument parsing', () => {
+  const result = spawnSync(process.execPath, ['scripts/browser-check.mjs', '--browser', 'webkit'],
+    { cwd: root, encoding: 'utf8', timeout: 5000 })
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /--browser webkit needs --playwright/)
 })

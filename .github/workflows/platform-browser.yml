@@ -118,3 +118,57 @@ jobs:
           name: cpu-safari-browser-${{ github.sha }}
           path: ${{ runner.temp }}/cpu-platform-safari/
           if-no-files-found: warn
+
+  webkit-floor:
+    # The README's declared Safari floor is 15.4. No hosted macOS image still
+    # ships Safari 15.4, so this leg runs the same demo check on the nearest
+    # available WebKit build: Playwright 1.22.2's WebKit (browsers.json
+    # revision 1641, browserVersion "15.4"), preinstalled in its focal image.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    container:
+      image: mcr.microsoft.com/playwright:v1.22.2-focal@sha256:9b3f813c7f76c0f562244b3c99423755405cd43b413941f04d99f20ff604286c
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: '26'
+          cache: npm
+      - name: Record exact source, image and WebKit build
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt="$RUNNER_TEMP/cpu-platform-webkit"
+          mkdir -p "$receipt"
+          {
+            echo "source=$GITHUB_SHA"
+            grep -E '^(NAME|VERSION)=' /etc/os-release
+            node --version
+            ls -d /ms-playwright/webkit-*
+          } | tee "$receipt/identity.log"
+          [[ "$(node --version)" == v26.* ]]
+          test -d /ms-playwright/webkit-1641
+      - run: npm ci --ignore-scripts --bin-links=false
+      - name: Install the Playwright client that drives WebKit 1641
+        shell: bash
+        run: npm install --prefix "$RUNNER_TEMP/playwright" --no-save --ignore-scripts playwright-core@1.22.2
+      - name: Run the demo browser check on WebKit 15.4
+        shell: bash
+        run: |
+          set -uo pipefail
+          receipt="$RUNNER_TEMP/cpu-platform-webkit"
+          PLAYWRIGHT_BROWSERS_PATH=/ms-playwright node scripts/browser-check.mjs --browser webkit \
+            --playwright "$RUNNER_TEMP/playwright/node_modules/playwright-core" 2>&1 | tee "$receipt/browser.log"
+          browser_exit=${PIPESTATUS[0]}
+          echo "exit_code=$browser_exit" | tee -a "$receipt/browser.log"
+          test "$browser_exit" -eq 0 || exit "$browser_exit"
+          grep -F '"pass":true' "$receipt/browser.log"
+          grep -F '"product":"WebKit 15.4"' "$receipt/browser.log"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: cpu-webkit-floor-browser-${{ github.sha }}
+          path: ${{ runner.temp }}/cpu-platform-webkit/
+          if-no-files-found: warn

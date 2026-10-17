@@ -6,21 +6,26 @@
  * Serves a directory root (the repository checkout or an installed
  * `noisemaker-cpu` package root) over local HTTP, opens
  * `examples/browser/index.html` in a Chromium-family browser over the raw
- * DevTools protocol, or in Safari over its built-in WebDriver, waits for the
- * demo's first render to complete, and asserts that the demo initialized,
- * every same-origin module loaded, and the canvas carries a rendered frame.
+ * DevTools protocol, in Safari over its built-in WebDriver, or in a Playwright
+ * WebKit build, waits for the demo's first render to complete, and asserts
+ * that the demo initialized, every same-origin module loaded, and the canvas
+ * carries a rendered frame.
  *
  * Options:
  *   --root <dir>        Directory to serve (default: repository root)
  *   --url <url>         Check this URL directly instead of serving --root
- *   --browser <name>    chromium (default) or safari
+ *   --browser <name>    chromium (default), safari, or webkit
  *   --executable <path> Browser or safaridriver binary (default: discovered)
+ *   --playwright <dir>  Installed playwright-core package that drives WebKit
+ *                       (webkit only; its bundled WebKit build is the engine
+ *                       under test, so the package version picks the version)
  *   --timeout <ms>      Render wait budget (default: 120000)
  *
  * Prints one `BROWSER-CHECK {…}` JSON line. Exit 0 on pass, 1 on failure.
  */
 
 import { spawn } from 'node:child_process'
+import { createRequire } from 'node:module'
 import { createServer, request as httpRequest } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { mkdtempSync, statSync } from 'node:fs'
@@ -40,10 +45,12 @@ function parseArgs(argv) {
     else if (key === '--url') args.url = argv[++i]
     else if (key === '--executable') args.executable = argv[++i]
     else if (key === '--browser') args.browser = argv[++i]
+    else if (key === '--playwright') args.playwright = resolve(argv[++i])
     else if (key === '--timeout') args.timeout = Number(argv[++i])
     else throw new Error(`unknown argument: ${key}`)
   }
-  if (!['chromium', 'safari'].includes(args.browser)) throw new Error(`unsupported browser: ${args.browser}`)
+  if (!['chromium', 'safari', 'webkit'].includes(args.browser)) throw new Error(`unsupported browser: ${args.browser}`)
+  if (args.browser === 'webkit' && !args.playwright) throw new Error('--browser webkit needs --playwright <playwright-core dir>')
   if (!Number.isFinite(args.timeout) || args.timeout <= 0) throw new Error('timeout must be positive')
   return args
 }
@@ -378,13 +385,89 @@ async function runSafari(args, executable, server, targetURL, requests) {
   }
 }
 
+// Drives a Playwright WebKit build. The page error recorder is the one the
+// served Safari page carries, so early module exceptions count the same way;
+// Playwright's own pageerror events and failed same-origin requests are added.
+export async function inspectWebkit({ engine, targetURL, baseURL, requests, executable, timeout }) {
+  const browser = await engine.launch({ headless: true, ...(executable ? { executablePath: executable } : {}) })
+  try {
+    const page = await browser.newPage()
+    const engineErrors = []
+    const requestFailures = []
+    page.on('pageerror', (error) => engineErrors.push(String(error?.message || error).slice(0, 300)))
+    page.on('requestfailed', (request) => {
+      if (request.url().startsWith(baseURL)) requestFailures.push(`failed ${request.url()} :: ${request.failure()?.errorText || 'network error'}`)
+    })
+    await page.goto(targetURL, { waitUntil: 'domcontentloaded', timeout: 30000 })
+
+    const deadline = Date.now() + timeout
+    let probe = null
+    while (Date.now() < deadline) {
+      probe = JSON.parse(await page.evaluate(STATUS_PROBE))
+      if (!probe.rendering && /passes/.test(probe.status)) break
+      await sleep(500)
+    }
+    const userAgent = await page.evaluate('navigator.userAgent')
+    const mainFrameStatus = requests.find((request) => request.path === '/examples/browser/index.html')?.status ?? null
+    const moduleFailures = [
+      ...requests.filter((request) => request.status >= 400).map((request) => `${request.status} ${new URL(request.path, targetURL)}`),
+      ...requestFailures,
+    ]
+    const pageErrors = [...(probe?.pageErrors || []), ...engineErrors]
+    const renderCompleted = !!probe && /passes/.test(probe.status)
+    const canvas = probe?.canvas || null
+    const nonBlank = !!canvas && !canvas.error && canvas.nonZeroPixels > canvas.width * canvas.height * 0.5
+    const pass = renderCompleted && nonBlank && probe.appContainer && mainFrameStatus === 200 &&
+      moduleFailures.length === 0 && pageErrors.length === 0
+    return {
+      pass,
+      browser: { product: `WebKit ${browser.version()}`, userAgent, executable: executable || 'playwright' },
+      platform: process.platform,
+      url: targetURL,
+      httpStatus: mainFrameStatus,
+      render: { completed: renderCompleted, statusText: probe ? probe.status.slice(0, 120) : null },
+      canvas,
+      appContainer: !!probe && probe.appContainer,
+      moduleFailures,
+      pageErrors,
+    }
+  } finally {
+    await browser.close()
+  }
+}
+
+async function runWebkit(args, server, baseURL, targetURL, requests) {
+  try {
+    const { webkit } = createRequire(import.meta.url)(args.playwright)
+    if (!webkit) throw new Error(`${args.playwright} exports no webkit browser type`)
+    const result = await inspectWebkit({
+      engine: webkit, targetURL, baseURL, requests, executable: args.executable, timeout: args.timeout,
+    })
+    console.log(`BROWSER-CHECK ${JSON.stringify(result)}`)
+    process.exitCode = result.pass ? 0 : 1
+  } catch (error) {
+    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: String(error).slice(0, 500) })}`)
+    process.exitCode = 1
+  } finally {
+    await new Promise((resolveClose) => server.close(resolveClose))
+  }
+}
+
 async function run() {
   const args = parseArgs(process.argv.slice(2))
   const demoPath = '/examples/browser/index.html'
 
-  if (args.browser === 'safari' && args.url) {
-    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: 'Safari --url cannot capture pre-module page errors; use --root' })}`)
+  if (args.browser !== 'chromium' && args.url) {
+    console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: `${args.browser} --url cannot capture pre-module page errors; use --root` })}`)
     process.exitCode = 1
+    return
+  }
+
+  if (args.browser === 'webkit') {
+    const requests = []
+    const server = await serve(args.root, { safari: true, requests })
+    const baseURL = `http://127.0.0.1:${server.address().port}`
+    await runWebkit(args, server, baseURL, `${baseURL}${demoPath}`, requests)
     return
   }
 
