@@ -180,5 +180,34 @@
   "defaults/filter__flipMirror.golden.png": {
     "captureRevision": "2026-10-09-m4-metal-webgl2-worker-elves-4907b00c-flipmirror",
     "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Worker Elves job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture (parity/upstream-defaults/filter__flipMirror.dsl; flipMirror mode semantics changed upstream in 16d97cdf..700ac32e, so this golden's first capture is this re-capture; the port reproduces it byte-exact)"
+  },
+  "defaults/points__buddhabrot.golden.png": {
+    "captureRevision": "2026-10-16-m4-metal-webgl2-gap035-buddhabrot",
+    "captureRecord": {
+      "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+      "fixtureSha256": "553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 60,
+      "frameTimeStep": 0.0016666666666666668,
+      "surface": {
+        "read": "global_o0_read",
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "id": "global_o0_read",
+          "sha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65",
+          "repeatSha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65"
+        },
+        {
+          "id": "global_o0_write",
+          "sha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
+          "repeatSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113"
+        }
+      ]
+    }
   }
 }

@@ -6,7 +6,7 @@
 // The gate passes only when all of these are true:
 //   - the output ends its run with one PARITY-SUMMARY line;
 //   - every authority-manifest case is reported exactly once, and no other id is;
-//   - no case is MISSING and the near and defer counts are zero;
+//   - no case is MISSING or deferred, and every NEAR case has its reviewed evidence;
 //   - the SKIP cases are exactly the declared skip set (an undeclared skip fails,
 //     and a declared skip that is no longer skipped fails until it is undeclared);
 //   - the FAIL cases are exactly the accepted failures (filter/crt today, see
@@ -19,6 +19,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 import { sourceEffectIds } from '../../src/effects/generated/upstream-snapshot.js'
+import { validateNearReview } from './near.js'
 
 const VERDICT = /^(EXACT|STRICT|FAIL|SKIP|MISSING|NEAR|DEFER) (\S+)/
 const SUMMARY = /^PARITY-SUMMARY (.*)$/
@@ -31,6 +32,7 @@ export function parseSummaryOutput(text) {
   const verdicts = new Map()
   const duplicates = []
   const summaries = []
+  const nearReviews = new Map()
   for (const line of text.split(/\r?\n/)) {
     const summaryMatch = SUMMARY.exec(line)
     if (summaryMatch) {
@@ -42,8 +44,14 @@ export function parseSummaryOutput(text) {
     const [, verdict, id] = match
     if (verdicts.has(id)) duplicates.push(id)
     verdicts.set(id, verdict)
+    if (verdict === 'NEAR') {
+      const evidence = /\sreview=(\{.*\})$/.exec(line)
+      let review = null
+      try { if (evidence) review = JSON.parse(evidence[1]) } catch { /* Invalid evidence fails validation. */ }
+      nearReviews.set(id, review)
+    }
   }
-  return { verdicts, duplicates, summaries }
+  return { verdicts, duplicates, summaries, nearReviews }
 }
 
 export function evaluateReleaseGate(text, { declaredSkips, acceptedFailures, authority = sourceEffectIds }) {
@@ -51,7 +59,7 @@ export function evaluateReleaseGate(text, { declaredSkips, acceptedFailures, aut
     throw new TypeError('evaluateReleaseGate needs explicit declaredSkips and acceptedFailures arrays')
   }
   const errors = []
-  const { verdicts, duplicates, summaries } = parseSummaryOutput(text)
+  const { verdicts, duplicates, summaries, nearReviews } = parseSummaryOutput(text)
   const authoritySet = new Set(authority)
 
   for (const id of [...declaredSkips, ...acceptedFailures]) {
@@ -86,7 +94,9 @@ export function evaluateReleaseGate(text, { declaredSkips, acceptedFailures, aut
   const defer = byVerdict('DEFER')
 
   for (const id of missing) errors.push(`MISSING ${id}: a release needs zero missing cases`)
-  for (const id of near) errors.push(`NEAR ${id}: a release accepts no near cases`)
+  for (const id of near) {
+    if (!validateNearReview(id, nearReviews.get(id), summary)) errors.push(`NEAR ${id}: missing or invalid reviewed case evidence`)
+  }
   for (const id of defer) errors.push(`DEFER ${id}: a release accepts no deferred cases`)
 
   const declaredSkipSet = new Set(declaredSkips)
@@ -110,13 +120,13 @@ export function evaluateReleaseGate(text, { declaredSkips, acceptedFailures, aut
   }
 
   if (summary) {
-    const executed = byVerdict('EXACT').length + byVerdict('STRICT').length + fails.length
+    const executed = byVerdict('EXACT').length + byVerdict('STRICT').length + near.length + fails.length
     const expectedCounts = {
       expected: authority.length,
       executed,
       exact: byVerdict('EXACT').length,
       strict: byVerdict('STRICT').length,
-      near: 0,
+      near: near.length,
       defer: 0,
       skip: skips.length,
       fail: fails.length,

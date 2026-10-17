@@ -63,6 +63,19 @@ test('buildSummary arithmetic satisfies the closure contract invariants', () => 
   )
 })
 
+test('buildSummary counts a reviewed NEAR result separately from numerical passes and failures', () => {
+  const summary = buildSummary([
+    { exact: true, pass: true },
+    { exact: false, pass: true },
+    { exact: false, pass: false, near: { accepted: true } },
+    { exact: false, pass: false },
+  ], [], [], { size: 8, time: 0.25, seed: 1, tolerance: 2 })
+  assert.deepEqual(
+    [summary.expected, summary.executed, summary.exact, summary.strict, summary.near, summary.fail],
+    [4, 4, 1, 1, 1, 1],
+  )
+})
+
 test('entrypoint run on one case emits a PARITY-SUMMARY last line', () => {
   const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'filter/adjust'], { encoding: 'utf8' })
   const lastLine = stdout.trimEnd().split('\n').pop()
@@ -87,7 +100,7 @@ test('entrypoint runs a former excluded case (synth/roll) through its fixture to
 })
 
 test('entrypoint run on one skipped case preflights the fixture and reports skip', () => {
-  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'points/buddhabrot'], { encoding: 'utf8' })
+  const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'synth/navierStokes'], { encoding: 'utf8' })
   const lastLine = stdout.trimEnd().split('\n').pop()
   const summary = JSON.parse(lastLine.replace(/^PARITY-SUMMARY /, ''))
   assert.equal(summary.expected, 1)

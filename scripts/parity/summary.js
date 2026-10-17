@@ -6,8 +6,7 @@
 // never hand-assigned:
 //   exact   — byte-identical RGBA output against the retained authority golden.
 //   strict  — all channels within the gate's ±2-byte numerical contract (not byte-exact).
-//   near    — reserved: mismatches beyond the contract that a separately authorized,
-//             explicitly recorded per-case tolerance accepts. Nothing records one today.
+//   near    — reviewed capture bytes under the case-specific policy in near.js.
 //   defer   — reserved: explicitly recorded per-case deferrals with their own acceptance
 //             record. Nothing records one today.
 //   skip    — the explicit, fixture-preflighted ITERATED_SKIP_IDS
@@ -19,8 +18,8 @@
 //             policy reason).
 // The exit code reports whether the audit ran to completion, not a parity verdict: the
 // PASS/FAIL verdict lives in the PARITY-SUMMARY JSON line, whose counts are the closure contract
-// only when executed === expected, exact + strict === expected, and near, defer, skip,
-// fail, and missing are all zero.
+// only when executed === expected, exact + strict + reviewed near === expected,
+// and defer, skip, fail, and missing are all zero.
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
@@ -33,6 +32,7 @@ import { sourceEffectIds, UPSTREAM_REVISION } from '../../src/effects/generated/
 import { readPng } from '../../src/node/png.js'
 import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect } from './lib.js'
 import { externalInputsForCase } from './reactive-fixtures.js'
+import { reviewedNearComparison } from './near.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -95,7 +95,8 @@ export function classifyCase({ id, inRegistry, hasGolden, skipPolicy }) {
 export function buildSummary(rendered, skipped, missing, meta) {
   const exact = rendered.filter((result) => result.exact).length
   const strict = rendered.filter((result) => !result.exact && result.pass).length
-  const fail = rendered.filter((result) => !result.pass).length
+  const near = rendered.filter((result) => result.near?.accepted === true).length
+  const fail = rendered.filter((result) => !result.pass && result.near?.accepted !== true).length
   return {
     sourceRevision: UPSTREAM_REVISION,
     size: meta.size,
@@ -106,7 +107,7 @@ export function buildSummary(rendered, skipped, missing, meta) {
     executed: rendered.length,
     exact,
     strict,
-    near: 0,
+    near,
     defer: 0,
     skip: skipped.length,
     fail,
@@ -197,9 +198,13 @@ export async function runSummary(options = {}) {
     if (golden.width !== meta.size || golden.height !== meta.size) {
       throw new Error(`${id} golden is ${golden.width}x${golden.height}; requested ${meta.size}x${meta.size}`)
     }
-    const comparison = compareRgba8(renderedResult.toRgba8(), golden.data, meta.tolerance)
+    const actual = renderedResult.toRgba8()
+    const comparison = compareRgba8(actual, golden.data, meta.tolerance)
     const reference = await goldenReference(goldenRoot, suiteFor(id), caseName(id), provenance)
-    rendered.push({ id, ...comparison, reference })
+    const near = comparison.pass ? null : await reviewedNearComparison({
+      id, actual, source, meta, reference, authorityRevision: UPSTREAM_REVISION,
+    })
+    rendered.push({ id, ...comparison, reference, ...(near ? { near } : {}) })
   }
 
   const summary = buildSummary(rendered, skipped, missing, meta)
@@ -209,7 +214,7 @@ export async function runSummary(options = {}) {
     const reference = `reference=${result.reference.image} sha256=${result.reference.sha256} provenance=${result.reference.provenance}`
     lines.push(result.exact
       ? `EXACT ${result.id} (${fixtureLine(result.id)}; ${reference})`
-      : `${result.pass ? 'STRICT' : 'FAIL'} ${result.id} max=${result.maxError} mean=${result.meanError.toFixed(4)} channels>${meta.tolerance}=${result.channelsOverTolerance} (${fixtureLine(result.id)}; ${reference})`)
+      : `${result.pass ? 'STRICT' : result.near ? 'NEAR' : 'FAIL'} ${result.id} max=${result.maxError} mean=${result.meanError.toFixed(4)} channels>${meta.tolerance}=${result.channelsOverTolerance} differingChannels=${result.differingChannels} (${fixtureLine(result.id)}; ${reference})${result.near ? ` review=${JSON.stringify(result.near)}` : ''}`)
   }
   for (const entry of skipped) lines.push(`SKIP ${entry.id} (${entry.reason})`)
   for (const entry of missing) lines.push(`MISSING ${entry.id} (${entry.reason})`)

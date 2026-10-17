@@ -1519,6 +1519,38 @@
       "introducedIn": "9d8fc85e7468c21bde6acbb2c54971924c925a85",
       "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-lenia-density01-timed60",
       "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 capture from authority source 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d. The default points/lenia fixture changed only pointsRender density to 0.1. At 8x8 with perlin and pointsEmit seed 0, the authority rendered 60 frame times from 0.1516666667 through 0.25 in steps of 1/600; the CPU comparison used renderer seed 1. Two independent readbacks had raw SHA-256 f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a and encoded PNG SHA-256 69d87be57f63ba9327bbc1b48349ac82fab7981a4dc4c5debc7b71b7283f4142. The CPU 60-frame output differs in one RGBA channel by 1, inside the unchanged tolerance of 2. One frame produces a different authority raw SHA-256 6296b722becb73bfa53865ae433f532d8b94d2a9ee0ded5cfc88506a723e2a10, so this capture distinguishes one from 60 group ticks."
+    },
+    "defaults/points__buddhabrot.golden.png": {
+      "sha256": "d5f2d4316afeb89d1cc3fc92295ae6b2dc4a9d912f91f1308eb19a90deb130df",
+      "bytes": 128,
+      "introducedIn": "4e444062fe609e3fa9adb0dfe22b7989beb057b8",
+      "captureRevision": "2026-10-16-m4-metal-webgl2-gap035-buddhabrot",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 60,
+        "frameTimeStep": 0.0016666666666666668,
+        "surface": {
+          "read": "global_o0_read",
+          "write": "global_o0_write"
+        },
+        "readbacks": [
+          {
+            "id": "global_o0_read",
+            "sha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65",
+            "repeatSha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65"
+          },
+          {
+            "id": "global_o0_write",
+            "sha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
+            "repeatSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113"
+          }
+        ]
+      }
     }
   }
 }

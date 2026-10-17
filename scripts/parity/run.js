@@ -9,6 +9,7 @@ import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot
 import { readPng, writePng } from '../../src/node/png.js'
 import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect } from './lib.js'
 import { externalInputsForCase } from './reactive-fixtures.js'
+import { reviewedNearComparison } from './near.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -130,10 +131,14 @@ async function main() {
     }
     const actual = rendered.toRgba8()
     const comparison = compareRgba8(actual, golden.data, options.tolerance)
-    results.push({ id: definition.id, reference: await goldenReference(goldenRoot, suite, name, goldenProvenance), ...comparison })
+    const reference = await goldenReference(goldenRoot, suite, name, goldenProvenance)
+    const near = comparison.pass ? null : await reviewedNearComparison({
+      id: definition.id, actual, source, meta: options, reference, authorityRevision: UPSTREAM_REVISION,
+    })
+    results.push({ id: definition.id, reference, ...comparison, ...(near ? { near } : {}) })
     if (options.writeCpu) await writePng(resolve(directory, `${name}.cpu.png`), rendered)
   }
-  const failures = results.filter((result) => !result.pass).sort((left, right) => right.maxError - left.maxError || right.meanError - left.meanError)
+  const failures = results.filter((result) => !result.pass && !result.near).sort((left, right) => right.maxError - left.maxError || right.meanError - left.meanError)
   const summary = {
     sourceRevision: UPSTREAM_REVISION,
     suite: options.suite,
@@ -142,7 +147,8 @@ async function main() {
     seed: options.seed,
     tolerance: options.tolerance,
     effects: results.length,
-    passed: results.length - failures.length,
+    passed: results.filter((result) => result.pass).length,
+    near: results.filter((result) => result.near).length,
     byteExact: results.filter((result) => result.exact).length,
     failures,
     skipped: skipped.map((definition) => definition.id),
@@ -154,10 +160,13 @@ async function main() {
   }
   if (options.json) process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`)
   else {
-    process.stdout.write(`Parity ${summary.passed}/${summary.effects} within ±${summary.tolerance} RGBA bytes; ${summary.byteExact} byte-exact; ${summary.skipped.length} skipped\n`)
+    process.stdout.write(`Parity ${summary.passed}/${summary.effects} within ±${summary.tolerance} RGBA bytes; ${summary.byteExact} byte-exact; ${summary.near} reviewed NEAR; ${summary.skipped.length} skipped\n`)
     process.stdout.write(`Reference provenance: ${summary.referenceProvenance.recorded} recorded, ${summary.referenceProvenance.unknown} unknown (no capture record; sourceRevision ${summary.sourceRevision} is the candidate pin, not the reference capture revision)\n`)
     for (const failure of failures) {
       process.stdout.write(`FAIL ${failure.id} max=${failure.maxError} mean=${failure.meanError.toFixed(4)} channels>${summary.tolerance}=${failure.channelsOverTolerance}\n`)
+    }
+    for (const result of results.filter((result) => result.near)) {
+      process.stdout.write(`NEAR ${result.id} review=${JSON.stringify(result.near)}\n`)
     }
     for (const id of summary.skipped) {
       process.stdout.write(`SKIP ${id} (cpu-divergent, no GPU golden)\n`)
