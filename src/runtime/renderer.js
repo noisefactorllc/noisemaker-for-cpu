@@ -43,7 +43,8 @@ function particleStateFallbackFormat(name) {
 // paths, not just one.
 function groupOwnerStateSize(group) {
   if (group.steps.length <= 1) return undefined
-  const owner = group.steps[0]
+  // A particle group's owner is its pointsEmit step, which an animated input generator may precede.
+  const owner = group.steps.find((step) => Object.hasOwn(step.definition?.textures ?? {}, 'global_xyz')) ?? group.steps[0]
   return Object.hasOwn(owner.params, 'stateSize') ? owner.params.stateSize : undefined
 }
 

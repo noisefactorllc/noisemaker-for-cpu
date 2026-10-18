@@ -69,6 +69,31 @@ test('flow3d re-evaluates animated noise3d per tick while preserving static and 
   assert.deepEqual(computeIterationGroups([animated, zeroFlow]).map((group) => [group.iterated, group.steps.length]), [[false, 1], [true, 1]])
 })
 
+test('pointsEmit re-runs an animated image generator input per iteration, and leaves static and zero-iteration inputs alone', () => {
+  // Break caught: the authority renders the chain every frame, so pointsEmit colors agents from
+  // its input at that frame's time; evaluating animated perlin once colors every agent from the
+  // final frame.
+  const xyz = { global_xyz: {}, global_vel: {}, global_rgba: {} }
+  const emitPasses = [{ inputs: { xyzTex: 'global_xyz', inputTex: 'inputTex' }, outputs: { outXYZ: 'global_xyz' } }]
+  const emit = step('render/pointsEmit', xyz, emitPasses, true, { iterationCount: 3 })
+  const zeroEmit = step('render/pointsEmit', xyz, emitPasses, true, { iterationCount: 0 })
+  const generator = (params, iterated = false, domain = 'image') => {
+    const value = step('synth/perlin', {}, [], iterated, params)
+    value.definition.kind = 'generator'
+    value.definition.domain = domain
+    return value
+  }
+  const animated = generator({ speed: 1 })
+  const shape = (steps) => computeIterationGroups(steps).map((group) => [group.iterated, group.steps.length])
+  assert.deepEqual(shape([animated, emit]), [[true, 2]])
+  assert.equal(computeIterationGroups([animated, emit])[0].steps[0], animated)
+  assert.deepEqual(shape([generator({ speed: 0 }), emit]), [[false, 1], [true, 1]])
+  assert.deepEqual(shape([generator({}), emit]), [[false, 1], [true, 1]])
+  assert.deepEqual(shape([animated, zeroEmit]), [[false, 1], [true, 1]])
+  assert.deepEqual(shape([generator({ speed: 1 }, false, 'volume-generator'), emit]), [[false, 1], [true, 1]])
+  assert.deepEqual(shape([generator({ speed: 10 }, true), emit]), [[true, 1], [true, 1]])
+})
+
 test('computeIterationGroups makes a balanced loop region one iteration-owned group', () => {
   // Break caught: leaving loopBegin/loopEnd as independent groups runs the enclosed blur once
   // instead of once per accumulator iteration.

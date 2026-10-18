@@ -30,6 +30,12 @@ export function isSurfaceIo(step) {
   return step.kind === 'read' || step.kind === 'write' || step.kind === 'read3d' || step.kind === 'write3d'
 }
 
+function isAnimatedImageGenerator(step) {
+  const definition = step.definition
+  return definition?.kind === 'generator' && definition.domain === 'image' && !definition.iterated &&
+    Object.hasOwn(step.params, 'speed') && step.params.speed !== 0
+}
+
 function declaresXyz(step) {
   return Object.prototype.hasOwnProperty.call(step.definition.textures ?? {}, 'global_xyz')
 }
@@ -95,6 +101,16 @@ export function computeIterationGroups(steps) {
     }
     if (declaresXyz(step)) {
       closeOpenGroup()
+      // The authority renders the whole chain every frame, and pointsEmit colors each
+      // agent it spawns from its input at that frame's time. An animated image generator
+      // that feeds the group therefore re-runs with it, once per iteration.
+      const previous = groups.at(-1)
+      if (step.params.iterationCount > 0 && previous?.steps.length === 1 && !previous.iterated &&
+          isAnimatedImageGenerator(previous.steps[0])) {
+        groups.pop()
+        openGroup = { steps: [previous.steps[0], step], iterated: step.definition.iterated === true }
+        continue
+      }
       openGroup = { steps: [step], iterated: step.definition.iterated === true }
       continue
     }
