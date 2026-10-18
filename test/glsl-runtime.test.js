@@ -182,6 +182,24 @@ test('AOT canonical uint hash kernels dispatch to exact uint32 multiplication', 
   assert.doesNotMatch(factory.toString(), /x \*= 2146121005/)
 })
 
+test('AOT canonical murmur finalizers dispatch by body, not by name', () => {
+  // filter/spookyTicker declares the finalizer as `uint hash_mix(uint v)`. Its
+  // transpiled body used signed `>>`, which corrupts every value at or above 2^31.
+  const factory = canonicalKernelFactories['filter/spookyTicker:spookyTicker'].toString()
+  assert.match(factory, /function hash_mix \(value\) \{ return \$runtime\.stdlib\.hashUint\(value\); \};/)
+  assert.doesNotMatch(factory, /v >> 16/)
+})
+
+test('AOT canonical spookyTicker kernel truncates its GLSL int divisions', () => {
+  const factory = canonicalKernelFactories['filter/spookyTicker:spookyTicker'].toString()
+  for (const division of [
+    'var gx = Math.trunc(localX / iScale);',
+    'var gy = Math.trunc(localY / iScale);',
+    'var cellX = sx >= 0 ? Math.trunc(sx / CELL_W) : Math.trunc((sx - CELL_W + 1) / CELL_W);',
+    'var rowIdx = Math.trunc(pyFromBottom / rowStride);',
+  ]) assert.ok(factory.includes(division), division)
+})
+
 test('AOT canonical LCG hash_uint kernels dispatch to the LCG body, not the murmur finalizer', () => {
   // The pinned GLSL declares two different `hash_uint` bodies under one name.
   // The pointsEmit init / points agents / flow3d agent body is the LCG-seeded

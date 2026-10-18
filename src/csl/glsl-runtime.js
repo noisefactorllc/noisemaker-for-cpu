@@ -51,9 +51,9 @@ export function hashUint32(value) {
 
 // `uint hash_uint(uint seed)` from the pinned authority's agent GLSL
 // (render/pointsEmit init, the points/* agents, filter3d/flow3d): an LCG-seeded
-// state mixed by an xor-shift-multiply finalizer. A different pinned GLSL body
-// (filter/texture, filter/spookyTicker) uses the same `hash_uint` name for the
-// murmur-style finalizer above, so the transpiler must route by body, not name.
+// state mixed by an xor-shift-multiply finalizer. filter/texture uses the same
+// `hash_uint` name for the murmur-style finalizer above (filter/spookyTicker
+// names it `hash_mix`), so the transpiler routes by body, not name.
 export function hashUintLcg(value) {
   const state = (Math.imul(value >>> 0, 747796405) + 2891336453) >>> 0
   const word = Math.imul(((state >>> ((state >>> 28) + 4)) ^ state) >>> 0, 277803737) >>> 0

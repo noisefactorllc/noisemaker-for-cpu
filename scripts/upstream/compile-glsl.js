@@ -132,6 +132,29 @@ function transpile(source) {
   return compile(source)
 }
 
+// Names of the GLSL `uint NAME(uint ARG)` functions whose body is exactly the
+// murmur-style finalizer: xor-shift 16, multiply 0x7feb352d, xor-shift 15,
+// multiply 0x846ca68b, xor-shift 16, return. Both the compound (`x ^= x >> 16u;`)
+// and the expanded (`v = v ^ (v >> 16u);`) spellings match.
+const MURMUR_FINALIZER_STEPS = ['^>>16', '*0x7feb352d', '^>>15', '*0x846ca68b', '^>>16']
+function murmurFinalizerFunctions(originalSource) {
+  const names = new Set()
+  const source = originalSource.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
+  for (const match of source.matchAll(/\buint\s+([A-Za-z_]\w*)\s*\(\s*uint\s+([A-Za-z_]\w*)\s*\)\s*\{([^{}]*)\}/g)) {
+    const [, name, argument, body] = match
+    const statements = body.split(';').map((statement) => statement.replace(/\s+/g, '')).filter(Boolean)
+    if (statements.pop() !== `return${argument}`) continue
+    const steps = statements.map((statement) => {
+      const shift = statement.match(new RegExp(`^${argument}(?:\\^=|=${argument}\\^)\\(?${argument}>>(\\d+)u\\)?$`))
+      if (shift) return `^>>${shift[1]}`
+      const multiply = statement.match(new RegExp(`^${argument}(?:\\*=|=${argument}\\*)(0x[0-9A-Fa-f]+)u$`))
+      return multiply ? `*${multiply[1].toLowerCase()}` : null
+    })
+    if (steps.length === MURMUR_FINALIZER_STEPS.length && steps.every((step, index) => step === MURMUR_FINALIZER_STEPS[index])) names.add(name)
+  }
+  return names
+}
+
 function lowerUnsignedJavaScript(transpiled, originalSource) {
   let lowered = transpiled.replace(
     /function (cpu_uvec([234])(?:_[A-Za-z0-9_]+)?) \([^)]*\) \{[\s\S]*?\n\};/g,
@@ -162,24 +185,27 @@ function lowerUnsignedJavaScript(transpiled, originalSource) {
       `function ${name} (value) { return $runtime.stdlib.pcg3d(value); };`,
     )
   }
-  if (/\buint\s+hash_uint\s*\(\s*uint\b/.test(originalSource)) {
-    // Two distinct pinned GLSL bodies share the `hash_uint` name: the
-    // xor-shift-multiply murmur-style finalizer (filter/texture,
-    // filter/spookyTicker) and the LCG-seeded mix (render/pointsEmit init,
-    // the points/* agents, filter3d/flow3d). Route by body — mapping the LCG
-    // body to the murmur implementation produced entirely different agent
-    // sequences than the authority's bytes.
-    const hashUintReplacement = /7feb352d|846ca68b/.test(originalSource)
-      ? 'function hash_uint (value) { return $runtime.stdlib.hashUint(value); };'
-      : /747796405/.test(originalSource)
-        ? 'function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };'
-        : null
-    if (hashUintReplacement) {
-      lowered = lowered.replace(
-        /function hash_uint \([^)]*\) \{[\s\S]*?\n\};/,
-        hashUintReplacement,
-      )
-    }
+  // The xor-shift-multiply murmur-style finalizer is a scalar uint hash. Its
+  // transpiled body uses JavaScript's signed `>>` and signed `^`, so every
+  // intermediate value at or above 2^31 shifts ones into its high bits and the
+  // hash diverges. Route each function whose GLSL body is this finalizer to the
+  // exact runtime implementation, whatever its name: filter/texture declares it
+  // as `hash_uint`, filter/spookyTicker as `hash_mix`.
+  const murmurFinalizers = murmurFinalizerFunctions(originalSource)
+  for (const name of murmurFinalizers) {
+    const body = new RegExp(`function ${name} \\([^)]*\\) \\{[\\s\\S]*?\\n\\};`)
+    if (!body.test(lowered)) throw new Error(`Unable to find the transpiled murmur finalizer ${name}`)
+    lowered = lowered.replace(body, `function ${name} (value) { return $runtime.stdlib.hashUint(value); };`)
+  }
+  if (!murmurFinalizers.has('hash_uint') && /\buint\s+hash_uint\s*\(\s*uint\b/.test(originalSource) && /747796405/.test(originalSource)) {
+    // A different pinned GLSL body shares the `hash_uint` name: the LCG-seeded
+    // mix (render/pointsEmit init, the points/* agents, filter3d/flow3d).
+    // Mapping it to the murmur implementation produced entirely different
+    // agent sequences than the authority's bytes.
+    lowered = lowered.replace(
+      /function hash_uint \([^)]*\) \{[\s\S]*?\n\};/,
+      'function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };',
+    )
   }
   lowered = lowered
     .replace(/var denom = 4294967295\.0;/g, 'var denom = cpu_float(4294967295.0);')
@@ -261,13 +287,15 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // GLSL int/int division truncates toward zero; the transpiler loses int typing on
   // component-indexed operands (e.g. `int z = pixelCoord.y / volSize;` inside the volume
   // atlas mapping) and emits a raw float64 division, shifting every sampled coordinate.
-  // Narrow statement-level rewrite only: `vec[i] / intName` where the divisor is a
-  // provably int-typed GLSL identifier. Broader expression-level rewrites were measured
-  // against fresh M4/Metal authority captures and REJECTED: the authority's rendered
-  // output for filter/spookyTicker matches the untruncated lowering, not the pinned
-  // GLSL's int-division semantics, so broad sub-expression rewrites diverge. The
-  // billboard depth-merge topology below has its own source-checked exception.
-  // Integer casts (`float(x)`) and literals are left untouched.
+  // Statement-level rewrites only: `vec[i] / intName`, `intName / intName`, and an int
+  // declaration whose ternary branches each divide by an int name, where every name is a
+  // provably int-typed GLSL identifier. The billboard depth-merge topology below has its
+  // own source-checked exception. Integer casts (`float(x)`) and literals are left
+  // untouched. An earlier note here said that filter/spookyTicker's M4/Metal authority
+  // matched the untruncated lowering. That match came from its `hash_mix` uint hash,
+  // which was then lowered with signed shifts. With the exact uint hash, truncation
+  // matches the M4 captures within one byte at every measured size, 8x8 to 97x80
+  // (test/fixtures/authority/spookyTicker-m4).
   const intNames = new Set()
   for (const m of originalSource.matchAll(/\buniform\s+int\s+([A-Za-z_$]\w*)/g)) intNames.add(m[1])
   for (const m of originalSource.matchAll(/\bint\s+([A-Za-z_$]\w*)\s*(?:=|;)/g)) intNames.add(m[1])
@@ -284,16 +312,26 @@ function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // Statement-level scalar/scalar form (synth3d/shape3d: `int z = yAtlas / volumeSize;` where
   // yAtlas is a scalar int local). Both operands are provably int-typed GLSL identifiers, so
   // GLSL truncates toward zero; the transpiler's raw float64 division shifted every volume
-  // z-slice coordinate. filter/spookyTicker is EXEMPT: its pinned M4/Metal authority capture
-  // matches the untruncated lowering for `glyph_idx = lx / cell_stride` (measured), so
-  // truncating it regresses the gate.
-  if (effectId !== 'filter/spookyTicker') {
-    out = out.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*) \/ ([A-Za-z_$]\w*);/g, (m, name, dividend, divisor) => {
-      if (!intNames.has(divisor) || !intNames.has(dividend)) return m
-      if (dividend === divisor) return m
-      return `var ${name} = Math.trunc(${dividend} / ${divisor});`
-    })
-  }
+  // z-slice coordinate.
+  out = out.replace(/var ([A-Za-z_$]\w*) = ([A-Za-z_$]\w*) \/ ([A-Za-z_$]\w*);/g, (m, name, dividend, divisor) => {
+    if (!intNames.has(divisor) || !intNames.has(dividend)) return m
+    if (dividend === divisor) return m
+    return `var ${name} = Math.trunc(${dividend} / ${divisor});`
+  })
+  // Ternary form of an int declaration whose branches each divide by an int name
+  // (filter/spookyTicker's floor-toward-negative cell index,
+  // `int cellX = sx >= 0 ? sx / CELL_W : (sx - CELL_W + 1) / CELL_W;`). GLSL has no
+  // implicit int/float conversion, so an int divisor makes each branch an int division.
+  // A branch dividend is an int name or a parenthesized expression without nested calls.
+  const intDividend = (dividend) => dividend.startsWith('(') || intNames.has(dividend)
+  out = out.replace(
+    /var ([A-Za-z_$]\w*) = ([^;?:]+) \? ([A-Za-z_$]\w*|\([^()]*\)) \/ ([A-Za-z_$]\w*) : ([A-Za-z_$]\w*|\([^()]*\)) \/ ([A-Za-z_$]\w*);/g,
+    (m, name, condition, left, leftDivisor, right, rightDivisor) => {
+      if (!intNames.has(name) || !intNames.has(leftDivisor) || !intNames.has(rightDivisor)) return m
+      if (!intDividend(left) || !intDividend(right)) return m
+      return `var ${name} = ${condition} ? Math.trunc(${left} / ${leftDivisor}) : Math.trunc(${right} / ${rightDivisor});`
+    },
+  )
   if (effectId === 'synth/testPattern') {
     // The numbered checkerboard divides an int digit accumulator in place.
     // Raw JS `/=` leaves a fractional digit and drops glyph-table lookups.

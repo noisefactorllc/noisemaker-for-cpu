@@ -1,0 +1,167 @@
+{
+  "note": "filter/spookyTicker against the Apple M4 authority outside the 8x8 default fixture. The CPU must reproduce these bytes after the generated kernel truncates GLSL int divisions and evaluates hash_mix as an unsigned 32-bit hash.",
+  "tolerance": 2,
+  "capture": {
+    "at": "2026-10-17",
+    "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+    "sources": [
+      {
+        "path": "shaders/effects/filter/spookyTicker/definition.js",
+        "size": 1656,
+        "sha256": "8013809bf8f728e581ddc0d9af9639ceef7fc667507471d8b57e6cd7c51a7dac"
+      },
+      {
+        "path": "shaders/effects/filter/spookyTicker/glsl/spookyTicker.glsl",
+        "size": 4276,
+        "sha256": "d50ca880cd6c6c03dd01a7ae683316d42ed93baddaadce9f3b918be1c816d50f"
+      },
+      {
+        "path": "shaders/effects/synth/perlin/definition.js",
+        "size": 3072,
+        "sha256": "8ef8bdc3c5005dd5a30d02876a47cc8a036d14faa0f5cd7349c3743e3ef4c8e3"
+      },
+      {
+        "path": "shaders/effects/synth/perlin/glsl/perlin.glsl",
+        "size": 10882,
+        "sha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318"
+      },
+      {
+        "path": "shaders/effects/synth/solid/definition.js",
+        "size": 803,
+        "sha256": "8d4620efd3b1a10178827252eb6fe7dc6034ac65e20b685beb211089ecba525c"
+      },
+      {
+        "path": "shaders/effects/synth/solid/glsl/solid.glsl",
+        "size": 273,
+        "sha256": "82afae3ccf523d1938cd02eadc6bfae5e4440a9b22a4f5629688d1d05856287c"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 90314,
+        "sha256": "eadd0fd9ca8578f31744d94efce85879429149dee354b5bb73b95b5fbe8872af"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 81454,
+        "sha256": "951ce0245fefaa29dda4dffe3e6fe0835773aa2a6f0e6889825676c772da894c"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "host": "Apple M4, macOS 26.6.2 (25G83)",
+    "browserVersion": "156.0.8078.4",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Metal. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL, apply the demo ProgramState step values, upload a transparent canvas to every media step, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
+  },
+  "cases": [
+    {
+      "name": "perlin-ticker-41x23",
+      "width": 41,
+      "height": 23,
+      "time": 0.75,
+      "seed": 7,
+      "program": "search filter, synth\n\nperlin(seed: 7)\n  .spookyTicker(seed: 7)\n  .write(o0)\n",
+      "programSha256": "62a52c09f801396fc18bd4989ea9ccea6cc2d93b4d38f0d771304301eeac8c7d",
+      "expect": "exact",
+      "reference": {
+        "image": "perlin-ticker-41x23.png",
+        "pngSha256": "0072be1e610d0614f9a810bcca23da493727e781335aa6dbd039f1700e3653f2",
+        "rgbaSha256": "60fd00043a7f89ddc441751b14bd0f5a91ba56beeb084df766064d7c1e3abb24"
+      },
+      "independentCaptures": {
+        "writeSha256": "60fd00043a7f89ddc441751b14bd0f5a91ba56beeb084df766064d7c1e3abb24",
+        "repeatSha256": "60fd00043a7f89ddc441751b14bd0f5a91ba56beeb084df766064d7c1e3abb24",
+        "independentSha256": "60fd00043a7f89ddc441751b14bd0f5a91ba56beeb084df766064d7c1e3abb24"
+      }
+    },
+    {
+      "name": "perlin-ticker-64x64",
+      "width": 64,
+      "height": 64,
+      "time": 0.75,
+      "seed": 7,
+      "program": "search filter, synth\n\nperlin(seed: 7)\n  .spookyTicker(seed: 7)\n  .write(o0)\n",
+      "programSha256": "62a52c09f801396fc18bd4989ea9ccea6cc2d93b4d38f0d771304301eeac8c7d",
+      "expect": "exact",
+      "reference": {
+        "image": "perlin-ticker-64x64.png",
+        "pngSha256": "5508a12f0eb43a3a76438ec247276401ca81ae8a4ad7e1cad9853a082b0cd0bd",
+        "rgbaSha256": "59281b10d7b6e0b511342c089d5f9e5b7c5d03d7909c46247241e59dccd9fe93"
+      },
+      "independentCaptures": {
+        "writeSha256": "59281b10d7b6e0b511342c089d5f9e5b7c5d03d7909c46247241e59dccd9fe93",
+        "repeatSha256": "59281b10d7b6e0b511342c089d5f9e5b7c5d03d7909c46247241e59dccd9fe93",
+        "independentSha256": "59281b10d7b6e0b511342c089d5f9e5b7c5d03d7909c46247241e59dccd9fe93"
+      }
+    },
+    {
+      "name": "perlin-ticker-64x64-fixture-seeds",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search filter, synth\n\nperlin(seed: 0)\n  .spookyTicker(seed: 1)\n  .write(o0)\n",
+      "programSha256": "f98b7c65202fbacb78944d742ec82d1e73d523b236f91da4ca76dd85882f6933",
+      "expect": "strict",
+      "reference": {
+        "image": "perlin-ticker-64x64-fixture-seeds.png",
+        "pngSha256": "f50b7ce33d39a8d84dd99ee1b9cc69b1d545cbd321949aef9b172cc9080c79b9",
+        "rgbaSha256": "3d974529595288df89e40d9bc330fb708757a39ec70cb1e85d441f9a8269677f"
+      },
+      "independentCaptures": {
+        "writeSha256": "3d974529595288df89e40d9bc330fb708757a39ec70cb1e85d441f9a8269677f",
+        "repeatSha256": "3d974529595288df89e40d9bc330fb708757a39ec70cb1e85d441f9a8269677f",
+        "independentSha256": "3d974529595288df89e40d9bc330fb708757a39ec70cb1e85d441f9a8269677f"
+      }
+    },
+    {
+      "name": "perlin-ticker-97x80-three-rows",
+      "width": 97,
+      "height": 80,
+      "time": 0.6,
+      "seed": 1,
+      "program": "search filter, synth\n\nperlin(seed: 7)\n  .spookyTicker(seed: 42, rows: 3, speed: 2.5, alpha: 1)\n  .write(o0)\n",
+      "programSha256": "e3ce23e1d3c9baf21fd675998247426d677c37a1c5205686fae511daf9b5ce0d",
+      "expect": "exact",
+      "reference": {
+        "image": "perlin-ticker-97x80-three-rows.png",
+        "pngSha256": "8a01fc8adc5d99795aa43a8f63c706dce5042e446ed17eeafd734e9f374ba1ce",
+        "rgbaSha256": "d80bcc9883f89b7ae442f0e022c092f1f79a94f74d661cade6cf79521215d78f"
+      },
+      "independentCaptures": {
+        "writeSha256": "d80bcc9883f89b7ae442f0e022c092f1f79a94f74d661cade6cf79521215d78f",
+        "repeatSha256": "d80bcc9883f89b7ae442f0e022c092f1f79a94f74d661cade6cf79521215d78f",
+        "independentSha256": "d80bcc9883f89b7ae442f0e022c092f1f79a94f74d661cade6cf79521215d78f"
+      }
+    },
+    {
+      "name": "solid-ticker-64x48",
+      "width": 64,
+      "height": 48,
+      "time": 0.3,
+      "seed": 1,
+      "program": "search filter, synth\n\nsolid(color: #101820)\n  .spookyTicker()\n  .write(o0)\n",
+      "programSha256": "dac249ff02318497ce5f106caf0920846e52457fc07e4b44b779e82fcc50267b",
+      "expect": "exact",
+      "reference": {
+        "image": "solid-ticker-64x48.png",
+        "pngSha256": "28a694e54b2729e6ac5857b8618c30818b75087525dcd22dec3cacd6c1e898b7",
+        "rgbaSha256": "5158e682fdeffa70242a7b4131aebabe89409b96c2c435f7baa3e81ef4de3f92"
+      },
+      "independentCaptures": {
+        "writeSha256": "5158e682fdeffa70242a7b4131aebabe89409b96c2c435f7baa3e81ef4de3f92",
+        "repeatSha256": "5158e682fdeffa70242a7b4131aebabe89409b96c2c435f7baa3e81ef4de3f92",
+        "independentSha256": "5158e682fdeffa70242a7b4131aebabe89409b96c2c435f7baa3e81ef4de3f92"
+      }
+    }
+  ]
+}

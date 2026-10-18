@@ -19774,17 +19774,10 @@ function canonicalFactory144($bindings, $runtime) {
   var GLYPH_H = 8;
   var BASE_SCALE = 3;
   var BASE_ROW_GAP = 4;
-  function hash_mix (v) {
-  	v = v ^ (v >> 16);
-  	v = cpu_umul(v, 2146121005);
-  	v = v ^ (v >> 15);
-  	v = cpu_umul(v, 2221713035);
-  	v = v ^ (v >> 16);
-  	return v;
-  };
+  function hash_mix (value) { return $runtime.stdlib.hashUint(value); };
   function sample_glyph (digit, localX, localY, iScale) {
-  	var gx = localX / iScale;
-  	var gy = localY / iScale;
+  	var gx = Math.trunc(localX / iScale);
+  	var gy = Math.trunc(localY / iScale);
   	if ((gx < 0) || (gx >= GLYPH_W) || (gy < 0) || (gy >= GLYPH_H)) {
   	return 0;
   	};
@@ -19795,7 +19788,7 @@ function canonicalFactory144($bindings, $runtime) {
   	var scrollSpeed = 0.5 + ((cpu_float((hash_mix((rowSeed|0) ^ 17)) & 65535)) / 65535) * 1.5;
   	var offset = floor((t * scrollSpeed) * 120)|0;
   	var sx = pixelX + offset;
-  	var cellX = sx >= 0 ? sx / CELL_W : (sx - CELL_W + 1) / CELL_W;
+  	var cellX = sx >= 0 ? Math.trunc(sx / CELL_W) : Math.trunc((sx - CELL_W + 1) / CELL_W);
   	var localX = sx - cellX * CELL_W;
   	var h = hash_mix((cellX|0) ^ ((rowSeed|0) * 997));
   	var digit = h % 10|0;
@@ -19818,7 +19811,7 @@ function canonicalFactory144($bindings, $runtime) {
   	return;
   	};
   	var rowStride = CELL_H + ROW_GAP;
-  	var rowIdx = pyFromBottom / rowStride;
+  	var rowIdx = Math.trunc(pyFromBottom / rowStride);
   	var localY = pyFromBottom - rowIdx * rowStride;
   	if ((rowIdx >= rows) || (localY >= CELL_H)) {
   	(fragColor[0] = src[0], fragColor[1] = src[1], fragColor[2] = src[2], fragColor[3] = src[3], fragColor);
