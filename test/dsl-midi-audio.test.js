@@ -65,26 +65,33 @@ const ACCEPTED = [
   { param: 'scaleX', value: 'audio(band: audioBand.low, min: osc(type: oscKind.saw, min: 0.1, max: 0.5), channel: 40)', resolved: 1 },
 ]
 
-// Arguments that the authority rejects. Each error names the call.
+// Arguments that the authority rejects. The errors use the port's existing
+// message templates. Each error for an argument that the authority parser
+// rejects (its P003 errors) names the call. The validator errors (S001, S003)
+// name the field.
+const MIDI_FIELDS = 'channel, mode, min, max, sensitivity, name, id, cc, nrpn, zone, members'
+const AUDIO_FIELDS = 'band, min, max, channel, name, id'
 const REJECTED = [
-  { value: 'midi(channel: 1, wobble: 2)', error: /midi\(\) unknown parameter 'wobble'/ },
-  { value: 'midi(min: 0.5)', error: /midi\(\) requires 'channel' or 'zone' argument/ },
-  { value: 'midi(1, 2, 3, 4, 5, 6)', error: /midi\(\) name, id, cc, nrpn, zone and members are keyword-only/ },
-  { value: 'midi(channel: 1, zone: midiZone.lower)', error: /midi\(\) 'channel' and 'zone' are mutually exclusive/ },
-  { value: 'midi(channel: 1, members: 3)', error: /midi\(\) 'members' requires 'zone'/ },
-  { value: 'midi(channel: 1, id: "x")', error: /midi\(\) 'id' requires readable 'name'/ },
-  { value: 'midi(channel: 1, name: "")', error: /midi\(\) 'name' must not be empty/ },
-  { value: 'midi(channel: 1, name: port)', error: /midi\(\) 'name' requires a quoted string/ },
-  { value: 'midi(channel: "1")', error: /String literal not allowed for midi\(\) channel/ },
-  { value: 'midi(channel: 1, mode: "cc")', error: /String literal not allowed for midi\(\) mode/ },
-  { value: 'midi(channel: foo)', error: /Undefined automation source 'foo' for midi\(\) channel/ },
-  { value: 'audio(min: 0.5)', error: /audio\(\) requires 'band' argument/ },
-  { value: 'audio(audioBand.low, 0, 1, 2)', error: /audio\(\) channel, name and id are keyword-only/ },
-  { value: 'audio(band: audioBand.low, name: "Mic")', error: /audio\(\) selected device requires both 'name' and 'channel'/ },
-  { value: 'audio(band: "low")', error: /String literal not allowed for audio\(\) band/ },
-  { value: 'audio(band: audioBand.low, channel: "2")', error: /String literal not allowed for audio\(\) channel/ },
-  { value: 'audio(band: audioBand.low, min: "0.2")', error: /String literal not allowed for audio\(\) min/ },
-  { value: 'audio(band: audioBand.low, min: lowish)', error: /Undefined automation source 'lowish' for audio\(\) min/ },
+  { value: 'midi(channel: 1, wobble: 2)', error: new RegExp(`Unknown parameter "wobble" for midi\\(\\); accepted: ${MIDI_FIELDS}$`) },
+  { value: 'midi(min: 0.5)', error: /Missing required parameter "channel" for midi\(\)$/ },
+  { value: 'midi(1, 2, 3, 4, 5, 6)', error: /Unknown parameter "argument 6" for midi\(\); accepted: / },
+  { value: 'midi(1, 2, 3, 4, 5, channel: 1)', error: /Unknown parameter "argument 5" for midi\(\); accepted: / },
+  { value: 'midi(channel: 1, zone: midiZone.lower)', error: /Unsupported DSL value Call "midi"$/ },
+  { value: 'midi(channel: 1, members: 3)', error: /Missing required parameter "zone" for midi\(\)$/ },
+  { value: 'midi(channel: 1, id: "x")', error: /Missing required parameter "name" for midi\(\)$/ },
+  { value: 'midi(channel: 1, name: "")', error: /Unsupported DSL value Call "midi"$/ },
+  { value: 'midi(channel: 1, name: port)', error: /Unsupported DSL value Call "midi"$/ },
+  { value: 'midi(channel: "1")', error: /Parameter "channel" must be a finite number$/ },
+  { value: 'midi(channel: 1, mode: "cc")', error: /Parameter "mode" must be an enum value$/ },
+  { value: 'midi(channel: foo)', error: /Parameter "channel" must be a finite number$/ },
+  { value: 'audio(min: 0.5)', error: /Missing required parameter "band" for audio\(\)$/ },
+  { value: 'audio(audioBand.low, 0, 1, 2)', error: new RegExp(`Unknown parameter "argument 4" for audio\\(\\); accepted: ${AUDIO_FIELDS}$`) },
+  { value: 'audio(band: audioBand.low, name: "Mic")', error: /Missing required parameter "channel" for audio\(\)$/ },
+  { value: 'audio(band: audioBand.low, id: "dev")', error: /Missing required parameter "name" for audio\(\)$/ },
+  { value: 'audio(band: "low")', error: /Parameter "band" must be an enum value$/ },
+  { value: 'audio(band: audioBand.low, channel: "2")', error: /Parameter "channel" must be an integer$/ },
+  { value: 'audio(band: audioBand.low, min: "0.2")', error: /Parameter "min" must be a finite number$/ },
+  { value: 'audio(band: audioBand.low, min: lowish)', error: /Parameter "min" must be a finite number$/ },
 ]
 
 function program(param, value, lets = '') {

@@ -107,6 +107,20 @@ function compileOscillator(call, bindings, depth) {
 // upstream reports with severity "error" (its P003 parser errors, S001 and S003)
 // throw DslError. Upstream warnings (S002) keep the field's fallback value and mark
 // the descriptor `_invalid` where upstream does, so the program still compiles.
+// The errors use the port's existing message templates; the P003 errors name the
+// call.
+
+function unknownParameter(call, badName, valid) {
+  return new DslError(`Unknown parameter "${badName}" for ${call.name}(); accepted: ${valid.join(', ')}`, call.loc)
+}
+
+function missingParameter(call, name) {
+  return new DslError(`Missing required parameter "${name}" for ${call.name}()`, call.loc)
+}
+
+function unsupportedCall(call) {
+  return new DslError(`Unsupported DSL value ${call.kind} "${call.name}"`, call.loc)
+}
 
 const MIDI_POSITIONAL = ['channel', 'mode', 'min', 'max', 'sensitivity']
 const MIDI_KEYWORD_ONLY = ['name', 'id', 'cc', 'nrpn', 'zone', 'members']
@@ -144,7 +158,7 @@ function resolveAutomationEnum(node, enumName, fallback, validValues, call, fiel
     resolved = node.name.includes('.') ? resolveStdEnum(node.name) : resolveStdEnum(`${enumName}.${node.name}`)
   }
   if (typeof resolved === 'number' && validValues.has(resolved)) return resolved
-  if (typeof node === 'string') throw new DslError(`String literal not allowed for ${call.name}() ${field}`, call.loc)
+  if (typeof node === 'string') throw new DslError(`Parameter "${field}" must be an enum value`, call.loc)
   return fallback
 }
 
@@ -161,10 +175,9 @@ function resolveAutomationNumber(node, bindings, depth, call, field, fallback, o
   } else if (node?.kind === 'Call' && AUTOMATION_CALLS.has(node.name) && options.allowAutomation) {
     const compiled = compileAutomationCall(node, bindings, depth + 1)
     return { value: compiled, valid: compiled._invalid !== true }
-  } else if (typeof node === 'string') {
-    throw new DslError(`String literal not allowed for ${call.name}() ${field}`, call.loc)
-  } else if (node?.kind === 'identifier' && !node.name.includes('.')) {
-    throw new DslError(`Undefined automation source '${node.name}' for ${call.name}() ${field}`, call.loc)
+  } else if (typeof node === 'string' || (node?.kind === 'identifier' && !node.name.includes('.'))) {
+    // Upstream S001 (a string literal) and S003 (an undefined automation source).
+    throw new DslError(`Parameter "${field}" must be a finite number`, call.loc)
   } else {
     return invalid
   }
@@ -183,12 +196,11 @@ function automationFields(call, bindings, positionalOrder, keywordOnly, defaults
   const positional = call.args.filter((arg) => arg.name === null)
   const kwargs = new Map()
   for (const arg of call.args) if (arg.name !== null) kwargs.set(arg.name, arg.value)
-  if (positional.length > positionalOrder.length) {
-    const names = call.name === 'audio' ? 'channel, name and id' : 'name, id, cc, nrpn, zone and members'
-    throw new DslError(`${call.name}() ${names} are keyword-only`, call.loc)
-  }
+  // Upstream: the keyword-only fields cannot take a positional argument.
+  const excess = (arg) => unknownParameter(call, `argument ${call.args.indexOf(arg) + 1}`, valid)
+  if (positional.length > positionalOrder.length) throw excess(positional[positionalOrder.length])
   for (const key of kwargs.keys()) {
-    if (!valid.includes(key)) throw new DslError(`${call.name}() unknown parameter '${key}'; valid: ${valid.join(', ')}`, call.loc)
+    if (!valid.includes(key)) throw unknownParameter(call, key, valid)
   }
   const fields = {}
   let cursor = 0
@@ -197,7 +209,7 @@ function automationFields(call, bindings, positionalOrder, keywordOnly, defaults
     else if (cursor < positional.length) fields[field] = positional[cursor++].value
     else if (field in defaults) fields[field] = defaults[field]
   }
-  if (cursor < positional.length) throw new DslError(`${call.name}() has an excess positional argument`, call.loc)
+  if (cursor < positional.length) throw excess(positional[cursor])
   for (const field of keywordOnly) if (kwargs.has(field)) fields[field] = kwargs.get(field)
   for (const field of Object.keys(fields)) {
     if (field !== 'name' && field !== 'id') fields[field] = substituteField(fields[field], bindings)
@@ -209,8 +221,7 @@ function automationFields(call, bindings, positionalOrder, keywordOnly, defaults
 function checkSelectorStrings(call, fields) {
   for (const field of ['name', 'id']) {
     if (!(field in fields)) continue
-    if (typeof fields[field] !== 'string') throw new DslError(`${call.name}() '${field}' requires a quoted string`, call.loc)
-    if (fields[field].length === 0) throw new DslError(`${call.name}() '${field}' must not be empty`, call.loc)
+    if (typeof fields[field] !== 'string' || fields[field].length === 0) throw unsupportedCall(call)
   }
 }
 
@@ -220,10 +231,10 @@ function compileMidi(call, bindings, depth) {
   }
   const fields = automationFields(call, bindings, MIDI_POSITIONAL, MIDI_KEYWORD_ONLY, { mode: 4, min: 0, max: 1, sensitivity: 1 })
   const hasZone = 'zone' in fields
-  if (!('channel' in fields) && !hasZone) throw new DslError("midi() requires 'channel' or 'zone' argument", call.loc)
-  if ('channel' in fields && hasZone) throw new DslError("midi() 'channel' and 'zone' are mutually exclusive", call.loc)
-  if ('members' in fields && !hasZone) throw new DslError("midi() 'members' requires 'zone'", call.loc)
-  if ('id' in fields && !('name' in fields)) throw new DslError("midi() 'id' requires readable 'name'", call.loc)
+  if (!('channel' in fields) && !hasZone) throw missingParameter(call, 'channel')
+  if ('channel' in fields && hasZone) throw unsupportedCall(call)
+  if ('members' in fields && !hasZone) throw missingParameter(call, 'zone')
+  if ('id' in fields && !('name' in fields)) throw missingParameter(call, 'name')
   checkSelectorStrings(call, fields)
 
   const mode = resolveAutomationEnum(fields.mode, 'midiMode', 4, new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), call, 'mode')
@@ -280,9 +291,9 @@ function compileAudio(call, bindings, depth) {
     throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
   }
   const fields = automationFields(call, bindings, AUDIO_POSITIONAL, AUDIO_KEYWORD_ONLY, { min: 0, max: 1 })
-  if (!('band' in fields)) throw new DslError("audio() requires 'band' argument", call.loc)
-  if ('id' in fields && !('name' in fields)) throw new DslError("audio() 'id' requires readable 'name'", call.loc)
-  if ('name' in fields && !('channel' in fields)) throw new DslError("audio() selected device requires both 'name' and 'channel'", call.loc)
+  if (!('band' in fields)) throw missingParameter(call, 'band')
+  if ('id' in fields && !('name' in fields)) throw missingParameter(call, 'name')
+  if ('name' in fields && !('channel' in fields)) throw missingParameter(call, 'channel')
   checkSelectorStrings(call, fields)
 
   const band = resolveAutomationEnum(fields.band, 'audioBand', undefined, new Set([0, 1, 2, 3, 4]), call, 'band')
@@ -294,7 +305,7 @@ function compileAudio(call, bindings, depth) {
   if ('channel' in fields) {
     const node = fields.channel
     if (typeof node === 'number' && Number.isInteger(node) && node >= 1 && node <= 32) channel = node
-    else if (typeof node === 'string') throw new DslError('String literal not allowed for audio() channel', call.loc)
+    else if (typeof node === 'string') throw new DslError('Parameter "channel" must be an integer', call.loc)
     else validChannel = false
   }
   return {
