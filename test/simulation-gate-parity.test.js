@@ -22,6 +22,9 @@ const CASES = [
   ['synth/cellularAutomata', (dsl) => dsl.replace('cellularAutomata(seed: 1, ', 'cellularAutomata(seed: 1, iterationCount: 1, ')],
   ['synth/mnca', (dsl) => dsl.replace('mnca(seed: 1, ', 'mnca(seed: 1, iterationCount: 1, ')],
   ['synth/reactionDiffusion', (dsl) => dsl.replace('reactionDiffusion(seed: 1, ', 'reactionDiffusion(seed: 1, iterations: 1, ')],
+  // Particle chains step through their pointsEmit group's iterationCount.
+  ...['points/physical', 'render/pointsEmit', 'render/pointsRender', 'points/flow', 'points/physarum', 'render/pointsBillboardRender']
+    .map((id) => [id, (dsl) => dsl.replace('pointsEmit(seed: 0, ', 'pointsEmit(seed: 0, iterationCount: 1, ')]),
 ]
 
 function distinctRgba(bytes) {
