@@ -97,8 +97,32 @@ class Parser {
   parseChain() {
     const first = this.parseCall()
     const calls = [first]
-    while (this.match('.')) calls.push(this.atSubchain() ? this.parseSubchain() : this.parseCall())
+    while (this.match('.')) {
+      if (this.atSubchain()) calls.push(this.parseSubchain())
+      else if (this.peek().lexeme === 'write3d' && this.peek().type === 'identifier') calls.push(this.parseWrite3d())
+      else calls.push(this.parseCall())
+    }
     return { kind: 'Chain', calls, loc: first.loc }
+  }
+
+  // Port of upstream parseWriteCall for write3d: two positional references, a
+  // volume and a geometry (`write3d(vol0, geo0)`), each an identifier or a surface.
+  parseWrite3d() {
+    const name = this.identifier()
+    this.consume('(')
+    const reference = () => {
+      const token = this.peek()
+      if (token.type === 'surface') return this.parseSurface()
+      if (token.type !== 'identifier') throw new DslError('Expected surface reference', location(token))
+      this.current += 1
+      return { kind: 'identifier', name: token.lexeme, loc: location(token) }
+    }
+    const volume = reference()
+    this.consume(',')
+    const geometry = reference()
+    this.consume(')')
+    const args = [volume, geometry].map((value) => ({ name: null, value, loc: value.loc }))
+    return { kind: 'Call', name: 'write3d', args, argMode: 'positional', loc: location(name) }
   }
 
   atSubchain() {
@@ -195,17 +219,17 @@ class Parser {
   }
 
   // Port of upstream transformFromInvocation: `from(namespace, effect(...))` is the
-  // effect call, resolved in that one namespace instead of the search order.
+  // effect call, resolved in that one namespace instead of the search order. It
+  // takes exactly two positional arguments, an identifier and one call; upstream's
+  // read(), read3d(), osc(), midi() and audio() nodes are not Call nodes. Any
+  // other from(...) stays a call named `from`, which no namespace defines, so the
+  // compiler rejects it as an unknown effect.
   fromCall(call) {
-    if (call.argMode === 'named' || call.argMode === 'mixed') throw new DslError("'from' does not support named arguments", call.loc)
-    if (call.args.length !== 2) throw new DslError("'from' requires exactly two arguments (namespace, call)", call.loc)
+    if (call.argMode !== 'positional' || call.args.length !== 2) return call
     const [namespace, target] = call.args.map((arg) => arg.value)
-    if (namespace?.kind !== 'identifier') throw new DslError("'from' namespace argument must be an identifier", call.loc)
-    // Upstream accepts a Call node or a one-call chain. Its read(), read3d(), osc(),
-    // midi() and audio() nodes are not Call nodes.
     const inner = target?.kind === 'Chain' && target.calls.length === 1 ? target.calls[0] : null
-    if (inner?.kind !== 'Call' || ['read', 'read3d', 'write', 'write3d'].includes(inner.name)) {
-      throw new DslError("'from' second argument must be a call expression", call.loc)
+    if (namespace?.kind !== 'identifier' || inner?.kind !== 'Call' || ['read', 'read3d', 'write', 'write3d'].includes(inner.name)) {
+      return call
     }
     return { ...inner, namespace: namespace.name }
   }

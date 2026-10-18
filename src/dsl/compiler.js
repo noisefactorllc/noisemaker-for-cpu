@@ -487,17 +487,19 @@ function compileChain(chain, bindings, { inline = false } = {}) {
     }
     // Built-in volume I/O (upstream `_write3d` and `_read3d`). write3d stores the
     // current volume and geometry under the two names and passes the chain through;
-    // read3d starts a chain from them.
+    // read3d starts a chain from them. A mid-chain read3d() is not a starter, so it
+    // fails below as an unknown effect, as a one-argument read3d() at a chain start
+    // does.
     if (call.name === 'write3d') {
-      if (index === 0) throw new DslError('write3d() requires an input - cannot be first in chain', call.loc)
+      // Upstream's lexer reserves write3d, so it cannot start a chain.
+      if (index === 0) throw new DslError('Expected effect or IO function name', call.loc)
       if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
       const references = volumeReferences(call)
-      if (!references) throw new DslError('write3d() requires tex3d and geo references', call.loc)
+      if (!references) throw new DslError('Expected surface reference', call.loc)
       steps.push({ kind: 'write3d', volume: references[0], geometry: references[1], loc: call.loc })
       continue
     }
-    if (call.name === 'read3d' && read3dReferences(call)) {
-      if (index !== 0) throw new DslError('read3d() is a starter node and cannot be chained inline', call.loc)
+    if (index === 0 && call.name === 'read3d' && read3dReferences(call)) {
       const [volume, geometry] = read3dReferences(call)
       steps.push({ kind: 'read3d', volume, geometry, loc: call.loc })
       hasInput = true

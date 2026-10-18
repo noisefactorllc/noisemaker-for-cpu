@@ -76,23 +76,26 @@ const READ3D_VALUE_FORM = [
   'search synth3d, render\ncellularAutomata3d(source: vol1, geoSource: geo1, volumeSize: x16).render3d().write(o0)\nrender(o0)\n',
 ]
 
-// Each rejected program also fails on the pinned authority.
+// Each rejected program also fails on the pinned authority. The port reports
+// each one with an existing message template. A from() call that the authority
+// rejects stays a call named `from`, an unknown effect.
 const REJECTED = [
   ['search synth\nnoise(seed: 1, scaleX: Math.E).write(o0)\nrender(o0)\n', /Parameter "scaleX" must be a finite number/],
   ['search synth\nnoise(seed: 1, scaleX: Math.PI()).write(o0)\nrender(o0)\n', /Expected "\)"/],
   ['search synth, filter\nsolid(color: #000).text(text: """open\n', /Unterminated string/],
   ['search synth\nlet pattern = wobble\npattern().write(o0)\nrender(o0)\n', /Binding "pattern" is not callable/],
   ['search synth\nlet pattern = noise\nnoise(seed: 1, scaleX: pattern).write(o0)\nrender(o0)\n', /Parameter "scaleX" must be a finite number/],
-  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(vol0)\nrender(o0)\n', /write3d\(\) requires tex3d and geo references/],
-  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(tex3d: vol0, geo: geo0)\nrender(o0)\n', /write3d\(\) requires tex3d and geo references/],
-  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(vol0, geo0)\nnoise3d(seed: 2).read3d(vol0, geo0).render3d().write(o0)\nrender(o0)\n', /read3d\(\) is a starter node and cannot be chained inline/],
-  ['search synth3d, render\nwrite3d(vol0, geo0)\nrender(o0)\n', /write3d\(\) requires an input - cannot be first in chain/],
+  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(vol0)\nrender(o0)\n', /Expected ","/],
+  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(tex3d: vol0, geo: geo0)\nrender(o0)\n', /Expected ","/],
+  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(5, geo0)\nrender(o0)\n', /Expected surface reference/],
+  ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(vol0, geo0)\nnoise3d(seed: 2).read3d(vol0, geo0).render3d().write(o0)\nrender(o0)\n', /Unknown effect "read3d" in search namespaces synth3d, render/],
+  ['search synth3d, render\nwrite3d(vol0, geo0)\nrender(o0)\n', /Expected effect or IO function name/],
   ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(vol0, geo0)\nread3d(vol0).render3d().write(o0)\nrender(o0)\n', /Unknown effect "read3d"/],
-  ['search synth, filter\nfrom(ns: classicNoisedeck, call: noise(seed: 3)).write(o0)\nrender(o0)\n', /'from' does not support named arguments/],
-  ['search synth, filter\nfrom(classicNoisedeck).write(o0)\nrender(o0)\n', /'from' requires exactly two arguments \(namespace, call\)/],
-  ['search synth, filter\nfrom("classicNoisedeck", noise(seed: 3)).write(o0)\nrender(o0)\n', /'from' namespace argument must be an identifier/],
-  ['search synth, filter\nfrom(classicNoisedeck, noise).write(o0)\nrender(o0)\n', /'from' second argument must be a call expression/],
-  ['search synth, filter\nfrom(classicNoisedeck, noise(seed: 3).invert()).write(o0)\nrender(o0)\n', /'from' second argument must be a call expression/],
+  ['search synth, filter\nfrom(ns: classicNoisedeck, call: noise(seed: 3)).write(o0)\nrender(o0)\n', /Unknown effect "from" in search namespaces synth, filter/],
+  ['search synth, filter\nfrom(classicNoisedeck).write(o0)\nrender(o0)\n', /Unknown effect "from" in search namespaces synth, filter/],
+  ['search synth, filter\nfrom("classicNoisedeck", noise(seed: 3)).write(o0)\nrender(o0)\n', /Unknown effect "from" in search namespaces synth, filter/],
+  ['search synth, filter\nfrom(classicNoisedeck, noise).write(o0)\nrender(o0)\n', /Unknown effect "from" in search namespaces synth, filter/],
+  ['search synth, filter\nfrom(classicNoisedeck, noise(seed: 3).invert()).write(o0)\nrender(o0)\n', /Unknown effect "from" in search namespaces synth, filter/],
   ['search synth, filter\nfrom(filter, noise(seed: 3)).write(o0)\nrender(o0)\n', /Unknown effect "noise" in search namespaces filter/],
 ]
 
