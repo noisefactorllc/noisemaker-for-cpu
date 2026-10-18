@@ -1371,11 +1371,52 @@
       "captureRecord": null
     },
     "defaults/synth__cellularAutomata.golden.png": {
-      "sha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
-      "bytes": 74,
+      "sha256": "94ddd537f2bcc7caf095f5838e3ab04555fc5bd93270b8dbd00ed5ecc882e55f",
+      "bytes": 91,
       "introducedIn": "0c4e4f0df1068deb78f4f45cc1af80d8ec4da5ea",
-      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
-      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
+      "captureRevision": "2026-10-18-m4-metal-webgl2-gap039-cellularAutomata-timed60",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "f3873ba8a383747860df980bf526db4eb8bf7ce1c2b58df033be1758ba25c60c",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 60,
+        "frameTimes": {
+          "first": 0.15166666666666662,
+          "last": 0.25,
+          "step": "1/600",
+          "rule": "wrap01(0.25 - (59 - i) / 600) for frame i = 0..59"
+        },
+        "surface": {
+          "read": "global_o1_read",
+          "write": "global_o1_write",
+          "presented": "global_o1_read"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source (1588 files under shaders, share and demo), served to headless Chromium with ANGLE Metal on an Apple M4. Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, then call render(t) for the 60 frame times on one renderer, as the CPU iterationCount 60 schedule does. After 60 frames the presented surface is the read texture. Read the read and write textures as top-down RGBA8 through WebGL2Backend.readPixels. A second renderer returned the same bytes for both textures.",
+        "readbacks": [
+          {
+            "id": "global_o1_write",
+            "sha256": "cb5938bd3075b4c19c10010b94210435504ba4169d155cff7518112c000842d6",
+            "repeatSha256": "cb5938bd3075b4c19c10010b94210435504ba4169d155cff7518112c000842d6",
+            "independentSha256": "cb5938bd3075b4c19c10010b94210435504ba4169d155cff7518112c000842d6"
+          },
+          {
+            "id": "global_o1_read",
+            "sha256": "e56eb65b583e3cf42e898b470e74380ac36635001833ce696f3b4d9f5b475df8",
+            "independentSha256": "e56eb65b583e3cf42e898b470e74380ac36635001833ce696f3b4d9f5b475df8"
+          }
+        ],
+        "distinctRgba": 2,
+        "replaces": {
+          "pngSha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
+          "rgbaSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
+          "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+          "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+        }
+      }
     },
     "defaults/synth__curl.golden.png": {
       "sha256": "567cd6207b62e13988437e94baf825fab1285370d1d3eaae6452ec212520dbb2",
@@ -1427,11 +1468,52 @@
       "captureRecord": null
     },
     "defaults/synth__mnca.golden.png": {
-      "sha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
-      "bytes": 74,
+      "sha256": "5e2c0aa28be9933d8d14432f12657eefa72c45b3b4e343386acfb9456328c0dc",
+      "bytes": 84,
       "introducedIn": "0c4e4f0df1068deb78f4f45cc1af80d8ec4da5ea",
-      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
-      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
+      "captureRevision": "2026-10-18-m4-metal-webgl2-gap039-mnca-timed60",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "b5f190dd910f7fab78798b13f87c8922437c0ca12b8dde8fabc7148aaa5c2aad",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 60,
+        "frameTimes": {
+          "first": 0.15166666666666662,
+          "last": 0.25,
+          "step": "1/600",
+          "rule": "wrap01(0.25 - (59 - i) / 600) for frame i = 0..59"
+        },
+        "surface": {
+          "read": "global_o1_read",
+          "write": "global_o1_write",
+          "presented": "global_o1_read"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source (1588 files under shaders, share and demo), served to headless Chromium with ANGLE Metal on an Apple M4. Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, then call render(t) for the 60 frame times on one renderer, as the CPU iterationCount 60 schedule does. After 60 frames the presented surface is the read texture. Read the read and write textures as top-down RGBA8 through WebGL2Backend.readPixels. A second renderer returned the same bytes for both textures.",
+        "readbacks": [
+          {
+            "id": "global_o1_write",
+            "sha256": "e1ce4d9990023d21002d43c44f0c2149da870171a8f061d2fd0f5bdd27ccc9b3",
+            "repeatSha256": "e1ce4d9990023d21002d43c44f0c2149da870171a8f061d2fd0f5bdd27ccc9b3",
+            "independentSha256": "e1ce4d9990023d21002d43c44f0c2149da870171a8f061d2fd0f5bdd27ccc9b3"
+          },
+          {
+            "id": "global_o1_read",
+            "sha256": "fc0c559754ee566a785fe659f56f0461acd5f1e522db155813bda26682e3fdb0",
+            "independentSha256": "fc0c559754ee566a785fe659f56f0461acd5f1e522db155813bda26682e3fdb0"
+          }
+        ],
+        "distinctRgba": 2,
+        "replaces": {
+          "pngSha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
+          "rgbaSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
+          "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+          "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+        }
+      }
     },
     "defaults/synth__modPattern.golden.png": {
       "sha256": "fdf61afdc036a884e02dd7ce745e6ca534ced039df5f6821d9f267ca33c54819",
@@ -1483,11 +1565,46 @@
       "captureRecord": null
     },
     "defaults/synth__reactionDiffusion.golden.png": {
-      "sha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
-      "bytes": 74,
+      "sha256": "bf80a2394d21cb6a5e47dd6b0177a7d64ccb0eab0d3827d3ef2b9e7310d29ccd",
+      "bytes": 213,
       "introducedIn": "0c4e4f0df1068deb78f4f45cc1af80d8ec4da5ea",
-      "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
-      "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Worker Elves job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive /workspace/evidence/gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
+      "captureRevision": "2026-10-18-m4-metal-webgl2-gap039-reactionDiffusion",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "a4af1eef27fa4c0c050d98299533c2a056075b64646519505d451cc7240fa9d3",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "surface": {
+          "read": "global_o1_read",
+          "write": "global_o1_write",
+          "presented": "global_o1_write"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source (1588 files under shaders, share and demo), served to headless Chromium with ANGLE Metal on an Apple M4. Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, and call render(0.25) once. reactionDiffusion repeats its update pass `iterations` times inside that frame. Read the write texture twice and the read texture once as top-down RGBA8 through WebGL2Backend.readPixels. A second renderer returned the same bytes.",
+        "readbacks": [
+          {
+            "id": "global_o1_write",
+            "sha256": "2ba5441bb4196c0aea1e43feaa1d3d5649cb6b9c92ec3262bb2910109004fd96",
+            "repeatSha256": "2ba5441bb4196c0aea1e43feaa1d3d5649cb6b9c92ec3262bb2910109004fd96",
+            "independentSha256": "2ba5441bb4196c0aea1e43feaa1d3d5649cb6b9c92ec3262bb2910109004fd96"
+          },
+          {
+            "id": "global_o1_read",
+            "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+            "independentSha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+          }
+        ],
+        "distinctRgba": 28,
+        "replaces": {
+          "pngSha256": "30160553fec73b75e7b8948d5428297344cd48e60c534725b9c7b035469e14bd",
+          "rgbaSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
+          "captureRevision": "2026-10-02-m4-metal-webgl2-worker-elves-3be6cc6a-skip-graduate5",
+          "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+        }
+      }
     },
     "defaults/synth__remap.golden.png": {
       "sha256": "9dc681968c63ee057c802937fc0a6ea19ce3e6c582db817567a88d93e6e686f8",
