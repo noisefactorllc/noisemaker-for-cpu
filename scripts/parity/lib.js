@@ -63,7 +63,7 @@ export async function goldenReference(goldenRoot, suite, name, provenance) {
 
 // Shared skip policy for the parity gate and the parity-summary entrypoint:
 // remaining CPU-divergent simulation effects are explicit, preflighted skips.
-// Graduated, 2026-10-01 M4/Metal campaign (Worker Elves job 3be6cc6a): the 3
+// Graduated, 2026-10-01 M4/Metal campaign (automated job 3be6cc6a): the 3
 // landscape/heightfield effects from reference 0ed489ec and 11 iterated effects
 // (dla, flock, flow, hydraulic, life, physarum, physical, pointsEmit, pointsRender,
 // temporalAberration, feedback) now have committed goldens captured byte-exact

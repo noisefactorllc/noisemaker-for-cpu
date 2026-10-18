@@ -12,7 +12,7 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
-import { hostname, release, type } from 'node:os'
+import { cpus, release, type } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -160,7 +160,7 @@ const operatingSystem = type() === 'Darwin'
   ? `macOS ${execFileSync('sw_vers', ['-productVersion'], { encoding: 'utf8' }).trim()} (${execFileSync('sw_vers', ['-buildVersion'], { encoding: 'utf8' }).trim()})`
   : `${type()} ${release()}`
 const capture = {
-  host: hostname(),
+  host: `${cpus()[0]?.model ?? 'unknown'}${type() === 'Darwin' ? ' Mac' : ''}`,
   os: operatingSystem,
   gpu: renderer,
   browser: `HeadlessChrome ${browserVersion} (--use-angle=metal)`,

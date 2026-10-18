@@ -26,9 +26,9 @@ const M4_RENDERER = 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified V
 test('the reciprocal data module is the pinned M4 capture', async () => {
   // Git can check the module out with CRLF line endings; hash it as LF.
   const source = (await readFile(new URL('../src/csl/metal-reciprocal-data.js', import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
-  assert.equal(createHash('sha256').update(source).digest('hex'), '4591d5cdc19b65d8d70f7a20a419517ebea056cecc44d882cab288c681446fb6')
+  assert.equal(createHash('sha256').update(source).digest('hex'), '08905259e72a066e77675f98b9700d6c3a6467662f5de562d8f8e1e14d082c87')
   assert.deepEqual(METAL_RECIPROCAL.capture, {
-    host: 'zig.local',
+    host: 'Apple M4 Mac',
     os: 'macOS 26.6.2 (25G83)',
     gpu: M4_RENDERER,
     browser: 'HeadlessChrome 156.0.8078.4 (--use-angle=metal)',

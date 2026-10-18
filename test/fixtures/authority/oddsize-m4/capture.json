@@ -1,12 +1,12 @@
 {
   "tolerance": 2,
   "capture": {
-    "host": "zig.local",
+    "host": "Apple M4 Mac",
     "os": "macOS 26.6.2 (25G83)",
     "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
     "browser": "HeadlessChrome 156.0.8078.4 (--use-angle=metal)",
     "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
-    "record": "2026-10-17 GAP-002 coverage sweep on the zig Apple M4 authority. Upstream CanvasRenderer from an exact git archive of the authority source, two independent renderers in fresh pages, demo ProgramState host step, blank transparent media canvases, one render(time), global_o0_write read back twice from the first renderer and once from the second; all three readbacks were identical. 41x23-seed7: every seeded call in the fixture program set to seed 7, time 0.75. 41x41: the fixture programs unchanged, time 0.25, renderer seed 1.",
+    "record": "2026-10-17 GAP-002 coverage sweep on the Apple M4 authority. Upstream CanvasRenderer from an exact git archive of the authority source, two independent renderers in fresh pages, demo ProgramState host step, blank transparent media canvases, one render(time), global_o0_write read back twice from the first renderer and once from the second; all three readbacks were identical. 41x23-seed7: every seeded call in the fixture program set to seed 7, time 0.75. 41x41: the fixture programs unchanged, time 0.25, renderer seed 1.",
     "sources": [
       {
         "path": "shaders/effects/filter/channel/definition.js",
