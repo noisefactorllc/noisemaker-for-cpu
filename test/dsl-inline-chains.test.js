@@ -94,8 +94,9 @@ const GRAMMAR_PAIRS = [
 ]
 
 const REJECTED = [
-  // write() is only allowed in statement context.
-  ['search synth, mixer\nnoise(seed: 1).blendMode(tex: solid(color: #ff0000).write(o1), mode: screen).write(o0)\nrender(o0)\n', /'\.write\(\)' is only allowed in statement context/],
+  // write() is only allowed in statement context. The port reports it with the
+  // existing message for a name that cannot be a chain element.
+  ['search synth, mixer\nnoise(seed: 1).blendMode(tex: solid(color: #ff0000).write(o1), mode: screen).write(o0)\nrender(o0)\n', /Expected effect or IO function name/],
   // A chain argument must start with a generator or read().
   ['search filter, mixer, synth\nnoise(seed: 1).blendMode(tex: invert(), mode: screen).write(o0)\nrender(o0)\n', /filter\/invert requires an input/],
   // An effect that the search order does not resolve.

@@ -120,9 +120,8 @@ class Parser {
         continue
       }
       const call = this.parseCall()
-      if (call.name === 'write' || call.name === 'write3d') {
-        throw new DslError("'.write()' is only allowed in statement context", call.loc)
-      }
+      // Upstream allows write() and write3d() only in statement context.
+      if (call.name === 'write' || call.name === 'write3d') throw new DslError('Expected effect or IO function name', call.loc)
       calls.push(call)
     }
     return { kind: 'Chain', calls, loc: first.loc }
