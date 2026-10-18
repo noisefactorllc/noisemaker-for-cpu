@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findExecutable, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
+import { findExecutable, inspectChromium, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
@@ -239,4 +239,90 @@ test('webkit without a Playwright package fails at argument parsing', () => {
     { cwd: root, encoding: 'utf8', timeout: 5000 })
   assert.notEqual(result.status, 0)
   assert.match(result.stderr, /--browser webkit needs --playwright/)
+})
+
+// A stand-in for an attached Chromium DevTools session. Its first status probe
+// answers as Chromium does when the probe runs before the document has a body:
+// a TypeError with no string value. Later probes return the rendered status.
+const BODY_NOT_READY = {
+  result: { type: 'object', subtype: 'error', className: 'TypeError',
+    description: "TypeError: Cannot read properties of null (reading 'classList')" },
+  exceptionDetails: { exceptionId: 1, text: 'Uncaught', lineNumber: 21, columnNumber: 29 },
+}
+
+function fakeChromium(mode) {
+  const state = { evaluations: 0 }
+  const baseURL = 'http://127.0.0.1:43117'
+  const targetURL = `${baseURL}/examples/browser/index.html`
+  const cdp = {
+    handlers: [],
+    emit(method, params) {
+      for (const handler of this.handlers) handler({ method, params, sessionId: 'session-1' })
+    },
+    async send(method, params) {
+      if (method === 'Target.createTarget') return { targetId: 'target-1' }
+      if (method === 'Target.attachToTarget') return { sessionId: 'session-1' }
+      if (['Page.enable', 'Network.enable', 'Runtime.enable'].includes(method)) return {}
+      if (method === 'Page.navigate') {
+        assert.equal(params.url, targetURL)
+        this.emit('Network.responseReceived', { type: 'Document', response: { status: 200, url: targetURL } })
+        this.emit('Network.requestWillBeSent', { requestId: 'module-1', request: { url: `${baseURL}/examples/browser/demo.js` } })
+        if (mode === 'missing-module') {
+          this.emit('Network.responseReceived', { type: 'Script', response: { status: 404, url: `${baseURL}/examples/browser/missing-module.mjs` } })
+        }
+        if (mode === 'page-error') this.emit('Runtime.exceptionThrown', { exceptionDetails: { text: 'Uncaught early module exception' } })
+        return { frameId: 'frame-1' }
+      }
+      if (method === 'Runtime.evaluate') {
+        state.evaluations += 1
+        if (state.evaluations === 1 || mode === 'never-ready') return BODY_NOT_READY
+        return { result: { type: 'string', value: JSON.stringify({ rendering: false, status: '20 passes', appContainer: true,
+          canvas: { width: 256, height: 256, nonZeroPixels: mode === 'blank' ? 0 : 65536 }, pageErrors: [] }) } }
+      }
+      if (method === 'Browser.getVersion') return { product: 'HeadlessChrome/156.0.8078.4', userAgent: 'Mozilla/5.0 HeadlessChrome/156.0.8078.4' }
+      throw new Error(`unexpected DevTools command ${method}`)
+    },
+  }
+  return { cdp, state, baseURL, targetURL }
+}
+
+async function runFakeChromium(mode, timeout = 3000) {
+  const { cdp, state, baseURL, targetURL } = fakeChromium(mode)
+  const result = await inspectChromium({ cdp, baseURL, targetURL, executable: 'chrome-headless-shell', timeout, interval: 5 })
+  return { result, state }
+}
+
+test('Chromium probe that runs before the page body exists retries instead of ending the check', async () => {
+  const { result, state } = await runFakeChromium('pass')
+  assert.equal(state.evaluations, 2)
+  assert.equal(result.pass, true)
+  assert.equal(result.httpStatus, 200)
+  assert.deepEqual(result.canvas, { width: 256, height: 256, nonZeroPixels: 65536 })
+  assert.deepEqual(result.moduleFailures, [])
+  assert.deepEqual(result.pageErrors, [])
+})
+
+test('Chromium check still rejects an early page error after a not-ready probe', async () => {
+  const { result } = await runFakeChromium('page-error')
+  assert.equal(result.pass, false)
+  assert.deepEqual(result.pageErrors, ['Uncaught early module exception'])
+})
+
+test('Chromium check still rejects a failed same-origin module after a not-ready probe', async () => {
+  const { result } = await runFakeChromium('missing-module')
+  assert.equal(result.pass, false)
+  assert.match(result.moduleFailures.join(' '), /404 .*missing-module\.mjs/)
+})
+
+test('Chromium check still rejects a blank canvas after a not-ready probe', async () => {
+  const { result } = await runFakeChromium('blank')
+  assert.equal(result.pass, false)
+  assert.equal(result.render.completed, true)
+})
+
+test('Chromium check fails at the deadline when the page never becomes ready', async () => {
+  const { result, state } = await runFakeChromium('never-ready', 100)
+  assert.equal(result.pass, false)
+  assert.equal(result.render.completed, false)
+  assert.ok(state.evaluations > 1)
 })

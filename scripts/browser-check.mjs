@@ -453,6 +453,85 @@ async function runWebkit(args, server, baseURL, targetURL, requests) {
   }
 }
 
+// Reads one Chromium `Runtime.evaluate` result of the status probe. The probe
+// can run before the navigated document has a body: it then throws, and the
+// result carries `exceptionDetails` and no string value. That page is not
+// ready yet, so this returns null and the caller probes again.
+export function chromiumProbeValue(evaluate) {
+  const value = evaluate?.result?.value
+  if (evaluate?.exceptionDetails || typeof value !== 'string') return null
+  return JSON.parse(value)
+}
+
+// Drives one Chromium page over an attached DevTools connection: `cdp.send`
+// issues a command and `cdp.handlers` receives every event.
+export async function inspectChromium({ cdp, baseURL, targetURL, executable, timeout, interval = 500 }) {
+  const failures = []
+  const pageErrors = []
+  const pendingRequests = new Map()
+  let sessionPath = null
+  let mainFrameStatus = null
+
+  const onEvent = (message) => {
+    if (!message.method) return
+    if (sessionPath && message.sessionId !== sessionPath) return
+    if (message.method === 'Network.requestWillBeSent') {
+      pendingRequests.set(message.params.requestId, message.params.request.url)
+    } else if (message.method === 'Network.responseReceived') {
+      const { status, url } = message.params.response
+      if (message.params.type === 'Document' && url.startsWith(baseURL)) mainFrameStatus = status
+      if (url.startsWith(baseURL) && status >= 400) failures.push(`${status} ${url}`)
+    } else if (message.method === 'Network.loadingFailed') {
+      const url = pendingRequests.get(message.params.requestId) || ''
+      if (url.startsWith(baseURL)) failures.push(`failed ${url} :: ${message.params.errorText || 'network error'}`)
+    } else if (message.method === 'Runtime.exceptionThrown') {
+      pageErrors.push(String(message.params.exceptionDetails.text || message.params.exceptionDetails.exception?.description || 'exception').slice(0, 300))
+    }
+  }
+  cdp.handlers.push(onEvent)
+
+  const { targetId } = await cdp.send('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send('Target.attachToTarget', { targetId, flatten: true })
+  sessionPath = sessionId
+  await cdp.send('Page.enable', {}, sessionId)
+  await cdp.send('Network.enable', {}, sessionId)
+  await cdp.send('Runtime.enable', {}, sessionId)
+
+  const nav = await cdp.send('Page.navigate', { url: targetURL }, sessionId)
+  if (nav.errorText) throw new Error(`navigation failed: ${nav.errorText}`)
+
+  const deadline = Date.now() + timeout
+  let probe = null
+  while (Date.now() < deadline) {
+    const evaluate = await cdp.send('Runtime.evaluate', { expression: STATUS_PROBE, returnByValue: true }, sessionId)
+    const next = chromiumProbeValue(evaluate)
+    if (next) {
+      probe = next
+      if (!probe.rendering && /passes/.test(probe.status)) break
+    }
+    await sleep(interval)
+  }
+
+  const { product, userAgent } = await cdp.send('Browser.getVersion')
+  const renderCompleted = !!probe && /passes/.test(probe.status)
+  const canvas = probe?.canvas || null
+  const nonBlank = !!canvas && !canvas.error && canvas.nonZeroPixels > canvas.width * canvas.height * 0.5
+  const pass = renderCompleted && nonBlank && probe.appContainer && failures.length === 0 && pageErrors.length === 0
+
+  return {
+    pass,
+    browser: { product, userAgent, executable },
+    platform: `${process.platform}`,
+    url: targetURL,
+    httpStatus: mainFrameStatus,
+    render: { completed: renderCompleted, statusText: probe ? probe.status.slice(0, 120) : null },
+    canvas,
+    appContainer: !!probe && probe.appContainer,
+    moduleFailures: failures,
+    pageErrors,
+  }
+}
+
 async function run() {
   const args = parseArgs(process.argv.slice(2))
   const demoPath = '/examples/browser/index.html'
@@ -535,68 +614,9 @@ async function run() {
     })
     const cdp = new Cdp(ws)
 
-    const failures = []
-    const pageErrors = []
-    const pendingRequests = new Map()
-    let sessionPath = null
-    let mainFrameStatus = null
-
-    const onEvent = (message) => {
-      if (!message.method) return
-      if (sessionPath && message.sessionId !== sessionPath) return
-      if (message.method === 'Network.requestWillBeSent') {
-        pendingRequests.set(message.params.requestId, message.params.request.url)
-      } else if (message.method === 'Network.responseReceived') {
-        const { status, url } = message.params.response
-        if (message.params.type === 'Document' && url.startsWith(baseURL)) mainFrameStatus = status
-        if (url.startsWith(baseURL) && status >= 400) failures.push(`${status} ${url}`)
-      } else if (message.method === 'Network.loadingFailed') {
-        const url = pendingRequests.get(message.params.requestId) || ''
-        if (url.startsWith(baseURL)) failures.push(`failed ${url} :: ${message.params.errorText || 'network error'}`)
-      } else if (message.method === 'Runtime.exceptionThrown') {
-        pageErrors.push(String(message.params.exceptionDetails.text || message.params.exceptionDetails.exception?.description || 'exception').slice(0, 300))
-      }
-    }
-    cdp.handlers.push(onEvent)
-
-    const { targetId } = await cdp.send('Target.createTarget', { url: 'about:blank' })
-    const { sessionId } = await cdp.send('Target.attachToTarget', { targetId, flatten: true })
-    sessionPath = sessionId
-    await cdp.send('Page.enable', {}, sessionId)
-    await cdp.send('Network.enable', {}, sessionId)
-    await cdp.send('Runtime.enable', {}, sessionId)
-
-    const nav = await cdp.send('Page.navigate', { url: targetURL }, sessionId)
-    if (nav.errorText) throw new Error(`navigation failed: ${nav.errorText}`)
-
-    const deadline = Date.now() + args.timeout
-    let probe = null
-    while (Date.now() < deadline) {
-      const evaluate = await cdp.send('Runtime.evaluate', { expression: STATUS_PROBE, returnByValue: true }, sessionId)
-      probe = JSON.parse(evaluate.result.value)
-      if (!probe.rendering && /passes/.test(probe.status)) break
-      await sleep(500)
-    }
-
-    const { product, userAgent } = await cdp.send('Browser.getVersion')
-    const renderCompleted = !!probe && /passes/.test(probe.status)
-    const canvas = probe?.canvas || null
-    const nonBlank = !!canvas && !canvas.error && canvas.nonZeroPixels > canvas.width * canvas.height * 0.5
-    const pass = renderCompleted && nonBlank && probe.appContainer && failures.length === 0 && pageErrors.length === 0
-
-    console.log(`BROWSER-CHECK ${JSON.stringify({
-      pass,
-      browser: { product, userAgent, executable },
-      platform: `${process.platform}`,
-      url: targetURL,
-      httpStatus: mainFrameStatus,
-      render: { completed: renderCompleted, statusText: probe ? probe.status.slice(0, 120) : null },
-      canvas,
-      appContainer: !!probe && probe.appContainer,
-      moduleFailures: failures,
-      pageErrors,
-    })}`)
-    process.exitCode = pass ? 0 : 1
+    const result = await inspectChromium({ cdp, baseURL, targetURL, executable, timeout: args.timeout })
+    console.log(`BROWSER-CHECK ${JSON.stringify(result)}`)
+    process.exitCode = result.pass ? 0 : 1
   } catch (error) {
     console.log(`BROWSER-CHECK ${JSON.stringify({ pass: false, error: String(error).slice(0, 500) })}`)
     process.exitCode = 1
