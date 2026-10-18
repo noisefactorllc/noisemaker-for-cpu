@@ -56,10 +56,11 @@ Replace `program.dsl` with a Noisemaker program that uses only the supported eff
 
 ## What this port cannot render
 
-This port cannot render five effects from the upstream catalog:
+The `render` command cannot render two effects from the upstream catalog:
 
-- `synth/roll`, `synth/scope` and `synth/spectrum` react to live audio.
-- `render/meshLoader` and `render/meshRender` need a mesh pipeline.
+- `render/meshLoader` and `render/meshRender` need mesh data. The command has no mesh input.
+
+`synth/roll`, `synth/scope` and `synth/spectrum` render with silent MIDI and audio input. The command has no live input.
 
 Everything else in the catalog renders here.
 `node engine/bin/noisemaker-cpu.js effects` lists exactly which effects this engine contains.

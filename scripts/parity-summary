@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 // Whole-port parity summary entrypoint. Renders every case of the current
-// authority's manifest (210 pinned effect IDs, including the five excluded reactive/mesh
-// effects as expected cases) with this port and compares each against the retained
-// authority golden; positional case-id arguments (either spelling, `filter/crt` or
-// `filter__crt`) restrict the run to those cases. The last output line is the
+// authority's manifest (210 pinned effect IDs; an effect in the snapshot's
+// excludedEffects, empty at the current pin, still counts as an expected case) with
+// this port and compares each against the retained authority golden; positional
+// case-id arguments (either spelling, `filter/crt` or `filter__crt`) restrict the run
+// to those cases. The last output line is the
 // PARITY-SUMMARY JSON with the gap-closure counts. See scripts/parity/summary.js for
 // the classification contract. The exit code reports audit completion, not the parity
 // verdict — the verdict is the counts in the PARITY-SUMMARY line.

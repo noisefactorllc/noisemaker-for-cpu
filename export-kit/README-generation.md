@@ -7,12 +7,9 @@ lives here.
 
 ## What `compat-effects.json` is
 
-This is a sorted JSON array of the catalog ids this port renders. Start with the 210 `sourceEffectIds` in `src/effects/generated/upstream-snapshot.js`. Subtract the same snapshot's five `excludedEffects`:
+This is a sorted JSON array of the catalog ids this port renders. Start with the 210 `sourceEffectIds` in `src/effects/generated/upstream-snapshot.js`. Subtract the same snapshot's `excludedEffects`.
 
-- Reactive effects: `synth/roll`, `synth/scope`, `synth/spectrum`.
-- Mesh effects: `render/meshLoader`, `render/meshRender`.
-
-The result is 205 today. `docs/EFFECTS.md` documents the exclusions. Including these effects in the compatibility list would tell users that the kit renders effects it refuses.
+At the current pin `excludedEffects` is empty, so the result is all 210 ids. An excluded effect in the compatibility list would tell users that the kit renders effects it refuses.
 
 The other three CPU ports derive the same claim with `fromBundleMetadata` over
 their generated `bundle/metadata.json`. This port ships no such file. The repository instead contains a generated, committed list, which can become outdated. Regenerate it whenever

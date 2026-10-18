@@ -17,3 +17,11 @@ test('export kit compat list names exactly the effects the snapshot renders', as
   const listed = JSON.parse(await readFile(new URL('../export-kit/compat-effects.json', import.meta.url), 'utf8'))
   assert.deepEqual(listed, derived)
 })
+
+test('README-generation states the compat list size', async () => {
+  const note = await readFile(new URL('../export-kit/README-generation.md', import.meta.url), 'utf8')
+  const listed = JSON.parse(await readFile(new URL('../export-kit/compat-effects.json', import.meta.url), 'utf8'))
+  const stated = note.match(/the result is all (\d+) ids/)
+  assert.ok(stated, 'README-generation states no list size')
+  assert.equal(Number(stated[1]), listed.length)
+})

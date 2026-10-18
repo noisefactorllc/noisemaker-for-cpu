@@ -36,3 +36,17 @@ test('every eligible canonical GLSL program is transpiled or assigned a parity a
   assert.deepEqual([...new Set(programCoverage.map((program) => program.effectId))].length, 210)
   assert.ok(programCoverage.every((program) => program.sourceBytes > 0 && program.normalizedBytes > 0))
 })
+
+// docs/CSL.md ships with the package and states the same coverage split.
+test('docs/CSL.md states the canonical program coverage counts', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const text = await readFile(new URL('../docs/CSL.md', import.meta.url), 'utf8')
+  const generated = programCoverage.filter((program) => program.status === 'generated').length
+  const adapter = programCoverage.filter((program) => program.status === 'adapter').length
+  const stated = text.match(/Of (\d+) canonical programs, (\d+) are generated and (\d+) use full CPU adapters/)
+  assert.ok(stated, 'docs/CSL.md states no program coverage counts')
+  assert.deepEqual(stated.slice(1).map(Number), [programCoverage.length, generated, adapter])
+  const split = text.match(/the (\d+)\/(\d+) coverage split/)
+  assert.ok(split, 'docs/CSL.md states no coverage split')
+  assert.deepEqual(split.slice(1).map(Number), [generated, adapter])
+})

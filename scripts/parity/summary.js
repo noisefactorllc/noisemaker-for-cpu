@@ -1,9 +1,9 @@
 // Whole-port parity summary. Counts every case of the current authority's
 // manifest (the pinned upstream source's 210 effect IDs in
-// src/effects/generated/upstream-snapshot.js `sourceEffectIds`, which includes the five
-// explicitly excluded reactive/mesh effects as expected cases) against this port and the
-// retained authority goldens. Classification is computed from real evidence only; it is
-// never hand-assigned:
+// src/effects/generated/upstream-snapshot.js `sourceEffectIds`; an effect in the
+// snapshot's `excludedEffects`, empty at the current pin, still counts as an expected
+// case) against this port and the retained authority goldens. Classification is
+// computed from real evidence only; it is never hand-assigned:
 //   exact   — byte-identical RGBA output against the retained authority golden.
 //   strict  — all channels within the gate's ±2-byte numerical contract (not byte-exact).
 //   near    — reviewed capture bytes under the case-specific policy in near.js.
@@ -12,7 +12,7 @@
 //   skip    — the explicit, fixture-preflighted ITERATED_SKIP_IDS
 //             with no captured authority golden to compare against.
 //   fail    — rendered but exceeds the numerical contract.
-//   missing — no implementation in this port (the five excluded effects) or an
+//   missing — no implementation in this port (an effect in `excludedEffects`) or an
 //             unexplained hole (registry effect without a golden and without a skip
 //             policy reason).
 // The exit code reports whether the audit ran to completion, not a parity verdict: the

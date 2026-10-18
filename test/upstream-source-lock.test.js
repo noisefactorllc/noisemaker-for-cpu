@@ -128,3 +128,14 @@ test('committed kernel records match the pinned-source manifest hashes', async (
     assert.ok(covered.has(entry.path), `Pinned upstream source ${entry.path} has no committed kernel coverage record`)
   }
 })
+
+// The shipped README and docs/EFFECTS.md name the upstream revision the catalog
+// comes from. A pin move that leaves the old revision in either document fails here.
+test('README and docs/EFFECTS.md name the pinned upstream revision', async () => {
+  for (const document of ['../README.md', '../docs/EFFECTS.md']) {
+    const text = await readFile(new URL(document, import.meta.url), 'utf8')
+    const named = [...text.matchAll(/Noisemaker revision `([0-9a-f]{7,40})`/g)].map((match) => match[1])
+    assert.ok(named.length > 0, `${document} names no Noisemaker revision`)
+    assert.deepEqual([...new Set(named)], [sourceLock.PINNED_UPSTREAM_REVISION], document)
+  }
+})

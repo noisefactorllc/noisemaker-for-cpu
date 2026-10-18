@@ -1,6 +1,6 @@
 # Effect coverage
 
-This is the exact CPU-eligible target imported from Noisemaker revision `3f5775c64d55c31906eab114087e09827cb2a1cc` (the full 210-effect manifest; the formerly excluded reactive/mesh trees are imported since the 2026-10-02 fourth parity leg, below). Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
+This is the exact CPU-eligible target imported from Noisemaker revision `6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d` (the full 210-effect manifest; the formerly excluded reactive/mesh trees are imported since the 2026-10-02 fourth parity leg, below). Canonical names, namespaces, kinds, descriptions, parameters, aliases, defaults, enum choices, texture bindings, and pass graphs live in the generated snapshot at `src/effects/generated/upstream-snapshot.js`; they are not maintained as a second hand-written schema.
 
 The runtime contains 210 effects and 308 canonical programs (298 generated from canonical GLSL, 10 CPU adapters — see [CSL.md](CSL.md)). All 460 non-null compile-time shader choices and finite smoke programs for every effect execute in the test suite. Run `noisemaker-cpu effects` for the machine-readable command-line listing.
 
@@ -80,8 +80,8 @@ An RGBA CPU atlas costs `16N³` bytes because storage is float32 even for a decl
 
 **Statelessness.** Nothing persists between separate `render()`/`renderAsync()` calls. Every iteration's state is `iterationCount`-many synchronous re-runs of the pass graph within one render, seeded fresh (zeroed particle/scratch textures, a zeroed `selfTex`) at the start of every render — calling `render()` twice with identical arguments is deterministic and byte-identical, exactly like every other effect in the catalog.
 
-**Pixel parity.** The prior 21 simulation effects remain explicit `cpu-divergent` skips. All 17 effects added in this coverage pass are separately reported as `newly ported, no GPU golden` until pinned references exist.
+**Pixel parity.** Every simulation effect is graded against a retained authority golden. No simulation effect is a skip: `ITERATED_SKIP_IDS` in `scripts/parity/lib.js` is empty.
 
 ## Parity status
 
-`npm run parity` keeps the established pinned-GPU-golden gate and unchanged ±2-byte RGBA threshold, and exits nonzero on any failure. The whole-port `scripts/parity-summary` grades all 210 effects: 159 byte-exact, 49 further strict passes and 2 reviewed NEAR cases (`points/buddhabrot` and `synth/navierStokes`), with no skip and no failure. `filter/crt` is a strict pass; see [CRT-PARITY.md](CRT-PARITY.md) for how its adapter follows the Metal arithmetic.
+`npm run parity` keeps the established pinned-GPU-golden gate and unchanged ±2-byte RGBA threshold, and exits nonzero on any failure. The whole-port `scripts/parity-summary` grades all 210 effects: 161 byte-exact, 47 further strict passes and 2 reviewed NEAR cases (`points/buddhabrot` and `synth/navierStokes`), with no skip and no failure. `filter/crt` is a strict pass; see [CRT-PARITY.md](CRT-PARITY.md) for how its adapter follows the Metal arithmetic.

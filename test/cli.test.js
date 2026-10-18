@@ -336,3 +336,25 @@ test('CLI animate defaults its output to animation.mp4', { skip: !hasFfmpeg() },
     await rm(dir, { recursive: true, force: true })
   }
 })
+
+// Every exported kit ships the kit README template. Its "cannot render" list
+// must name exactly the reactive and mesh effects the render command refuses.
+test('kit README names the reactive and mesh effects the render command refuses', async () => {
+  const template = await readFile(resolve('export-kit/kit/README.template.md'), 'utf8')
+  const section = template.split('## What this port cannot render')[1].split('\n## ')[0]
+  const refused = [...section.matchAll(/^- (.*)$/gm)].flatMap((line) => [...line[1].matchAll(/`([a-z0-9]+\/[A-Za-z0-9]+)`/g)].map((match) => match[1]))
+  const words = { one: 1, two: 2, three: 3, four: 4, five: 5 }
+  const count = section.match(/cannot render (\w+) effects/)
+  assert.ok(count, 'kit README states no refused-effect count')
+  assert.equal(words[count[1]], refused.length)
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    for (const id of ['synth/roll', 'synth/scope', 'synth/spectrum', 'render/meshLoader', 'render/meshRender']) {
+      const fixture = resolve(`parity/upstream-defaults/${id.replace('/', '__')}.dsl`)
+      const result = run(['render', fixture, '--width', '8', '--height', '8', '--output', join(dir, 'out.png')])
+      assert.equal(result.status !== 0, refused.includes(id), `${id}: exit ${result.status} ${result.stderr}`)
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
