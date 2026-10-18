@@ -2116,11 +2116,53 @@
       "captureRecord": null
     },
     "variants/points__lenia_density01.golden.png": {
-      "sha256": "69d87be57f63ba9327bbc1b48349ac82fab7981a4dc4c5debc7b71b7283f4142",
+      "sha256": "21e1e428bf6382c92dd4b51b7b35ce1d90c21b708771ca7ca69e76079d2c0b33",
       "bytes": 113,
       "introducedIn": "9d8fc85e7468c21bde6acbb2c54971924c925a85",
-      "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-lenia-density01-timed60",
-      "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 capture from authority source 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d. The default points/lenia fixture changed only pointsRender density to 0.1. At 8x8 with perlin and pointsEmit seed 0, the authority rendered 60 frame times from 0.1516666667 through 0.25 in steps of 1/600; the CPU comparison used renderer seed 1. Two independent readbacks had raw SHA-256 f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a and encoded PNG SHA-256 69d87be57f63ba9327bbc1b48349ac82fab7981a4dc4c5debc7b71b7283f4142. The CPU 60-frame output differs in one RGBA channel by 1, inside the unchanged tolerance of 2. One frame produces a different authority raw SHA-256 6296b722becb73bfa53865ae433f532d8b94d2a9ee0ded5cfc88506a723e2a10, so this capture distinguishes one from 60 group ticks."
+      "captureRevision": "2026-10-18-m4-metal-webgl2-lenia-density01-timed60-read",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "47a429cbcbd86a1ac624a24f4527ca07ce47c5de37c3cd63d13bced748cbe96f",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 60,
+        "frameTimes": {
+          "first": 0.15166666666666667,
+          "last": 0.25,
+          "step": "1/600",
+          "rule": "wrap01(0.25 - (59 - i) / 600) for frame i = 0..59"
+        },
+        "surface": {
+          "read": "global_o0_read",
+          "write": "global_o0_write",
+          "presented": "global_o0_read"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source (1588 files under shaders, share and demo), served to headless Chromium with ANGLE Metal on an Apple M4. The program is the default points/lenia fixture with pointsRender(density: 0.1); fixtureSha256 is the hash of that program. Load the manifest and the fixture effects, compile the program, apply the demo ProgramState step values, upload a transparent canvas to every media step, then call render(t) for the 60 frame times on one renderer, as the CPU iterationCount 60 schedule does. After 60 frames the presented surface is the read texture. Read the read and write textures twice each as top-down RGBA8 through WebGL2Backend.readPixels. A second renderer returned the same bytes for both textures. The golden holds the authority read texture; no candidate output entered it.",
+        "readbacks": [
+          {
+            "id": "global_o0_write",
+            "sha256": "f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a",
+            "repeatSha256": "f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a",
+            "independentSha256": "f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a"
+          },
+          {
+            "id": "global_o0_read",
+            "sha256": "dd6fa096be9b23fa796b6d3c45707c576a70786898c3eca4acd413d31e5e900d",
+            "repeatSha256": "dd6fa096be9b23fa796b6d3c45707c576a70786898c3eca4acd413d31e5e900d",
+            "independentSha256": "dd6fa096be9b23fa796b6d3c45707c576a70786898c3eca4acd413d31e5e900d"
+          }
+        ],
+        "distinctRgba": 9,
+        "replaces": {
+          "pngSha256": "69d87be57f63ba9327bbc1b48349ac82fab7981a4dc4c5debc7b71b7283f4142",
+          "rgbaSha256": "f8fff3dd74ae41c57c22b48f7e60faf810479704a98ae518dcb1ffe532d7f69a",
+          "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-lenia-density01-timed60",
+          "reason": "The replaced capture held the authority write texture, frame 59 of 60. After 60 frames the presented surface is the read texture, which every other iterated gate golden holds."
+        }
+      }
     },
     "defaults/points__buddhabrot.golden.png": {
       "sha256": "d5f2d4316afeb89d1cc3fc92295ae6b2dc4a9d912f91f1308eb19a90deb130df",
