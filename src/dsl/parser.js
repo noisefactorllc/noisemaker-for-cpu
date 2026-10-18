@@ -22,9 +22,11 @@ class Parser {
   peek(offset = 0) { return this.tokens[Math.min(this.current + offset, this.tokens.length - 1)] }
   previous() { return this.tokens[this.current - 1] }
   atEnd() { return this.peek().type === 'eof' }
-  check(lexeme) { return this.peek().lexeme === lexeme }
+  // A string token's lexeme is its content, so a string never matches punctuation,
+  // an operator or a keyword: `text(")")` holds the string ")".
+  check(lexeme) { return this.peek().type !== 'string' && this.peek().lexeme === lexeme }
   match(...lexemes) {
-    if (!lexemes.includes(this.peek().lexeme)) return false
+    if (this.peek().type === 'string' || !lexemes.includes(this.peek().lexeme)) return false
     this.current += 1
     return true
   }
@@ -186,13 +188,30 @@ class Parser {
       } while (this.match(','))
     }
     this.consume(')')
-    return { kind: 'Call', name: name.lexeme, args, argMode: mode, loc: location(name) }
+    const call = { kind: 'Call', name: name.lexeme, args, argMode: mode, loc: location(name) }
+    return call.name === 'from' ? this.fromCall(call) : call
+  }
+
+  // Port of upstream transformFromInvocation: `from(namespace, effect(...))` is the
+  // effect call, resolved in that one namespace instead of the search order.
+  fromCall(call) {
+    if (call.argMode === 'named' || call.argMode === 'mixed') throw new DslError("'from' does not support named arguments", call.loc)
+    if (call.args.length !== 2) throw new DslError("'from' requires exactly two arguments (namespace, call)", call.loc)
+    const [namespace, target] = call.args.map((arg) => arg.value)
+    if (namespace?.kind !== 'identifier') throw new DslError("'from' namespace argument must be an identifier", call.loc)
+    // Upstream accepts a Call node or a one-call chain. Its read(), read3d(), osc(),
+    // midi() and audio() nodes are not Call nodes.
+    const inner = target?.kind === 'Chain' && target.calls.length === 1 ? target.calls[0] : null
+    if (inner?.kind !== 'Call' || ['read', 'read3d', 'write', 'write3d'].includes(inner.name)) {
+      throw new DslError("'from' second argument must be a call expression", call.loc)
+    }
+    return { ...inner, namespace: namespace.name }
   }
 
   parseValueExpression(minPrecedence = 0) {
     let left = this.parseValueUnary()
     const precedence = { '+': 1, '-': 1, '*': 2, '/': 2 }
-    while ((precedence[this.peek().lexeme] ?? -1) >= minPrecedence) {
+    while (this.peek().type === 'operator' && precedence[this.peek().lexeme] >= minPrecedence) {
       const operator = this.tokens[this.current++]
       const right = this.parseValueExpression(precedence[operator.lexeme] + 1)
       left = { kind: 'binary', operator: operator.lexeme, left, right, loc: location(operator) }
@@ -244,6 +263,20 @@ class Parser {
     if (token.type === 'identifier') {
       this.current += 1
       const name = token.lexeme
+      // `Math.PI` is the one numeric constant of upstream's grammar
+      // (`NumberExpr ::= Number | 'Math.PI' | ...`).
+      if (name === 'Math' && this.isPunctuation('.') && this.peek(1).type === 'identifier' && this.peek(1).lexeme === 'PI') {
+        this.current += 2
+        return Math.PI
+      }
+      // A one-argument `read3d(vol0)` names a volume or geometry for a parameter,
+      // as upstream's validator reads it. With two arguments it starts a chain.
+      if (name === 'read3d' && this.isPunctuation('(')) {
+        this.current -= 1
+        const call = this.parseCall()
+        if (call.args.length === 1 && call.args[0].value?.kind === 'identifier') return call.args[0].value
+        return this.parseExpressionChain(call)
+      }
       if (name === 'read' && this.match('(')) {
         if (this.peek().type === 'identifier' && this.peek(1).lexeme === ':') {
           const argumentName = this.identifier().lexeme

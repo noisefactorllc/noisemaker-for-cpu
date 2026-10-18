@@ -54,6 +54,17 @@ export function tokenizeDsl(source, options = {}) {
       push('color', lexeme, location)
       continue
     }
+    // A triple-quoted string (upstream `String ::= '"""' .* '"""'`) may span lines.
+    // Upstream's lexer keeps its content raw, without escape processing, and its
+    // unparser writes a multi-line string in this form.
+    if (char === '"' && source[index + 1] === '"' && source[index + 2] === '"') {
+      const end = source.indexOf('"""', index + 3)
+      if (end < 0) throw new DslError('Unterminated string', location)
+      const value = source.slice(index + 3, end)
+      while (index < end + 3) advance()
+      push('string', value, location, value)
+      continue
+    }
     if (char === '"') {
       advance()
       let value = ''

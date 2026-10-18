@@ -14,7 +14,7 @@ import { resolveMeshAdapter } from '../effects/cpu/mesh-render.js'
 import { externalDataSurface } from './external-textures.js'
 import { isAutomationValue, resolveAutomationUniform } from './automation.js'
 import { paletteData } from '../effects/generated/canonical-adapter-data.js'
-import { computeIterationGroups, isParticleStateName, wrap01, ITERATION_DELTA_TIME } from './iteration.js'
+import { computeIterationGroups, isParticleStateName, isSurfaceIo, wrap01, ITERATION_DELTA_TIME } from './iteration.js'
 
 // Fallback size/format for a group-scoped particle-state texture (`global_xyz`/`global_vel`/
 // `global_rgba`/`global_life_data`/`global_*_trail`) that nobody in its iteration group declares
@@ -1831,15 +1831,37 @@ export class CpuRenderer {
   // group that holds the step, and each writes the hidden surface that the step's
   // argument names. Upstream compiles those chains into steps directly ahead of the
   // consuming effect; they read nothing that the group itself writes.
+  // The built-in surface I/O steps. read3d starts a chain bundle from a stored
+  // volume and geometry; write3d stores the current bundle's volume and geometry
+  // under its two names (`none` stores nothing) and passes the chain through, as
+  // upstream's `_write3d` blits and passes through.
+  runSurfaceIoStep(step, current, surfaces, owned) {
+    if (step.kind === 'read') {
+      const surface = surfaces.get(step.surface)
+      if (!surface) throw new Error(`Surface ${step.surface} has not been written`)
+      return surface
+    }
+    if (step.kind === 'write') {
+      this.writeSurface(step.surface, chainBundle(current).image, surfaces, owned)
+      return current
+    }
+    if (step.kind === 'write3d') {
+      const bundle = chainBundle(current)
+      if (step.volume !== 'none' && bundle.volume) this.writeSurface(step.volume, bundle.volume, surfaces, owned)
+      if (step.geometry !== 'none' && bundle.geometry) this.writeSurface(step.geometry, bundle.geometry, surfaces, owned)
+      return current
+    }
+    const volume = surfaces.get(step.volume)
+    if (!volume) throw new Error(`Surface ${step.volume} has not been written`)
+    return { image: null, volume, geometry: surfaces.get(step.geometry) ?? null, volumeSize: volume.width }
+  }
+
   runChainSync(chain, surfaces, owned, renderOptions, stats) {
     let current = null
     for (const group of computeIterationGroups(chain.steps)) {
       const only = group.steps.length === 1 ? group.steps[0] : null
-      if (only?.kind === 'read') {
-        current = surfaces.get(only.surface)
-        if (!current) throw new Error(`Surface ${only.surface} has not been written`)
-      } else if (only?.kind === 'write') {
-        this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
+      if (only && isSurfaceIo(only)) {
+        current = this.runSurfaceIoStep(only, current, surfaces, owned)
       } else {
         for (const step of group.steps) {
           for (const inline of step.inlineChains ?? []) {
@@ -1857,11 +1879,8 @@ export class CpuRenderer {
     let current = null
     for (const group of computeIterationGroups(chain.steps)) {
       const only = group.steps.length === 1 ? group.steps[0] : null
-      if (only?.kind === 'read') {
-        current = surfaces.get(only.surface)
-        if (!current) throw new Error(`Surface ${only.surface} has not been written`)
-      } else if (only?.kind === 'write') {
-        this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
+      if (only && isSurfaceIo(only)) {
+        current = this.runSurfaceIoStep(only, current, surfaces, owned)
       } else {
         for (const step of group.steps) {
           for (const inline of step.inlineChains ?? []) {

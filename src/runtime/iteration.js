@@ -24,6 +24,12 @@ export function wrap01(value) {
   return ((value % 1) + 1) % 1
 }
 
+// The built-in surface I/O steps: read/write for images, read3d/write3d for a
+// volume and its geometry.
+export function isSurfaceIo(step) {
+  return step.kind === 'read' || step.kind === 'write' || step.kind === 'read3d' || step.kind === 'write3d'
+}
+
 function declaresXyz(step) {
   return Object.prototype.hasOwnProperty.call(step.definition.textures ?? {}, 'global_xyz')
 }
@@ -67,7 +73,7 @@ export function computeIterationGroups(steps) {
 
   for (const step of steps) {
     if (openLoop) {
-      if (step.kind === 'read' || step.kind === 'write') throw new Error('Loop iteration group cannot cross a read/write boundary')
+      if (isSurfaceIo(step)) throw new Error('Loop iteration group cannot cross a read/write boundary')
       if (step.definition?.loopRole === 'begin') throw new Error('Nested loop iteration groups are not supported')
       openLoop.steps.push(step)
       if (step.definition?.loopRole === 'end') {
@@ -76,7 +82,7 @@ export function computeIterationGroups(steps) {
       }
       continue
     }
-    if (step.kind === 'read' || step.kind === 'write') {
+    if (isSurfaceIo(step)) {
       closeOpenGroup()
       groups.push({ steps: [step], iterated: false })
       continue

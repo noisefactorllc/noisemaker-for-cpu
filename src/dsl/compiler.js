@@ -327,6 +327,8 @@ function evaluateValue(value, bindings, oscDepth = 0) {
     if (bindings.has(value.name)) {
       const binding = bindings.get(value.name)
       if (binding.kind === 'partial') throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
+      // An effect alias used as a value stays the effect's bare name.
+      if (binding.kind === 'alias') return binding.name
       return binding.value
     }
     return value.name
@@ -382,7 +384,7 @@ class CompileScope extends Map {
   }
 }
 
-function mergePartial(stored, call) {
+function mergeArgs(stored, call) {
   if (!stored.argMode) return { ...call, name: stored.name }
   if (!call.argMode) return { ...stored, loc: call.loc }
   if (stored.argMode !== call.argMode) throw new DslError('Partial and call arguments must use the same named or positional form', call.loc)
@@ -390,6 +392,38 @@ function mergePartial(stored, call) {
   const merged = new Map(stored.args.map((arg) => [arg.name, arg]))
   for (const arg of call.args) merged.set(arg.name, arg)
   return { ...call, name: stored.name, args: [...merged.values()], argMode: 'named' }
+}
+
+// A `from(ns, ...)` namespace on the call site wins over one stored in the partial,
+// as in upstream's resolveCall.
+function mergePartial(stored, call) {
+  const merged = mergeArgs(stored, call)
+  const namespace = call.namespace ?? stored.namespace
+  if (namespace) merged.namespace = namespace
+  else delete merged.namespace
+  return merged
+}
+
+// `read3d(vol, geo)` and `write3d(vol, geo)` take two positional references:
+// identifiers such as vol0 and geo0, or surface references (upstream parseWriteCall
+// and the validator's Read3D handling).
+function volumeReferences(call) {
+  if (call.argMode !== 'positional' || call.args.length !== 2) return null
+  const names = call.args.map(({ value }) => {
+    if (value?.kind === 'surface') return value.name
+    if (value?.kind === 'identifier' && !value.name.includes('.')) return value.name
+    return null
+  })
+  return names.includes(null) ? null : names
+}
+
+function read3dReferences(call) {
+  if (call.argMode === 'named') {
+    const named = new Map(call.args.map((arg) => [arg.name, arg]))
+    if (!named.has('tex3d') || !named.has('geo')) return null
+    return volumeReferences({ argMode: 'positional', args: [named.get('tex3d'), named.get('geo')] })
+  }
+  return volumeReferences(call)
 }
 
 // Compiles one chain. A statement chain that begins with a generator must end with
@@ -410,7 +444,9 @@ function compileChain(chain, bindings, { inline = false } = {}) {
   for (let index = 0; index < calls.length; index += 1) {
     let call = calls[index]
     const partial = bindings.get(call.name)
-    if (partial) {
+    if (partial?.kind === 'alias') {
+      call = { ...call, name: partial.name }
+    } else if (partial) {
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       call = mergePartial(partial.call, call)
     }
@@ -438,8 +474,28 @@ function compileChain(chain, bindings, { inline = false } = {}) {
       steps.push({ kind: 'write', surface: args[0].value.name, loc: call.loc })
       continue
     }
-    const definition = registry.resolve(call.name, search)
-    if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${search.join(', ')}`, call.loc)
+    // Built-in volume I/O (upstream `_write3d` and `_read3d`). write3d stores the
+    // current volume and geometry under the two names and passes the chain through;
+    // read3d starts a chain from them.
+    if (call.name === 'write3d') {
+      if (index === 0) throw new DslError('write3d() requires an input - cannot be first in chain', call.loc)
+      if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
+      const references = volumeReferences(call)
+      if (!references) throw new DslError('write3d() requires tex3d and geo references', call.loc)
+      steps.push({ kind: 'write3d', volume: references[0], geometry: references[1], loc: call.loc })
+      continue
+    }
+    if (call.name === 'read3d' && read3dReferences(call)) {
+      if (index !== 0) throw new DslError('read3d() is a starter node and cannot be chained inline', call.loc)
+      const [volume, geometry] = read3dReferences(call)
+      steps.push({ kind: 'read3d', volume, geometry, loc: call.loc })
+      hasInput = true
+      hasVolume = true
+      continue
+    }
+    const namespaces = call.namespace ? [call.namespace] : search
+    const definition = registry.resolve(call.name, namespaces)
+    if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${namespaces.join(', ')}`, call.loc)
     if (definition.domain === 'volume-generator') {
       if (index !== 0 && !(definition.iterated && hasVolume)) {
         throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
@@ -489,8 +545,19 @@ function compileChain(chain, bindings, { inline = false } = {}) {
     steps.push(step)
   }
   if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before the chain ends', openLoop)
-  if (!inline && startsWithGenerator && steps.at(-1)?.kind !== 'write') throw new DslError('Generator chain must end with write(oN)', chain.loc)
+  const terminal = steps.at(-1)?.kind
+  if (!inline && startsWithGenerator && terminal !== 'write' && terminal !== 'write3d') throw new DslError('Generator chain must end with write(oN)', chain.loc)
   return { steps, loc: chain.loc }
+}
+
+// Upstream `let x = noise` makes `x` an alias of the effect function, and
+// `let y = x` copies a partial or an alias (the validator stores the symbol's
+// expression and substitutes it where `y` is used).
+function aliasBinding(value, bindings) {
+  if (value?.kind !== 'identifier' || value.name.includes('.')) return null
+  const bound = bindings.get(value.name)
+  if (bound) return bound.kind === 'partial' || bound.kind === 'alias' ? bound : null
+  return bindings.registry.resolve(value.name, bindings.search) ? { kind: 'alias', name: value.name } : null
 }
 
 export function compileDsl(source, registry, options = {}) {
@@ -504,6 +571,8 @@ export function compileDsl(source, registry, options = {}) {
       // A partial keeps its call unresolved. Its arguments resolve where it is
       // called, as upstream's validator substitutes a symbol at each use.
       bindings.set(binding.name, { kind: 'partial', call: binding.value })
+    } else if (aliasBinding(binding.value, bindings)) {
+      bindings.set(binding.name, aliasBinding(binding.value, bindings))
     } else {
       bindings.set(binding.name, { kind: 'value', value: evaluateValue(binding.value, bindings), ast: binding.value })
     }
