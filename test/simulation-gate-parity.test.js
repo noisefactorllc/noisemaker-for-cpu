@@ -124,3 +124,25 @@ for (const id of ['points/dla', 'points/flock']) {
     assert.equal(createHash('sha256').update(large).digest('hex'), review.review.candidate.rawSha256)
   })
 }
+
+// points/life keeps its 256x256 agent state, so one CPU frame of its fixture takes
+// minutes. The parity summary grades its strict pass; this test checks the golden, its
+// capture record and the one-step control, which runs in seconds.
+test('points/life gate golden is a non-uniform 60-frame authority capture that one step cannot reach', async () => {
+  const fixture = readFileSync(resolve(root, 'parity/upstream-defaults/points__life.dsl'), 'utf8')
+  const key = 'defaults/points__life.golden.png'
+  const golden = await readPng(resolve(root, 'parity/goldens', key))
+  assert.ok(distinctRgba(golden.data) >= 2, `${key} holds one RGBA value`)
+  const record = records[key]?.captureRecord
+  assert.equal(record?.fixtureSha256, createHash('sha256').update(fixture.replace(/\r\n/g, '\n')).digest('hex'))
+  assert.equal(record.frames, 60)
+
+  const blank = new Surface(8, 8)
+  blank.format = 'rgba16f'
+  const stepped = fixture.replace('pointsEmit(seed: 0)', 'pointsEmit(seed: 0, iterationCount: 1)')
+  assert.notEqual(stepped, fixture)
+  const one = new CpuRenderer({ registry: createDefaultRegistry(), kernelFactories }).render(stepped, {
+    width: 8, height: 8, seed: 1, time: 0.25, oneShot: 'initial', externalTextures: { imageTex: blank, textTex: blank },
+  }).toRgba8()
+  assert.equal(compareRgba8(one, golden.data, 2).pass, false)
+})
