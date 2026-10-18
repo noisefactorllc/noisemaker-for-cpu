@@ -39,6 +39,10 @@ function normalizeValue(param, value, name) {
   }
   switch (param.type) {
     case 'float':
+      // A float parameter may declare inline choices (the `rotation` parameter of the
+      // palette filters). Upstream's validator resolves a bare identifier against them
+      // and its unparser writes the choice name, so they resolve here as for `int`.
+      value = param.choices ? enumValue(param, value, name) : value
       if (typeof value !== 'number' || !Number.isFinite(value)) throw new TypeError(`Parameter "${name}" must be a finite number`)
       break
     case 'int':
