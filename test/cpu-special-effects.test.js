@@ -26,9 +26,12 @@ test('snow uses its float32 semantic adapter for GPU operation boundaries', () =
     'search filter, synth\nnoise(seed: 1, ridges: true).snow().write(o0)\nrender(o0)',
     { width: 8, height: 8, time: 0.25, oneShot: 'initial' },
   )
+  // The first four pixels of the Apple M4 gate capture
+  // (parity/goldens/defaults/filter__snow.golden.png, capture revision
+  // 2026-10-17-m4-metal-webgl2-gap002-snow).
   assert.deepEqual(
     [...result.toRgba8().slice(0, 16)],
-    [160, 147, 81, 255, 103, 76, 88, 255, 110, 82, 150, 255, 119, 67, 16, 255],
+    [159, 146, 79, 255, 105, 77, 90, 255, 109, 82, 150, 255, 119, 67, 16, 255],
   )
 })
 
