@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import GLSL from 'glsl-transpiler'
+import Descriptor from 'glsl-transpiler/lib/descriptor.js'
 import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
@@ -119,7 +120,140 @@ for (const name of COMPONENT_WISE_ES3_BUILTINS) {
   GLSL.prototype.stdlib[name] = typed
 }
 
-function transpile(source) {
+// GLSL float division as the Metal authority compiles it. Fast math lowers
+// `a / b` to `a * rcp(b)` with the hardware reciprocal, which is not correctly
+// rounded (src/csl/metal-division.js). glsl-transpiler emits a raw float64
+// `/`, which decides texel and cell boundaries differently from the GPU at
+// image sizes that are not powers of two. A float division whose divisor is a
+// run-time value (a uniform, a texture size, or a value computed in main or a
+// global) therefore calls `$runtime.fdiv`.
+//
+// The compiler folds every other divisor. A literal, a `const`, a define, or
+// an expression of those becomes a correctly rounded reciprocal constant, and
+// helper functions are inlined, so a divisor built from a helper's parameters
+// or locals is folded wherever the call passes constants (noise's
+// `map(value, 1.0, 100.0, ...)` folds `(outMax - outMin) / (inMax - inMin)`
+// and fuses the rest). Those divisions keep the transpiler's float64 `/`,
+// which follows the folded result more closely than a literal lowering.
+//
+// The transpiler's operand types are not GLSL types: normalizeCanonicalGlsl
+// strips `float(name)` to `(name)`, `vec2(ivec)` keeps the ivec type, and an
+// ivec component can come out typed float. GLSL ES 3.00 has no implicit
+// int-to-float conversion, so a division is float when an operand shows float
+// evidence (a float literal, a stripped cast, a name declared float in the
+// enclosing scope, an expression with a float literal term, or a float type)
+// and the two operands are not both integers (an integer literal, a name
+// declared int or ivec in scope, or an integer type).
+const FLOAT_DIVISION_TYPES = new Set(['float', 'vec2', 'vec3', 'vec4'])
+const INTEGER_DIVISION_TYPES = new Set(['int', 'uint', 'ivec2', 'ivec3', 'ivec4', 'uvec2', 'uvec3', 'uvec4'])
+const NUMERIC_LITERAL = /^[-+]?(?:\d*\.?\d+|\d+\.?\d*)(?:[eE][-+]?\d+)?$/
+const INTEGER_LITERAL = /^[-+]?\d+$/
+const STRIPPED_FLOAT_CAST = /^\(\s*[A-Za-z_]\w*(?:\[\d+\])?\s*\)$/
+const BARE_NAME = /^([A-Za-z_]\w*)(?:\[\d+\])?$/
+const FLOAT_LITERAL_TERM = /(?<![\w.])(?:\d+\.\d*|\.\d+)(?:[eE][-+]?\d+)?(?![\w.])/
+let divisionScope = null
+
+function divisionScopeFor(defines) {
+  return { defines: new Set(Object.keys(defines)) }
+}
+
+// The transpiler's scope entry for a name visible in its current scope.
+function scopeEntry(glsl, name) {
+  let scope = glsl.scopes[glsl.currentScope]
+  while (scope && scope[name] == null) scope = scope.__parentScope
+  return scope?.[name] ?? null
+}
+
+function operandKind(glsl, operand) {
+  const text = String(operand).trim()
+  if (INTEGER_LITERAL.test(text)) return 'int'
+  if (NUMERIC_LITERAL.test(text) || STRIPPED_FLOAT_CAST.test(text)) return 'float'
+  const bare = text.match(BARE_NAME)
+  const declared = bare && scopeEntry(glsl, bare[1])?.type
+  // An integer expression holds a float literal only inside an int or ivec
+  // conversion, which the transpiler emits as `|0` or a cpu_ivec call.
+  if (!declared && FLOAT_LITERAL_TERM.test(text) && !/\|0|cpu_[iu]vec|trunc/.test(text)) return 'float'
+  const type = declared || operand.type
+  if (INTEGER_DIVISION_TYPES.has(type)) return 'int'
+  if (FLOAT_DIVISION_TYPES.has(type)) return 'float'
+  return null
+}
+
+// True when the divisor holds a run-time value after the compiler folds
+// constants and inlines helpers; see the comment above. A name counts as
+// run-time when it is a uniform, or a main or global variable whose
+// initializer is run-time. Anything else that is not provably constant (a
+// helper's parameters and locals, or a variable without an initializer)
+// leaves the division unclassified, so it keeps the float64 `/`.
+function divisorKind(glsl, text, names = new Map()) {
+  if (NUMERIC_LITERAL.test(text.trim())) return 'constant'
+  let kind = 'constant'
+  for (const name of text.match(/[A-Za-z_][\w$]*/g) ?? []) {
+    if (name === 'gl_FragCoord') {
+      kind = 'runtime'
+      continue
+    }
+    if (divisionScope.defines.has(name)) continue
+    const entry = scopeEntry(glsl, name)
+    if (!entry || entry.binding === 'const') continue
+    if (entry.binding === 'uniform') {
+      kind = 'runtime'
+      continue
+    }
+    const scope = entry.scope?.__name
+    if ((scope !== 'main' && scope !== 'global') || entry.value == null) return 'unknown'
+    // A name already on the stack refers to itself; it is not provably anything.
+    if (!names.has(name)) {
+      names.set(name, 'unknown')
+      names.set(name, divisorKind(glsl, String(entry.value), names))
+    }
+    const initializer = names.get(name)
+    if (initializer === 'unknown') return 'unknown'
+    if (initializer === 'runtime') kind = 'runtime'
+  }
+  return kind
+}
+
+const transpilerOperation = GLSL.prototype.processOperation
+GLSL.prototype.processOperation = function processOperation(left, right, operator) {
+  const result = transpilerOperation.call(this, left, right, operator)
+  if (operator !== '/' || !left || !divisionScope) return result
+  const kinds = [operandKind(this, left), operandKind(this, right)]
+  if (!kinds.includes('float') || (kinds[0] === 'int' && kinds[1] === 'int')) return result
+  if (divisorKind(this, String(right)) !== 'runtime') return result
+  const width = result.components?.length ?? 0
+  const leftScalar = (left.components?.length ?? 1) === 1
+  const rightScalar = (right.components?.length ?? 1) === 1
+  if (width === 0 || width > 4 || (!leftScalar && left.components.length !== width) || (!rightScalar && right.components.length !== width)) return result
+  const components = result.components.map((component, index) => {
+    const dividend = leftScalar ? left : left.components[index]
+    const divisor = rightScalar ? right : right.components[index]
+    return Descriptor(`$runtime.fdiv(${dividend}, ${divisor})`, { complexity: component.complexity, optimize: component.optimize })
+  })
+  let main
+  if (leftScalar && rightScalar) {
+    main = `$runtime.fdiv(${left}, ${right})`
+  } else if (rightScalar) {
+    main = right.optimize
+      ? `${left}.map(function (_) {return $runtime.fdiv(_, ${right});})`
+      : `${left}.map(function (_) {return $runtime.fdiv(_, this);}, ${right})`
+  } else if (leftScalar) {
+    main = left.optimize
+      ? `${right}.map(function (_) {return $runtime.fdiv(${left}, _);})`
+      : `${right}.map(function (_) {return $runtime.fdiv(this, _);}, ${left})`
+  } else {
+    main = `vec${width}.divideMetal([], ${left}, ${right})`
+  }
+  return Descriptor(main, {
+    components,
+    type: result.type,
+    complexity: result.complexity,
+    include: leftScalar || rightScalar ? result.include : { [`vec${width}`]: 'divideMetal' },
+    optimize: result.optimize,
+  })
+}
+
+function transpile(source, scope = null) {
   const preprocess = source.split('\n').some((line) => /^\s*#/.test(line))
   const compile = GLSL({
     version: '300 es',
@@ -129,7 +263,12 @@ function transpile(source) {
     uniform: (name) => `$bindings[${JSON.stringify(name)}]`,
     varying: (name) => `$varyings[${JSON.stringify(name)}]`,
   })
-  return compile(source)
+  divisionScope = scope
+  try {
+    return compile(source)
+  } finally {
+    divisionScope = null
+  }
 }
 
 // Names of the GLSL `uint NAME(uint ARG)` functions whose body is exactly the
@@ -754,6 +893,17 @@ function lowerSeededLatticeHashes(effectId, source) {
 function adaptCanonicalSource(effectId, source) {
   source = lowerVectorEquality(source)
   source = lowerSeededLatticeHashes(effectId, source)
+  // Metal's fast math reassociates the mirror-wrap idiom
+  // `mod(x + 1.0, 2.0) - 1.0` into `x - 2.0 * floor((x + 1.0) * 0.5)`, so
+  // the `+ 1.0` never rounds the coordinate before the `- 1.0` cancels it
+  // (filter/reverb's wrapped coordinates on the M4 matched this form for all
+  // 192 measured values and the literal form for 124). The literal form
+  // loses the low bits of x near 0 and moves its sampled texel at sizes that
+  // are not powers of two.
+  source = source.replace(
+    /\bmod\(\s*([A-Za-z_]\w*(?:\.[xyzw]{1,4})?)\s*\+\s*1\.0\s*,\s*2\.0\s*\)\s*-\s*1\.0\b/g,
+    '($1 - 2.0 * floor(($1 + 1.0) * 0.5))',
+  )
   // glsl-transpiler flattens these common hash swizzles into scalar JS inside
   // one typed-array constructor, erasing the float32 operation boundaries
   // between the add and multiply. Explicit float casts retain the GLSL hash
@@ -771,6 +921,21 @@ function adaptCanonicalSource(effectId, source) {
       'return fract((p3.xx + p3.yz) * p3.zy);',
       'return fract(vec2(float(float(p3.x + p3.y) * p3.z), float(float(p3.x + p3.z) * p3.y)));',
     )
+  if (effectId === 'filter/extrude') {
+    // The Metal compile keeps the block height scale `s` in float32 and
+    // reassociates the top-face test `P - faceCenter`, with faceCenter =
+    // imgCenter + (cellC - imgCenter) * s, into (P - imgCenter) -
+    // (cellC - imgCenter) * s. On the centre row and column of an odd-sized
+    // image P - imgCenter is 0, the face edge test is an exact tie, and the
+    // literal form decides it differently (measured on the M4 for every pixel
+    // of 41x23 and 41x41 frames).
+    const scale = 'float s = 1.0 + h * (depth / 100.0) * 0.4;'
+    const topHit = 'bool topHit = all(lessThanEqual(abs(P - faceCenter), faceHalf));'
+    if (!source.includes(scale) || !source.includes(topHit)) throw new Error('filter/extrude block face source changed')
+    source = source
+      .replace(scale, 'float s = float(1.0 + h * (depth / 100.0) * 0.4);')
+      .replace(topHit, 'bool topHit = all(lessThanEqual(abs((P - imgCenter) - (cellC - imgCenter) * s), faceHalf));')
+  }
   if (effectId === 'render/renderLandscape3d') {
     source = source
       .replaceAll(
@@ -1071,7 +1236,7 @@ for (const record of effectRecords) {
     const status = adapters.has(`${record.id}:${program}`) ? 'adapter' : 'generated'
     if (status === 'generated') {
       try {
-        transpiled = transpile(normalized.source)
+        transpiled = transpile(normalized.source, divisionScopeFor(runtimeDefines(record)))
         generatedBytes = Buffer.byteLength(transpiled)
       } catch (error) {
         throw new Error(`${sourceName} failed CPU transpilation: ${error.message}`, { cause: error })

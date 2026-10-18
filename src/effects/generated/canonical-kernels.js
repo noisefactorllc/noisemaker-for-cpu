@@ -160,7 +160,7 @@ function canonicalFactory0($bindings, $runtime) {
   };
   function bitField (st) {
   	st = $runtime.copy(st);
-  	st = new $runtime.PooledFloat32Array([st[0] / scale, st[1] / scale]);
+  	st = new $runtime.PooledFloat32Array([$runtime.fdiv(st[0], scale), $runtime.fdiv(st[1], scale)]);
   	rotate2D(st, rotation).reduce((res,el,i)=>(res[i] = el, res), st);
   	var freq = map(scale, 1, 100, scale, 8);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -367,10 +367,10 @@ function canonicalFactory0($bindings, $runtime) {
   function bitMask (st) {
   	st = $runtime.copy(st);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * tiles, st[1] * tiles]);
-  	(st[0] += (0.5 * fullResolution[0]) / fullResolution[1], st[1] += 0.5, st);
-  	st[0] -= (0.5 * fullResolution[0]) / fullResolution[1];
+  	(st[0] += $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] += 0.5, st);
+  	st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]);
   	if (MASK_FORMULA == 11) {
   	st[1] *= 2;
   	};
@@ -404,11 +404,11 @@ function canonicalFactory0($bindings, $runtime) {
   	if (MODE == 0) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, bitField(st));
   	} else {
-  	(st[0] = globalCoord[0] / fullResolution[1], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[1]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	st = new $runtime.PooledFloat32Array([st[0] + (seed) + 1000, st[1] + (seed) + 1000]);
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, bitMask(st));
   	};
-  	(st[0] = globalCoord[0] / fullResolution[0], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[0]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -793,12 +793,12 @@ function canonicalFactory1($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
-  	(st[0] -= (fullResolution[0] / fullResolution[1]) * 0.5, st[1] -= 0.5, st);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	(st[0] -= ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] -= 0.5, st);
   	var leftColor = noise(st, (seed));
   	var rightColor = noise(st, (seed) + 10);
-  	var left = min(new $runtime.PooledFloat32Array([(leftColor[0] * rightColor[0]) / (1 - rightColor[0] * leftColor[0]), (leftColor[1] * rightColor[1]) / (1 - rightColor[1] * leftColor[1]), (leftColor[2] * rightColor[2]) / (1 - rightColor[2] * leftColor[2])]), new $runtime.PooledFloat32Array([1, 1, 1]));
-  	var right = min(new $runtime.PooledFloat32Array([(rightColor[0] * leftColor[0]) / (1 - leftColor[0] * rightColor[0]), (rightColor[1] * leftColor[1]) / (1 - leftColor[1] * rightColor[1]), (rightColor[2] * leftColor[2]) / (1 - leftColor[2] * rightColor[2])]), new $runtime.PooledFloat32Array([1, 1, 1]));
+  	var left = min(new $runtime.PooledFloat32Array([$runtime.fdiv(leftColor[0] * rightColor[0], (1 - rightColor[0] * leftColor[0])), $runtime.fdiv(leftColor[1] * rightColor[1], (1 - rightColor[1] * leftColor[1])), $runtime.fdiv(leftColor[2] * rightColor[2], (1 - rightColor[2] * leftColor[2]))]), new $runtime.PooledFloat32Array([1, 1, 1]));
+  	var right = min(new $runtime.PooledFloat32Array([$runtime.fdiv(rightColor[0] * leftColor[0], (1 - leftColor[0] * rightColor[0])), $runtime.fdiv(rightColor[1] * leftColor[1], (1 - leftColor[1] * rightColor[1])), $runtime.fdiv(rightColor[2] * leftColor[2], (1 - leftColor[2] * rightColor[2]))]), new $runtime.PooledFloat32Array([1, 1, 1]));
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, brightnessContrast(mix(left, right, 0.5)));
   	color[3] = 1;
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
@@ -811,7 +811,7 @@ function canonicalFactory1($bindings, $runtime) {
 }
 
 function canonicalFactory2($bindings, $runtime) {
-  const { float, vec2, vec3, sin, cos, atan, pow, abs, sign, floor, fract, mod, min, max, mix, length, add, multiply, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, vec3, sin, cos, atan, pow, abs, sign, floor, fract, mod, min, max, mix, length, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -971,10 +971,10 @@ function canonicalFactory2($bindings, $runtime) {
   	st = $runtime.copy(st);
   	rot = map(rot, 0, 360, 0, 2);
   	var angle = rot * 3.1415927410125732;
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	var cpu_matrix_assignment_0 = new $runtime.PooledFloat32Array([cos(angle) * st[0] + sin(angle) * st[1], -sin(angle) * st[0] + cos(angle) * st[1]]);
   	(st[0] = cpu_matrix_assignment_0[0], st[1] = cpu_matrix_assignment_0[1], st);
-  	(st[0] += (0.5 * fullResolution[0]) / fullResolution[1], st[1] += 0.5, st);
+  	(st[0] += $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] += 0.5, st);
   	return st;
   };
   function polarShape (st, sides) {
@@ -1015,7 +1015,7 @@ function canonicalFactory2($bindings, $runtime) {
   	if (st[0] < 0) {
   	st[0] = freq - 1;
   	};
-  	if (st[0] > ((freq * fullResolution[0]) / fullResolution[1])) {
+  	if (st[0] > ($runtime.fdiv(freq * fullResolution[0], fullResolution[1]))) {
   	st[0] = 0;
   	};
   	if (st[1] < 0) {
@@ -1035,9 +1035,9 @@ function canonicalFactory2($bindings, $runtime) {
   };
   function cells (st, freq, cellSize, sides) {
   	st = $runtime.copy(st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
-  	(st[0] += (0.5 * fullResolution[0]) / fullResolution[1], st[1] += 0.5, st);
+  	(st[0] += $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] += 0.5, st);
   	new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, prng(new $runtime.PooledFloat32Array([(seed), (seed), (seed)])))).reduce((res,el,i)=>(res[i] += el, res), st);
   	var i = floor(st);
   	var f = fract(st);
@@ -1066,14 +1066,14 @@ function canonicalFactory2($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var freq = map(scale, 1, 100, 20, 1);
   	var cellSize = map(cellScale, 1, 100, 3, 0.75);
   	var texLuminosity = 0;
   	var texFactor = texIntensity * 0.009999999776482582;
-  	var texCoord = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var texCoord = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	if (texInfluence > 0) {
-  	var texRGB = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)))));
+  	var texRGB = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)))));
   	texLuminosity = luminance(texRGB);
   	if (texInfluence == 1) {
   	cellSize -= texLuminosity * texFactor;
@@ -1131,7 +1131,7 @@ function canonicalFactory2($bindings, $runtime) {
   	};
   	};
   	};
-  	(st[0] = globalCoord[0] / fullResolution[0], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[0]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -1142,7 +1142,7 @@ function canonicalFactory2($bindings, $runtime) {
 }
 
 function canonicalFactory3($bindings, $runtime) {
-  const { float, vec2, vec3, sin, cos, atan, abs, floor, fract, mod, min, max, clamp, mix, length, distance, multiply, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, vec3, sin, cos, atan, abs, floor, fract, mod, min, max, clamp, mix, length, distance, subtract, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -1223,7 +1223,7 @@ function canonicalFactory3($bindings, $runtime) {
   };
   function convolve (localUV, kernel, divide) {
   	localUV = $runtime.copy(localUV);
-  	var texelSize = textureSize(inputTex, 0).map(function (_) {return 1 / _;});
+  	var texelSize = textureSize(inputTex, 0).map(function (_) {return $runtime.fdiv(1, _);});
   	var offset = [new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0])];
   	(offset[0][0] = -texelSize[0], offset[0][1] = -texelSize[1], offset[0]);
   	(offset[1][0] = 0, offset[1][1] = -texelSize[1], offset[1]);
@@ -1529,7 +1529,7 @@ function canonicalFactory3($bindings, $runtime) {
   	if (st[0] < 0) {
   	st[0] = freq - 1;
   	};
-  	if (st[0] > ((freq * fullResolution[0]) / fullResolution[1])) {
+  	if (st[0] > ($runtime.fdiv(freq * fullResolution[0], fullResolution[1]))) {
   	st[0] = 0;
   	};
   	if (st[1] < 0) {
@@ -1595,7 +1595,7 @@ function canonicalFactory3($bindings, $runtime) {
   	if (size <= 1) {
   	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, localUV)));
   	};
-  	var texelSize = textureSize(inputTex, 0).map(function (_) {return 1 / _;});
+  	var texelSize = textureSize(inputTex, 0).map(function (_) {return $runtime.fdiv(1, _);});
   	var dx = size * texelSize[0];
   	var dy = size * texelSize[1];
   	var coord = new $runtime.PooledFloat32Array([dx * (floor(localUV[0] / dx)), dy * (floor(localUV[1] / dy))]);
@@ -1604,24 +1604,24 @@ function canonicalFactory3($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	loadKernels();
   	var blend = 1;
   	var freq = map(scale, 1, 100, 20, 1);
   	var cellSize = map(cellScale, 1, 100, 3, 0.75);
-  	var d = cells(new $runtime.PooledFloat32Array([st[0] * (fullResolution[0] / fullResolution[1]), st[1]]), freq, cellSize);
+  	var d = cells(new $runtime.PooledFloat32Array([st[0] * ($runtime.fdiv(fullResolution[0], fullResolution[1])), st[1]]), freq, cellSize);
   	var ref = map(refractAmt, 0, 100, 0, 0.125);
   	var refLen = d + direction / 360;
   	st[0] += (cos(refLen * 6.2831854820251465)) * ref;
   	st[1] += (sin(refLen * 6.2831854820251465)) * ref;
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([st[0] + 1, st[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), st);
+  	abs((vec2.subtract([], st, floor(new $runtime.PooledFloat32Array([(st[0] + 1) * 0.5, (st[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), st);
   	} else {
   	if (wrap == 1) {
   	fract(st).reduce((res,el,i)=>(res[i] = el, res), st);
   	};
   	};
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([st[0] * fullResolution[0] - tileOffset[0], st[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([st[0] * fullResolution[0] - tileOffset[0], st[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	texture(inputTex, localUV).reduce((res,el,i)=>(res[i] = el, res), color);
   	if (KERNEL != 0) {
   	if (effectWidth != 0) {
@@ -1646,7 +1646,7 @@ function canonicalFactory3($bindings, $runtime) {
 }
 
 function canonicalFactory4($bindings, $runtime) {
-  const { vec2, vec4, sin, cos, sqrt, abs, fract, mod, min, max, mix, length, equal, all, add, subtract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, vec4, sin, cos, sqrt, abs, fract, mod, min, max, mix, length, equal, all, add, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -1676,19 +1676,19 @@ function canonicalFactory4($bindings, $runtime) {
   	var m = map(mixAmt, -100, 100, 0, 1);
   	var ra = map(refractAAmt, 0, 100, 0, 0.125);
   	var rb = map(refractBAmt, 0, 100, 0, 0.125);
-  	var leftColor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var rightColor = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var leftColor = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var rightColor = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var leftUV = st instanceof Float32Array ? $runtime.copy(st) : st;
   	var rightLen = length(new $runtime.PooledFloat32Array([rightColor[0], rightColor[1], rightColor[2]]));
   	leftUV[0] += (cos(rightLen * 6.2831854820251465)) * ra;
   	leftUV[1] += (sin(rightLen * 6.2831854820251465)) * ra;
-  	var leftLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([leftUV[0] * fullResolution[0] - tileOffset[0], leftUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var leftLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([leftUV[0] * fullResolution[0] - tileOffset[0], leftUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var leftRefracted = texture(inputTex, fract(leftLocalUV));
   	var rightUV = st instanceof Float32Array ? $runtime.copy(st) : st;
   	var leftLen = length(new $runtime.PooledFloat32Array([leftColor[0], leftColor[1], leftColor[2]]));
   	rightUV[0] += (cos(leftLen * 6.2831854820251465)) * rb;
   	rightUV[1] += (sin(leftLen * 6.2831854820251465)) * rb;
-  	var rightLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([rightUV[0] * fullResolution[0] - tileOffset[0], rightUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(tex, 0));
+  	var rightLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([rightUV[0] * fullResolution[0] - tileOffset[0], rightUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(tex, 0));
   	var rightRefracted = texture(tex, fract(rightLocalUV));
   	var leftReflected = min(new $runtime.PooledFloat32Array([(rightRefracted[0] * rightColor[0]) / (1 - leftRefracted[0] * leftColor[0]), (rightRefracted[1] * rightColor[1]) / (1 - leftRefracted[1] * leftColor[1]), (rightRefracted[2] * rightColor[2]) / (1 - leftRefracted[2] * leftColor[2]), (rightRefracted[3] * rightColor[3]) / (1 - leftRefracted[3] * leftColor[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1]));
   	var rightReflected = min(new $runtime.PooledFloat32Array([(leftRefracted[0] * leftColor[0]) / (1 - rightRefracted[0] * rightColor[0]), (leftRefracted[1] * leftColor[1]) / (1 - rightRefracted[1] * rightColor[1]), (leftRefracted[2] * leftColor[2]) / (1 - rightRefracted[2] * rightColor[2]), (leftRefracted[3] * leftColor[3]) / (1 - rightRefracted[3] * rightColor[3])]), new $runtime.PooledFloat32Array([1, 1, 1, 1]));
@@ -1901,25 +1901,25 @@ function canonicalFactory4($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	if (blendMode == 100) {
   	cloak(st).reduce((res,el,i)=>(res[i] = el, res), color);
   	} else {
   	var ra = map(refractAAmt, 0, 100, 0, 0.125);
   	var rb = map(refractBAmt, 0, 100, 0, 0.125);
-  	var leftColor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var rightColor = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var leftColor = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var rightColor = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var leftUV = st instanceof Float32Array ? $runtime.copy(st) : st;
   	var rightLen = length(new $runtime.PooledFloat32Array([rightColor[0], rightColor[1], rightColor[2]])) + refractADir / 360;
   	leftUV[0] += (cos(rightLen * 6.2831854820251465)) * ra;
   	leftUV[1] += (sin(rightLen * 6.2831854820251465)) * ra;
-  	var leftLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([leftUV[0] * fullResolution[0] - tileOffset[0], leftUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var leftLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([leftUV[0] * fullResolution[0] - tileOffset[0], leftUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var color1 = texture(inputTex, fract(leftLocalUV));
   	var rightUV = st instanceof Float32Array ? $runtime.copy(st) : st;
   	var leftLen = length(new $runtime.PooledFloat32Array([leftColor[0], leftColor[1], leftColor[2]])) + refractBDir / 360;
   	rightUV[0] += (cos(leftLen * 6.2831854820251465)) * rb;
   	rightUV[1] += (sin(leftLen * 6.2831854820251465)) * rb;
-  	var rightLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([rightUV[0] * fullResolution[0] - tileOffset[0], rightUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(tex, 0));
+  	var rightLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([rightUV[0] * fullResolution[0] - tileOffset[0], rightUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(tex, 0));
   	var color2 = texture(tex, fract(rightLocalUV));
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, blend(color1, color2, blendMode, mixAmt));
   	color[3] = max(color1[3], color2[3]);
@@ -1934,7 +1934,7 @@ function canonicalFactory4($bindings, $runtime) {
 }
 
 function canonicalFactory5($bindings, $runtime) {
-  const { float, vec2, vec3, sin, cos, pow, abs, sign, floor, fract, mod, min, max, step, distance, equal, all, add, multiply, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, vec3, sin, cos, pow, abs, sign, floor, fract, mod, min, max, step, distance, equal, all, add, multiply, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -2143,10 +2143,10 @@ function canonicalFactory5($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	var blendy = periodicFunction(time - offsets(uv));
-  	texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0))).reduce((res,el,i)=>(res[i] = el, res), color);
+  	texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0))).reduce((res,el,i)=>(res[i] = el, res), color);
   	if (levels != 0) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, posterize(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), levels));
   	};
@@ -2161,7 +2161,7 @@ function canonicalFactory5($bindings, $runtime) {
   	color = new $runtime.PooledFloat32Array([color[0] * (step(periodicFunction(random(globalCoord) + time), bright)), color[1] * (step(periodicFunction(random(globalCoord) + time), bright)), color[2] * (step(periodicFunction(random(globalCoord) + time), bright)), color[3]]);
   	} else {
   	if (dither == 4) {
-  	var coord = mod(new $runtime.PooledFloat32Array([globalCoord[0] / renderScale, globalCoord[1] / renderScale]), 4).map(function (_) {return _ - 0.5;});
+  	var coord = mod(new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], renderScale), $runtime.fdiv(globalCoord[1], renderScale)]), 4).map(function (_) {return _ - 0.5;});
   	if (bright < 0.11999999731779099) {
   	color = new $runtime.PooledFloat32Array([0, 0, 0, color[3]]);
   	} else {
@@ -2237,7 +2237,7 @@ function canonicalFactory5($bindings, $runtime) {
 }
 
 function canonicalFactory6($bindings, $runtime) {
-  const { vec2, abs, fract, mod, min, max, mix, step, smoothstep, distance, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, abs, fract, mod, min, max, mix, step, smoothstep, distance, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -2431,9 +2431,9 @@ function canonicalFactory6($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var color1 = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var color2 = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var color1 = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var color2 = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, blend(new $runtime.PooledFloat32Array([color1[0], color1[1], color1[2]]), new $runtime.PooledFloat32Array([color2[0], color2[1], color2[2]])));
   	color[3] = mix(color1[3], color2[3], mixAmt * 0.009999999776482582);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
@@ -2446,7 +2446,7 @@ function canonicalFactory6($bindings, $runtime) {
 }
 
 function canonicalFactory7($bindings, $runtime) {
-  const { float, vec2, vec3, sin, cos, pow, abs, floor, ceil, fract, mod, min, max, clamp, mix, step, distance, dot, multiply, divide, matrixMult, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, vec3, sin, cos, pow, abs, floor, ceil, fract, mod, min, max, clamp, mix, step, distance, dot, multiply, matrixMult, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -2563,11 +2563,11 @@ function canonicalFactory7($bindings, $runtime) {
   };
   function rotate2D (st, rot) {
   	st = $runtime.copy(st);
-  	st[0] *= fullResolution[0] / fullResolution[1];
+  	st[0] *= $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	st[0] = min(max(st[0], -9.999999680285692e+37), 9.999999680285692e+37);
   	rot = map(rot, 0, 360, 0, 2);
   	var angle = rot * 3.1415927410125732;
-  	var ox = min(max((0.5 * fullResolution[0]) / fullResolution[1], -9.999999680285692e+37), 9.999999680285692e+37);
+  	var ox = min(max($runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), -9.999999680285692e+37), 9.999999680285692e+37);
   	(st[0] -= ox, st[1] -= 0.5, st);
   	var ca = cos(angle);
   	var sa = sin(angle);
@@ -2680,15 +2680,15 @@ function canonicalFactory7($bindings, $runtime) {
   function pixellate (uv, size) {
   	uv = $runtime.copy(uv);
   	if (size < 1) {
-  	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	};
   	size *= 4;
-  	var dx = size * (1 / fullResolution[0]);
-  	var dy = size * (1 / fullResolution[1]);
+  	var dx = size * ($runtime.fdiv(1, fullResolution[0]));
+  	var dy = size * ($runtime.fdiv(1, fullResolution[1]));
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
   	var coord = new $runtime.PooledFloat32Array([dx * (floor(uv[0] / dx)), dy * (floor(uv[1] / dy))]);
   	coord = new $runtime.PooledFloat32Array([coord[0] + 0.5, coord[1] + 0.5]);
-  	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([coord[0] * fullResolution[0] - tileOffset[0], coord[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([coord[0] * fullResolution[0] - tileOffset[0], coord[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   };
   function desaturate (color) {
   	color = $runtime.copy(color);
@@ -2697,7 +2697,7 @@ function canonicalFactory7($bindings, $runtime) {
   };
   function convolve (uv, kernel, divide) {
   	uv = $runtime.copy(uv);
-  	var steps = new $runtime.PooledFloat32Array([1 / fullResolution[0], 1 / fullResolution[1]]);
+  	var steps = new $runtime.PooledFloat32Array([$runtime.fdiv(1, fullResolution[0]), $runtime.fdiv(1, fullResolution[1])]);
   	var offset = [new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0])];
   	(offset[0][0] = -steps[0], offset[0][1] = -steps[1], offset[0]);
   	(offset[1][0] = 0, offset[1][1] = -steps[1], offset[1]);
@@ -2711,7 +2711,7 @@ function canonicalFactory7($bindings, $runtime) {
   	var kernelWeight = 0;
   	var conv = new $runtime.PooledFloat32Array([0, 0, 0]);
   	for (var i = 0; i < 9; i++) {
-  	var color = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + offset[i][0] * effectAmt) * fullResolution[0] - tileOffset[0], (uv[1] + offset[i][1] * effectAmt) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	var color = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + offset[i][0] * effectAmt) * fullResolution[0] - tileOffset[0], (uv[1] + offset[i][1] * effectAmt) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	(conv[0] += color[0] * kernel[i], conv[1] += color[1] * kernel[i], conv[2] += color[2] * kernel[i], conv);
   	kernelWeight += kernel[i];
   	};
@@ -2948,11 +2948,11 @@ function canonicalFactory7($bindings, $runtime) {
   	var dSize = 2 * size;
   	var amount = fullResolution[0] / size;
   	var d = 1 / amount;
-  	var ar = fullResolution[0] / fullResolution[1];
+  	var ar = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var sx = (floor(st[0] / d)) * d;
   	d = ar / amount;
   	var sy = (floor(st[1] / d)) * d;
-  	var base = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([sx * fullResolution[0] - tileOffset[0], sy * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var base = texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([sx * fullResolution[0] - tileOffset[0], sy * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	var lum = 0.2125999927520752 * base[0] + 0.7152000069618225 * base[1] + 0.0722000002861023 * base[2];
   	var o = floor(6 * lum);
   	var c1 = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -3036,11 +3036,11 @@ function canonicalFactory7($bindings, $runtime) {
   	st = $runtime.copy(st);
   	var sum = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
-  	var orig = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([st[0] * fullResolution[0] - tileOffset[0], st[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	var orig = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([st[0] * fullResolution[0] - tileOffset[0], st[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	var strength = map(effectAmt, 0, 20, 0, 0.25);
   	for (var i = -4; i < 4; i++) {
   	for (var j = -3; j < 3; j++) {
-  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(st[0] + j * 0.004000000189989805) * fullResolution[0] - tileOffset[0], (st[1] + i * 0.004000000189989805) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))).map(function (_) {return _ * strength;}).reduce((res,el,i)=>(res[i] += el, res), sum);
+  	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(st[0] + j * 0.004000000189989805) * fullResolution[0] - tileOffset[0], (st[1] + i * 0.004000000189989805) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))).map(function (_) {return _ * strength;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	};
   	};
   	if (orig[0] < 0.30000001192092896) {
@@ -3074,7 +3074,7 @@ function canonicalFactory7($bindings, $runtime) {
   	var tapBudget = new $runtime.PooledFloat32Array([256 * invFullResolution[0], 256 * invFullResolution[1]]);
   	min(max(tapB, new $runtime.PooledFloat32Array([-tapBudget[0], -tapBudget[1]])), tapBudget).reduce((res,el,i)=>(res[i] = el, res), tapB);
   	};
-  	var tex = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(st[0] + tapB[0]) * fullResolution[0] - tileOffset[0], (st[1] + tapB[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var tex = texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(st[0] + tapB[0]) * fullResolution[0] - tileOffset[0], (st[1] + tapB[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	min(max(new $runtime.PooledFloat32Array([tex[0] * weight, tex[1] * weight, tex[2] * weight]), new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37, 9.999999680285692e+37])).reduce((res,el,i)=>(res[i] = el, res), products[t|0]);
   	total += min(max(weight, -9.999999680285692e+37), 9.999999680285692e+37);
   	};
@@ -3095,7 +3095,7 @@ function canonicalFactory7($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var uv = new $runtime.PooledFloat32Array([globalCoord[0] * invFullResolution[0], globalCoord[1] * invFullResolution[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
-  	var sR = 1 / scaleAmt;
+  	var sR = $runtime.fdiv(1, scaleAmt);
   	var sC = min(max(scaleAmt * sR, -9.999999680285692e+37), 9.999999680285692e+37);
   	var scale = 100 * (sR * (2 - sC));
   	if (scale == 0) {
@@ -3107,8 +3107,8 @@ function canonicalFactory7($bindings, $runtime) {
   	min(max(uv, new $runtime.PooledFloat32Array([-9.999999680285692e+37, -9.999999680285692e+37])), new $runtime.PooledFloat32Array([9.999999680285692e+37, 9.999999680285692e+37])).reduce((res,el,i)=>(res[i] = el, res), uv);
   	uv = new $runtime.PooledFloat32Array([uv[0] + 0.5, uv[1] + 0.5]);
   	var imageSize = fullResolution instanceof Float32Array ? $runtime.copy(fullResolution) : fullResolution;
-  	uv[0] -= ceil((scale * 0.5) - (0.5 - ((1 / imageSize[0]) * scale)));
-  	uv[1] += ceil((scale * 0.5) + (0.5 - ((1 / imageSize[1]) * scale)) - (scale));
+  	uv[0] -= ceil((scale * 0.5) - (0.5 - (($runtime.fdiv(1, imageSize[0])) * scale)));
+  	uv[1] += ceil((scale * 0.5) + (0.5 - (($runtime.fdiv(1, imageSize[1])) * scale)) - (scale));
   	var shiftXv = min(max((map(offsetX, -100, 100, -scale, scale)) * 1.5, -9.999999680285692e+37), 9.999999680285692e+37);
   	var shiftYv = min(max((map(offsetY, -100, 100, -scale, scale)) * 1.5, -9.999999680285692e+37), 9.999999680285692e+37);
   	(uv[0] -= shiftXv, uv[1] -= shiftYv, uv);
@@ -3188,7 +3188,7 @@ function canonicalFactory7($bindings, $runtime) {
   	loadKernels();
   	var blendy = periodicFunction(time - offsets(uv));
   	var origUV = uv instanceof Float32Array ? $runtime.copy(uv) : uv;
-  	var origcolor = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var origcolor = texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	(color[0] = origcolor[0], color[1] = origcolor[1], color[2] = origcolor[2], color[3] = origcolor[3], color);
   	if (EFFECT != 0) {
   	if (effectAmt != 0) {
@@ -3231,7 +3231,7 @@ function canonicalFactory7($bindings, $runtime) {
 }
 
 function canonicalFactory8($bindings, $runtime) {
-  const { float, vec2, sin, pow, floor, fract, mod, max, clamp, mix, length, dot, divide, matrixMult, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, sin, pow, floor, fract, mod, max, clamp, mix, length, dot, matrixMult, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -3357,7 +3357,7 @@ function canonicalFactory8($bindings, $runtime) {
   	};
   	var diff = new $runtime.PooledFloat32Array([0.5 - st[0], 0.5 - st[1]]);
   	if (aspectLens) {
-  	(diff[0] = (0.5 * fullResolution[0]) / fullResolution[1] - (st[0] * fullResolution[0]) / fullResolution[1], diff[1] = 0.5 - st[1], diff);
+  	(diff[0] = $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]) - $runtime.fdiv(st[0] * fullResolution[0], fullResolution[1]), diff[1] = 0.5 - st[1], diff);
   	};
   	var centerDist = length(diff);
   	var distort = 0;
@@ -3372,18 +3372,18 @@ function canonicalFactory8($bindings, $runtime) {
   	var lensedCoords = fract(new $runtime.PooledFloat32Array([(st[0] - diff[0] * zoom) - ((diff[0] * centerDist) * centerDist) * distort, (st[1] - diff[1] * zoom) - ((diff[1] * centerDist) * centerDist) * distort]));
   	var aberrationOffset = (((map(aberration, 0, 100, 0, 0.05000000074505806)) * centerDist) * 3.1415927410125732) * 0.5;
   	var redOffset = mix(clamp(lensedCoords[0] + aberrationOffset, 0, 1), lensedCoords[0], lensedCoords[0]);
-  	var localUV_red = fract(vec2.divide([], (new $runtime.PooledFloat32Array([redOffset * fullResolution[0] - tileOffset[0], lensedCoords[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var localUV_red = fract(vec2.divideMetal([], (new $runtime.PooledFloat32Array([redOffset * fullResolution[0] - tileOffset[0], lensedCoords[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	var red = texture(inputTex, localUV_red);
-  	var localUV_green = fract(vec2.divide([], (new $runtime.PooledFloat32Array([lensedCoords[0] * fullResolution[0] - tileOffset[0], lensedCoords[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var localUV_green = fract(vec2.divideMetal([], (new $runtime.PooledFloat32Array([lensedCoords[0] * fullResolution[0] - tileOffset[0], lensedCoords[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	var green = texture(inputTex, localUV_green);
   	var blueOffset = mix(lensedCoords[0], clamp(lensedCoords[0] - aberrationOffset, 0, 1), lensedCoords[0]);
-  	var localUV_blue = fract(vec2.divide([], (new $runtime.PooledFloat32Array([blueOffset * fullResolution[0] - tileOffset[0], lensedCoords[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var localUV_blue = fract(vec2.divideMetal([], (new $runtime.PooledFloat32Array([blueOffset * fullResolution[0] - tileOffset[0], lensedCoords[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	var blue = texture(inputTex, localUV_blue);
   	return new $runtime.PooledFloat32Array([red[0], green[1], blue[2], green[3]]);
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	var blendy = periodicFunction(time - offsets(uv));
   	glitch(uv).reduce((res,el,i)=>(res[i] = el, res), color);
@@ -3494,17 +3494,17 @@ function canonicalFactory9($bindings, $runtime) {
   };
   function circles (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return dist * freq;
   };
   function rings (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return cos((dist * 3.1415927410125732) * freq);
   };
   function diamonds (st, freq) {
   	st = $runtime.copy(st);
-  	st[0] -= (0.5 * fullResolution[0]) / fullResolution[1];
+  	st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
   	return (sin(st[0] * 3.1415927410125732) + sin(st[1] * 3.1415927410125732));
   };
@@ -3671,7 +3671,7 @@ function canonicalFactory9($bindings, $runtime) {
   };
   function sineNoise (st, freq) {
   	st = $runtime.copy(st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	var rand = randomFromLatticeWithOffset(st, freq, cpu_ivec2(20, 0));
   	var waveFreq = rand[0] * 50;
   	var waveAmp = rand[1];
@@ -3754,7 +3754,7 @@ function canonicalFactory9($bindings, $runtime) {
   };
   function value (st, freq, interp) {
   	st = $runtime.copy(st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	if (interp == 3) {
   	return catmullRom3x3Value(st, freq);
   	} else {
@@ -3857,7 +3857,7 @@ function canonicalFactory9($bindings, $runtime) {
   };
   function convolve (uv, kernel, divide) {
   	uv = $runtime.copy(uv);
-  	var steps = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var steps = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var offset = [new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0])];
   	(offset[0][0] = -steps[0], offset[0][1] = -steps[1], offset[0]);
   	(offset[1][0] = 0, offset[1][1] = -steps[1], offset[1]);
@@ -4053,7 +4053,7 @@ function canonicalFactory9($bindings, $runtime) {
   	if (sides < 2) {
   	return distance(st, new $runtime.PooledFloat32Array([0.5, 0.5]));
   	};
-  	var cpu_vector_assignment_1 = new $runtime.PooledFloat32Array([st[0] * 2 - fullResolution[0] / fullResolution[1], (1 - st[1]) * 2 - 1]);
+  	var cpu_vector_assignment_1 = new $runtime.PooledFloat32Array([st[0] * 2 - $runtime.fdiv(fullResolution[0], fullResolution[1]), (1 - st[1]) * 2 - 1]);
   	(st[0] = cpu_vector_assignment_1[0], st[1] = cpu_vector_assignment_1[1], st);
   	var a = atan(st[0], st[1]) + 3.1415927410125732;
   	var r = 6.2831854820251465 / (sides);
@@ -4076,16 +4076,16 @@ function canonicalFactory9($bindings, $runtime) {
   };
   function pixellate (uv, size) {
   	uv = $runtime.copy(uv);
-  	var dx = size * (1 / resolution[0]);
-  	var dy = size * (1 / resolution[1]);
+  	var dx = size * ($runtime.fdiv(1, resolution[0]));
+  	var dy = size * ($runtime.fdiv(1, resolution[1]));
   	var coord = new $runtime.PooledFloat32Array([dx * (floor(uv[0] / dx)), dy * (floor(uv[1] / dy))]);
   	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, coord)));
   };
   function getMetric (st) {
   	st = $runtime.copy(st);
-  	var diff = new $runtime.PooledFloat32Array([(0.5 * fullResolution[0]) / fullResolution[1] - st[0], 0.5 - st[1]]);
+  	var diff = new $runtime.PooledFloat32Array([$runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]) - st[0], 0.5 - st[1]]);
   	if (METRIC == 0) {
-  	return length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	return length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	} else {
   	if (METRIC == 1) {
   	return abs(diff[0]) + abs(diff[1]);
@@ -4119,7 +4119,7 @@ function canonicalFactory9($bindings, $runtime) {
   	return shape(st, 3, freq * 0.5);
   	} else {
   	if (LOOP_OFFSET == 30) {
-  	return ((abs(st[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(st[1] - 0.5)) * freq) * 0.5;
+  	return ((abs(st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(st[1] - 0.5)) * freq) * 0.5;
   	} else {
   	if (LOOP_OFFSET == 40) {
   	return shape(st, 4, freq * 0.5);
@@ -4215,7 +4215,7 @@ function canonicalFactory9($bindings, $runtime) {
   function kaleidoscope (st, sides, blendy) {
   	st = $runtime.copy(st);
   	var r = getMetric(st) + blendy;
-  	(st[0] = st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] = st[1] - 0.5, st);
+  	(st[0] = st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] = st[1] - 0.5, st);
   	var a = atan(st[1], st[0]);
   	if (DIRECTION == 1) {
   	var dir = -time;
@@ -4234,7 +4234,7 @@ function canonicalFactory9($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	loadKernels();
   	var lf = map(loopScale, 1, 100, 6, 1);
@@ -4418,22 +4418,22 @@ function canonicalFactory10($bindings, $runtime) {
   function _distance (diff, uv) {
   	diff = $runtime.copy(diff);
   	uv = $runtime.copy(uv);
-  	uv[0] *= fullResolution[0] / fullResolution[1];
+  	uv[0] *= $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var dist = 1;
   	if (shape == 0) {
   	dist = length(diff);
   	} else {
   	if (shape == 1) {
-  	dist = abs(uv[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(uv[1] - 0.5);
+  	dist = abs(uv[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(uv[1] - 0.5);
   	} else {
   	if (shape == 2) {
   	dist = max(max(abs(diff[0]) - diff[1] * -0.5, -1 * diff[1]), max(abs(diff[0]) - diff[1] * 0.5, diff[1]));
   	} else {
   	if (shape == 3) {
-  	dist = max((abs(uv[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(uv[1] - 0.5)) / sqrt(2), max(abs(uv[0] - (0.5 * fullResolution[0]) / fullResolution[1]), abs(uv[1] - 0.5)));
+  	dist = max((abs(uv[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(uv[1] - 0.5)) / sqrt(2), max(abs(uv[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])), abs(uv[1] - 0.5)));
   	} else {
   	if (shape == 4) {
-  	dist = max(abs(uv[0] - (0.5 * fullResolution[0]) / fullResolution[1]), abs(uv[1] - 0.5));
+  	dist = max(abs(uv[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])), abs(uv[1] - 0.5));
   	} else {
   	if (shape == 6) {
   	dist = max(abs(diff[0]) - diff[1] * -0.5, -1 * diff[1]);
@@ -4458,11 +4458,11 @@ function canonicalFactory10($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 1]);
   	var diff = new $runtime.PooledFloat32Array([0.5 - uv[0], 0.5 - uv[1]]);
   	if (aspectLens) {
-  	(diff[0] = (0.5 * fullResolution[0]) / fullResolution[1] - (uv[0] * fullResolution[0]) / fullResolution[1], diff[1] = 0.5 - uv[1], diff);
+  	(diff[0] = $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]) - $runtime.fdiv(uv[0] * fullResolution[0], fullResolution[1]), diff[1] = 0.5 - uv[1], diff);
   	};
   	var centerDist = _distance(diff, uv);
   	var distort = 0;
@@ -4934,8 +4934,8 @@ function canonicalFactory11($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
-  	(st[0] -= (fullResolution[0] / fullResolution[1]) * 0.5, st[1] -= 0.5, st);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	(st[0] -= ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] -= 0.5, st);
   	var xFreq = 1;
   	var yFreq = 1;
   	if (NOISE_TYPE == 10) {
@@ -5356,38 +5356,38 @@ function canonicalFactory12($bindings, $runtime) {
   };
   function circles (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return dist * freq;
   };
   function rings (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return cos((dist * 3.1415927410125732) * freq);
   };
   function concentric (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return cos((dist * 3.1415927410125732) * freq);
   };
   function diamonds (st, freq) {
   	st = $runtime.copy(st);
-  	(st[0] = (gl_FragCoord[0] + tileOffset[0]) / fullResolution[1], st[1] = (gl_FragCoord[1] + tileOffset[1]) / fullResolution[1], st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] = $runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullResolution[1]), st[1] = $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullResolution[1]), st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
   	return (cos(st[0] * 3.1415927410125732) + cos(st[1] * 3.1415927410125732));
   };
   function shape (st, sides, blend) {
   	st = $runtime.copy(st);
-  	(st[0] = st[0] * 2 - fullResolution[0] / fullResolution[1], st[1] = st[1] * 2 - 1, st);
+  	(st[0] = st[0] * 2 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] = st[1] * 2 - 1, st);
   	var a = atan(st[0], st[1]) + 3.1415927410125732;
   	var r = 6.2831854820251465 / (sides);
   	return (cos((floor(0.5 + a / r)) * r - a)) * length(st) * blend;
   };
   function getMetric (st) {
   	st = $runtime.copy(st);
-  	var diff = new $runtime.PooledFloat32Array([(0.5 * fullResolution[0]) / fullResolution[1] - st[0], 0.5 - st[1]]);
+  	var diff = new $runtime.PooledFloat32Array([$runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]) - st[0], 0.5 - st[1]]);
   	if (METRIC == 0) {
-  	return length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	return length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	} else {
   	if (METRIC == 1) {
   	return abs(diff[0]) + abs(diff[1]);
@@ -5425,7 +5425,7 @@ function canonicalFactory12($bindings, $runtime) {
   	return st;
   	};
   	var r = getMetric(st) + blendy;
-  	(st[0] = st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] = st[1] - 0.5, st);
+  	(st[0] = st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] = st[1] - 0.5, st);
   	rotate2D(st, 0.5).reduce((res,el,i)=>(res[i] = el, res), st);
   	var a = atan(st[1], st[0]);
   	var ma = mod(a - radians(360 / sides), 6.2831854820251465 / sides);
@@ -5443,7 +5443,7 @@ function canonicalFactory12($bindings, $runtime) {
   	return shape(st, 3, freq[0] * 0.5);
   	} else {
   	if (LOOP_OFFSET == 30) {
-  	return ((abs(st[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(st[1] - 0.5)) * freq[0]) * 0.5;
+  	return ((abs(st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(st[1] - 0.5)) * freq[0]) * 0.5;
   	} else {
   	if (LOOP_OFFSET == 40) {
   	return shape(st, 4, freq[0] * 0.5);
@@ -5479,7 +5479,7 @@ function canonicalFactory12($bindings, $runtime) {
   	return (st[1] * freq[0]) * 0.5;
   	} else {
   	if (LOOP_OFFSET == 300) {
-  	(st[0] -= (fullResolution[0] / fullResolution[1]) * 0.5, st[1] -= 0.5, st);
+  	(st[0] -= ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] -= 0.5, st);
   	return value(st, freq, (seed) + 50, 0);
   	} else {
   	if (LOOP_OFFSET == 400) {
@@ -5740,9 +5740,9 @@ function canonicalFactory12($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	kaleidoscope(st, kaleido, 0.5).reduce((res,el,i)=>(res[i] = el, res), st);
-  	var centered = new $runtime.PooledFloat32Array([st[0] - (fullResolution[0] / fullResolution[1]) * 0.5, st[1] - 0.5]);
+  	var centered = new $runtime.PooledFloat32Array([st[0] - ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] - 0.5]);
   	var freq = new $runtime.PooledFloat32Array([1, 1]);
   	var lf = new $runtime.PooledFloat32Array([1, 1]);
   	if (NOISE_TYPE == 11) {
@@ -5789,7 +5789,7 @@ function canonicalFactory12($bindings, $runtime) {
   	};
   	var blend = (periodicFunction(t) * abs(speed)) * 0.009999999776482582;
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, multires(centered, freq, octaves, (seed), blend));
-  	(st[0] = globalCoord[0] / fullResolution[0], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[0]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -6249,7 +6249,7 @@ function canonicalFactory13($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 1]);
-  	var st = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullResolution[0]) / fullResolution[1], (globalCoord[1] - 0.5 * fullResolution[1]) / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - 0.5 * fullResolution[0]), fullResolution[1]), $runtime.fdiv((globalCoord[1] - 0.5 * fullResolution[1]), fullResolution[1])]);
   	var rayOrigin = new $runtime.PooledFloat32Array([offsetX * 0.10000000149011612, offsetY * 0.10000000149011612, -8 + (time * 6.2831854820251465) * speed]);
   	var rayDirection = normalize(new $runtime.PooledFloat32Array([st[0], st[1], 1]));
   	var d = rayMarch(rayOrigin, rayDirection);
@@ -6275,7 +6275,7 @@ function canonicalFactory13($bindings, $runtime) {
   	};
   	var fogDist = clamp(d / 50, 0, 1);
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), new $runtime.PooledFloat32Array([0, 0, 0]), fogDist));
-  	(st[0] = globalCoord[0] / fullResolution[0], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[0]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -6287,7 +6287,7 @@ function canonicalFactory13($bindings, $runtime) {
 canonicalFactory13.usesDerivatives = true
 
 function canonicalFactory14($bindings, $runtime) {
-  const { vec2, vec4, sin, cos, sqrt, abs, floor, mod, min, max, clamp, mix, equal, all, add, subtract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, vec4, sin, cos, sqrt, abs, floor, mod, min, max, clamp, mix, equal, all, add, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -6307,8 +6307,8 @@ function canonicalFactory14($bindings, $runtime) {
   };
   function convolve (uv, kernel, divide) {
   	uv = $runtime.copy(uv);
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
-  	var steps = textureSize(inputTex, 0).map(function (_) {return 1 / _;});
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var steps = textureSize(inputTex, 0).map(function (_) {return $runtime.fdiv(1, _);});
   	var offset = [new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0, 0])];
   	(offset[0][0] = -steps[0], offset[0][1] = -steps[1], offset[0]);
   	(offset[1][0] = 0, offset[1][1] = -steps[1], offset[1]);
@@ -6472,14 +6472,14 @@ function canonicalFactory14($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var inputColor = texture(inputTex, localUV);
   	var brightness = desaturate(new $runtime.PooledFloat32Array([inputColor[0], inputColor[1], inputColor[2]])) + direction / 360;
   	var displacement = amount * 0.009999999776482582;
   	if ((fullResolution[0] > resolution[0]) || (fullResolution[1] > resolution[1])) {
-  	var maxDisplacement = 256 / (max(fullResolution[0], fullResolution[1]));
+  	var maxDisplacement = $runtime.fdiv(256, max(fullResolution[0], fullResolution[1]));
   	displacement = min(displacement, maxDisplacement);
   	};
   	if (mode == 0) {
@@ -6492,7 +6492,7 @@ function canonicalFactory14($bindings, $runtime) {
   	};
   	};
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -6502,7 +6502,7 @@ function canonicalFactory14($bindings, $runtime) {
   	};
   	};
   	};
-  	var warpedLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var warpedLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	texture(inputTex, warpedLocalUV).reduce((res,el,i)=>(res[i] = el, res), color);
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, blend(inputColor, color));
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
@@ -6515,7 +6515,7 @@ function canonicalFactory14($bindings, $runtime) {
 }
 
 function canonicalFactory15($bindings, $runtime) {
-  const { float, vec2, vec3, ivec2, sin, cos, atan, pow, abs, sign, floor, fract, mod, min, max, clamp, mix, smoothstep, length, dot, reflect, refract, add, subtract, multiply, divide, texture, textureSize, floatBitsToUint } = $runtime.stdlib
+  const { float, vec2, vec3, ivec2, sin, cos, atan, pow, abs, sign, floor, fract, mod, min, max, clamp, mix, smoothstep, length, dot, reflect, refract, add, subtract, multiply, texture, textureSize, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -6713,24 +6713,24 @@ function canonicalFactory15($bindings, $runtime) {
   };
   function rings (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return cos((dist * 3.1415927410125732) * freq);
   };
   function circles (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return dist * freq;
   };
   function diamonds (st, freq) {
   	st = $runtime.copy(st);
-  	(st[0] = (gl_FragCoord[0] + tileOffset[0]) / fullResolution[1], st[1] = (gl_FragCoord[1] + tileOffset[1]) / fullResolution[1], st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] = $runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullResolution[1]), st[1] = $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullResolution[1]), st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
   	return (cos(st[0] * 3.1415927410125732) + cos(st[1] * 3.1415927410125732));
   };
   function shape (st, sides, blend) {
   	st = $runtime.copy(st);
-  	(st[0] = st[0] * 2 - fullResolution[0] / fullResolution[1], st[1] = st[1] * 2 - 1, st);
+  	(st[0] = st[0] * 2 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] = st[1] * 2 - 1, st);
   	var a = atan(st[0], st[1]) + 3.1415927410125732;
   	var r = 6.2831854820251465 / (sides);
   	return (cos((floor(0.5 + a / r)) * r - a)) * length(st) * blend;
@@ -6762,7 +6762,7 @@ function canonicalFactory15($bindings, $runtime) {
   	st = $runtime.copy(st);
   	var C = new $runtime.PooledFloat32Array([0.21132487058639526, 0.3660254180431366, -0.5773502588272095, 0.024390242993831635]);
   	var uv = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
-  	st[0] *= fullResolution[0] / fullResolution[1];
+  	st[0] *= $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	uv[0] += s;
   	var i = floor(new $runtime.PooledFloat32Array([uv[0] + dot(uv, new $runtime.PooledFloat32Array([C[1], C[1]])), uv[1] + dot(uv, new $runtime.PooledFloat32Array([C[1], C[1]]))]));
   	var x0 = new $runtime.PooledFloat32Array([uv[0] - i[0] + dot(i, new $runtime.PooledFloat32Array([C[0], C[0]])), uv[1] - i[1] + dot(i, new $runtime.PooledFloat32Array([C[0], C[0]]))]);
@@ -6873,7 +6873,7 @@ function canonicalFactory15($bindings, $runtime) {
   };
   function value (st, freq, interp) {
   	st = $runtime.copy(st);
-  	var st2 = new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]);
+  	var st2 = new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]);
   	var scaledTime = 1;
   	var d = 0;
   	if (interp == 5) {
@@ -6909,9 +6909,9 @@ function canonicalFactory15($bindings, $runtime) {
   };
   function sineNoise (st, freq) {
   	st = $runtime.copy(st);
-  	(st[0] -= (fullResolution[0] / fullResolution[1]) * 0.5, st[1] -= 0.5, st);
+  	(st[0] -= ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
-  	(st[0] += (fullResolution[0] / fullResolution[1]) * 0.5, st[1] += 0.5, st);
+  	(st[0] += ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] += 0.5, st);
   	var r1 = prng(new $runtime.PooledFloat32Array([(seed), (seed), (seed)]));
   	var r2 = prng(new $runtime.PooledFloat32Array([(seed) + 10, (seed) + 10, (seed) + 10]));
   	var scaleA = r1[0] * 6.2831854820251465;
@@ -6924,7 +6924,7 @@ function canonicalFactory15($bindings, $runtime) {
   };
   function offset (st, freq) {
   	st = $runtime.copy(st);
-  	st[0] *= fullResolution[0] / fullResolution[1];
+  	st[0] *= $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var d = 0;
   	if (LOOP_OFFSET == 10) {
   	d = circles(st, freq);
@@ -6933,7 +6933,7 @@ function canonicalFactory15($bindings, $runtime) {
   	d = shape(st, 3, freq * 0.5);
   	} else {
   	if (LOOP_OFFSET == 30) {
-  	d = ((abs(st[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(st[1] - 0.5)) * freq) * 0.5;
+  	d = ((abs(st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(st[1] - 0.5)) * freq) * 0.5;
   	} else {
   	if ((LOOP_OFFSET >= 40) && (LOOP_OFFSET <= 80)) {
   	var sides = LOOP_OFFSET / 10;
@@ -7073,9 +7073,9 @@ function canonicalFactory15($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var color1 = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var color2 = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var color1 = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var color2 = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var freq = 1;
   	if (LOOP_OFFSET == 350) {
   	freq = map(loopScale, 1, 100, 12, 0.5);
@@ -7179,10 +7179,10 @@ function canonicalFactory16($bindings, $runtime) {
   function rotate2D (st, rot) {
   	st = $runtime.copy(st);
   	var angle = rot *= 3.1415927410125732;
-  	(st[0] -= 0.5 - fullResolution[0] / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= 0.5 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	var cpu_matrix_assignment_0 = new $runtime.PooledFloat32Array([cos(angle) * st[0] + sin(angle) * st[1], -sin(angle) * st[0] + cos(angle) * st[1]]);
   	(st[0] = cpu_matrix_assignment_0[0], st[1] = cpu_matrix_assignment_0[1], st);
-  	(st[0] += 0.5 - fullResolution[0] / fullResolution[1], st[1] += 0.5, st);
+  	(st[0] += 0.5 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] += 0.5, st);
   	return st;
   };
   function pcg (value) { return $runtime.stdlib.pcg3d(value); };
@@ -7475,24 +7475,24 @@ function canonicalFactory16($bindings, $runtime) {
   };
   function circles (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return dist * freq;
   };
   function rings (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return cos((dist * 3.1415927410125732) * freq);
   };
   function diamonds (st, freq) {
   	st = $runtime.copy(st);
-  	(st[0] = (gl_FragCoord[0] + tileOffset[0]) / fullResolution[1], st[1] = (gl_FragCoord[1] + tileOffset[1]) / fullResolution[1], st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] = $runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullResolution[1]), st[1] = $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullResolution[1]), st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
   	return (cos(st[0] * 3.1415927410125732) + cos(st[1] * 3.1415927410125732));
   };
   function shape (st, sides, blend) {
   	st = $runtime.copy(st);
-  	(st[0] = st[0] * 2 - fullResolution[0] / fullResolution[1], st[1] = st[1] * 2 - 1, st);
+  	(st[0] = st[0] * 2 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] = st[1] * 2 - 1, st);
   	var a = atan(st[0], st[1]) + 3.1415927410125732;
   	var r = 6.2831854820251465 / (sides);
   	return (cos((floor(0.5 + a / r)) * r - a)) * length(st) * blend;
@@ -7506,7 +7506,7 @@ function canonicalFactory16($bindings, $runtime) {
   	return shape(st, 3, freq * 0.5);
   	} else {
   	if (loopOffset == 30) {
-  	return ((abs(st[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(st[1] - 0.5)) * freq) * 0.5;
+  	return ((abs(st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(st[1] - 0.5)) * freq) * 0.5;
   	} else {
   	if ((loopOffset >= 40) && (loopOffset <= 120)) {
   	var sides = loopOffset / 10;
@@ -7650,7 +7650,7 @@ function canonicalFactory16($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var lf1 = map(loopAScale, 1, 100, 6, 1);
   	if (wrap) {
   	lf1 = floor(lf1);
@@ -7694,7 +7694,7 @@ function canonicalFactory16($bindings, $runtime) {
   	};
   	};
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, pal(d));
-  	(st[0] = globalCoord[0] / fullResolution[0], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[0]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -8124,7 +8124,7 @@ function canonicalFactory17($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([1, 1, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullResolution[0]) / fullResolution[1], (globalCoord[1] - 0.5 * fullResolution[1]) / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - 0.5 * fullResolution[0]), fullResolution[1]), $runtime.fdiv((globalCoord[1] - 0.5 * fullResolution[1]), fullResolution[1])]);
   	var rayOrigin = new $runtime.PooledFloat32Array([0, 0, -cameraDist]);
   	var rayDirection = normalize(new $runtime.PooledFloat32Array([st[0], st[1], 1]));
   	var transformData = computeTransformData();
@@ -8170,7 +8170,7 @@ function canonicalFactory17($bindings, $runtime) {
   	} else {
   	mix(color, new $runtime.PooledFloat32Array([bgColor[0], bgColor[1], bgColor[2], bgAlpha * 0.009999999776482582]), floor(fogDist)).reduce((res,el,i)=>(res[i] = el, res), color);
   	};
-  	(st[0] = globalCoord[0] / fullResolution[0], st[1] = globalCoord[1] / fullResolution[1], st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[0]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -8181,7 +8181,7 @@ function canonicalFactory17($bindings, $runtime) {
 }
 
 function canonicalFactory18($bindings, $runtime) {
-  const { float, vec2, sin, cos, atan, floor, mix, step, length, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, sin, cos, atan, floor, mix, step, length, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -8270,23 +8270,23 @@ function canonicalFactory18($bindings, $runtime) {
   };
   function shape (st, sides, blend) {
   	st = $runtime.copy(st);
-  	(st[0] = st[0] * 2 - fullResolution[0] / fullResolution[1], st[1] = st[1] * 2 - 1, st);
+  	(st[0] = st[0] * 2 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] = st[1] * 2 - 1, st);
   	var a = atan(st[0], st[1]) + 3.1415927410125732;
   	var r = 6.2831854820251465 / (sides);
   	return (cos((floor(0.5 + a / r)) * r - a)) * length(st) * blend;
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var color = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var noiseCoord = new $runtime.PooledFloat32Array([uv[0] * (fullResolution[0] / fullResolution[1]), uv[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var color = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var noiseCoord = new $runtime.PooledFloat32Array([uv[0] * ($runtime.fdiv(fullResolution[0], fullResolution[1])), uv[1]]);
   	if (useSpecks) {
   	var speckMask = speckle(new $runtime.PooledFloat32Array([noiseCoord[0] + speckSeed, noiseCoord[1] + speckSeed]), new $runtime.PooledFloat32Array([32 * (map(speckScale, 1, 5, 2, 0.5)), 32 * (map(speckScale, 1, 5, 2, 0.5))]));
   	if (speckMode == 0) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), speckColor, speckMask));
   	} else {
   	if (speckMode == 1) {
-  	texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + speckMask * 0.10000000149011612) * fullResolution[0] - tileOffset[0], (uv[1] + speckMask * 0.10000000149011612) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))).reduce((res,el,i)=>(res[i] = el, res), color);
+  	texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + speckMask * 0.10000000149011612) * fullResolution[0] - tileOffset[0], (uv[1] + speckMask * 0.10000000149011612) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))).reduce((res,el,i)=>(res[i] = el, res), color);
   	} else {
   	if (speckMode == 2) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), new $runtime.PooledFloat32Array([1 - color[0], 1 - color[1], 1 - color[2]]), speckMask));
@@ -8304,7 +8304,7 @@ function canonicalFactory18($bindings, $runtime) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, mix(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), splatColor, splatMask));
   	} else {
   	if (mode == 1) {
-  	var texColor = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + splatMask * 0.10000000149011612) * fullResolution[0] - tileOffset[0], (uv[1] + splatMask * 0.10000000149011612) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var texColor = texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + splatMask * 0.10000000149011612) * fullResolution[0] - tileOffset[0], (uv[1] + splatMask * 0.10000000149011612) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	mix(color, texColor, splatMask).reduce((res,el,i)=>(res[i] = el, res), color);
   	} else {
   	if (mode == 2) {
@@ -8423,9 +8423,9 @@ function canonicalFactory19($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
-  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, color[3] > 0 ? new $runtime.PooledFloat32Array([color[0] / color[3], color[1] / color[3], color[2] / color[3]]) : new $runtime.PooledFloat32Array([0, 0, 0]));
+  	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, color[3] > 0 ? new $runtime.PooledFloat32Array([$runtime.fdiv(color[0], color[3]), $runtime.fdiv(color[1], color[3]), $runtime.fdiv(color[2], color[3])]) : new $runtime.PooledFloat32Array([0, 0, 0]));
   	if (mode == 1) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, hsv2rgb(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
   	} else {
@@ -8491,7 +8491,7 @@ function canonicalFactory20($bindings, $runtime) {
   	if (luma >= threshHigh) {
   	bloomFactor = 1;
   	} else {
-  	var t = (luma - threshLow) / (threshHigh - threshLow);
+  	var t = $runtime.fdiv((luma - threshLow), (threshHigh - threshLow));
   	bloomFactor = (t * t) * (3 - 2 * t);
   	};
   	};
@@ -8553,8 +8553,8 @@ function canonicalFactory22($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var radiusUV = new $runtime.PooledFloat32Array([(radius * renderScale) * texelSize[0], (radius * renderScale) * texelSize[1]]);
   	var tapCount = clamp(taps, 1, MAX_TAPS);
   	var bloomAccum = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -8563,7 +8563,7 @@ function canonicalFactory22($bindings, $runtime) {
   	if (i >= tapCount) {
   	break;
   	};
-  	var t = (i) / (tapCount);
+  	var t = $runtime.fdiv((i), (tapCount));
   	var r = sqrt(t);
   	var theta = (i) * GOLDEN_ANGLE;
   	var offset = new $runtime.PooledFloat32Array([cos(theta) * r, sin(theta) * r]);
@@ -8604,8 +8604,8 @@ function canonicalFactory23($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var radius = radiusX * renderScale|0;
   	if (radius <= 0) {
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
@@ -8617,7 +8617,7 @@ function canonicalFactory23($bindings, $runtime) {
   	var weightSum = 0;
   	for (var i = -radius; i <= radius; i++) {
   	var x = (i);
-  	var weight = exp((-(x * x)) / (2 * sigma2));
+  	var weight = exp($runtime.fdiv(-(x * x), (2 * sigma2)));
   	var offset = new $runtime.PooledFloat32Array([(i) * texelSize[0], 0]);
   	texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + offset[0], uv[1] + offset[1]])).map(function (_) {return _ * weight;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	weightSum += weight;
@@ -8649,8 +8649,8 @@ function canonicalFactory24($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var radius = radiusY * renderScale|0;
   	if (radius <= 0) {
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
@@ -8662,7 +8662,7 @@ function canonicalFactory24($bindings, $runtime) {
   	var weightSum = 0;
   	for (var i = -radius; i <= radius; i++) {
   	var x = (i);
-  	var weight = exp((-(x * x)) / (2 * sigma2));
+  	var weight = exp($runtime.fdiv(-(x * x), (2 * sigma2)));
   	var offset = new $runtime.PooledFloat32Array([0, (i) * texelSize[1]]);
   	texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + offset[0], uv[1] + offset[1]])).map(function (_) {return _ * weight;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	weightSum += weight;
@@ -8677,7 +8677,7 @@ function canonicalFactory24($bindings, $runtime) {
 }
 
 function canonicalFactory25($bindings, $runtime) {
-  const { sin, cos, pow, abs, fract, mod, clamp, length, normalize, texture, dFdx, dFdy } = $runtime.stdlib
+  const { vec2, sin, cos, pow, abs, floor, fract, mod, clamp, length, normalize, subtract, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -8702,9 +8702,9 @@ function canonicalFactory25($bindings, $runtime) {
   	return st;
   };
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	rotate2D(uv, rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
   	var intensity = strength * -0.009999999776482582;
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
@@ -8719,7 +8719,7 @@ function canonicalFactory25($bindings, $runtime) {
   	};
   	uv = new $runtime.PooledFloat32Array([uv[0] + 0.5, uv[1] + 0.5]);
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -8728,7 +8728,7 @@ function canonicalFactory25($bindings, $runtime) {
   	};
   	};
   	rotate2D(uv, -rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
-  	var sampleUV = fract(new $runtime.PooledFloat32Array([(uv[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (uv[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]));
+  	var sampleUV = fract(new $runtime.PooledFloat32Array([$runtime.fdiv((uv[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((uv[1] * fullResolution[1] - tileOffset[1]), resolution[1])]));
   	if (antialias) {
   	var dx = dFdx(sampleUV);
   	var dy = dFdy(sampleUV);
@@ -8774,7 +8774,7 @@ function canonicalFactory26($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var origColor = texture(inputTex, uv);
   	var celColor = texture(colorTex, uv);
   	var edgeStrength = cpu_texture_r(edgeTex, uv);
@@ -8834,7 +8834,7 @@ function canonicalFactory27($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var origColor = texture(inputTex, uv);
   	var lev = (levels);
   	var lightDir = normalize(lightDirection);
@@ -8843,8 +8843,8 @@ function canonicalFactory27($bindings, $runtime) {
   	var shadeFactor = mix(1, 0.5 + 0.5 * diffuse, strength);
   	var shadedColor = new $runtime.PooledFloat32Array([origColor[0] * shadeFactor, origColor[1] * shadeFactor, origColor[2] * shadeFactor]);
   	var gamma_value = max(gamma, MIN_GAMMA);
-  	var inv_gamma = 1 / gamma_value;
-  	var inv_factor = 1 / lev;
+  	var inv_gamma = $runtime.fdiv(1, gamma_value);
+  	var inv_factor = $runtime.fdiv(1, lev);
   	var half_step = inv_factor * 0.5;
   	var working_rgb = srgb_to_linear_rgb(shadedColor);
   	pow_vec3(clamp(working_rgb, new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([1, 1, 1])), gamma_value).reduce((res,el,i)=>(res[i] = el, res), working_rgb);
@@ -8933,7 +8933,7 @@ function canonicalFactory28($bindings, $runtime) {
 }
 
 function canonicalFactory29($bindings, $runtime) {
-  const { vec2, fract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, fract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var tileOffset = $bindings["tileOffset"];
@@ -8945,7 +8945,7 @@ function canonicalFactory29($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = vec2.divide([], (new $runtime.PooledFloat32Array([gl_FragCoord[0] - 0.5, gl_FragCoord[1] - 0.5])), textureSize(inputTex, 0));
+  	var st = vec2.divideMetal([], (new $runtime.PooledFloat32Array([gl_FragCoord[0] - 0.5, gl_FragCoord[1] - 0.5])), textureSize(inputTex, 0));
   	var c = texture(inputTex, st);
   	var v = 0;
   	if (channel == 0) {
@@ -9002,7 +9002,7 @@ function canonicalFactory30($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
   	var hsv = rgb2hsv(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]));
   	var hue = hsv[0];
@@ -9022,7 +9022,7 @@ function canonicalFactory30($bindings, $runtime) {
 }
 
 function canonicalFactory31($bindings, $runtime) {
-  const { vec2, min, clamp, mix, length, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, min, clamp, mix, length, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -9037,18 +9037,18 @@ function canonicalFactory31($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var globalAspect = fullRes[0] / fullRes[1];
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var globalAspect = $runtime.fdiv(fullRes[0], fullRes[1]);
   	var diff = new $runtime.PooledFloat32Array([0.5 * globalAspect - globalUV[0] * globalAspect, 0.5 - globalUV[1]]);
   	var centerDist = length(diff);
   	var aberrationOffset = (((map(aberrationAmt, 0, 100, 0, 0.05000000074505806)) * centerDist) * 3.1415927410125732) * 0.5;
   	var redOffset = mix(clamp(uv[0] + aberrationOffset, 0, 1), uv[0], uv[0]);
-  	var red = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(redOffset) * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
-  	var green = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var red = texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(redOffset) * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var green = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
   	var blueOffset = mix(uv[0], clamp(uv[0] - aberrationOffset, 0, 1), uv[0]);
-  	var blue = texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(blueOffset) * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var blue = texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(blueOffset) * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	var aberrated = new $runtime.PooledFloat32Array([red[0], green[1], blue[2]]);
   	var edges = new $runtime.PooledFloat32Array([aberrated[0] - green[0], aberrated[1] - green[1], aberrated[2] - green[2]]);
   	var original = new $runtime.PooledFloat32Array([green[0] * (map(passthru, 0, 100, 0, 2)), green[1] * (map(passthru, 0, 100, 0, 2)), green[2] * (map(passthru, 0, 100, 0, 2))]);
@@ -9072,7 +9072,7 @@ function canonicalFactory32($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var radius = mix(1, 16, smoothness / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -9083,8 +9083,8 @@ function canonicalFactory32($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -9108,7 +9108,7 @@ function canonicalFactory33($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var radius = mix(1, 16, smoothness / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -9119,8 +9119,8 @@ function canonicalFactory33($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -9148,13 +9148,13 @@ function canonicalFactory34($bindings, $runtime) {
   	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var hL = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]])))));
   	var hR = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]])))));
   	var hB = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, new $runtime.PooledFloat32Array([uv[0], uv[1] - texel[1]])))));
   	var hT = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]])))));
-  	var grad = new $runtime.PooledFloat32Array([(hR - hL) / (2 * texel[0]), (hT - hB) / (2 * texel[1])]);
+  	var grad = new $runtime.PooledFloat32Array([$runtime.fdiv((hR - hL), (2 * texel[0])), $runtime.fdiv((hT - hB), (2 * texel[1]))]);
   	var uv2 = new $runtime.PooledFloat32Array([uv[0] + (grad[0] * texel[0]) * (distortion / 100), uv[1] + (grad[1] * texel[1]) * (distortion / 100)]);
   	var h2 = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, uv2))));
   	var cycles = mix(1, 7, detail / 100);
@@ -9249,21 +9249,21 @@ function canonicalFactory35($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var resolution = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / tileDims[0], gl_FragCoord[1] / tileDims[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / resolution[0], (gl_FragCoord[1] + tileOffset[1]) / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], tileDims[0]), $runtime.fdiv(gl_FragCoord[1], tileDims[1])]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), resolution[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), resolution[1])]);
   	var inputColor = texture(inputTex, uv);
-  	var aspect = fullResolution[0] / fullResolution[1];
+  	var aspect = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var seedOffset = new $runtime.PooledFloat32Array([seed * 17.309999465942383, seed * 23.709999084472656]);
   	var animPhase = (time * TAU) * (speed);
   	var animSpeed = (speed);
-  	var cloudUV = new $runtime.PooledFloat32Array([(globalUV[0] * aspect) / scale + seedOffset[0], globalUV[1] / scale + seedOffset[1]]);
+  	var cloudUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalUV[0] * aspect, scale) + seedOffset[0], $runtime.fdiv(globalUV[1], scale) + seedOffset[1]]);
   	var cloud = cloudNoise(cloudUV, 1, 7, animPhase, animSpeed);
   	var cloudMask = smoothstep(0.44999998807907104, 0.6499999761581421, cloud);
   	var cloudDepth = smoothstep(0.44999998807907104, 0.8500000238418579, cloud);
   	var cloudBrightness = mix(0.75, 1, cloudDepth);
   	var shadowDist = (min(resolution[0], resolution[1])) * 0.00800000037997961;
-  	var shadowOffset = new $runtime.PooledFloat32Array([-shadowDist / resolution[0], shadowDist / resolution[1]]);
-  	var shadowUV = new $runtime.PooledFloat32Array([((globalUV[0] + shadowOffset[0]) * aspect) / scale + seedOffset[0], (globalUV[1] + shadowOffset[1]) / scale + seedOffset[1]]);
+  	var shadowOffset = new $runtime.PooledFloat32Array([$runtime.fdiv(-shadowDist, resolution[0]), $runtime.fdiv(shadowDist, resolution[1])]);
+  	var shadowUV = new $runtime.PooledFloat32Array([$runtime.fdiv((globalUV[0] + shadowOffset[0]) * aspect, scale) + seedOffset[0], $runtime.fdiv((globalUV[1] + shadowOffset[1]), scale) + seedOffset[1]]);
   	var shadowCloud = cloudNoise(shadowUV, 1, 7, animPhase, animSpeed);
   	var shadowMask = smoothstep(0.44999998807907104, 0.6499999761581421, shadowCloud);
   	var shadow = (max(shadowMask - cloudMask, 0)) * 0.5;
@@ -9279,7 +9279,7 @@ function canonicalFactory35($bindings, $runtime) {
 }
 
 function canonicalFactory36($bindings, $runtime) {
-  const { vec2, ivec2, max, mix, smoothstep, length, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, max, mix, smoothstep, length, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -9299,7 +9299,7 @@ function canonicalFactory36($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), max(textureSize(inputTex, 0), cpu_ivec2(1)));
+  	var st = vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), max(textureSize(inputTex, 0), cpu_ivec2(1)));
   	var src = texture(inputTex, st);
   	var dist = (length(new $runtime.PooledFloat32Array([src[0] - targetColor[0], src[1] - targetColor[1], src[2] - targetColor[2]]))) / 1.7320507764816284;
   	var halfBand = smoothing * 0.5;
@@ -9382,7 +9382,7 @@ function canonicalFactory38($bindings, $runtime) {
   	var samplePos = ivec2.add([], coord, cpu_ivec2(kx, ky));
   	clamp(samplePos, cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), samplePos);
   	var dist2 = cpu_float(kx * kx + ky * ky);
-  	var weight = exp(-dist2 / (2 * sigma2));
+  	var weight = exp($runtime.fdiv(-dist2, (2 * sigma2)));
   	var texSample = texelFetch(inputTex, samplePos, 0);
   	(sum[0] += texSample[0] * weight, sum[1] += texSample[1] * weight, sum[2] += texSample[2] * weight, sum);
   	weightSum += weight;
@@ -9432,7 +9432,7 @@ function canonicalFactory39($bindings, $runtime) {
   	var samplePos = ivec2.add([], coord, cpu_ivec2(kx, ky));
   	clamp(samplePos, cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), samplePos);
   	var dist2 = cpu_float(kx * kx + ky * ky);
-  	var weight = exp(-dist2 / (2 * sigma2));
+  	var weight = exp($runtime.fdiv(-dist2, (2 * sigma2)));
   	var texSample = texelFetch(inputTex, samplePos, 0);
   	(blurSum[0] += texSample[0] * weight, blurSum[1] += texSample[1] * weight, blurSum[2] += texSample[2] * weight, blurSum);
   	weightSum += weight;
@@ -9584,14 +9584,14 @@ function canonicalFactory40($bindings, $runtime) {
   	var tileDims = textureSize(inputTex, 0);
   	var resolution = fullResolution[0] > 0 ? fullResolution : tileDims;
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / resolution[0], globalCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], resolution[0]), $runtime.fdiv(globalCoord[1], resolution[1])]);
   	var rs = max(renderScale, 1);
-  	var resX = resolution[0] / rs;
+  	var resX = $runtime.fdiv(resolution[0], rs);
   	var spd = floor(speed);
   	var t = (time * 6.2831854820251465) * spd;
-  	var rawRow = globalCoord[1] / rs;
+  	var rawRow = $runtime.fdiv(globalCoord[1], rs);
   	var bh = max(1, floor(bandHeight * 0.3199999928474426));
-  	var row = floor(rawRow / bh);
+  	var row = floor($runtime.fdiv(rawRow, bh));
   	var rt = rowTime(row, t);
   	var rowHash = lineHash(row, rt);
   	var prob = intensity / 100;
@@ -9712,7 +9712,7 @@ function canonicalFactory41($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var seedF = (seed);
   	var kC = crackMask(globalCoord, spacing, depth, seedF);
@@ -10110,12 +10110,12 @@ function canonicalFactory42($bindings, $runtime) {
   	};
   	var rs = max(renderScale, 1);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var width_f = max(fullRes[0] / rs, 1);
-  	var height_f = max(fullRes[1] / rs, 1);
+  	var width_f = max($runtime.fdiv(fullRes[0], rs), 1);
+  	var height_f = max($runtime.fdiv(fullRes[1], rs), 1);
   	var _local_time_1 = time instanceof Float32Array ? $runtime.copy(time) : time;
   	var _local_speed_1 = speed instanceof Float32Array ? $runtime.copy(speed) : speed;
-  	var x = ((global_id[0]) + tileOffset[0]) / rs;
-  	var y = ((global_id[1]) + tileOffset[1]) / rs;
+  	var x = $runtime.fdiv(((global_id[0]) + tileOffset[0]), rs);
+  	var y = $runtime.fdiv(((global_id[1]) + tileOffset[1]), rs);
   	var displacement = 0.0625;
   	var freq = freq_for_shape(2, width_f, height_f);
   	var base_offsets = compute_lens_offsets(new $runtime.PooledFloat32Array([x, y]), width_f, height_f, freq, _local_time_1, _local_speed_1, displacement);
@@ -10134,7 +10134,7 @@ function canonicalFactory42($bindings, $runtime) {
   	var displacement_pixels = (displacement_base * width_f) * simplex_value;
   	var singularity = compute_singularity(x, y, width_f, height_f);
   	var aber_mask = pow(singularity, 3);
-  	var gradient = clamp(x / (width_f - 1), 0, 1);
+  	var gradient = clamp($runtime.fdiv(x, (width_f - 1)), 0, 1);
   	var hue_shift = (random_scalar(seed_base + 1.909999966621399)) * 0.25 - 0.125;
   	var red_x = min(x + displacement_pixels, width_f - 1);
   	red_x = blend_linear(red_x, x, gradient);
@@ -10433,16 +10433,16 @@ function canonicalFactory43($bindings, $runtime) {
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
   	var width_f = fullRes[0];
   	var height_f = fullRes[1];
-  	var uv = new $runtime.PooledFloat32Array([((global_id[0]) + tileOffset[0] + 0.5) / (max(width_f, 1)), ((global_id[1]) + tileOffset[1] + 0.5) / (max(height_f, 1))]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(((global_id[0]) + tileOffset[0] + 0.5), max(width_f, 1)), $runtime.fdiv(((global_id[1]) + tileOffset[1] + 0.5), max(height_f, 1))]);
   	var mask = singularity_mask(uv, width_f, height_f);
   	if (mask <= 0) {
   	(fragColor[0] = original[0], fragColor[1] = original[1], fragColor[2] = original[2], fragColor[3] = original[3], fragColor);
   	return;
   	};
-  	var renderScale = fullResolution[0] > 0 ? fullResolution[0] / (max(resolution[0], 1)) : 1;
+  	var renderScale = fullResolution[0] > 0 ? $runtime.fdiv(fullResolution[0], max(resolution[0], 1)) : 1;
   	var isTiling = renderScale > 1.0099999904632568;
   	var maxOffsetPixels = isTiling ? 256 : max(resolution[0], resolution[1]);
-  	var maxAllowedDisplacement = isTiling ? maxOffsetPixels / (max(width_f, height_f)) : maxOffsetPixels / (max(resolution[0], 1));
+  	var maxAllowedDisplacement = isTiling ? $runtime.fdiv(maxOffsetPixels, max(width_f, height_f)) : $runtime.fdiv(maxOffsetPixels, max(resolution[0], 1));
   	var clampedDisplacement = min(displacement, maxAllowedDisplacement);
   	var freq = freq_for_shape(2, width_f, height_f);
   	var base_pos = new $runtime.PooledFloat32Array([(global_id[0]), (global_id[1])]);
@@ -10482,7 +10482,7 @@ function canonicalFactory44($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var localUV = new $runtime.PooledFloat32Array([gl_FragCoord[0] * texelSize[0], gl_FragCoord[1] * texelSize[1]]);
   	var radiusPixels = amount * renderScale;
   	radiusPixels = min(radiusPixels, 256);
@@ -10528,7 +10528,7 @@ function canonicalFactory45($bindings, $runtime) {
   	for (var i = 0; i < N; i++) {
   	var t = ((i) / (cpu_float(N - 1)) - 0.5) * blurDistance + jitter;
   	var offset = new $runtime.PooledFloat32Array([dir[0] * t, dir[1] * t]);
-  	texture(inputTex, new $runtime.PooledFloat32Array([(gl_FragCoord[0] + offset[0]) / resolution[0], (gl_FragCoord[1] + offset[1]) / resolution[1]])).reduce((res,el,i)=>(res[i] += el, res), sum);
+  	texture(inputTex, new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + offset[0]), resolution[0]), $runtime.fdiv((gl_FragCoord[1] + offset[1]), resolution[1])])).reduce((res,el,i)=>(res[i] += el, res), sum);
   	};
   	(fragColor[0] = sum[0] / (N), fragColor[1] = sum[1] / (N), fragColor[2] = sum[2] / (N), fragColor[3] = sum[3] / (N), fragColor);
   };
@@ -10962,7 +10962,7 @@ function canonicalFactory46($bindings, $runtime) {
   };
   function fsScale () {
   	if (palette == PALETTE_INPUT) {
-  	return 1 / (levels);
+  	return $runtime.fdiv(1, (levels));
   	};
   	return 0.25;
   };
@@ -11030,7 +11030,7 @@ function canonicalFactory46($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -11145,7 +11145,7 @@ function canonicalFactory47($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(inputTex, 0);
   	var resolution = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
-  	var texelSize = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var origColor = texture(inputTex, new $runtime.PooledFloat32Array([gl_FragCoord[0] * texelSize[0], gl_FragCoord[1] * texelSize[1]]));
   	var kernelType = kernel|0;
   	var radius = min((size + 1) * renderScale|0, 256);
@@ -11215,7 +11215,7 @@ function canonicalFactory47($bindings, $runtime) {
 }
 
 function canonicalFactory48($bindings, $runtime) {
-  const { vec2, radians, sin, cos, abs, clamp, dot, equal, all, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, radians, sin, cos, abs, clamp, dot, equal, all, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var STYLE = $bindings["STYLE"];
@@ -11231,7 +11231,7 @@ function canonicalFactory48($bindings, $runtime) {
   var LUMA = new Float32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]);
   function sampleGlobal (globalUV) {
   	globalUV = $runtime.copy(globalUV);
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([globalUV[0] * fullResolution[0] - tileOffset[0], globalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([globalUV[0] * fullResolution[0] - tileOffset[0], globalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	return new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, localUV)));
   };
   function colorDefaultEmboss (uv, texelSize) {
@@ -11259,7 +11259,7 @@ function canonicalFactory48($bindings, $runtime) {
   	(offsets[8][0] = texelSize[0], offsets[8][1] = texelSize[1], offsets[8]);
   	var conv = new $runtime.PooledFloat32Array([0, 0, 0]);
   	for (var i = 0; i < 9; i++) {
-  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + (offsets[i][0] * amount) * renderScale) * fullResolution[0] - tileOffset[0], (uv[1] + (offsets[i][1] * amount) * renderScale) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + (offsets[i][0] * amount) * renderScale) * fullResolution[0] - tileOffset[0], (uv[1] + (offsets[i][1] * amount) * renderScale) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	(conv[0] += texSample[0] * kernel[i], conv[1] += texSample[1] * kernel[i], conv[2] += texSample[2] * kernel[i], conv);
   	};
   	return conv;
@@ -11295,7 +11295,7 @@ function canonicalFactory48($bindings, $runtime) {
   	var basePx = baseOffsetsPx[i];
   	var rotatedPx = new $runtime.PooledFloat32Array([(ct * basePx[0] + st * basePx[1]) * height, (-st * basePx[0] + ct * basePx[1]) * height]);
   	var offsetUV = new $runtime.PooledFloat32Array([((rotatedPx[0] * texelSize[0]) * amount) * renderScale, ((rotatedPx[1] * texelSize[1]) * amount) * renderScale]);
-  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + offsetUV[0]) * fullResolution[0] - tileOffset[0], (uv[1] + offsetUV[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + offsetUV[0]) * fullResolution[0] - tileOffset[0], (uv[1] + offsetUV[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	(conv[0] += texSample[0] * kernel[i], conv[1] += texSample[1] * kernel[i], conv[2] += texSample[2] * kernel[i], conv);
   	};
   	return conv;
@@ -11305,7 +11305,7 @@ function canonicalFactory48($bindings, $runtime) {
   	centerRGB = $runtime.copy(centerRGB);
   	var theta = radians(angle);
   	var direction = new $runtime.PooledFloat32Array([cos(theta), sin(theta)]);
-  	var offsetUV = new $runtime.PooledFloat32Array([(direction[0] * (height * renderScale)) / fullResolution[0], (direction[1] * (height * renderScale)) / fullResolution[1]]);
+  	var offsetUV = new $runtime.PooledFloat32Array([$runtime.fdiv(direction[0] * (height * renderScale), fullResolution[0]), $runtime.fdiv(direction[1] * (height * renderScale), fullResolution[1])]);
   	var positiveLuma = dot(sampleGlobal(new $runtime.PooledFloat32Array([uv[0] + offsetUV[0], uv[1] + offsetUV[1]])), LUMA);
   	var negativeLuma = dot(sampleGlobal(new $runtime.PooledFloat32Array([uv[0] - offsetUV[0], uv[1] - offsetUV[1]])), LUMA);
   	var signedEdge = positiveLuma - negativeLuma;
@@ -11319,11 +11319,11 @@ function canonicalFactory48($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var resolution = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
-  	var origColor = texture(inputTex, new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
+  	var origColor = texture(inputTex, new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]));
   	var fullFrame = (all(equal(tileOffset, new $runtime.PooledFloat32Array([0, 0])))) && (all(equal(fullResolution, resolution)));
-  	var colorTexelSize = fullFrame ? texelSize : new $runtime.PooledFloat32Array([1 / fullResolution[0], 1 / fullResolution[1]]);
+  	var colorTexelSize = fullFrame ? texelSize : new $runtime.PooledFloat32Array([$runtime.fdiv(1, fullResolution[0]), $runtime.fdiv(1, fullResolution[1])]);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (STYLE == 0) {
   	if ((angle == 135) && (height == 1)) {
@@ -11377,7 +11377,7 @@ function canonicalFactory49($bindings, $runtime) {
   };
   function toSampleUV (globalPixelPos) {
   	globalPixelPos = $runtime.copy(globalPixelPos);
-  	return clamp(new $runtime.PooledFloat32Array([(globalPixelPos[0] - tileOffset[0]) / resolution[0], (globalPixelPos[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	return clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((globalPixelPos[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((globalPixelPos[1] - tileOffset[1]), resolution[1])]), 0, 1);
   };
   function cellAvgColor3x3 (centerPx) {
   	centerPx = $runtime.copy(centerPx);
@@ -11469,7 +11469,7 @@ function canonicalFactory49($bindings, $runtime) {
   	var halfCell = new $runtime.PooledFloat32Array([size * 0.5, size * 0.5]);
   	var toCenter = new $runtime.PooledFloat32Array([imgCenter[0] - P[0], imgCenter[1] - P[1]]);
   	var distToCenter = length(toCenter);
-  	var stepDir = (distToCenter > 0) ? new $runtime.PooledFloat32Array([toCenter[0] / distToCenter, toCenter[1] / distToCenter]) : new $runtime.PooledFloat32Array([0, 0]);
+  	var stepDir = (distToCenter > 0) ? new $runtime.PooledFloat32Array([$runtime.fdiv(toCenter[0], distToCenter), $runtime.fdiv(toCenter[1], distToCenter)]) : new $runtime.PooledFloat32Array([0, 0]);
   	var bestPriority = -1000000000;
   	var bestCenterPx = new $runtime.PooledFloat32Array([0, 0]);
   	var bestS = 1;
@@ -11479,10 +11479,10 @@ function canonicalFactory49($bindings, $runtime) {
   	for (var i = 0; i < 6; i++) {
   	var t = min((i) * size, distToCenter);
   	var samplePos = new $runtime.PooledFloat32Array([P[0] + stepDir[0] * t, P[1] + stepDir[1] * t]);
-  	var cellIdxF = floor(new $runtime.PooledFloat32Array([(samplePos[0] - imgCenter[0]) / size, (samplePos[1] - imgCenter[1]) / size]));
+  	var cellIdxF = floor(new $runtime.PooledFloat32Array([$runtime.fdiv((samplePos[0] - imgCenter[0]), size), $runtime.fdiv((samplePos[1] - imgCenter[1]), size)]));
   	var cellC = new $runtime.PooledFloat32Array([imgCenter[0] + (cellIdxF[0] + 0.5) * size, imgCenter[1] + (cellIdxF[1] + 0.5) * size]);
   	var h = cellHeight(cellC, cellIdxF);
-  	var s = 1 + (h * (depth / 100)) * 0.4000000059604645;
+  	var s = cpu_float(1 + (h * (depth / 100)) * 0.4000000059604645);
   	if (EXTRUDE_TYPE == 1) {
   	var apex = new $runtime.PooledFloat32Array([imgCenter[0] + (cellC[0] - imgCenter[0]) * s, imgCenter[1] + (cellC[1] - imgCenter[1]) * s]);
   	var tri = pyramidTriHit(P, cellC, apex, halfCell);
@@ -11496,7 +11496,7 @@ function canonicalFactory49($bindings, $runtime) {
   	} else {
   	var faceCenter = new $runtime.PooledFloat32Array([imgCenter[0] + (cellC[0] - imgCenter[0]) * s, imgCenter[1] + (cellC[1] - imgCenter[1]) * s]);
   	var faceHalf = new $runtime.PooledFloat32Array([halfCell[0] * s, halfCell[1] * s]);
-  	var topHit = all(lessThanEqual(abs(new $runtime.PooledFloat32Array([P[0] - faceCenter[0], P[1] - faceCenter[1]])), faceHalf));
+  	var topHit = all(lessThanEqual(abs(new $runtime.PooledFloat32Array([(P[0] - imgCenter[0]) - (cellC[0] - imgCenter[0]) * s, (P[1] - imgCenter[1]) - (cellC[1] - imgCenter[1]) * s])), faceHalf));
   	var sideHit = (!topHit) && (all(lessThanEqual(abs(new $runtime.PooledFloat32Array([P[0] - cellC[0], P[1] - cellC[1]])), halfCell)));
   	if (topHit || sideHit) {
   	var priority = s + (topHit ? 1000 : 0);
@@ -11515,7 +11515,7 @@ function canonicalFactory49($bindings, $runtime) {
   	};
   	var outColor = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	if (!found) {
-  	var cellC = vec2.add([], imgCenter, (floor(new $runtime.PooledFloat32Array([(P[0] - imgCenter[0]) / size, (P[1] - imgCenter[1]) / size])).map(function (_) {return _ + 0.5;})).map(function (_) {return _ * size;}));
+  	var cellC = vec2.add([], imgCenter, (floor(new $runtime.PooledFloat32Array([$runtime.fdiv((P[0] - imgCenter[0]), size), $runtime.fdiv((P[1] - imgCenter[1]), size)])).map(function (_) {return _ + 0.5;})).map(function (_) {return _ * size;}));
   	cellAvgColor3x3(cellC).reduce((res,el,i)=>(res[i] = el, res), outColor);
   	} else {
   	if (EXTRUDE_TYPE == 1) {
@@ -11598,7 +11598,7 @@ function canonicalFactory50($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -11776,14 +11776,14 @@ function canonicalFactory51($bindings, $runtime) {
   };
   function rotate2D (st, rot) {
   	st = $runtime.copy(st);
-  	st[0] *= (resolution[0] / resolution[1]);
+  	st[0] *= ($runtime.fdiv(resolution[0], resolution[1]));
   	rot = map(rot, 0, 360, 0, 2);
   	var angle = rot * 3.1415927410125732;
-  	(st[0] -= 0.5 * (resolution[0] / resolution[1]), st[1] -= 0.5, st);
+  	(st[0] -= 0.5 * ($runtime.fdiv(resolution[0], resolution[1])), st[1] -= 0.5, st);
   	var cpu_matrix_assignment_0 = new $runtime.PooledFloat32Array([cos(angle) * st[0] + sin(angle) * st[1], -sin(angle) * st[0] + cos(angle) * st[1]]);
   	(st[0] = cpu_matrix_assignment_0[0], st[1] = cpu_matrix_assignment_0[1], st);
-  	(st[0] += 0.5 * (resolution[0] / resolution[1]), st[1] += 0.5, st);
-  	st[0] /= (resolution[0] / resolution[1]);
+  	(st[0] += 0.5 * ($runtime.fdiv(resolution[0], resolution[1])), st[1] += 0.5, st);
+  	st[0] /= ($runtime.fdiv(resolution[0], resolution[1]));
   	return st;
   };
   function hsv2rgb (hsv) {
@@ -11863,14 +11863,14 @@ function canonicalFactory51($bindings, $runtime) {
   	zoom = map(distortion, 0, 100, 0, -1);
   	};
   	(st[0] = (st[0] - diff[0] * zoom) - ((diff[0] * centerDist) * centerDist) * distort, st[1] = (st[1] - diff[1] * zoom) - ((diff[1] * centerDist) * centerDist) * distort, st);
-  	var scale = 100 / scaleAmt;
+  	var scale = $runtime.fdiv(100, scaleAmt);
   	if (scale == 0) {
   	scale = 1;
   	};
   	st = new $runtime.PooledFloat32Array([st[0] * scale, st[1] * scale]);
-  	st[0] -= (scale * 0.5) - (0.5 - ((1 / resolution[0]) * scale));
-  	st[1] += (scale * 0.5) + (0.5 - ((1 / resolution[1]) * scale)) - (scale);
-  	(st[0] += 1 / resolution[0], st[1] += 1 / resolution[1], st);
+  	st[0] -= (scale * 0.5) - (0.5 - (($runtime.fdiv(1, resolution[0])) * scale));
+  	st[1] += (scale * 0.5) + (0.5 - (($runtime.fdiv(1, resolution[1])) * scale)) - (scale);
+  	(st[0] += $runtime.fdiv(1, resolution[0]), st[1] += $runtime.fdiv(1, resolution[1]), st);
   	fract(st).reduce((res,el,i)=>(res[i] = el, res), st);
   	var aberrationOffset = (((map(aberration, 0, 100, 0, 0.10000000149011612)) * centerDist) * 3.1415927410125732) * 0.5;
   	var redOffset = mix(clamp(st[0] + aberrationOffset, 0, 1), st[0], st[0]);
@@ -11883,7 +11883,7 @@ function canonicalFactory51($bindings, $runtime) {
   	return tex;
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	if (resetState) {
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	return;
@@ -11962,7 +11962,7 @@ function canonicalFactory53($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(inputTex, 0);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var warpedUV = globalUV instanceof Float32Array ? $runtime.copy(globalUV) : globalUV;
   	if (flipMode == 1) {
   	warpedUV[0] = 1 - warpedUV[0];
@@ -12036,7 +12036,7 @@ function canonicalFactory53($bindings, $runtime) {
   	};
   	};
   	};
-  	var localUV = fract(new $runtime.PooledFloat32Array([(warpedUV[0] * fullResolution[0] - tileOffset[0]) / texSize[0], (warpedUV[1] * fullResolution[1] - tileOffset[1]) / texSize[1]]));
+  	var localUV = fract(new $runtime.PooledFloat32Array([$runtime.fdiv((warpedUV[0] * fullResolution[0] - tileOffset[0]), texSize[0]), $runtime.fdiv((warpedUV[1] * fullResolution[1] - tileOffset[1]), texSize[1])]));
   	texture(inputTex, localUV).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -12182,7 +12182,7 @@ function canonicalFactory54($bindings, $runtime) {
 }
 
 function canonicalFactory55($bindings, $runtime) {
-  const { vec2, sqrt, abs, max, clamp, mix, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, sqrt, abs, max, clamp, mix, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -12216,17 +12216,17 @@ function canonicalFactory55($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([width / resolution[0], width / resolution[1]]);
-  	var base = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var tl = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + -texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + -texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var tc = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0]) * fullResolution[0] - tileOffset[0], (uv[1] + -texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var tr = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + -texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var ml = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + -texel[0]) * fullResolution[0] - tileOffset[0], (uv[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var mr = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + texel[0]) * fullResolution[0] - tileOffset[0], (uv[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var bl = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + -texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var bc = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0]) * fullResolution[0] - tileOffset[0], (uv[1] + texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
-  	var br = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(width, resolution[0]), $runtime.fdiv(width, resolution[1])]);
+  	var base = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var tl = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + -texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + -texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var tc = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0]) * fullResolution[0] - tileOffset[0], (uv[1] + -texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var tr = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + -texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var ml = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + -texel[0]) * fullResolution[0] - tileOffset[0], (uv[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var mr = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + texel[0]) * fullResolution[0] - tileOffset[0], (uv[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var bl = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + -texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var bc = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0]) * fullResolution[0] - tileOffset[0], (uv[1] + texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
+  	var br = luminance(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + texel[0]) * fullResolution[0] - tileOffset[0], (uv[1] + texel[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0))))));
   	var gx = -tl - 2 * ml - bl + tr + 2 * mr + br;
   	var gy = -tl - 2 * tc - tr + bl + 2 * bc + br;
   	var metric = sobelMetric|0;
@@ -12506,13 +12506,13 @@ function canonicalFactory56($bindings, $runtime) {
   	cs = min(cs, 512);
   	};
   	var csf = (cs);
-  	var cellIndex = floor(new $runtime.PooledFloat32Array([pixelCoord[0] / csf, pixelCoord[1] / csf]));
-  	var localPos = fract(new $runtime.PooledFloat32Array([pixelCoord[0] / csf, pixelCoord[1] / csf]));
+  	var cellIndex = floor(new $runtime.PooledFloat32Array([$runtime.fdiv(pixelCoord[0], csf), $runtime.fdiv(pixelCoord[1], csf)]));
+  	var localPos = fract(new $runtime.PooledFloat32Array([$runtime.fdiv(pixelCoord[0], csf), $runtime.fdiv(pixelCoord[1], csf)]));
   	var gx = floor(localPos[0] * 5)|0;
   	var gy = 6 - clamp(floor(localPos[1] * 7)|0, 0, 6);
   	gx = clamp(gx, 0, 4);
   	var cellCenter = new $runtime.PooledFloat32Array([(cellIndex[0] + 0.5) * csf, (cellIndex[1] + 0.5) * csf]);
-  	var sampleUV = new $runtime.PooledFloat32Array([(cellCenter[0] - tileOffset[0]) / resolution[0], (cellCenter[1] - tileOffset[1]) / resolution[1]]);
+  	var sampleUV = new $runtime.PooledFloat32Array([$runtime.fdiv((cellCenter[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((cellCenter[1] - tileOffset[1]), resolution[1])]);
   	if (isTileRendering) {
   	clamp(sampleUV, 0, 1).reduce((res,el,i)=>(res[i] = el, res), sampleUV);
   	};
@@ -13351,7 +13351,7 @@ function canonicalFactory60($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var color = texelFetch(inputTex, coord, 0);
-  	var straight = color[3] > 0 ? new $runtime.PooledFloat32Array([color[0] / color[3], color[1] / color[3], color[2] / color[3]]) : new $runtime.PooledFloat32Array([0, 0, 0]);
+  	var straight = color[3] > 0 ? new $runtime.PooledFloat32Array([$runtime.fdiv(color[0], color[3]), $runtime.fdiv(color[1], color[3]), $runtime.fdiv(color[2], color[3])]) : new $runtime.PooledFloat32Array([0, 0, 0]);
   	var rgb = srgbToLinear(straight);
   	applyWhiteBalance(rgb, temperature, tint).reduce((res,el,i)=>(res[i] = el, res), rgb);
   	(rgb[0] = rgb[0] * (pow(2, exposure)), rgb[1] = rgb[1] * (pow(2, exposure)), rgb[2] = rgb[2] * (pow(2, exposure)), rgb);
@@ -13448,8 +13448,8 @@ function canonicalFactory61($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : texSize;
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var color = texelFetch(inputTex, coord, 0);
   	if (abs(vignetteAmount) < 0.0010000000474974513) {
@@ -13459,9 +13459,9 @@ function canonicalFactory61($bindings, $runtime) {
   	var rgb = srgbToLinear(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]));
   	var aspectRatio = new $runtime.PooledFloat32Array([1, 1]);
   	if (fullRes[0] > fullRes[1]) {
-  	(aspectRatio[0] = fullRes[0] / fullRes[1], aspectRatio[1] = 1, aspectRatio);
+  	(aspectRatio[0] = $runtime.fdiv(fullRes[0], fullRes[1]), aspectRatio[1] = 1, aspectRatio);
   	} else {
-  	(aspectRatio[0] = 1, aspectRatio[1] = fullRes[1] / fullRes[0], aspectRatio);
+  	(aspectRatio[0] = 1, aspectRatio[1] = $runtime.fdiv(fullRes[1], fullRes[0]), aspectRatio);
   	};
   	var vignetteMask = computeVignette(globalUV, aspectRatio, vignetteMidpoint, vignetteRoundness, vignetteFeather);
   	applyVignette(rgb, vignetteMask, vignetteAmount, vigHiProtect).reduce((res,el,i)=>(res[i] = el, res), rgb);
@@ -13741,7 +13741,7 @@ function canonicalFactory63($bindings, $runtime) {
   	};
   	var effective_time = pause > 0.5 ? 0 : time;
   	var rs = max(renderScale, 1);
-  	var noise_value = sample_grain_noise(global_pixel, new $runtime.PooledFloat32Array([(u_width) / rs, (u_height) / rs]), effective_time, 100);
+  	var noise_value = sample_grain_noise(global_pixel, new $runtime.PooledFloat32Array([$runtime.fdiv((u_width), rs), $runtime.fdiv((u_height), rs)]), effective_time, 100);
   	var noise_rgb = new $runtime.PooledFloat32Array([noise_value, noise_value, noise_value]);
   	var mixed_rgb = mix(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]), noise_rgb, blend_alpha);
   	new $runtime.PooledFloat32Array([clamp01(mixed_rgb[0]), clamp01(mixed_rgb[1]), clamp01(mixed_rgb[2]), texel[3]]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
@@ -13875,8 +13875,8 @@ function canonicalFactory64($bindings, $runtime) {
   function main () {
   	var tileSize = textureSize(inputTex, 0);
   	var globalCoord = new $runtime.PooledFloat32Array([v_texCoord[0] * tileSize[0] + tileOffset[0], v_texCoord[1] * tileSize[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var px = new $runtime.PooledFloat32Array([1 / fullResolution[0], 1 / fullResolution[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, fullResolution[0]), $runtime.fdiv(1, fullResolution[1])]);
   	var base_color = texture(inputTex, v_texCoord);
   	var str = max(strength, 0);
   	var s = seed instanceof Float32Array ? $runtime.copy(seed) : seed;
@@ -13973,7 +13973,7 @@ function canonicalFactory65($bindings, $runtime) {
   	texel = $runtime.copy(texel);
   	var cellId = floor(ruv).map(function (_) {return _ + 0.5;});
   	var cellCenterGc = rotate2D(new $runtime.PooledFloat32Array([cellId[0] * frequency, cellId[1] * frequency]), -angleDeg);
-  	var cellUV = clamp(new $runtime.PooledFloat32Array([(cellCenterGc[0] - tileOffset[0]) / resolution[0], (cellCenterGc[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var cellUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((cellCenterGc[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((cellCenterGc[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	return boxBlur3(cellUV, texel);
   };
   function halftoneCoverage (d, value, sharpnessPct) {
@@ -14001,14 +14001,14 @@ function canonicalFactory65($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var alpha = cpu_texture_a(inputTex, uv);
   	if (MODE == 0) {
-  	var ruvC = rotate2D(globalCoord, cyanAngle).map(function (_) {return _ / frequency;});
-  	var ruvM = rotate2D(globalCoord, magentaAngle).map(function (_) {return _ / frequency;});
-  	var ruvY = rotate2D(globalCoord, yellowAngle).map(function (_) {return _ / frequency;});
-  	var ruvK = rotate2D(globalCoord, blackAngle).map(function (_) {return _ / frequency;});
+  	var ruvC = rotate2D(globalCoord, cyanAngle).map(function (_) {return $runtime.fdiv(_, frequency);});
+  	var ruvM = rotate2D(globalCoord, magentaAngle).map(function (_) {return $runtime.fdiv(_, frequency);});
+  	var ruvY = rotate2D(globalCoord, yellowAngle).map(function (_) {return $runtime.fdiv(_, frequency);});
+  	var ruvK = rotate2D(globalCoord, blackAngle).map(function (_) {return $runtime.fdiv(_, frequency);});
   	var valC = rgbToCmyk(cellSampleFromRuv(ruvC, cyanAngle, texel))[0];
   	var valM = rgbToCmyk(cellSampleFromRuv(ruvM, magentaAngle, texel))[1];
   	var valY = rgbToCmyk(cellSampleFromRuv(ruvY, yellowAngle, texel))[2];
@@ -14027,10 +14027,10 @@ function canonicalFactory65($bindings, $runtime) {
   	if (PATTERN == 2) {
   	var center = new $runtime.PooledFloat32Array([fullResolution[0] * 0.5, fullResolution[1] * 0.5]);
   	value = 1 - lum(boxBlur3(uv, texel));
-  	var rd = (length(new $runtime.PooledFloat32Array([globalCoord[0] - center[0], globalCoord[1] - center[1]]))) / frequency;
+  	var rd = $runtime.fdiv(length(new $runtime.PooledFloat32Array([globalCoord[0] - center[0], globalCoord[1] - center[1]])), frequency);
   	d = abs(fract(rd) - 0.5);
   	} else {
-  	var ruv = rotate2D(globalCoord, monoAngle).map(function (_) {return _ / frequency;});
+  	var ruv = rotate2D(globalCoord, monoAngle).map(function (_) {return $runtime.fdiv(_, frequency);});
   	value = 1 - lum(cellSampleFromRuv(ruv, monoAngle, texel));
   	var off = fract(ruv).map(function (_) {return _ - 0.5;});
   	(dotOffset[0] = off[0], dotOffset[1] = off[1], dotOffset);
@@ -14103,7 +14103,7 @@ function canonicalFactory66($bindings, $runtime) {
   };
   function lumGradient (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var tl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1]])))));
   	var l = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1]])))));
   	var bl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1] * -1])))));
@@ -14144,7 +14144,7 @@ function canonicalFactory66($bindings, $runtime) {
   	return vnoise(p);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var gc = vec2.add([], floor(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]])), tileOffset);
   	var theta = dirAngle(direction);
@@ -14181,7 +14181,7 @@ function canonicalFactory66($bindings, $runtime) {
   	} else {
   	if (MODE == 3) {
   	var toneGate = smoothstep(0.30000001192092896, 0.699999988079071, t);
-  	var texture2 = mix(s, fbm(new $runtime.PooledFloat32Array([gc[0] / (stretchAmt * 0.6000000238418579) + 41, gc[1] / (stretchAmt * 0.6000000238418579) + 41])), 0.5);
+  	var texture2 = mix(s, fbm(new $runtime.PooledFloat32Array([$runtime.fdiv(gc[0], (stretchAmt * 0.6000000238418579)) + 41, $runtime.fdiv(gc[1], (stretchAmt * 0.6000000238418579)) + 41])), 0.5);
   	var level = mix(texture2, toneGate, abs(toneGate * 2 - 1));
   	level = clamp(level + pb * 0.15000000596046448, 0, 1);
   	tonemap2(level, inkColor, paperColor).reduce((res,el,i)=>(res[i] = el, res), outColor);
@@ -14232,7 +14232,7 @@ function canonicalFactory67($bindings, $runtime) {
   var radius = $bindings["radius"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
   	var fTaps = min(radius, 32);
@@ -14243,8 +14243,8 @@ function canonicalFactory67($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([((dirPx[0] * (i)) * stride) / resolution[0], ((dirPx[1] * (i)) * stride) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv((dirPx[0] * (i)) * stride, resolution[0]), $runtime.fdiv((dirPx[1] * (i)) * stride, resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -14268,7 +14268,7 @@ function canonicalFactory68($bindings, $runtime) {
   var radius = $bindings["radius"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
   	var fTaps = min(radius, 32);
@@ -14279,8 +14279,8 @@ function canonicalFactory68($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([((dirPx[0] * (i)) * stride) / resolution[0], ((dirPx[1] * (i)) * stride) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv((dirPx[0] * (i)) * stride, resolution[0]), $runtime.fdiv((dirPx[1] * (i)) * stride, resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -14307,7 +14307,7 @@ function canonicalFactory69($bindings, $runtime) {
   	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var blur = texture(blurTex, uv);
   	var diff = new $runtime.PooledFloat32Array([src[0] - blur[0], src[1] - blur[1], src[2] - blur[2]]);
@@ -14334,7 +14334,7 @@ function canonicalFactory70($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
   	if (mode == 1) {
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, min(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]), new $runtime.PooledFloat32Array([color[3] - color[0], color[3] - color[1], color[3] - color[2]])));
@@ -14371,9 +14371,9 @@ function canonicalFactory71($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var dims = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / dims[0], (gl_FragCoord[1] + tileOffset[1]) / dims[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), dims[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), dims[1])]);
   	var zoom = (lensDisplacement < 0) ? (lensDisplacement * -0.25) : 0;
-  	var aspect = dims[0] / dims[1];
+  	var aspect = $runtime.fdiv(dims[0], dims[1]);
   	var dist = new $runtime.PooledFloat32Array([uv[0] - HALF_FRAME, uv[1] - HALF_FRAME]);
   	var aDist = dist instanceof Float32Array ? $runtime.copy(dist) : dist;
   	if (aspectLens) {
@@ -14381,7 +14381,7 @@ function canonicalFactory71($bindings, $runtime) {
   	};
   	var maxDist = length(new $runtime.PooledFloat32Array([aspectLens ? aspect * 0.5 : 0.5, 0.5]));
   	var distFromCenter = length(aDist);
-  	var normalizedDist = clamp(distFromCenter / maxDist, 0, 1);
+  	var normalizedDist = clamp($runtime.fdiv(distFromCenter, maxDist), 0, 1);
   	var centerWeight = 1 - normalizedDist;
   	var centerWeightSq = centerWeight * centerWeight;
   	var displacement = new $runtime.PooledFloat32Array([aDist[0] * zoom + (aDist[0] * centerWeightSq) * lensDisplacement, aDist[1] * zoom + (aDist[1] * centerWeightSq) * lensDisplacement]);
@@ -14393,11 +14393,11 @@ function canonicalFactory71($bindings, $runtime) {
   	var maxDispPixels = 256;
   	var dispPixels = length(new $runtime.PooledFloat32Array([displacement[0] * dims[0], displacement[1] * dims[1]]));
   	if (dispPixels > maxDispPixels) {
-  	displacement = new $runtime.PooledFloat32Array([displacement[0] * (maxDispPixels / dispPixels), displacement[1] * (maxDispPixels / dispPixels)]);
+  	displacement = new $runtime.PooledFloat32Array([displacement[0] * ($runtime.fdiv(maxDispPixels, dispPixels)), displacement[1] * ($runtime.fdiv(maxDispPixels, dispPixels))]);
   	};
   	};
   	var warpedGlobalUV = isTileRendering ? (new $runtime.PooledFloat32Array([uv[0] - displacement[0], uv[1] - displacement[1]])) : fract(new $runtime.PooledFloat32Array([uv[0] - displacement[0], uv[1] - displacement[1]]));
-  	var offset = new $runtime.PooledFloat32Array([(warpedGlobalUV[0] * dims[0] - tileOffset[0]) / tileDims[0], (warpedGlobalUV[1] * dims[1] - tileOffset[1]) / tileDims[1]]);
+  	var offset = new $runtime.PooledFloat32Array([$runtime.fdiv((warpedGlobalUV[0] * dims[0] - tileOffset[0]), tileDims[0]), $runtime.fdiv((warpedGlobalUV[1] * dims[1] - tileOffset[1]), tileDims[1])]);
   	var sampledUV = offset instanceof Float32Array ? $runtime.copy(offset) : offset;
   	if (antialias) {
   	var dx = dFdx(sampledUV);
@@ -14485,10 +14485,10 @@ function canonicalFactory72($bindings, $runtime) {
   	return (1 - smoothstep(size * 0.6000000238418579, size, hexDist(delta)));
   };
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var localUV = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var localUV = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, localUV);
   	var flarePos = new $runtime.PooledFloat32Array([centerX, centerY]);
   	var mirrorPos = new $runtime.PooledFloat32Array([1 - flarePos[0], 1 - flarePos[1]]);
@@ -14557,7 +14557,7 @@ function canonicalFactory72($bindings, $runtime) {
 }
 
 function canonicalFactory73($bindings, $runtime) {
-  const { float, sin, cos, pow, abs, floor, mod, clamp, length, dot, texture, dFdx, dFdy } = $runtime.stdlib
+  const { float, vec2, sin, cos, pow, abs, floor, clamp, length, dot, subtract, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -14614,33 +14614,33 @@ function canonicalFactory73($bindings, $runtime) {
   };
   function main () {
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var aspectRatio = fullRes[0] / fullRes[1];
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var maxDisplacementUV = 256 / fullRes[0];
+  	var aspectRatio = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var maxDisplacementUV = $runtime.fdiv(256, fullRes[0]);
   	var clampedDisplacement = clamp(displacement, -maxDisplacementUV, maxDisplacementUV);
   	var delta = abs(new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]));
   	var scaled = new $runtime.PooledFloat32Array([delta[0] * aspectRatio, delta[1]]);
   	var maxRadius = length(new $runtime.PooledFloat32Array([aspectRatio * 0.5, 0.5]));
-  	var mask = pow(clamp(length(scaled) / maxRadius, 0, 1), 5);
+  	var mask = pow(clamp($runtime.fdiv(length(scaled), maxRadius), 0, 1), 5);
   	var noiseCoord = new $runtime.PooledFloat32Array([uv[0] * aspectRatio, uv[1]]);
   	var noiseX = perlinNoise(new $runtime.PooledFloat32Array([noiseCoord[0] + 42, noiseCoord[1] + 42]), new $runtime.PooledFloat32Array([2, 2]));
   	var noiseY = perlinNoise(new $runtime.PooledFloat32Array([noiseCoord[0] + 97, noiseCoord[1] + 97]), new $runtime.PooledFloat32Array([2, 2]));
   	uv[0] += ((noiseX - 0.5) * clampedDisplacement) * mask;
   	uv[1] += ((noiseY - 0.5) * clampedDisplacement) * mask;
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
-  	var localUV = new $runtime.PooledFloat32Array([(uv[0] * fullRes[0] - tileOffset[0]) / resolution[0], (uv[1] * fullRes[1] - tileOffset[1]) / resolution[1]]);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	var localUV = new $runtime.PooledFloat32Array([$runtime.fdiv((uv[0] * fullRes[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((uv[1] * fullRes[1] - tileOffset[1]), resolution[1])]);
   	clamp(localUV, 0, 1).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	if (antialias) {
   	var dx = dFdx(uv);
   	var dy = dFdy(uv);
   	var col = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
-  	var sUV = new $runtime.PooledFloat32Array([((uv[0] + dx[0] * -0.375 + dy[0] * -0.125) * fullRes[0] - tileOffset[0]) / resolution[0], ((uv[1] + dx[1] * -0.375 + dy[1] * -0.125) * fullRes[1] - tileOffset[1]) / resolution[1]]);
+  	var sUV = new $runtime.PooledFloat32Array([$runtime.fdiv(((uv[0] + dx[0] * -0.375 + dy[0] * -0.125) * fullRes[0] - tileOffset[0]), resolution[0]), $runtime.fdiv(((uv[1] + dx[1] * -0.375 + dy[1] * -0.125) * fullRes[1] - tileOffset[1]), resolution[1])]);
   	texture(inputTex, clamp(sUV, 0, 1)).reduce((res,el,i)=>(res[i] += el, res), col);
-  	(sUV[0] = ((uv[0] + dx[0] * 0.125 + dy[0] * -0.375) * fullRes[0] - tileOffset[0]) / resolution[0], sUV[1] = ((uv[1] + dx[1] * 0.125 + dy[1] * -0.375) * fullRes[1] - tileOffset[1]) / resolution[1], sUV);
+  	(sUV[0] = $runtime.fdiv(((uv[0] + dx[0] * 0.125 + dy[0] * -0.375) * fullRes[0] - tileOffset[0]), resolution[0]), sUV[1] = $runtime.fdiv(((uv[1] + dx[1] * 0.125 + dy[1] * -0.375) * fullRes[1] - tileOffset[1]), resolution[1]), sUV);
   	texture(inputTex, clamp(sUV, 0, 1)).reduce((res,el,i)=>(res[i] += el, res), col);
-  	(sUV[0] = ((uv[0] + dx[0] * 0.375 + dy[0] * 0.125) * fullRes[0] - tileOffset[0]) / resolution[0], sUV[1] = ((uv[1] + dx[1] * 0.375 + dy[1] * 0.125) * fullRes[1] - tileOffset[1]) / resolution[1], sUV);
+  	(sUV[0] = $runtime.fdiv(((uv[0] + dx[0] * 0.375 + dy[0] * 0.125) * fullRes[0] - tileOffset[0]), resolution[0]), sUV[1] = $runtime.fdiv(((uv[1] + dx[1] * 0.375 + dy[1] * 0.125) * fullRes[1] - tileOffset[1]), resolution[1]), sUV);
   	texture(inputTex, clamp(sUV, 0, 1)).reduce((res,el,i)=>(res[i] += el, res), col);
-  	(sUV[0] = ((uv[0] + dx[0] * -0.125 + dy[0] * 0.375) * fullRes[0] - tileOffset[0]) / resolution[0], sUV[1] = ((uv[1] + dx[1] * -0.125 + dy[1] * 0.375) * fullRes[1] - tileOffset[1]) / resolution[1], sUV);
+  	(sUV[0] = $runtime.fdiv(((uv[0] + dx[0] * -0.125 + dy[0] * 0.375) * fullRes[0] - tileOffset[0]), resolution[0]), sUV[1] = $runtime.fdiv(((uv[1] + dx[1] * -0.125 + dy[1] * 0.375) * fullRes[1] - tileOffset[1]), resolution[1]), sUV);
   	texture(inputTex, clamp(sUV, 0, 1)).reduce((res,el,i)=>(res[i] += el, res), col);
   	(fragColor[0] = col[0] * 0.25, fragColor[1] = col[1] * 0.25, fragColor[2] = col[2] * 0.25, fragColor[3] = col[3] * 0.25, fragColor);
   	} else {
@@ -14729,7 +14729,7 @@ function canonicalFactory74($bindings, $runtime) {
   	var coords = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var tileDims = textureSize(inputTex, 0);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var base = texelFetch(inputTex, coords, 0);
   	var blend_alpha = clamp(alpha, 0, 1);
   	if (blend_alpha <= 0) {
@@ -14777,7 +14777,7 @@ function canonicalFactory74($bindings, $runtime) {
 }
 
 function canonicalFactory75($bindings, $runtime) {
-  const { vec2, ivec2, pow, max, mix, dot, normalize, reflect, add, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, pow, max, mix, dot, normalize, reflect, add, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_texture_r (samplerValue, coordValue) {
@@ -14881,7 +14881,7 @@ function canonicalFactory75($bindings, $runtime) {
   	uv = $runtime.copy(uv);
   	normal = $runtime.copy(normal);
   	var refractionOffset = new $runtime.PooledFloat32Array([normal[0] * (refraction * 0.012500000186264515), normal[1] * (refraction * 0.012500000186264515)]);
-  	return texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + refractionOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + refractionOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	return texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + refractionOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + refractionOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   };
   function applyReflection (uv, globalUV, normal) {
   	uv = $runtime.copy(uv);
@@ -14893,10 +14893,10 @@ function canonicalFactory75($bindings, $runtime) {
   	var redOffset = new $runtime.PooledFloat32Array([reflectionOffset[0] * (1 + aberration * 0.007499999832361937), reflectionOffset[1] * (1 + aberration * 0.007499999832361937)]);
   	var greenOffset = reflectionOffset instanceof Float32Array ? $runtime.copy(reflectionOffset) : reflectionOffset;
   	var blueOffset = new $runtime.PooledFloat32Array([reflectionOffset[0] * (1 - aberration * 0.007499999832361937), reflectionOffset[1] * (1 - aberration * 0.007499999832361937)]);
-  	var redChannel = cpu_texture_r(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + redOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + redOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
-  	var greenChannel = cpu_texture_g(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + greenOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + greenOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
-  	var blueChannel = cpu_texture_b(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + blueOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + blueOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
-  	var alphaChannel = cpu_texture_a(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + reflectionOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + reflectionOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var redChannel = cpu_texture_r(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + redOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + redOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var greenChannel = cpu_texture_g(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + greenOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + greenOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var blueChannel = cpu_texture_b(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + blueOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + blueOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
+  	var alphaChannel = cpu_texture_a(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + reflectionOffset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + reflectionOffset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)));
   	return new $runtime.PooledFloat32Array([redChannel, greenChannel, blueChannel, alphaChannel]);
   };
   function main () {
@@ -14904,10 +14904,10 @@ function canonicalFactory75($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var resolution = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
-  	var origColor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
+  	var origColor = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
   	var normal = calculateNormal(uv, texelSize);
   	var lightDir = normalize(lightDirection);
   	var viewDir = new $runtime.PooledFloat32Array([0, 0, 1]);
@@ -14986,12 +14986,12 @@ function canonicalFactory76($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var resolution = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / tileDims[0], gl_FragCoord[1] / tileDims[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / resolution[0], (gl_FragCoord[1] + tileOffset[1]) / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], tileDims[0]), $runtime.fdiv(gl_FragCoord[1], tileDims[1])]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), resolution[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), resolution[1])]);
   	var n = max(102 - scale, 2);
   	var s = seed instanceof Float32Array ? $runtime.copy(seed) : seed;
   	var spd = speed * 0.30000001192092896;
-  	var aspect = fullResolution[0] / fullResolution[1];
+  	var aspect = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var auv = new $runtime.PooledFloat32Array([globalUV[0] * aspect, globalUV[1]]);
   	var scaled = new $runtime.PooledFloat32Array([auv[0] * n, auv[1] * n]);
   	var cell = cpu_ivec2_vec2(floor(scaled));
@@ -15013,7 +15013,7 @@ function canonicalFactory76($bindings, $runtime) {
   	var radius = animRand[1] * spd;
   	clamp(new $runtime.PooledFloat32Array([offset[0] + cos(angle) * radius, offset[1] + sin(angle) * radius]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), offset);
   	};
-  	var point = new $runtime.PooledFloat32Array([(neighborF[0] + offset[0]) / n, (neighborF[1] + offset[1]) / n]);
+  	var point = new $runtime.PooledFloat32Array([$runtime.fdiv((neighborF[0] + offset[0]), n), $runtime.fdiv((neighborF[1] + offset[1]), n)]);
   	var d = distance(auv, point);
   	if (d < minDist) {
   	thirdDist = secondDist;
@@ -15035,8 +15035,8 @@ function canonicalFactory76($bindings, $runtime) {
   	};
   	};
   	};
-  	var globalUV_sample = new $runtime.PooledFloat32Array([nearestPoint[0] / aspect, nearestPoint[1]]);
-  	var localUV_sample = new $runtime.PooledFloat32Array([(globalUV_sample[0] * resolution[0] - tileOffset[0]) / tileDims[0], (globalUV_sample[1] * resolution[1] - tileOffset[1]) / tileDims[1]]);
+  	var globalUV_sample = new $runtime.PooledFloat32Array([$runtime.fdiv(nearestPoint[0], aspect), nearestPoint[1]]);
+  	var localUV_sample = new $runtime.PooledFloat32Array([$runtime.fdiv((globalUV_sample[0] * resolution[0] - tileOffset[0]), tileDims[0]), $runtime.fdiv((globalUV_sample[1] * resolution[1] - tileOffset[1]), tileDims[1])]);
   	var cellColor = texture(inputTex, localUV_sample);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (mode == 0) {
@@ -15081,12 +15081,12 @@ function canonicalFactory76($bindings, $runtime) {
   	var candidatePoint = lowPolySite(candidateCell, n, s, spd);
   	var siteVector = new $runtime.PooledFloat32Array([candidatePoint[0] - borderNearestPoint[0], candidatePoint[1] - borderNearestPoint[1]]);
   	var siteDistance = max(length(siteVector), 9.99999993922529e-9);
-  	var bisectorDistance = dot(new $runtime.PooledFloat32Array([(borderNearestPoint[0] + candidatePoint[0]) * 0.5 - auv[0], (borderNearestPoint[1] + candidatePoint[1]) * 0.5 - auv[1]]), new $runtime.PooledFloat32Array([siteVector[0] / siteDistance, siteVector[1] / siteDistance]));
+  	var bisectorDistance = dot(new $runtime.PooledFloat32Array([(borderNearestPoint[0] + candidatePoint[0]) * 0.5 - auv[0], (borderNearestPoint[1] + candidatePoint[1]) * 0.5 - auv[1]]), new $runtime.PooledFloat32Array([$runtime.fdiv(siteVector[0], siteDistance), $runtime.fdiv(siteVector[1], siteDistance)]));
   	distToEdge = min(distToEdge, bisectorDistance);
   	};
   	};
   	};
-  	var cellRadius = 0.5 / n;
+  	var cellRadius = $runtime.fdiv(0.5, n);
   	var borderHalfWidth = ((LP_BORDER) / 100) * cellRadius;
   	var borderFeather = max(fwidth(distToEdge), 9.999999974752427e-7);
   	borderMask = 1 - smoothstep(borderHalfWidth - borderFeather, borderHalfWidth + borderFeather, distToEdge);
@@ -15237,8 +15237,8 @@ function canonicalFactory78($bindings, $runtime) {
   var radius = $bindings["radius"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var acc = texture(inputTex, uv);
   	if (SHAPE == 1) {
   	var r = min(radius, 12);
@@ -15292,10 +15292,10 @@ function canonicalFactory79($bindings, $runtime) {
   var radius = $bindings["radius"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var acc = texture(inputTex, uv);
   	if (SHAPE == 0) {
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var r = min(radius, 32);
   	for (var i = 1; i <= 32; i++) {
   	if ((i) > r) {
@@ -15377,19 +15377,19 @@ function canonicalFactory80($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var srcHome = texture(inputTex, uv);
   	var seedF = (seed);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (MODE == 0) {
   	var warp = mosaicWarp(globalCoord, tileSize, seedF);
   	var warpedCoord = new $runtime.PooledFloat32Array([globalCoord[0] + warp, globalCoord[1] + warp]);
-  	var cellSpace = new $runtime.PooledFloat32Array([warpedCoord[0] / tileSize, warpedCoord[1] / tileSize]);
+  	var cellSpace = new $runtime.PooledFloat32Array([$runtime.fdiv(warpedCoord[0], tileSize), $runtime.fdiv(warpedCoord[1], tileSize)]);
   	var cellId = floor(cellSpace);
   	var warpedCenter = new $runtime.PooledFloat32Array([(cellId[0] + 0.5) * tileSize, (cellId[1] + 0.5) * tileSize]);
   	var centerWarp = mosaicWarp(warpedCenter, tileSize, seedF);
   	var sampleGc = new $runtime.PooledFloat32Array([warpedCenter[0] - centerWarp, warpedCenter[1] - centerWarp]);
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(sampleGc[0] - tileOffset[0]) / resolution[0], (sampleGc[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((sampleGc[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((sampleGc[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	var tileColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, sampleUV)));
   	var kC = mosaicGroutMask(globalCoord, tileSize, groutWidth, seedF);
   	var kR = mosaicGroutMask(new $runtime.PooledFloat32Array([globalCoord[0] + 1, globalCoord[1]]), tileSize, groutWidth, seedF);
@@ -15408,7 +15408,7 @@ function canonicalFactory80($bindings, $runtime) {
   	clamp(new $runtime.PooledFloat32Array([darkened[0] * shadeMul, darkened[1] * shadeMul, darkened[2] * shadeMul]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), result);
   	} else {
   	if (MODE == 1) {
-  	var cellSpace = new $runtime.PooledFloat32Array([globalCoord[0] / tileSize, globalCoord[1] / tileSize]);
+  	var cellSpace = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], tileSize), $runtime.fdiv(globalCoord[1], tileSize)]);
   	var cellId = floor(cellSpace);
   	var cellFrac = fract(cellSpace);
   	var edgeDistPx = (min(min(cellFrac[0], 1 - cellFrac[0]), min(cellFrac[1], 1 - cellFrac[1]))) * tileSize;
@@ -15418,7 +15418,7 @@ function canonicalFactory80($bindings, $runtime) {
   	var offsetPx = (hash22(new $runtime.PooledFloat32Array([cellId[0] + seedF * 101.69999694824219, cellId[1] + seedF * 101.69999694824219])).map(function (_) {return _ - 0.5;})).map(function (_) {return _ * 2;}).map(function (_) {return _ * (maxOffset / 100);}).map(function (_) {return _ * tileSize;});
   	var cellCenterGc = new $runtime.PooledFloat32Array([(cellId[0] + 0.5) * tileSize, (cellId[1] + 0.5) * tileSize]);
   	var shiftedGc = new $runtime.PooledFloat32Array([cellCenterGc[0] + offsetPx[0], cellCenterGc[1] + offsetPx[1]]);
-  	var shiftedUV = clamp(new $runtime.PooledFloat32Array([(shiftedGc[0] - tileOffset[0]) / resolution[0], (shiftedGc[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var shiftedUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((shiftedGc[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((shiftedGc[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	var tileColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, shiftedUV)));
   	var gapColor = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (gapFill == 0) {
@@ -15454,7 +15454,7 @@ function canonicalFactory81($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -15475,7 +15475,7 @@ function canonicalFactory82($bindings, $runtime) {
   var resetState = $bindings["resetState"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	if (resetState) {
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	return;
@@ -15650,7 +15650,7 @@ function canonicalFactory84($bindings, $runtime) {
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   	return;
   	};
-  	var normalized = new $runtime.PooledFloat32Array([(color[0] - minVal) / (maxVal - minVal), (color[1] - minVal) / (maxVal - minVal), (color[2] - minVal) / (maxVal - minVal)]);
+  	var normalized = new $runtime.PooledFloat32Array([$runtime.fdiv((color[0] - minVal), (maxVal - minVal)), $runtime.fdiv((color[1] - minVal), (maxVal - minVal)), $runtime.fdiv((color[2] - minVal), (maxVal - minVal))]);
   	(fragColor[0] = normalized[0], fragColor[1] = normalized[1], fragColor[2] = normalized[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -15830,7 +15830,7 @@ function canonicalFactory88($bindings, $runtime) {
   	};
   	var norm = value / limit;
   	if (mode == 0) {
-  	norm = abs(mod(norm + 1, 2) - 1);
+  	norm = abs((norm - 2 * (floor((norm + 1) * 0.5))));
   	} else {
   	if (mode == 1) {
   	norm = mod(norm, 1);
@@ -15849,14 +15849,14 @@ function canonicalFactory88($bindings, $runtime) {
   	var width = dims[0];
   	var height = dims[1];
   	var baseFreq = 11 - frequency;
-  	var aspect = width / height;
+  	var aspect = $runtime.fdiv(width, height);
   	var freq = new $runtime.PooledFloat32Array([baseFreq, baseFreq]);
   	if (aspect > 1) {
   	freq[1] *= aspect;
   	} else {
   	freq[0] /= aspect;
   	};
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var sampleCoord = new $runtime.PooledFloat32Array([uv[0] * dims[0], uv[1] * dims[1]]);
   	var numOctaves = max(octaves|0, 1);
   	var displaceBase = displacement instanceof Float32Array ? $runtime.copy(displacement) : displacement;
@@ -15871,7 +15871,7 @@ function canonicalFactory88($bindings, $runtime) {
   	};
   	var phase = (octave) * 2.3989999294281006;
   	var radius = 0.5 / sqrt(multiplier);
-  	var noiseCoord = new $runtime.PooledFloat32Array([(sampleCoord[0] / dims[0]) * freqScaled[0], (sampleCoord[1] / dims[1]) * freqScaled[1]]);
+  	var noiseCoord = new $runtime.PooledFloat32Array([($runtime.fdiv(sampleCoord[0], dims[0])) * freqScaled[0], ($runtime.fdiv(sampleCoord[1], dims[1])) * freqScaled[1]]);
   	var refX = simplexNoise(new $runtime.PooledFloat32Array([noiseCoord[0] + 17, noiseCoord[1] + 29]), time * speed, phase, radius);
   	var refY = simplexNoise(new $runtime.PooledFloat32Array([noiseCoord[0] + 23, noiseCoord[1] + 31]), time * speed, phase, radius);
   	refX = refX * 2 - 1;
@@ -15881,7 +15881,7 @@ function canonicalFactory88($bindings, $runtime) {
   	(sampleCoord[0] += offset[0], sampleCoord[1] += offset[1], sampleCoord);
   	(sampleCoord[0] = wrapFloat(sampleCoord[0], width, wrap|0), sampleCoord[1] = wrapFloat(sampleCoord[1], height, wrap|0), sampleCoord);
   	};
-  	var finalUV = new $runtime.PooledFloat32Array([(wrapFloat(sampleCoord[0], width, wrap|0)) / dims[0], (wrapFloat(sampleCoord[1], height, wrap|0)) / dims[1]]);
+  	var finalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(wrapFloat(sampleCoord[0], width, wrap|0), dims[0]), $runtime.fdiv(wrapFloat(sampleCoord[1], height, wrap|0), dims[1])]);
   	if (antialias) {
   	var dx = dFdx(finalUV);
   	var dy = dFdy(finalUV);
@@ -16126,7 +16126,7 @@ function canonicalFactory90($bindings, $runtime) {
   };
   function lumGradientFlat (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var tl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(flatTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1]])))));
   	var l = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(flatTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1]])))));
   	var bl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(flatTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1] * -1])))));
@@ -16139,7 +16139,7 @@ function canonicalFactory90($bindings, $runtime) {
   };
   function tent3x3 (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var sum = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var wsum = 0;
   	for (var dy = -1; dy <= 1; dy++) {
@@ -16182,7 +16182,7 @@ function canonicalFactory90($bindings, $runtime) {
   	var blurred = tent3x3(uv);
   	return mix(c, blurred, detail / 100);
   	} else {
-  	var band = fbm(new $runtime.PooledFloat32Array([(globalCoord[0] + (seed) * 37) / (4 + size), (globalCoord[1] + (seed) * 37) / (4 + size)]));
+  	var band = fbm(new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] + (seed) * 37), (4 + size)), $runtime.fdiv((globalCoord[1] + (seed) * 37), (4 + size))]));
   	var shift = (band * 2 - 1) * (detail / 100) * 0.25;
   	return clamp(new $runtime.PooledFloat32Array([c[0] + shift, c[1] + shift, c[2] + shift]), 0, 1);
   	};
@@ -16192,7 +16192,7 @@ function canonicalFactory90($bindings, $runtime) {
   	};
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var c = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(flatTex, uv)));
   	var globalCoord = vec2.add([], floor(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]])), tileOffset);
@@ -16368,7 +16368,7 @@ function canonicalFactory92($bindings, $runtime) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	return;
   	};
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / dimensions[0], gl_FragCoord[1] / dimensions[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], dimensions[0]), $runtime.fdiv(gl_FragCoord[1], dimensions[1])]);
   	var base = texture(inputTex, uv);
   	var edges = texture(edgesTexture, uv);
   	var strength = clamp(edges[0], 0, 1);
@@ -16505,7 +16505,7 @@ function canonicalFactory94($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var dimensions = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] - 0.5) / (max(dimensions[0], 1)), (gl_FragCoord[1] - 0.5) / (max(dimensions[1], 1))]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] - 0.5), max(dimensions[0], 1)), $runtime.fdiv((gl_FragCoord[1] - 0.5), max(dimensions[1], 1))]);
   	var texel = texture(inputTex, uv);
   	var value = valueMapComponent(texel);
   	(fragColor[0] = value, fragColor[1] = value, fragColor[2] = value, fragColor[3] = texel[3], fragColor);
@@ -16548,7 +16548,7 @@ function canonicalFactory95($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var v = length(direction) > 0 ? normalize(direction) : new $runtime.PooledFloat32Array([0, 0, 1]);
   	var shift = new $runtime.PooledFloat32Array([v[0] * SHIFT_SCALE, v[1] * SHIFT_SCALE]);
   	var isTileRendering = length(tileOffset) > 0;
@@ -16556,7 +16556,7 @@ function canonicalFactory95($bindings, $runtime) {
   	var maxDispPixels = 256;
   	var dispPixels = length(new $runtime.PooledFloat32Array([shift[0] * fullResolution[0], shift[1] * fullResolution[1]]));
   	if (dispPixels > maxDispPixels) {
-  	shift = new $runtime.PooledFloat32Array([shift[0] * (maxDispPixels / dispPixels), shift[1] * (maxDispPixels / dispPixels)]);
+  	shift = new $runtime.PooledFloat32Array([shift[0] * ($runtime.fdiv(maxDispPixels, dispPixels)), shift[1] * ($runtime.fdiv(maxDispPixels, dispPixels))]);
   	};
   	};
   	var t = 1;
@@ -16571,7 +16571,7 @@ function canonicalFactory95($bindings, $runtime) {
   	(rayUV[0] = uv[0] + shift[0] * (t - pivot), rayUV[1] = uv[1] + shift[1] * (t - pivot), rayUV);
   	f = t - getHeight(rayUV);
   	if (f <= 0) {
-  	var w = f / (f - prevF);
+  	var w = $runtime.fdiv(f, (f - prevF));
   	mix(rayUV, prevUV, w).reduce((res,el,i)=>(res[i] = el, res), rayUV);
   	break;
   	};
@@ -16604,7 +16604,7 @@ function canonicalFactory96($bindings, $runtime) {
   };
   function toSampleUV (globalPixelPos) {
   	globalPixelPos = $runtime.copy(globalPixelPos);
-  	return clamp(new $runtime.PooledFloat32Array([(globalPixelPos[0] - tileOffset[0]) / resolution[0], (globalPixelPos[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	return clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((globalPixelPos[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((globalPixelPos[1] - tileOffset[1]), resolution[1])]), 0, 1);
   };
   function cellAvgColor3x3 (centerPx) {
   	centerPx = $runtime.copy(centerPx);
@@ -16620,11 +16620,11 @@ function canonicalFactory96($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var srcOwn = texture(inputTex, uv);
   	var imgCenter = new $runtime.PooledFloat32Array([fullResolution[0] * 0.5, fullResolution[1] * 0.5]);
   	var relPx = new $runtime.PooledFloat32Array([globalCoord[0] - imgCenter[0], globalCoord[1] - imgCenter[1]]);
-  	var cellIdxF = floor(new $runtime.PooledFloat32Array([relPx[0] / squareSize, relPx[1] / squareSize]));
+  	var cellIdxF = floor(new $runtime.PooledFloat32Array([$runtime.fdiv(relPx[0], squareSize), $runtime.fdiv(relPx[1], squareSize)]));
   	var localPx = new $runtime.PooledFloat32Array([relPx[0] - cellIdxF[0] * squareSize, relPx[1] - cellIdxF[1] * squareSize]);
   	var cellCenter = new $runtime.PooledFloat32Array([imgCenter[0] + (cellIdxF[0] + 0.5) * squareSize, imgCenter[1] + (cellIdxF[1] + 0.5) * squareSize]);
   	var cellColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, cellAvgColor3x3(cellCenter)));
@@ -16686,7 +16686,7 @@ function canonicalFactory97($bindings, $runtime) {
   var detail = $bindings["detail"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var radius = mix(1, 24, (detail - 1) / 99);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -16697,8 +16697,8 @@ function canonicalFactory97($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -16722,7 +16722,7 @@ function canonicalFactory98($bindings, $runtime) {
   var detail = $bindings["detail"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var radius = mix(1, 24, (detail - 1) / 99);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -16733,8 +16733,8 @@ function canonicalFactory98($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -16768,7 +16768,7 @@ function canonicalFactory99($bindings, $runtime) {
   	return mix(ink, paper, clamp(t, 0, 1));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var blur = texture(blurTex, uv);
   	var lumSrc = lum(new $runtime.PooledFloat32Array([src[0], src[1], src[2]]));
@@ -16791,7 +16791,7 @@ function canonicalFactory99($bindings, $runtime) {
 }
 
 function canonicalFactory100($bindings, $runtime) {
-  const { sin, cos, pow, abs, mod, clamp, length, normalize, texture, dFdx, dFdy } = $runtime.stdlib
+  const { vec2, sin, cos, pow, abs, floor, mod, clamp, length, normalize, subtract, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -16816,9 +16816,9 @@ function canonicalFactory100($bindings, $runtime) {
   	return st;
   };
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	rotate2D(uv, rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
   	var intensity = strength * 0.009999999776482582;
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
@@ -16833,7 +16833,7 @@ function canonicalFactory100($bindings, $runtime) {
   	};
   	uv = new $runtime.PooledFloat32Array([uv[0] + 0.5, uv[1] + 0.5]);
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -16842,7 +16842,7 @@ function canonicalFactory100($bindings, $runtime) {
   	};
   	};
   	rotate2D(uv, -rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(uv[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (uv[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((uv[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((uv[1] * fullResolution[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	if (antialias) {
   	var dx = dFdx(sampleUV);
   	var dy = dFdy(sampleUV);
@@ -16896,7 +16896,7 @@ function canonicalFactory101($bindings, $runtime) {
   	};
   	};
   	var estimatedRank = (brighterCount) / (NUM_SAMPLES);
-  	new $runtime.PooledFloat32Array([estimatedRank, myLum, (x) / (cpu_float(width - 1)), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	new $runtime.PooledFloat32Array([estimatedRank, myLum, $runtime.fdiv((x), cpu_float(width - 1)), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -16906,7 +16906,7 @@ function canonicalFactory101($bindings, $runtime) {
 }
 
 function canonicalFactory102($bindings, $runtime) {
-  const { sin, cos, abs, fract, mod, max, clamp, texture, textureSize } = $runtime.stdlib
+  const { vec2, sin, cos, abs, floor, fract, max, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -16924,7 +16924,7 @@ function canonicalFactory102($bindings, $runtime) {
   	var uv = new $runtime.PooledFloat32Array([coord[0] / size[0], coord[1] / size[1]]);
   	var mode = wrap|0;
   	if (mode == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (mode == 1) {
   	fract(uv).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -16946,7 +16946,7 @@ function canonicalFactory102($bindings, $runtime) {
   	srcCoord[0] = c * pixelCoord[0] - s * pixelCoord[1];
   	srcCoord[1] = s * pixelCoord[0] + c * pixelCoord[1];
   	(srcCoord[0] += center[0], srcCoord[1] += center[1], srcCoord);
-  	var originalColor = texture(originalTex, new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]));
+  	var originalColor = texture(originalTex, new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]));
   	var wrappedUV = applyWrap(srcCoord, texSize);
   	var sortedColor = texture(inputTex, wrappedUV);
   	var working_source = originalColor instanceof Float32Array ? $runtime.copy(originalColor) : originalColor;
@@ -17003,7 +17003,7 @@ function canonicalFactory103($bindings, $runtime) {
   	brightestX = sampleX;
   	};
   	};
-  	new $runtime.PooledFloat32Array([(brightestX) / (cpu_float(width - 1)), maxLum, 0, 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	new $runtime.PooledFloat32Array([$runtime.fdiv((brightestX), cpu_float(width - 1)), maxLum, 0, 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -17035,7 +17035,7 @@ function canonicalFactory104($bindings, $runtime) {
   	var brightestXNorm = texelFetch(brightestTex, cpu_ivec2(0, y), 0)[0];
   	var brightestX = round(brightestXNorm * (cpu_float(width - 1)))|0;
   	var sortedIndex = (x - brightestX + width) % width;
-  	var targetRank = (sortedIndex) / (cpu_float(width - 1));
+  	var targetRank = $runtime.fdiv((sortedIndex), cpu_float(width - 1));
   	var NUM_SAMPLES = 64;
   	var bestDiff = 2;
   	var bestX = x instanceof Float32Array ? $runtime.copy(x) : x;
@@ -17092,7 +17092,7 @@ function canonicalFactory105($bindings, $runtime) {
   	var size = textureSize(inputTex, 0);
   	var texel = texelFetch(inputTex, coord, 0);
   	var lum = oklab_l(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]));
-  	new $runtime.PooledFloat32Array([lum, (coord[0]) / (cpu_float(size[0] - 1)), 0, 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	new $runtime.PooledFloat32Array([lum, $runtime.fdiv((coord[0]), cpu_float(size[0] - 1)), 0, 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -17102,7 +17102,7 @@ function canonicalFactory105($bindings, $runtime) {
 }
 
 function canonicalFactory106($bindings, $runtime) {
-  const { sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
+  const { vec2, sin, cos, abs, floor, fract, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -17119,7 +17119,7 @@ function canonicalFactory106($bindings, $runtime) {
   	var uv = new $runtime.PooledFloat32Array([coord[0] / size[0], coord[1] / size[1]]);
   	var mode = wrap|0;
   	if (mode == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (mode == 1) {
   	fract(uv).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -17173,19 +17173,19 @@ function canonicalFactory107($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var resolution = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / tileDims[0], gl_FragCoord[1] / tileDims[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], tileDims[0]), $runtime.fdiv(gl_FragCoord[1], tileDims[1])]);
   	if (size < 1) {
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	return;
   	};
   	var pixelSize = size instanceof Float32Array ? $runtime.copy(size) : size;
-  	var dx = pixelSize / resolution[0];
-  	var dy = pixelSize / resolution[1];
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / resolution[0], (gl_FragCoord[1] + tileOffset[1]) / resolution[1]]);
+  	var dx = $runtime.fdiv(pixelSize, resolution[0]);
+  	var dy = $runtime.fdiv(pixelSize, resolution[1]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), resolution[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), resolution[1])]);
   	var centered = new $runtime.PooledFloat32Array([globalUV[0] - 0.5, globalUV[1] - 0.5]);
-  	var globalCoord = new $runtime.PooledFloat32Array([dx * (floor(centered[0] / dx)), dy * (floor(centered[1] / dy))]);
+  	var globalCoord = new $runtime.PooledFloat32Array([dx * (floor($runtime.fdiv(centered[0], dx))), dy * (floor($runtime.fdiv(centered[1], dy)))]);
   	globalCoord = new $runtime.PooledFloat32Array([globalCoord[0] + 0.5, globalCoord[1] + 0.5]);
-  	var coord = new $runtime.PooledFloat32Array([(globalCoord[0] * resolution[0] - tileOffset[0]) / tileDims[0], (globalCoord[1] * resolution[1] - tileOffset[1]) / tileDims[1]]);
+  	var coord = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] * resolution[0] - tileOffset[0]), tileDims[0]), $runtime.fdiv((globalCoord[1] * resolution[1] - tileOffset[1]), tileDims[1])]);
   	texture(inputTex, coord).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -17206,7 +17206,7 @@ function canonicalFactory108($bindings, $runtime) {
   var detail = $bindings["detail"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var radius = mix(12, 2, detail / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -17217,8 +17217,8 @@ function canonicalFactory108($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -17242,7 +17242,7 @@ function canonicalFactory109($bindings, $runtime) {
   var detail = $bindings["detail"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var radius = mix(12, 2, detail / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -17253,8 +17253,8 @@ function canonicalFactory109($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -17283,8 +17283,8 @@ function canonicalFactory110($bindings, $runtime) {
   	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var src = texture(inputTex, uv);
   	var hC = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, uv))));
   	var hL = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]])))));
@@ -17307,7 +17307,7 @@ function canonicalFactory110($bindings, $runtime) {
   	var gloss = mix(24, 6, smoothness / 100);
   	var flatSpec = pow(H[2], gloss);
   	var rawSpec = pow(clamp(dot(n, H), 0, 1), gloss);
-  	var spec = clamp((rawSpec - flatSpec) / (max(1 - flatSpec, 0.00009999999747378752)), 0, 1);
+  	var spec = clamp($runtime.fdiv((rawSpec - flatSpec), max(1 - flatSpec, 0.00009999999747378752)), 0, 1);
   	var curv = 4 * hC - hL - hR - hB - hT;
   	var ridge = clamp((curv * strength) * 2, 0, 1);
   	spec = clamp(spec * 1.350000023841858 + ridge * 0.75, 0, 1);
@@ -17376,8 +17376,8 @@ function canonicalFactory111($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var fullRes = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var aspect = fullRes[0] / fullRes[1];
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
   	var coord = new $runtime.PooledFloat32Array([0, 0]);
   	if (polarMode == 0) {
   	polarCoords(uv, aspect).reduce((res,el,i)=>(res[i] = el, res), coord);
@@ -17406,7 +17406,7 @@ function canonicalFactory111($bindings, $runtime) {
 canonicalFactory111.usesDerivatives = true
 
 function canonicalFactory112($bindings, $runtime) {
-  const { sin, cos, abs, mod, max, clamp, length, texture, dFdx, dFdy } = $runtime.stdlib
+  const { vec2, sin, cos, abs, floor, mod, max, clamp, length, subtract, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var STYLE = $bindings["STYLE"];
@@ -17422,9 +17422,9 @@ function canonicalFactory112($bindings, $runtime) {
   var antialias = $bindings["antialias"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
   	uv[0] *= aspectRatio;
   	var r = length(uv);
@@ -17450,7 +17450,7 @@ function canonicalFactory112($bindings, $runtime) {
   	rDelta = w * 0.5;
   	};
   	};
-  	var dir = (r > 0) ? new $runtime.PooledFloat32Array([uv[0] / r, uv[1] / r]) : new $runtime.PooledFloat32Array([0, 0]);
+  	var dir = (r > 0) ? new $runtime.PooledFloat32Array([$runtime.fdiv(uv[0], r), $runtime.fdiv(uv[1], r)]) : new $runtime.PooledFloat32Array([0, 0]);
   	var rot = ((rotDelta * 2) * 3.1415927410125732) * 0.25;
   	var s = sin(rot);
   	var co = cos(rot);
@@ -17459,7 +17459,7 @@ function canonicalFactory112($bindings, $runtime) {
   	uv[0] /= aspectRatio;
   	uv = new $runtime.PooledFloat32Array([uv[0] + 0.5, uv[1] + 0.5]);
   	if (WRAP == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (WRAP == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -17467,7 +17467,7 @@ function canonicalFactory112($bindings, $runtime) {
   	clamp(uv, 0, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
   	};
   	};
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(uv[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (uv[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((uv[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((uv[1] * fullResolution[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	if (antialias) {
   	var dx = dFdx(sampleUV);
   	var dy = dFdy(sampleUV);
@@ -17490,7 +17490,7 @@ function canonicalFactory112($bindings, $runtime) {
 canonicalFactory112.usesDerivatives = true
 
 function canonicalFactory113($bindings, $runtime) {
-  const { vec2, vec3, pow, floor, round, fract, max, clamp, smoothstep, add, divide, texture, textureSize, fwidth } = $runtime.stdlib
+  const { vec2, vec3, pow, floor, round, fract, max, clamp, smoothstep, add, texture, textureSize, fwidth } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var tileOffset = $bindings["tileOffset"];
@@ -17531,7 +17531,7 @@ function canonicalFactory113($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0));
+  	var uv = vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0));
   	var texel = texture(inputTex, uv);
   	var levels_raw = max(levels, 0);
   	var levels_quantized = max(round(levels_raw), MIN_LEVELS);
@@ -17540,10 +17540,10 @@ function canonicalFactory113($bindings, $runtime) {
   	return;
   	};
   	var level_factor = levels_quantized instanceof Float32Array ? $runtime.copy(levels_quantized) : levels_quantized;
-  	var inv_factor = 1 / level_factor;
+  	var inv_factor = $runtime.fdiv(1, level_factor);
   	var half_step = inv_factor * 0.5;
   	var gamma_value = max(gamma, MIN_GAMMA);
-  	var inv_gamma = 1 / gamma_value;
+  	var inv_gamma = $runtime.fdiv(1, gamma_value);
   	var working_rgb = srgb_to_linear_rgb(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]));
   	pow_vec3(clamp(working_rgb, new $runtime.PooledFloat32Array([0, 0, 0]), new $runtime.PooledFloat32Array([1, 1, 1])), gamma_value).reduce((res,el,i)=>(res[i] = el, res), working_rgb);
   	var scaled = new $runtime.PooledFloat32Array([working_rgb[0] * level_factor + half_step, working_rgb[1] * level_factor + half_step, working_rgb[2] * level_factor + half_step]);
@@ -17658,16 +17658,16 @@ function canonicalFactory114($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var globalAspect = fullRes[0] / fullRes[1];
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var globalAspect = $runtime.fdiv(fullRes[0], fullRes[1]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 1]);
   	var diff = new $runtime.PooledFloat32Array([0.5 * globalAspect - globalUV[0] * globalAspect, 0.5 - globalUV[1]]);
   	var centerDist = length(diff);
   	var lensedCoords = uv instanceof Float32Array ? $runtime.copy(uv) : uv;
   	var aberrationOffset = (((map(aberrationAmt, 0, 100, 0, 0.05000000074505806)) * centerDist) * 3.1415927410125732) * 0.5;
-  	var texelSize = textureSize(inputTex, 0).map(function (_) {return 1 / _;});
+  	var texelSize = textureSize(inputTex, 0).map(function (_) {return $runtime.fdiv(1, _);});
   	var redOffset = mix(clamp(lensedCoords[0] + aberrationOffset, 0, 1), lensedCoords[0], lensedCoords[0]);
   	var redUV = new $runtime.PooledFloat32Array([redOffset, lensedCoords[1]]);
   	var redLocalUV = new $runtime.PooledFloat32Array([(redUV[0] * fullResolution[0] - tileOffset[0]) * texelSize[0], (redUV[1] * fullResolution[1] - tileOffset[1]) * texelSize[1]]);
@@ -17761,12 +17761,12 @@ function canonicalFactory115($bindings, $runtime) {
   	var range = minMax[1] - minMax[0];
   	var normalized = referenceValue instanceof Float32Array ? $runtime.copy(referenceValue) : referenceValue;
   	if (range > 0.00009999999747378752) {
-  	normalized = clamp01((referenceValue - minMax[0]) / range);
+  	normalized = clamp01($runtime.fdiv((referenceValue - minMax[0]), range));
   	};
   	var modRange = cpu_float(min(texSize[0], texSize[1]));
   	var offsetValue = (normalized * uDisplacement) * modRange + normalized;
-  	var sampleX = (fract(offsetValue / (texSize[0]))) * (texSize[0])|0;
-  	var sampleY = (fract(offsetValue / (texSize[1]))) * (texSize[1])|0;
+  	var sampleX = (fract($runtime.fdiv(offsetValue, (texSize[0])))) * (texSize[0])|0;
+  	var sampleY = (fract($runtime.fdiv(offsetValue, (texSize[1])))) * (texSize[1])|0;
   	sampleX = min(sampleX, texSize[0] - 1);
   	sampleY = min(sampleY, texSize[1] - 1);
   	var sampled = texelFetch(inputTex, cpu_ivec2(sampleX, sampleY), 0);
@@ -17923,7 +17923,7 @@ function canonicalFactory118($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var radius = mix(0.5, 15, smoothness / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -17934,8 +17934,8 @@ function canonicalFactory118($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -17960,7 +17960,7 @@ function canonicalFactory119($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var radius = mix(0.5, 15, smoothness / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -17971,8 +17971,8 @@ function canonicalFactory119($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -18026,8 +18026,8 @@ function canonicalFactory120($bindings, $runtime) {
   	return mix(ink, paper, clamp(t, 0, 1));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var src = texture(inputTex, uv);
   	var hC = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, uv))));
   	var hR = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(blurTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]])))));
@@ -18072,7 +18072,7 @@ function canonicalFactory120($bindings, $runtime) {
 }
 
 function canonicalFactory121($bindings, $runtime) {
-  const { vec2, abs, fract, mod, clamp, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, abs, floor, fract, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var resolution = $bindings["resolution"];
@@ -18088,13 +18088,13 @@ function canonicalFactory121($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var st = globalUV instanceof Float32Array ? $runtime.copy(globalUV) : globalUV;
   	st[0] *= aspect;
   	(st[0] = st[0] * x + offsetX * aspect, st[1] = st[1] * y + offsetY, st);
   	st[0] /= aspect;
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([st[0] + 1, st[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), st);
+  	abs((vec2.subtract([], st, floor(new $runtime.PooledFloat32Array([(st[0] + 1) * 0.5, (st[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), st);
   	} else {
   	if (wrap == 1) {
   	fract(st).reduce((res,el,i)=>(res[i] = el, res), st);
@@ -18102,9 +18102,9 @@ function canonicalFactory121($bindings, $runtime) {
   	clamp(st, 0, 1).reduce((res,el,i)=>(res[i] = el, res), st);
   	};
   	};
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([st[0] * fullResolution[0] - tileOffset[0], st[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([st[0] * fullResolution[0] - tileOffset[0], st[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([localUV[0] + 1, localUV[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), localUV);
+  	abs((vec2.subtract([], localUV, floor(new $runtime.PooledFloat32Array([(localUV[0] + 1) * 0.5, (localUV[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	} else {
   	if (wrap == 1) {
   	fract(localUV).reduce((res,el,i)=>(res[i] = el, res), localUV);
@@ -18122,7 +18122,7 @@ function canonicalFactory121($bindings, $runtime) {
 }
 
 function canonicalFactory122($bindings, $runtime) {
-  const { vec4, ivec2, abs, fract, mod, clamp, mix, subtract, texture, textureSize } = $runtime.stdlib
+  const { vec2, vec4, ivec2, abs, floor, fract, clamp, mix, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -18142,7 +18142,7 @@ function canonicalFactory122($bindings, $runtime) {
   	uv = $runtime.copy(uv);
   	var mode = wrap|0;
   	if (mode == 0) {
-  	return abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;}));
+  	return abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;}))));
   	} else {
   	if (mode == 1) {
   	return fract(uv);
@@ -18157,8 +18157,8 @@ function canonicalFactory122($bindings, $runtime) {
   function main () {
   	var dims = textureSize(inputTex, 0);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var localUV = new $runtime.PooledFloat32Array([gl_FragCoord[0] / dims[0], gl_FragCoord[1] / dims[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var localUV = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], dims[0]), $runtime.fdiv(gl_FragCoord[1], dims[1])]);
   	var original = texture(inputTex, localUV);
   	var current = original instanceof Float32Array ? $runtime.copy(original) : original;
   	if (ridges) {
@@ -18172,7 +18172,7 @@ function canonicalFactory122($bindings, $runtime) {
   	for (var i = 0; i < iters; i++) {
   	var warpedGlobalUV = new $runtime.PooledFloat32Array([globalUV[0] * scale, globalUV[1] * scale]);
   	var wrappedGlobalUV = applyWrap(warpedGlobalUV);
-  	var sampledLocalUV = fract(new $runtime.PooledFloat32Array([(wrappedGlobalUV[0] * fullResolution[0] - tileOffset[0]) / dims[0], (wrappedGlobalUV[1] * fullResolution[1] - tileOffset[1]) / dims[1]]));
+  	var sampledLocalUV = fract(new $runtime.PooledFloat32Array([$runtime.fdiv((wrappedGlobalUV[0] * fullResolution[0] - tileOffset[0]), dims[0]), $runtime.fdiv((wrappedGlobalUV[1] * fullResolution[1] - tileOffset[1]), dims[1])]));
   	var scaled = texture(inputTex, sampledLocalUV);
   	if (ridges) {
   	ridge_transform(scaled).reduce((res,el,i)=>(res[i] = el, res), scaled);
@@ -18215,7 +18215,7 @@ function canonicalFactory123($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var dims = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / dims[0], gl_FragCoord[1] / dims[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], dims[0]), $runtime.fdiv(gl_FragCoord[1], dims[1])]);
   	var texel = texture(inputTex, uv);
   	var ridged = ridge_transform(texel, level);
   	var out_color = new $runtime.PooledFloat32Array([ridged[0], ridged[1], ridged[2], 1]);
@@ -18229,7 +18229,7 @@ function canonicalFactory123($bindings, $runtime) {
 }
 
 function canonicalFactory124($bindings, $runtime) {
-  const { ivec2, sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, sin, cos, abs, floor, fract, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -18250,12 +18250,12 @@ function canonicalFactory124($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var angle = rotation instanceof Float32Array ? $runtime.copy(rotation) : rotation;
   	if (speed != 0) {
   	angle += (time * 360) * (speed);
   	};
-  	var aspect = (texSize[0]) / (texSize[1]);
+  	var aspect = $runtime.fdiv((texSize[0]), (texSize[1]));
   	var center = new $runtime.PooledFloat32Array([0.5, 0.5]);
   	(uv[0] -= center[0], uv[1] -= center[1], uv);
   	uv[0] *= aspect;
@@ -18263,7 +18263,7 @@ function canonicalFactory124($bindings, $runtime) {
   	uv[0] /= aspect;
   	(uv[0] += center[0], uv[1] += center[1], uv);
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	fract(uv).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -18281,7 +18281,7 @@ function canonicalFactory124($bindings, $runtime) {
 }
 
 function canonicalFactory125($bindings, $runtime) {
-  const { abs, fract, mod, clamp, texture } = $runtime.stdlib
+  const { vec2, abs, floor, fract, clamp, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var resolution = $bindings["resolution"];
@@ -18297,16 +18297,16 @@ function canonicalFactory125($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var c = new $runtime.PooledFloat32Array([centerX, centerY]);
   	(st[0] -= c[0], st[1] -= c[1], st);
   	st[0] *= aspect;
-  	(st[0] = st[0] / scaleX, st[1] = st[1] / scaleY, st);
+  	(st[0] = $runtime.fdiv(st[0], scaleX), st[1] = $runtime.fdiv(st[1], scaleY), st);
   	st[0] /= aspect;
   	(st[0] += c[0], st[1] += c[1], st);
-  	var localUV = new $runtime.PooledFloat32Array([(st[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (st[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]);
+  	var localUV = new $runtime.PooledFloat32Array([$runtime.fdiv((st[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((st[1] * fullResolution[1] - tileOffset[1]), resolution[1])]);
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([localUV[0] + 1, localUV[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), localUV);
+  	abs((vec2.subtract([], localUV, floor(new $runtime.PooledFloat32Array([(localUV[0] + 1) * 0.5, (localUV[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	} else {
   	if (wrap == 1) {
   	fract(localUV).reduce((res,el,i)=>(res[i] = el, res), localUV);
@@ -18533,7 +18533,7 @@ function canonicalFactory126($bindings, $runtime) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	return;
   	};
-  	var fullRes = fullResolution[0] > 0 ? (new $runtime.PooledFloat32Array([fullResolution[0] / renderScale, fullResolution[1] / renderScale])) : input_size;
+  	var fullRes = fullResolution[0] > 0 ? (new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], renderScale), $runtime.fdiv(fullResolution[1], renderScale)])) : input_size;
   	var width_f = fullRes[0];
   	var height_f = fullRes[1];
   	var dims = new $runtime.PooledFloat32Array([width_f, height_f]);
@@ -18543,16 +18543,16 @@ function canonicalFactory126($bindings, $runtime) {
   	var speed_value = max(speed, 0);
   	var m = mode|0;
   	if (m == 1) {
-  	var yNorm = ((globalGid[1]) + 0.5) / fullResolution[1];
-  	var xNorm = ((globalGid[0]) + 0.5) / fullResolution[0];
+  	var yNorm = $runtime.fdiv(((globalGid[1]) + 0.5), fullResolution[1]);
+  	var xNorm = $runtime.fdiv(((globalGid[0]) + 0.5), fullResolution[0]);
   	var destCoord = new $runtime.PooledFloat32Array([xNorm, yNorm]);
   	var gradDest = vhs_gradValue(yNorm, 5, time_value, speed_value);
   	var scanBase = floor(height_f * 0.5) + 1;
   	var scanFreq = new $runtime.PooledFloat32Array([0, 0]);
   	if (height_f < width_f) {
-  	(scanFreq[0] = scanBase * (height_f / width_f), scanFreq[1] = scanBase, scanFreq);
+  	(scanFreq[0] = scanBase * ($runtime.fdiv(height_f, width_f)), scanFreq[1] = scanBase, scanFreq);
   	} else {
-  	(scanFreq[0] = scanBase, scanFreq[1] = scanBase * (width_f / height_f), scanFreq);
+  	(scanFreq[0] = scanBase, scanFreq[1] = scanBase * ($runtime.fdiv(width_f, height_f)), scanFreq);
   	};
   	var scanDest = vhs_scanNoise(destCoord, scanFreq, time_value, speed_value * 100);
   	var fullWidth = fullResolution[0] > 0 ? fullResolution[0] : width_f;
@@ -18565,7 +18565,7 @@ function canonicalFactory126($bindings, $runtime) {
   	};
   	localSampleX = clamp(localSampleX, 0, (tile_width|0) - 1);
   	var srcTexel = texelFetch(inputTex, cpu_ivec2(localSampleX, gid[1]|0), 0);
-  	var srcXNorm = ((wrappedGlobalX) + 0.5) / fullResolution[0];
+  	var srcXNorm = $runtime.fdiv(((wrappedGlobalX) + 0.5), fullResolution[0]);
   	var scanSource = vhs_scanNoise(new $runtime.PooledFloat32Array([srcXNorm, yNorm]), scanFreq, time_value, speed_value * 100);
   	var gradSource = vhs_gradValue(yNorm, 5, time_value, speed_value);
   	var noiseColor = new $runtime.PooledFloat32Array([scanSource, scanSource, scanSource]);
@@ -18637,7 +18637,7 @@ function canonicalFactory127($bindings, $runtime) {
   };
   function lumGradient (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var tl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1]])))));
   	var l = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1]])))));
   	var bl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1] * -1])))));
@@ -18649,7 +18649,7 @@ function canonicalFactory127($bindings, $runtime) {
   	return new $runtime.PooledFloat32Array([tr + 2 * r + br - tl - 2 * l - bl, tl + 2 * t + tr - bl - 2 * b - br]);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var hashCoord = globalCoord instanceof Float32Array ? $runtime.copy(globalCoord) : globalCoord;
   	if (MODE == 4) {
@@ -18661,11 +18661,11 @@ function canonicalFactory127($bindings, $runtime) {
   	var grad = lumGradient(uv);
   	var gradLen = length(grad);
   	if (gradLen > 0.000009999999747378752) {
-  	var perp = new $runtime.PooledFloat32Array([-grad[1] / gradLen, grad[0] / gradLen]);
+  	var perp = new $runtime.PooledFloat32Array([$runtime.fdiv(-grad[1], gradLen), $runtime.fdiv(grad[0], gradLen)]);
   	(cpu_vector_write_0_0 = (dot(offset, perp)) * perp[0], cpu_vector_write_0_1 = (dot(offset, perp)) * perp[1], offset[0] = cpu_vector_write_0_0, offset[1] = cpu_vector_write_0_1, offset);
   	};
   	};
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(gl_FragCoord[0] + offset[0]) / resolution[0], (gl_FragCoord[1] + offset[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + offset[0]), resolution[0]), $runtime.fdiv((gl_FragCoord[1] + offset[1]), resolution[1])]), 0, 1);
   	var src = texture(inputTex, uv);
   	var samp = texture(inputTex, sampleUV);
   	var result = samp instanceof Float32Array ? $runtime.copy(samp) : samp;
@@ -18695,8 +18695,8 @@ function canonicalFactory128($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var src = texture(inputTex, uv);
   	var sum = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	var wsum = 0;
@@ -18745,7 +18745,7 @@ function canonicalFactory129($bindings, $runtime) {
 }
 
 function canonicalFactory130($bindings, $runtime) {
-  const { vec2, abs, fract, mod, clamp, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, abs, floor, fract, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var resolution = $bindings["resolution"];
@@ -18762,15 +18762,15 @@ function canonicalFactory130($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	globalUV[0] *= aspect;
   	var offset = new $runtime.PooledFloat32Array([-x + time * -speedX, y + time * speedY]);
   	offset[0] *= aspect;
   	(globalUV[0] += offset[0], globalUV[1] += offset[1], globalUV);
   	globalUV[0] /= aspect;
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([globalUV[0] * fullResolution[0] - tileOffset[0], globalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([globalUV[0] * fullResolution[0] - tileOffset[0], globalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([localUV[0] + 1, localUV[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), localUV);
+  	abs((vec2.subtract([], localUV, floor(new $runtime.PooledFloat32Array([(localUV[0] + 1) * 0.5, (localUV[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	} else {
   	if (wrap == 1) {
   	fract(localUV).reduce((res,el,i)=>(res[i] = el, res), localUV);
@@ -18817,7 +18817,7 @@ function canonicalFactory131($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var st = new $runtime.PooledFloat32Array([uv[0] * repeat, uv[1] * repeat]);
   	fract(st).reduce((res,el,i)=>(res[i] = el, res), st);
   	var wx = edgeWeight(st[0], blend);
@@ -18839,7 +18839,7 @@ function canonicalFactory131($bindings, $runtime) {
 }
 
 function canonicalFactory132($bindings, $runtime) {
-  const { vec2, ivec2, clamp, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -18856,9 +18856,9 @@ function canonicalFactory132($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
   	var resolution = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
-  	var origColor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
+  	var origColor = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
   	var kernel = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   	kernel[0] = -1;
   	kernel[1] = 0;
@@ -18881,7 +18881,7 @@ function canonicalFactory132($bindings, $runtime) {
   	(offsets[8][0] = texelSize[0], offsets[8][1] = texelSize[1], offsets[8]);
   	var conv = new $runtime.PooledFloat32Array([0, 0, 0]);
   	for (var i = 0; i < 9; i++) {
-  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + (offsets[i][0] * amount) * renderScale) * fullResolution[0] - tileOffset[0], (uv[1] + (offsets[i][1] * amount) * renderScale) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + (offsets[i][0] * amount) * renderScale) * fullResolution[0] - tileOffset[0], (uv[1] + (offsets[i][1] * amount) * renderScale) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	(conv[0] += texSample[0] * kernel[i], conv[1] += texSample[1] * kernel[i], conv[2] += texSample[2] * kernel[i], conv);
   	};
   	new $runtime.PooledFloat32Array([...clamp(conv, 0, 1), origColor[3]]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
@@ -18894,7 +18894,7 @@ function canonicalFactory132($bindings, $runtime) {
 }
 
 function canonicalFactory133($bindings, $runtime) {
-  const { vec2, clamp, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, clamp, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -18905,16 +18905,16 @@ function canonicalFactory133($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalPixel = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalPixel[0] / fullResolution[0], globalPixel[1] / fullResolution[1]]);
-  	var maxDisplacementUV = 256 / fullResolution[0];
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalPixel[0], fullResolution[0]), $runtime.fdiv(globalPixel[1], fullResolution[1])]);
+  	var maxDisplacementUV = $runtime.fdiv(256, fullResolution[0]);
   	var boundedDisplacement = clamp(displacement, -maxDisplacementUV, maxDisplacementUV);
   	var redGlobalUV = new $runtime.PooledFloat32Array([globalUV[0] + boundedDisplacement, globalUV[1]]);
-  	var redLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([redGlobalUV[0] * fullResolution[0] - tileOffset[0], redGlobalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var redLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([redGlobalUV[0] * fullResolution[0] - tileOffset[0], redGlobalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var red = texture(inputTex, redLocalUV);
-  	var greenLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([globalUV[0] * fullResolution[0] - tileOffset[0], globalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var greenLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([globalUV[0] * fullResolution[0] - tileOffset[0], globalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var green = texture(inputTex, greenLocalUV);
   	var blueGlobalUV = new $runtime.PooledFloat32Array([globalUV[0] - boundedDisplacement, globalUV[1]]);
-  	var blueLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([blueGlobalUV[0] * fullResolution[0] - tileOffset[0], blueGlobalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var blueLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([blueGlobalUV[0] * fullResolution[0] - tileOffset[0], blueGlobalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var blue = texture(inputTex, blueLocalUV);
   	(fragColor[0] = red[0], fragColor[1] = green[1], fragColor[2] = blue[2], fragColor[3] = green[3], fragColor);
   };
@@ -18945,7 +18945,7 @@ function canonicalFactory134($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
   	var use_rgb = colorMode > 0.5;
   	if (use_rgb) {
@@ -18967,7 +18967,7 @@ function canonicalFactory134($bindings, $runtime) {
 }
 
 function canonicalFactory135($bindings, $runtime) {
-  const { ivec2, sin, cos, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, sin, cos, abs, floor, fract, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -18987,8 +18987,8 @@ function canonicalFactory135($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var resolution = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var globalPixel = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalPixel[0] / fullResolution[0], globalPixel[1] / fullResolution[1]]);
-  	var aspect = fullResolution[0] / fullResolution[1];
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalPixel[0], fullResolution[0]), $runtime.fdiv(globalPixel[1], fullResolution[1])]);
+  	var aspect = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var st = globalUV instanceof Float32Array ? $runtime.copy(globalUV) : globalUV;
   	st = new $runtime.PooledFloat32Array([st[0] - 0.5, st[1] - 0.5]);
   	st[0] *= aspect;
@@ -18997,18 +18997,18 @@ function canonicalFactory135($bindings, $runtime) {
   	var s = sin(angle);
   	var cpu_matrix_assignment_0 = new $runtime.PooledFloat32Array([c * st[0] + s * st[1], -s * st[0] + c * st[1]]);
   	(st[0] = cpu_matrix_assignment_0[0], st[1] = cpu_matrix_assignment_0[1], st);
-  	var maxSkew = 512 / fullResolution[1];
+  	var maxSkew = $runtime.fdiv(512, fullResolution[1]);
   	var effectiveSkewAmt = clamp(skewAmt, -maxSkew, maxSkew);
   	st[0] += st[1] * -effectiveSkewAmt;
   	st[0] /= aspect;
   	st = new $runtime.PooledFloat32Array([st[0] + 0.5, st[1] + 0.5]);
-  	var localUV = new $runtime.PooledFloat32Array([(st[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (st[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]);
+  	var localUV = new $runtime.PooledFloat32Array([$runtime.fdiv((st[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((st[1] * fullResolution[1] - tileOffset[1]), resolution[1])]);
   	var wrapMode = wrap|0;
   	if (wrapMode == 0) {
   	clamp(localUV, 0, 1).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	} else {
   	if (wrapMode == 1) {
-  	abs(mod(new $runtime.PooledFloat32Array([localUV[0] + 1, localUV[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), localUV);
+  	abs((vec2.subtract([], localUV, floor(new $runtime.PooledFloat32Array([(localUV[0] + 1) * 0.5, (localUV[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	} else {
   	fract(localUV).reduce((res,el,i)=>(res[i] = el, res), localUV);
   	};
@@ -19211,8 +19211,8 @@ function canonicalFactory136($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var original = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]])), 0);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	if (smoothType == 0) {
@@ -19294,7 +19294,7 @@ function canonicalFactory138($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, smoothstep(edge0, edge1, new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
@@ -19387,7 +19387,7 @@ function canonicalFactory139($bindings, $runtime) {
   	var static_value = cpu_float(snow_noise(pixelCoord, timeVal, speedVal, STATIC_SEED));
   	var limiter_value = cpu_float(snow_noise(pixelCoord, timeVal, speedVal, LIMITER_SEED));
   	var d = cpu_float(max(density * 0.009999999776482582, 0.00009999999747378752));
-  	var exponent = cpu_float((1 - d) / d);
+  	var exponent = cpu_float($runtime.fdiv((1 - d), d));
   	var limiter_mask = cpu_float((pow(min(limiter_value, 0.9900000095367432), exponent)) * alphaVal);
   	var static_color = new $runtime.PooledFloat32Array([static_value, static_value, static_value]);
   	var mixed_rgb = mix(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]), static_color, new $runtime.PooledFloat32Array([limiter_mask, limiter_mask, limiter_mask]));
@@ -19401,7 +19401,7 @@ function canonicalFactory139($bindings, $runtime) {
 }
 
 function canonicalFactory140($bindings, $runtime) {
-  const { vec2, ivec2, mix, distance, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, mix, distance, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -19419,9 +19419,9 @@ function canonicalFactory140($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
   	var resolution = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
-  	var origColor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
+  	var origColor = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
   	var sobel_x = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   	sobel_x[0] = 1;
   	sobel_x[1] = 0;
@@ -19455,7 +19455,7 @@ function canonicalFactory140($bindings, $runtime) {
   	var convX = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var convY = new $runtime.PooledFloat32Array([0, 0, 0]);
   	for (var i = 0; i < 9; i++) {
-  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + (offsets[i][0] * amount) * renderScale) * fullResolution[0] - tileOffset[0], (uv[1] + (offsets[i][1] * amount) * renderScale) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
+  	var texSample = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, vec2.divideMetal([], (new $runtime.PooledFloat32Array([(uv[0] + (offsets[i][0] * amount) * renderScale) * fullResolution[0] - tileOffset[0], (uv[1] + (offsets[i][1] * amount) * renderScale) * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0)))));
   	(convX[0] += texSample[0] * sobel_x[i], convX[1] += texSample[1] * sobel_x[i], convX[2] += texSample[2] * sobel_x[i], convX);
   	(convY[0] += texSample[0] * sobel_y[i], convY[1] += texSample[1] * sobel_y[i], convY[2] += texSample[2] * sobel_y[i], convY);
   	};
@@ -19577,11 +19577,11 @@ function canonicalFactory141($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var dims = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / dims[0], gl_FragCoord[1] / dims[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], dims[0]), $runtime.fdiv(gl_FragCoord[1], dims[1])]);
   	var base = texture(inputTex, uv);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : dims;
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var aspect = fullRes[0] / fullRes[1];
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
   	var nUV = new $runtime.PooledFloat32Array([globalUV[0] * aspect, globalUV[1]]);
   	var s = (seed|0) * 17;
   	var smearFreq = mix(3, 6, hashf(pcg(s + 10)));
@@ -19653,9 +19653,9 @@ function canonicalFactory142($bindings, $runtime) {
   	return p;
   };
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var center = new $runtime.PooledFloat32Array([centerX, centerY]);
   	var arc = radians(amount);
   	var angularStep = arc / (cpu_float(N - 1));
@@ -19665,7 +19665,7 @@ function canonicalFactory142($bindings, $runtime) {
   	for (var i = 0; i < N; i++) {
   	var theta = ((i) / (cpu_float(N - 1)) - 0.5) * arc + jitter;
   	var distorted = clamp(rotateAround(uv, center, theta, aspectRatio), 0, 1);
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(distorted[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (distorted[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((distorted[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((distorted[1] * fullResolution[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	texture(inputTex, sampleUV).reduce((res,el,i)=>(res[i] += el, res), sum);
   	};
   	(fragColor[0] = sum[0] / (N), fragColor[1] = sum[1] / (N), fragColor[2] = sum[2] / (N), fragColor[3] = sum[3] / (N), fragColor);
@@ -19678,7 +19678,7 @@ function canonicalFactory142($bindings, $runtime) {
 }
 
 function canonicalFactory143($bindings, $runtime) {
-  const { sin, cos, atan, abs, sign, mod, clamp, length, texture, dFdx, dFdy } = $runtime.stdlib
+  const { vec2, sin, cos, atan, abs, sign, floor, mod, clamp, length, subtract, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -19705,9 +19705,9 @@ function canonicalFactory143($bindings, $runtime) {
   	return st;
   };
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	rotate2D(uv, rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
   	uv = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
   	if (aspectLens) {
@@ -19723,7 +19723,7 @@ function canonicalFactory143($bindings, $runtime) {
   	};
   	uv = new $runtime.PooledFloat32Array([uv[0] + 0.5, uv[1] + 0.5]);
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -19732,7 +19732,7 @@ function canonicalFactory143($bindings, $runtime) {
   	};
   	};
   	rotate2D(uv, -rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(uv[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (uv[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((uv[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((uv[1] * fullResolution[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	if (antialias) {
   	var dx = dFdx(sampleUV);
   	var dy = dFdy(sampleUV);
@@ -19851,7 +19851,7 @@ function canonicalFactory145($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var radius = mix(0.5, 20, smoothness / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -19862,8 +19862,8 @@ function canonicalFactory145($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -19887,7 +19887,7 @@ function canonicalFactory146($bindings, $runtime) {
   var smoothness = $bindings["smoothness"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var radius = mix(0.5, 20, smoothness / 100);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
@@ -19898,8 +19898,8 @@ function canonicalFactory146($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -19961,7 +19961,7 @@ function canonicalFactory147($bindings, $runtime) {
   	return mix(ink, paper, clamp(t, 0, 1));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var blur = texture(blurTex, uv);
   	var globalCoord = vec2.add([], floor(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]])), tileOffset);
@@ -19999,7 +19999,7 @@ function canonicalFactory148($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var color = texture(inputTex, uv);
   	if (antialias) {
   	var fw = fwidth(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]));
@@ -20105,14 +20105,14 @@ function canonicalFactory149($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var alpha = cpu_texture_a(inputTex, uv);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (MODE == 0) {
-  	var p = new $runtime.PooledFloat32Array([globalCoord[0] / cellSize, globalCoord[1] / cellSize]);
+  	var p = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], cellSize), $runtime.fdiv(globalCoord[1], cellSize)]);
   	var cell = voronoiCell(p, 0.8999999761581421, (seed));
   	var seedGc = new $runtime.PooledFloat32Array([cell[0] * cellSize, cell[1] * cellSize]);
-  	var seedUV = clamp(new $runtime.PooledFloat32Array([(seedGc[0] - tileOffset[0]) / resolution[0], (seedGc[1] - tileOffset[1]) / resolution[1]]), 0, 1);
+  	var seedUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((seedGc[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((seedGc[1] - tileOffset[1]), resolution[1])]), 0, 1);
   	var seedColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, seedUV)));
   	var radius = 0.3499999940395355 + 0.4000000059604645 * (1 - lum(seedColor));
   	var d = length(new $runtime.PooledFloat32Array([p[0] - cell[0], p[1] - cell[1]]));
@@ -20127,9 +20127,9 @@ function canonicalFactory149($bindings, $runtime) {
   	};
   	var noiseP = new $runtime.PooledFloat32Array([0, 0]);
   	if (MODE == 1) {
-  	(noiseP[0] = gc[0] / grainSize, noiseP[1] = gc[1] / grainSize, noiseP);
+  	(noiseP[0] = $runtime.fdiv(gc[0], grainSize), noiseP[1] = $runtime.fdiv(gc[1], grainSize), noiseP);
   	} else {
-  	(noiseP[0] = gc[0] * (1 / grainSize), noiseP[1] = gc[1] * (1 / (grainSize * 8)), noiseP);
+  	(noiseP[0] = gc[0] * ($runtime.fdiv(1, grainSize)), noiseP[1] = gc[1] * ($runtime.fdiv(1, (grainSize * 8))), noiseP);
   	};
   	var n = vnoise(new $runtime.PooledFloat32Array([noiseP[0] + (seed) * 101.69999694824219, noiseP[1] + (seed) * 101.69999694824219]));
   	n += (density - 50) / 100;
@@ -20138,7 +20138,7 @@ function canonicalFactory149($bindings, $runtime) {
   	} else {
   	var src = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv)));
   	var l = lum(src);
-  	var clumpNoise = (fbm(new $runtime.PooledFloat32Array([globalCoord[0] / (grainSize * 4) + (seed) * 101.69999694824219, globalCoord[1] / (grainSize * 4) + (seed) * 101.69999694824219]))) * (mix(1.2000000476837158, 0.6000000238418579, l));
+  	var clumpNoise = (fbm(new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], (grainSize * 4)) + (seed) * 101.69999694824219, $runtime.fdiv(globalCoord[1], (grainSize * 4)) + (seed) * 101.69999694824219]))) * (mix(1.2000000476837158, 0.6000000238418579, l));
   	clumpNoise += (density - 50) / 100;
   	tonemap2(step(clumpNoise, l), new $runtime.PooledFloat32Array([0.05000000074505806, 0.05000000074505806, 0.05000000074505806]), new $runtime.PooledFloat32Array([0.9700000286102295, 0.9700000286102295, 0.9700000286102295])).reduce((res,el,i)=>(res[i] = el, res), result);
   	};
@@ -20197,7 +20197,7 @@ function canonicalFactory151($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function tent3x3 (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var sum = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var wsum = 0;
   	for (var dy = -1; dy <= 1; dy++) {
@@ -20210,7 +20210,7 @@ function canonicalFactory151($bindings, $runtime) {
   	return new $runtime.PooledFloat32Array([sum[0] / wsum, sum[1] / wsum, sum[2] / wsum]);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var c = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(smearTex, uv)));
   	var tent = tent3x3(uv);
@@ -20264,7 +20264,7 @@ function canonicalFactory152($bindings, $runtime) {
   };
   function lumGradient (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var tl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1]])))));
   	var l = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1]])))));
   	var bl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1] * -1])))));
@@ -20319,7 +20319,7 @@ function canonicalFactory152($bindings, $runtime) {
   	var bristle = 0.7799999713897705 + 0.2199999988079071 * (0.5 + 0.5 * (sin(local[1] * 5.199999809265137 + (hash12(new $runtime.PooledFloat32Array([cell[0] + 97.30000305175781, cell[1] + 97.30000305175781]))) * 6.2831854820251465)));
   	var mark = body * bristle;
   	var centerGlobal = new $runtime.PooledFloat32Array([dirUnit[0] * center[0] + across[0] * center[1], dirUnit[1] * center[0] + across[1] * center[1]]);
-  	var centerUV = new $runtime.PooledFloat32Array([uv[0] + (centerGlobal[0] - gc[0]) / resolution[0], uv[1] + (centerGlobal[1] - gc[1]) / resolution[1]]);
+  	var centerUV = new $runtime.PooledFloat32Array([uv[0] + $runtime.fdiv((centerGlobal[0] - gc[0]), resolution[0]), uv[1] + $runtime.fdiv((centerGlobal[1] - gc[1]), resolution[1])]);
   	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, srcSample(centerUV))).map(function (_) {return _ * mark;}).reduce((res,el,i)=>(res[i] += el, res), pigmentSum);
   	pigmentWeight += mark;
   	field = max(field, mark);
@@ -20336,7 +20336,7 @@ function canonicalFactory152($bindings, $runtime) {
   function srcSample (sampleUV) {
   	sampleUV = $runtime.copy(sampleUV);
   	if (MODE == 3) {
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var s = texture(inputTex, sampleUV);
   	var e = new $runtime.PooledFloat32Array([s[0], s[1], s[2]]);
   	min(e, new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([sampleUV[0] + px[0], sampleUV[1]]))))).reduce((res,el,i)=>(res[i] = el, res), e);
@@ -20352,7 +20352,7 @@ function canonicalFactory152($bindings, $runtime) {
   	uv = $runtime.copy(uv);
   	gc = $runtime.copy(gc);
   	dirUnit = $runtime.copy(dirUnit);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var sum = srcSample(uv);
   	var wsum = 1;
   	for (var i = 1; i <= MAX_TAPS; i++) {
@@ -20375,7 +20375,7 @@ function canonicalFactory152($bindings, $runtime) {
   	return new $runtime.PooledFloat32Array([sum[0] / wsum, sum[1] / wsum, sum[2] / wsum, sum[3] / wsum]);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var gc = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var runBase = mix(3, 50, strokeLength / 100);
@@ -20411,7 +20411,7 @@ function canonicalFactory152($bindings, $runtime) {
   	var c = mix(src, pigment, layer[3]);
   	var t = lum(new $runtime.PooledFloat32Array([c[0], c[1], c[2]]));
   	var bAmt = balance / 100;
-  	var exponent = (t < bAmt) ? (1 + intensity / 50) : (1 / (1 + intensity / 100));
+  	var exponent = (t < bAmt) ? (1 + intensity / 50) : ($runtime.fdiv(1, (1 + intensity / 100)));
   	c = [0, 1, 2, null].map(function (idx, i) { return idx == null ? c[i] : this[idx]; }, pow(max(new $runtime.PooledFloat32Array([c[0], c[1], c[2]]), new $runtime.PooledFloat32Array([0, 0, 0])), new $runtime.PooledFloat32Array([exponent, exponent, exponent])));
   	(outc[0] = c[0], outc[1] = c[1], outc[2] = c[2], outc[3] = c[3], outc);
   	} else {
@@ -20460,7 +20460,7 @@ function canonicalFactory153($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(srcTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	texture(srcTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -20494,7 +20494,7 @@ function canonicalFactory154($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var cur = texture(inputTex, uv);
   	var slots = [new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])];
   	(slots[0][0] = cur[0], slots[0][1] = cur[1], slots[0][2] = cur[2], slots[0][3] = cur[3], slots[0]);
@@ -20825,7 +20825,7 @@ function canonicalFactory155($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var inputColor = texture(inputTex, uv);
   	var lum = dot(new $runtime.PooledFloat32Array([inputColor[0], inputColor[1], inputColor[2]]), new $runtime.PooledFloat32Array([0.29899999499320984, 0.5870000123977661, 0.11400000005960464]));
   	var t = (lum * (0.9998999834060669)) * repeat + offset;
@@ -20955,7 +20955,7 @@ function canonicalFactory156($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var inputColor = texture(inputTex, uv);
   	var lum = dot(new $runtime.PooledFloat32Array([inputColor[0], inputColor[1], inputColor[2]]), new $runtime.PooledFloat32Array([0.29899999499320984, 0.5870000123977661, 0.11400000005960464]));
   	var t = lum * repeat + offset;
@@ -20997,7 +20997,7 @@ function canonicalFactory156($bindings, $runtime) {
 }
 
 function canonicalFactory157($bindings, $runtime) {
-  const { vec2, max, mix, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, max, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -21010,8 +21010,8 @@ function canonicalFactory157($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var inputColor = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var inputColor = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
   	var text = texture(textTex, st);
   	var textPresence = text[3];
   	var matteAlpha = matteOpacity instanceof Float32Array ? $runtime.copy(matteOpacity) : matteOpacity;
@@ -21341,7 +21341,7 @@ function canonicalFactory158($bindings, $runtime) {
   function main () {
   	var base_color = texture(inputTex, v_texCoord);
   	var dims = textureSize(inputTex, 0);
-  	var pixel_step = new $runtime.PooledFloat32Array([1 / dims[0], 1 / dims[1]]);
+  	var pixel_step = new $runtime.PooledFloat32Array([$runtime.fdiv(1, dims[0]), $runtime.fdiv(1, dims[1])]);
   	var a = clamp(alpha, 0, 1);
   	if (a <= 0) {
   	(fragColor[0] = base_color[0], fragColor[1] = base_color[1], fragColor[2] = base_color[2], fragColor[3] = base_color[3], fragColor);
@@ -21396,7 +21396,7 @@ function canonicalFactory158($bindings, $runtime) {
 }
 
 function canonicalFactory159($bindings, $runtime) {
-  const { vec2, smoothstep, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, smoothstep, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var tileOffset = $bindings["tileOffset"];
@@ -21407,7 +21407,7 @@ function canonicalFactory159($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0));
+  	var st = vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0));
   	var c = texture(inputTex, st);
   	var l = dot(new $runtime.PooledFloat32Array([c[0], c[1], c[2]]), new $runtime.PooledFloat32Array([0.29899999499320984, 0.5870000123977661, 0.11400000005960464]));
   	var e = smoothstep(level - sharpness, level + sharpness, l);
@@ -21469,8 +21469,8 @@ function canonicalFactory160($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var aspect = fullResolution[0] / fullResolution[1];
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var aspect = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var st = new $runtime.PooledFloat32Array([globalUV[0] - 0.5, globalUV[1] - 0.5]);
   	if (aspectLens) {
   	st[0] *= aspect;
@@ -21483,13 +21483,13 @@ function canonicalFactory160($bindings, $runtime) {
   	var rep = aspectLens ? new $runtime.PooledFloat32Array([repeat * aspect, repeat]) : new $runtime.PooledFloat32Array([repeat, repeat]);
   	if (symmetry == 3) {
   	var local = hexCoord(new $runtime.PooledFloat32Array([(st[0] + offsetX) * rep[0], (st[1] + offsetY) * rep[1]]));
-  	(local[0] = local[0] / scale, local[1] = local[1] / scale, local);
+  	(local[0] = $runtime.fdiv(local[0], scale), local[1] = $runtime.fdiv(local[1], scale), local);
   	rotationalFold(new $runtime.PooledFloat32Array([local[0] + 0.5, local[1] + 0.5]), 6).reduce((res,el,i)=>(res[i] = el, res), st);
   	} else {
   	(st[0] = st[0] * rep[0], st[1] = st[1] * rep[1], st);
   	fract(st).reduce((res,el,i)=>(res[i] = el, res), st);
   	var effectiveScale = symmetry == 0 ? scale * 0.5 : scale;
-  	(st[0] = (st[0] - 0.5) / effectiveScale, st[1] = (st[1] - 0.5) / effectiveScale, st);
+  	(st[0] = $runtime.fdiv((st[0] - 0.5), effectiveScale), st[1] = $runtime.fdiv((st[1] - 0.5), effectiveScale), st);
   	(st[0] += 0.5 + offsetX, st[1] += 0.5 + offsetY, st);
   	if (symmetry == 0) {
   	st[0] = mirrorFold(st[0]);
@@ -21513,7 +21513,7 @@ function canonicalFactory160($bindings, $runtime) {
 }
 
 function canonicalFactory161($bindings, $runtime) {
-  const { vec2, ivec2, abs, floor, min, max, clamp, mix, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, abs, floor, min, max, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -21569,9 +21569,9 @@ function canonicalFactory161($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), max(textureSize(inputTex, 0), cpu_ivec2(1)));
+  	var st = vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), max(textureSize(inputTex, 0), cpu_ivec2(1)));
   	var base = texture(inputTex, st);
-  	var base_rgb = base[3] > 0 ? clamp(new $runtime.PooledFloat32Array([base[0] / base[3], base[1] / base[3], base[2] / base[3]]), 0, 1) : new $runtime.PooledFloat32Array([0, 0, 0]);
+  	var base_rgb = base[3] > 0 ? clamp(new $runtime.PooledFloat32Array([$runtime.fdiv(base[0], base[3]), $runtime.fdiv(base[1], base[3]), $runtime.fdiv(base[2], base[3])]), 0, 1) : new $runtime.PooledFloat32Array([0, 0, 0]);
   	var m = mode|0;
   	var tinted = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (m == 1) {
@@ -21596,7 +21596,7 @@ function canonicalFactory161($bindings, $runtime) {
 }
 
 function canonicalFactory162($bindings, $runtime) {
-  const { ivec2, abs, fract, mod, clamp, texture, textureSize } = $runtime.stdlib
+  const { vec2, ivec2, abs, floor, fract, clamp, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -21613,11 +21613,11 @@ function canonicalFactory162($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	uv[0] = uv[0] - x;
   	uv[1] = uv[1] - y;
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	fract(uv).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -21670,9 +21670,9 @@ function canonicalFactory163($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var fullRes = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var centered = new $runtime.PooledFloat32Array([uv[0] - 0.5, uv[1] - 0.5]);
-  	var aspectRatio = fullRes[0] / fullRes[1];
+  	var aspectRatio = $runtime.fdiv(fullRes[0], fullRes[1]);
   	if (aspectLens) {
   	centered[0] *= aspectRatio;
   	};
@@ -21745,7 +21745,7 @@ function canonicalFactory164($bindings, $runtime) {
   var radius = $bindings["radius"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([1, 0]);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
   	var fTaps = min(radius, 32);
@@ -21755,8 +21755,8 @@ function canonicalFactory164($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -21780,7 +21780,7 @@ function canonicalFactory165($bindings, $runtime) {
   var radius = $bindings["radius"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var dirPx = new $runtime.PooledFloat32Array([0, 1]);
   	var sigma = max(radius * 0.5, 0.0010000000474974513);
   	var fTaps = min(radius, 32);
@@ -21790,8 +21790,8 @@ function canonicalFactory165($bindings, $runtime) {
   	if ((i) > fTaps) {
   	break;
   	};
-  	var w = exp((-cpu_float(i * i)) / ((2 * sigma) * sigma));
-  	var o = new $runtime.PooledFloat32Array([(dirPx[0] * (i)) / resolution[0], (dirPx[1] * (i)) / resolution[1]]);
+  	var w = exp($runtime.fdiv(-cpu_float(i * i), ((2 * sigma) * sigma)));
+  	var o = new $runtime.PooledFloat32Array([$runtime.fdiv(dirPx[0] * (i), resolution[0]), $runtime.fdiv(dirPx[1] * (i), resolution[1])]);
   	(vec4.add([], texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + o[0], uv[1] + o[1]])), texture(inputTex, new $runtime.PooledFloat32Array([uv[0] - o[0], uv[1] - o[1]])))).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += 2 * w;
   	};
@@ -21815,7 +21815,7 @@ function canonicalFactory166($bindings, $runtime) {
   var threshold = $bindings["threshold"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var blur = texture(blurTex, uv);
   	var diff = new $runtime.PooledFloat32Array([src[0] - blur[0], src[1] - blur[1], src[2] - blur[2]]);
@@ -21833,7 +21833,7 @@ function canonicalFactory166($bindings, $runtime) {
 }
 
 function canonicalFactory167($bindings, $runtime) {
-  const { vec2, ivec2, sin, cos, exp, sqrt, abs, max, clamp, mix, smoothstep, divide, texture, textureSize, texelFetch } = $runtime.stdlib
+  const { vec2, ivec2, sin, cos, exp, sqrt, abs, max, clamp, mix, smoothstep, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -21862,16 +21862,16 @@ function canonicalFactory167($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var original = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]])), 0);
   	var a = clamp(alpha, 0, 1);
   	if (a <= 0) {
   	new $runtime.PooledFloat32Array([...clamp01(new $runtime.PooledFloat32Array([original[0], original[1], original[2]])), original[3]]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	return;
   	};
-  	var texelSize = new $runtime.PooledFloat32Array([1 / fullResolution[0], 1 / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, fullResolution[0]), $runtime.fdiv(1, fullResolution[1])]);
   	var radiusUV = new $runtime.PooledFloat32Array([(RADIUS * renderScale) * texelSize[0], (RADIUS * renderScale) * texelSize[1]]);
   	var blurAccum = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var weightSum = 0;
@@ -21883,7 +21883,7 @@ function canonicalFactory167($bindings, $runtime) {
   	var sigma = 0.4000000059604645;
   	var weight = exp((-0.5 * (r * r)) / (sigma * sigma));
   	var sampleGlobalUV = clamp(new $runtime.PooledFloat32Array([uv[0] + offset[0] * radiusUV[0], uv[1] + offset[1] * radiusUV[1]]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([1, 1]));
-  	var sampleLocalUV = vec2.divide([], (new $runtime.PooledFloat32Array([sampleGlobalUV[0] * fullResolution[0] - tileOffset[0], sampleGlobalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var sampleLocalUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([sampleGlobalUV[0] * fullResolution[0] - tileOffset[0], sampleGlobalUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, sampleLocalUV))).map(function (_) {return _ * weight;}).reduce((res,el,i)=>(res[i] += el, res), blurAccum);
   	weightSum += weight;
   	};
@@ -21939,8 +21939,8 @@ function canonicalFactory168($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var dims = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / tileDims[0], gl_FragCoord[1] / tileDims[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / dims[0], (gl_FragCoord[1] + tileOffset[1]) / dims[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], tileDims[0]), $runtime.fdiv(gl_FragCoord[1], tileDims[1])]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), dims[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), dims[1])]);
   	var texel = texture(inputTex, uv);
   	var mask = computeVignetteMask(globalUV, dims);
   	var brightnessRgb = new $runtime.PooledFloat32Array([vignetteBrightness, vignetteBrightness, vignetteBrightness]);
@@ -21956,7 +21956,7 @@ function canonicalFactory168($bindings, $runtime) {
 }
 
 function canonicalFactory169($bindings, $runtime) {
-  const { float, sin, cos, abs, floor, mod, clamp, dot, texture, dFdx, dFdy } = $runtime.stdlib
+  const { float, vec2, sin, cos, abs, floor, mod, clamp, dot, subtract, texture, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -22016,8 +22016,8 @@ function canonicalFactory169($bindings, $runtime) {
   };
   function main () {
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var aspectRatio = fullRes[0] / fullRes[1];
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var aspectRatio = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var noiseCoord = new $runtime.PooledFloat32Array([uv[0] * aspectRatio, uv[1]]);
   	var noiseScale = new $runtime.PooledFloat32Array([abs(scale * 3), abs(scale * 3)]);
   	var dx = ((perlinNoise(new $runtime.PooledFloat32Array([noiseCoord[0] + (seed), noiseCoord[1] + (seed)]), noiseScale) - 0.5) * strength) * 0.009999999776482582;
@@ -22025,7 +22025,7 @@ function canonicalFactory169($bindings, $runtime) {
   	uv[0] += dx;
   	uv[1] += dy;
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -22086,7 +22086,7 @@ function canonicalFactory170($bindings, $runtime) {
   };
   function lumGradientSimplified (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var tl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(simplifiedTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1]])))));
   	var l = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(simplifiedTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1]])))));
   	var bl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(simplifiedTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1] * -1])))));
@@ -22098,7 +22098,7 @@ function canonicalFactory170($bindings, $runtime) {
   	return new $runtime.PooledFloat32Array([tr + 2 * r + br - tl - 2 * l - bl, tl + 2 * t + tr - bl - 2 * b - br]);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
   	var simplified = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(simplifiedTex, uv)));
   	var edge = length(lumGradientSimplified(uv));
@@ -22127,7 +22127,7 @@ function canonicalFactory171($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -22156,8 +22156,8 @@ function canonicalFactory172($bindings, $runtime) {
   };
   function main () {
   	var stride = mix(3, 1, (clamp(detail, 0, 100)) / 100);
-  	var texel = new $runtime.PooledFloat32Array([stride / resolution[0], stride / resolution[1]]);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(stride, resolution[0]), $runtime.fdiv(stride, resolution[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var s0 = texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + -texel[0], uv[1] + -texel[1]]));
   	var s1 = texture(inputTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + -texel[1]]));
   	var s2 = texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1] + -texel[1]]));
@@ -22205,7 +22205,7 @@ function canonicalFactory172($bindings, $runtime) {
 }
 
 function canonicalFactory173($bindings, $runtime) {
-  const { vec2, sin, cos, abs, fract, mod, clamp, notEqual, any, divide, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
+  const { vec2, sin, cos, abs, floor, fract, mod, clamp, notEqual, any, subtract, texture, textureSize, dFdx, dFdy } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -22232,18 +22232,18 @@ function canonicalFactory173($bindings, $runtime) {
   	return st;
   };
   function main () {
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	rotate2D(uv, rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
   	var displacement = (sin((uv[0] * scale) * 10 + (time * 6.2831854820251465) * (speed))) * (strength * 0.009999999776482582);
   	if (any(notEqual(tileOffset, new $runtime.PooledFloat32Array([0, 0])))) {
-  	var maxDisplacementUV = 256 / fullResolution[1];
+  	var maxDisplacementUV = $runtime.fdiv(256, fullResolution[1]);
   	displacement = clamp(displacement, -maxDisplacementUV, maxDisplacementUV);
   	};
   	uv[1] += displacement;
   	if (wrap == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), uv);
+  	abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), uv);
   	} else {
   	if (wrap == 1) {
   	mod(uv, 1).reduce((res,el,i)=>(res[i] = el, res), uv);
@@ -22252,7 +22252,7 @@ function canonicalFactory173($bindings, $runtime) {
   	};
   	};
   	rotate2D(uv, -rotation / 180, aspectRatio).reduce((res,el,i)=>(res[i] = el, res), uv);
-  	var localCoord = vec2.divide([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localCoord = vec2.divideMetal([], (new $runtime.PooledFloat32Array([uv[0] * fullResolution[0] - tileOffset[0], uv[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var sampleUV = any(notEqual(tileOffset, new $runtime.PooledFloat32Array([0, 0]))) ? fract(localCoord) : clamp(localCoord, 0, 1);
   	if (antialias) {
   	var dx = dFdx(sampleUV);
@@ -22295,7 +22295,7 @@ function canonicalFactory174($bindings, $runtime) {
   	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var src = texture(inputTex, uv);
   	var amount = clamp(strength / 100, 0, 1);
@@ -22319,11 +22319,11 @@ function canonicalFactory174($bindings, $runtime) {
   	break;
   	};
   	var sampleDistance = distancePx + staggerPhase;
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(gl_FragCoord[0] + marchDir * sampleDistance) / resolution[0], (gl_FragCoord[1]) / resolution[1]]), 0, 1);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + marchDir * sampleDistance), resolution[0]), $runtime.fdiv((gl_FragCoord[1]), resolution[1])]), 0, 1);
   	var candidate = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, sampleUV)));
   	var contrast = lum(candidate) - baseLum - edge;
   	var activation = smoothstep(0, 0.07999999821186066, contrast);
-  	var alongRun = distancePx / (max(reach, 1));
+  	var alongRun = $runtime.fdiv(distancePx, max(reach, 1));
   	if (METHOD == 1) {
   	var decayRate = 0.800000011920929;
   	} else {
@@ -22367,7 +22367,7 @@ function canonicalFactory174($bindings, $runtime) {
 }
 
 function canonicalFactory175($bindings, $runtime) {
-  const { float, sin, cos, abs, floor, fract, mod, max, clamp, mix, texture } = $runtime.stdlib
+  const { float, vec2, sin, cos, abs, floor, fract, max, clamp, mix, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -22425,7 +22425,7 @@ function canonicalFactory175($bindings, $runtime) {
   	uv = $runtime.copy(uv);
   	var mode = wrap|0;
   	if (mode == 0) {
-  	return abs(mod(new $runtime.PooledFloat32Array([uv[0] + 1, uv[1] + 1]), 2).map(function (_) {return _ - 1;}));
+  	return abs((vec2.subtract([], uv, floor(new $runtime.PooledFloat32Array([(uv[0] + 1) * 0.5, (uv[1] + 1) * 0.5])).map(function (_) {return 2 * _;}))));
   	} else {
   	if (mode == 1) {
   	return fract(uv);
@@ -22454,7 +22454,7 @@ function canonicalFactory175($bindings, $runtime) {
 }
 
 function canonicalFactory176($bindings, $runtime) {
-  const { vec2, sqrt, clamp, mix, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, sqrt, clamp, mix, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -22466,9 +22466,9 @@ function canonicalFactory176($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var src = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var accum = texture(accumTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(accumTex, 0)));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var src = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var accum = texture(accumTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(accumTex, 0)));
   	var sum = 0;
   	var count = 0;
   	for (var gy = 0; gy < 32; gy++) {
@@ -22554,8 +22554,8 @@ function canonicalFactory179($bindings, $runtime) {
   	var texSize = textureSize(inputTex, 0);
   	var tileDims = texSize instanceof Float32Array ? $runtime.copy(texSize) : texSize;
   	var fullRes = fullResolution[0] > 0 ? fullResolution : tileDims;
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / tileDims[0], gl_FragCoord[1] / tileDims[1]]);
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], tileDims[0]), $runtime.fdiv(gl_FragCoord[1], tileDims[1])]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var total = 0;
   	var toCenter = new $runtime.PooledFloat32Array([globalUV[0] - 0.5, globalUV[1] - 0.5]);
@@ -22759,7 +22759,7 @@ function canonicalFactory180($bindings, $runtime) {
   	age = 0;
   	initialized = 1;
   	};
-  	var agentPhase = (agentIndex) / (cpu_float(max(totalAgents, 1)));
+  	var agentPhase = $runtime.fdiv((agentIndex), cpu_float(max(totalAgents, 1)));
   	var staggeredAge = age + agentPhase * lifetime;
   	var shouldRespawn = (lifetime > 0) && (staggeredAge >= lifetime);
   	if (shouldRespawn) {
@@ -22835,7 +22835,7 @@ function canonicalFactory181($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var outputSize = textureSize(trailTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / outputSize[0], gl_FragCoord[1] / outputSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], outputSize[0]), $runtime.fdiv(gl_FragCoord[1], outputSize[1])]);
   	var inputIntensityValue = inputIntensity / 100;
   	var baseSample = texture(mixerTex, uv);
   	var baseColor = new $runtime.PooledFloat32Array([baseSample[0] * inputIntensityValue, baseSample[1] * inputIntensityValue, baseSample[2] * inputIntensityValue, baseSample[3]]);
@@ -22864,7 +22864,7 @@ function canonicalFactory182($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(sourceTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	texture(sourceTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -22888,7 +22888,7 @@ function canonicalFactory183($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(sourceTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var trailColor = texture(sourceTex, uv);
   	var decay = clamp(intensity / 100, 0, 1);
   	(fragColor[0] = trailColor[0] * decay, fragColor[1] = trailColor[1] * decay, fragColor[2] = trailColor[2] * decay, fragColor[3] = trailColor[3] * decay, fragColor);
@@ -23645,7 +23645,7 @@ function canonicalFactory184($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(inputTex3d, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var inputColor = texture(inputTex3d, uv);
   	if ((paletteIndex <= 0) || (paletteIndex > PALETTE_COUNT)) {
   	(fragColor[0] = inputColor[0], fragColor[1] = inputColor[1], fragColor[2] = inputColor[2], fragColor[3] = inputColor[3], fragColor);
@@ -23688,7 +23688,7 @@ function canonicalFactory184($bindings, $runtime) {
 }
 
 function canonicalFactory185($bindings, $runtime) {
-  const { vec2, mix, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, mix, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -23704,7 +23704,7 @@ function canonicalFactory185($bindings, $runtime) {
   	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
   };
   function main () {
-  	var uv = vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0));
+  	var uv = vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0));
   	var color1 = texture(inputTex, uv);
   	var color2 = texture(tex, uv);
   	if (maskMode) {
@@ -23731,7 +23731,7 @@ function canonicalFactory185($bindings, $runtime) {
 }
 
 function canonicalFactory186($bindings, $runtime) {
-  const { vec2, vec3, abs, fract, min, max, clamp, mix, step, subtract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, vec3, abs, fract, min, max, clamp, mix, step, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -23762,9 +23762,9 @@ function canonicalFactory186($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var color1 = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var color2 = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var color1 = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var color2 = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var a = rgb2hsv(new $runtime.PooledFloat32Array([color1[0], color1[1], color1[2]]));
   	var b = rgb2hsv(new $runtime.PooledFloat32Array([color2[0], color2[1], color2[2]]));
   	var resultHSV = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -23870,16 +23870,16 @@ function canonicalFactory187($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var color1 = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var color2 = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var color1 = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var color2 = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var amt = map(mixAmt, -100, 100, 0, 1);
   	var opacity = mode == 8 ? amt : min(amt * 2, 1);
   	var sourceAlpha = color2[3] * opacity;
   	var source = new $runtime.PooledFloat32Array([color2[0] * opacity, color2[1] * opacity, color2[2] * opacity]);
   	if (mode != 8) {
-  	var baseColor = new $runtime.PooledFloat32Array([...color1[3] > 0 ? new $runtime.PooledFloat32Array([color1[0] / color1[3], color1[1] / color1[3], color1[2] / color1[3]]) : new $runtime.PooledFloat32Array([0, 0, 0]), 1]);
-  	var sourceColor = new $runtime.PooledFloat32Array([...color2[3] > 0 ? new $runtime.PooledFloat32Array([color2[0] / color2[3], color2[1] / color2[3], color2[2] / color2[3]]) : new $runtime.PooledFloat32Array([0, 0, 0]), 1]);
+  	var baseColor = new $runtime.PooledFloat32Array([...color1[3] > 0 ? new $runtime.PooledFloat32Array([$runtime.fdiv(color1[0], color1[3]), $runtime.fdiv(color1[1], color1[3]), $runtime.fdiv(color1[2], color1[3])]) : new $runtime.PooledFloat32Array([0, 0, 0]), 1]);
+  	var sourceColor = new $runtime.PooledFloat32Array([...color2[3] > 0 ? new $runtime.PooledFloat32Array([$runtime.fdiv(color2[0], color2[3]), $runtime.fdiv(color2[1], color2[3]), $runtime.fdiv(color2[2], color2[3])]) : new $runtime.PooledFloat32Array([0, 0, 0]), 1]);
   	var blended = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, applyBlendMode(baseColor, sourceColor, mode)));
   	mix(blended, new $runtime.PooledFloat32Array([sourceColor[0], sourceColor[1], sourceColor[2]]), max(amt * 2 - 1, 0)).reduce((res,el,i)=>(res[i] = el, res), blended);
   	(source[0] = source[0] * (1 - color1[3]) + (blended[0] * sourceAlpha) * color1[3], source[1] = source[1] * (1 - color1[3]) + (blended[1] * sourceAlpha) * color1[3], source[2] = source[2] * (1 - color1[3]) + (blended[2] * sourceAlpha) * color1[3], source);
@@ -23894,7 +23894,7 @@ function canonicalFactory187($bindings, $runtime) {
 }
 
 function canonicalFactory188($bindings, $runtime) {
-  const { float, vec2, sin, abs, floor, fract, min, max, mix, step, dot, normalize, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, sin, abs, floor, fract, min, max, mix, step, dot, normalize, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -23927,12 +23927,12 @@ function canonicalFactory188($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var colorA = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var colorB = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var colorA = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var colorB = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var aspect = fullRes[0] / fullRes[1];
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var p = new $runtime.PooledFloat32Array([globalUV[0] * (31 - scale), globalUV[1] * (31 - scale)]);
   	p[0] *= aspect;
   	var spd = floor(speed);
@@ -24096,13 +24096,13 @@ function canonicalFactory189($bindings, $runtime) {
   	return d / maxD;
   };
   function main () {
-  	var st = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var edgeColor = texture(inputTex, st);
   	var centerColor = texture(tex, st);
   	var minRes = min(fullResolution[0], fullResolution[1]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var p = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullResolution[0]) / (0.5 * minRes), (globalCoord[1] - 0.5 * fullResolution[1]) / (0.5 * minRes)]);
-  	var corner = new $runtime.PooledFloat32Array([fullResolution[0] / minRes, fullResolution[1] / minRes]);
+  	var p = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - 0.5 * fullResolution[0]), (0.5 * minRes)), $runtime.fdiv((globalCoord[1] - 0.5 * fullResolution[1]), (0.5 * minRes))]);
+  	var corner = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], minRes), $runtime.fdiv(fullResolution[1], minRes)]);
   	var dist01 = clamp01(distanceMetric(p, corner, shape));
   	var scaledPower = mix(0.10000000149011612, 25.049999237060547, (power + 100) / 200);
   	var mask = pow(dist01, scaledPower);
@@ -24126,7 +24126,7 @@ function canonicalFactory189($bindings, $runtime) {
 }
 
 function canonicalFactory190($bindings, $runtime) {
-  const { vec2, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var rTex = $bindings["rTex"];
@@ -24145,10 +24145,10 @@ function canonicalFactory190($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var r = ((luminance(texture(rTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(rTex, 0))))) * rLevel) / 100;
-  	var g = ((luminance(texture(gTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(gTex, 0))))) * gLevel) / 100;
-  	var b = ((luminance(texture(bTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(bTex, 0))))) * bLevel) / 100;
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var r = ((luminance(texture(rTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(rTex, 0))))) * rLevel) / 100;
+  	var g = ((luminance(texture(gTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(gTex, 0))))) * gLevel) / 100;
+  	var b = ((luminance(texture(bTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(bTex, 0))))) * bLevel) / 100;
   	(fragColor[0] = r, fragColor[1] = g, fragColor[2] = b, fragColor[3] = 1, fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -24353,10 +24353,10 @@ function canonicalFactory191($bindings, $runtime) {
   	};
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, resolution[0]), $runtime.fdiv(1, resolution[1])]);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	if (mode == 0) {
   	if (mapSource == 0) {
@@ -24430,21 +24430,21 @@ function canonicalFactory192($bindings, $runtime) {
   	for (var i = 0; i < 64; i++) {
   	var r = sqrt((i) / 64);
   	var theta = (i) * GOLDEN;
-  	var offset = new $runtime.PooledFloat32Array([((cos(theta) * r) * blurRadius) / resolution[0], ((sin(theta) * r) * blurRadius) / resolution[1]]);
+  	var offset = new $runtime.PooledFloat32Array([$runtime.fdiv((cos(theta) * r) * blurRadius, resolution[0]), $runtime.fdiv((sin(theta) * r) * blurRadius, resolution[1])]);
   	texture(sceneTex, vec2.divide([], (new $runtime.PooledFloat32Array([(uv[0] + offset[0]) * fullResolution[0] - tileOffset[0], (uv[1] + offset[1]) * fullResolution[1] - tileOffset[1]])), textureSize(sceneTex, 0))).reduce((res,el,i)=>(res[i] += el, res), color);
   	};
   	return new $runtime.PooledFloat32Array([color[0] / 64, color[1] / 64, color[2] / 64, color[3] / 64]);
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	if (depthSource == 0) {
   	applyFocusBlur(tex, inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), color);
   	} else {
   	applyFocusBlur(inputTex, tex, uv).reduce((res,el,i)=>(res[i] = el, res), color);
   	};
-  	color[3] = max(cpu_texture_a(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0))), cpu_texture_a(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0))));
+  	color[3] = max(cpu_texture_a(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0))), cpu_texture_a(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0))));
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -24539,7 +24539,7 @@ function canonicalFactory193($bindings, $runtime) {
   	return smoothstep(boundary - smoothness, boundary + smoothness, lum);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var controlColor = texture(source, uv);
   	var lum = getLuminosity(new $runtime.PooledFloat32Array([controlColor[0], controlColor[1], controlColor[2]]));
   	var n = clamp(layers, 2, 8);
@@ -24549,7 +24549,7 @@ function canonicalFactory193($bindings, $runtime) {
   	break;
   	};
   	var src = (layerActive(k) == 1) ? sampleLayer(k, uv) : controlColor;
-  	var boundary = (k) / (n);
+  	var boundary = $runtime.fdiv((k), (n));
   	var w = bandWeight(lum, boundary);
   	mix(result, src, w).reduce((res,el,i)=>(res[i] = el, res), result);
   	};
@@ -24563,7 +24563,7 @@ function canonicalFactory193($bindings, $runtime) {
 }
 
 function canonicalFactory194($bindings, $runtime) {
-  const { vec2, sin, cos, atan, abs, floor, fract, mod, min, max, mix, smoothstep, length, subtract, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, sin, cos, atan, abs, floor, fract, mod, min, max, mix, smoothstep, length, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -24671,12 +24671,12 @@ function canonicalFactory194($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var colorA = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var colorB = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var colorA = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var colorB = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var aspect = fullRes[0] / fullRes[1];
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var p = new $runtime.PooledFloat32Array([(globalUV[0] - 0.5) * 2, (globalUV[1] - 0.5) * 2]);
   	p[0] *= aspect;
   	var rad = (rotation * 3.1415927410125732) / 180;
@@ -24733,7 +24733,7 @@ function canonicalFactory194($bindings, $runtime) {
 }
 
 function canonicalFactory195($bindings, $runtime) {
-  const { float, vec2, exp, abs, fract, mod, min, max, clamp, mix, step, divide, texture, textureSize } = $runtime.stdlib
+  const { float, vec2, exp, abs, floor, fract, min, max, clamp, mix, step, subtract, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -24769,8 +24769,8 @@ function canonicalFactory195($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var baseColor = (maskSource == 0) ? texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0))) : texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var baseColor = (maskSource == 0) ? texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0))) : texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
   	var maskUV = new $runtime.PooledFloat32Array([uv[0] - (offsetX * 0.10000000149011612) * renderScale, uv[1] - (offsetY * 0.10000000149011612) * renderScale]);
   	var shadowMask = 0;
   	var totalWeight = 0;
@@ -24779,9 +24779,9 @@ function canonicalFactory195($bindings, $runtime) {
   	var sigma2 = (2 * sigma) * sigma;
   	for (var x = -5; x <= 5; x++) {
   	for (var y = -5; y <= 5; y++) {
-  	var offset = new $runtime.PooledFloat32Array([((x) * blurPixels) / resolution[0], ((y) * blurPixels) / resolution[1]]);
+  	var offset = new $runtime.PooledFloat32Array([$runtime.fdiv((x) * blurPixels, resolution[0]), $runtime.fdiv((y) * blurPixels, resolution[1])]);
   	var sampleUV = new $runtime.PooledFloat32Array([maskUV[0] + offset[0], maskUV[1] + offset[1]]);
-  	var localUV = vec2.divide([], (new $runtime.PooledFloat32Array([sampleUV[0] * fullResolution[0] - tileOffset[0], sampleUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
+  	var localUV = vec2.divideMetal([], (new $runtime.PooledFloat32Array([sampleUV[0] * fullResolution[0] - tileOffset[0], sampleUV[1] * fullResolution[1] - tileOffset[1]])), textureSize(inputTex, 0));
   	var thresholded = 0;
   	if (wrap == 0) {
   	if ((localUV[0] >= 0) && (localUV[0] <= 1) && (localUV[1] >= 0) && (localUV[1] <= 1)) {
@@ -24791,7 +24791,7 @@ function canonicalFactory195($bindings, $runtime) {
   	} else {
   	var wrappedUV = localUV instanceof Float32Array ? $runtime.copy(localUV) : localUV;
   	if (wrap == 1) {
-  	abs(mod(new $runtime.PooledFloat32Array([localUV[0] + 1, localUV[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), wrappedUV);
+  	abs((vec2.subtract([], localUV, floor(new $runtime.PooledFloat32Array([(localUV[0] + 1) * 0.5, (localUV[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), wrappedUV);
   	} else {
   	if (wrap == 2) {
   	fract(localUV).reduce((res,el,i)=>(res[i] = el, res), wrappedUV);
@@ -24803,7 +24803,7 @@ function canonicalFactory195($bindings, $runtime) {
   	thresholded = step(threshold, getChannel(maskSample, sourceChannel));
   	};
   	var dist2 = cpu_float(x * x + y * y);
-  	var weight = exp(-dist2 / sigma2);
+  	var weight = exp($runtime.fdiv(-dist2, sigma2));
   	shadowMask += thresholded * weight;
   	totalWeight += weight;
   	};
@@ -24811,7 +24811,7 @@ function canonicalFactory195($bindings, $runtime) {
   	shadowMask /= totalWeight;
   	shadowMask = clamp(shadowMask * (1 + spread), 0, 1);
   	var withShadow = mix(new $runtime.PooledFloat32Array([baseColor[0], baseColor[1], baseColor[2]]), color, shadowMask);
-  	var fgSample = (maskSource == 0) ? texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0))) : texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var fgSample = (maskSource == 0) ? texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0))) : texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var fgMask = step(threshold, getChannel(fgSample, sourceChannel));
   	var result = mix(withShadow, new $runtime.PooledFloat32Array([fgSample[0], fgSample[1], fgSample[2]]), fgMask);
   	(fragColor[0] = result[0], fragColor[1] = result[1], fragColor[2] = result[2], fragColor[3] = baseColor[3], fragColor);
@@ -24824,7 +24824,7 @@ function canonicalFactory195($bindings, $runtime) {
 }
 
 function canonicalFactory196($bindings, $runtime) {
-  const { vec2, sin, cos, atan, abs, sign, floor, mod, max, clamp, mix, smoothstep, length, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, sin, cos, atan, abs, sign, floor, mod, max, clamp, mix, smoothstep, length, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   var cpu_vector_write_0_0, cpu_vector_write_0_1;
   
@@ -24903,12 +24903,12 @@ function canonicalFactory196($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var colorA = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var colorB = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var colorA = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var colorB = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var aspect = fullRes[0] / fullRes[1];
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var p = new $runtime.PooledFloat32Array([(globalUV[0] - 0.5) * 2, (globalUV[1] - 0.5) * 2]);
   	p[0] *= aspect;
   	(p[0] -= posX * aspect, p[1] -= -posY, p);
@@ -24966,7 +24966,7 @@ function canonicalFactory196($bindings, $runtime) {
 }
 
 function canonicalFactory197($bindings, $runtime) {
-  const { vec2, sin, cos, abs, floor, fract, mod, max, mix, smoothstep, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, sin, cos, abs, floor, fract, mod, max, mix, smoothstep, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -24983,12 +24983,12 @@ function canonicalFactory197($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var colorA = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var colorB = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var colorA = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var colorB = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var aspect = fullRes[0] / fullRes[1];
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
   	var centered = new $runtime.PooledFloat32Array([(globalUV[0] - 0.5) * 2, (globalUV[1] - 0.5) * 2]);
   	centered[0] *= aspect;
   	var rad = (rotation * 3.1415927410125732) / 180;
@@ -25022,7 +25022,7 @@ function canonicalFactory197($bindings, $runtime) {
 }
 
 function canonicalFactory198($bindings, $runtime) {
-  const { vec2, floor, mix, step, smoothstep, dot, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, floor, mix, step, smoothstep, dot, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var inputTex = $bindings["inputTex"];
@@ -25064,9 +25064,9 @@ function canonicalFactory198($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var colorA = texture(inputTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
-  	var colorB = texture(tex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var colorA = texture(inputTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(inputTex, 0)));
+  	var colorB = texture(tex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(tex, 0)));
   	var mapColor = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (mapSource == 0) {
   	(mapColor[0] = colorA[0], mapColor[1] = colorA[1], mapColor[2] = colorA[2], mapColor);
@@ -25133,7 +25133,7 @@ function canonicalFactory199($bindings, $runtime) {
   	};
   };
   function main () {
-  	var localUV = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var localUV = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var colorA = texture(inputTex, localUV);
   	var colorB = texture(tex, localUV);
   	var mapColor = (mapSource == 0) ? colorA : colorB;
@@ -25151,7 +25151,7 @@ function canonicalFactory199($bindings, $runtime) {
   	var s = scale / 100;
   	var remappedUV = new $runtime.PooledFloat32Array([rawUV[0] * s + offset, rawUV[1] * s + offset]);
   	applyWrap(remappedUV, wrap).reduce((res,el,i)=>(res[i] = el, res), remappedUV);
-  	var sampleUV = new $runtime.PooledFloat32Array([(remappedUV[0] * fullResolution[0] - tileOffset[0]) / resolution[0], (remappedUV[1] * fullResolution[1] - tileOffset[1]) / resolution[1]]);
+  	var sampleUV = new $runtime.PooledFloat32Array([$runtime.fdiv((remappedUV[0] * fullResolution[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((remappedUV[1] * fullResolution[1] - tileOffset[1]), resolution[1])]);
   	fract(sampleUV).reduce((res,el,i)=>(res[i] = el, res), sampleUV);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	if (sampleFromB == 1) {
@@ -25337,7 +25337,7 @@ function canonicalFactory201($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -25511,7 +25511,7 @@ function canonicalFactory203($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -25656,7 +25656,7 @@ function canonicalFactory205($bindings, $runtime) {
   	return;
   	};
   	var gridDims = textureSize(gridTex, 0);
-  	var texel = 1 / (max(gridDims[0], gridDims[1]));
+  	var texel = $runtime.fdiv(1, max(gridDims[0], gridDims[1]));
   	var local = neighborhood(pos, 2);
   	var proximity = smoothstep(0.014999999664723873, 0.11999999731779099, local);
   	var randomDir = (randomDirection(seed), [seed] = randomDirection.__out__, randomDirection.__return__);
@@ -25729,7 +25729,7 @@ function canonicalFactory206($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(gridTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -25759,7 +25759,7 @@ function canonicalFactory207($bindings, $runtime) {
   	return fract(cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]));
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	if (resetState) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	return;
@@ -25799,7 +25799,7 @@ function canonicalFactory208($bindings, $runtime) {
   var matteOpacity = $bindings["matteOpacity"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var inputCol = texture(inputTex, uv);
   	var grid = texture(gridTex, uv);
   	var gridStrength = clamp(grid[3], 0, 1);
@@ -25972,7 +25972,7 @@ function canonicalFactory209($bindings, $runtime) {
   	if ((distSq < separationSq) && (distSq > 0)) {
   	var away = new $runtime.PooledFloat32Array([-diff[0], -diff[1]]);
   	var dist = sqrt(distSq);
-  	(separationForce[0] += away[0] / dist, separationForce[1] += away[1] / dist, separationForce);
+  	(separationForce[0] += $runtime.fdiv(away[0], dist), separationForce[1] += $runtime.fdiv(away[1], dist), separationForce);
   	separationCount++;
   	};
   	if ((distSq < perceptionSq) && (distSq > 0)) {
@@ -26024,17 +26024,17 @@ function canonicalFactory209($bindings, $runtime) {
   	var wallForce = new $runtime.PooledFloat32Array([0, 0]);
   	var turnStrength = maxForce * 2;
   	if (pos[0] < wallMargin) {
-  	wallForce[0] = turnStrength * (1 - pos[0] / wallMargin);
+  	wallForce[0] = turnStrength * (1 - $runtime.fdiv(pos[0], wallMargin));
   	} else {
   	if (pos[0] > (resolution[0] - wallMargin)) {
-  	wallForce[0] = -turnStrength * (1 - (resolution[0] - pos[0]) / wallMargin);
+  	wallForce[0] = -turnStrength * (1 - $runtime.fdiv((resolution[0] - pos[0]), wallMargin));
   	};
   	};
   	if (pos[1] < wallMargin) {
-  	wallForce[1] = turnStrength * (1 - pos[1] / wallMargin);
+  	wallForce[1] = turnStrength * (1 - $runtime.fdiv(pos[1], wallMargin));
   	} else {
   	if (pos[1] > (resolution[1] - wallMargin)) {
-  	wallForce[1] = -turnStrength * (1 - (resolution[1] - pos[1]) / wallMargin);
+  	wallForce[1] = -turnStrength * (1 - $runtime.fdiv((resolution[1] - pos[1]), wallMargin));
   	};
   	};
   	(steer[0] += wallForce[0], steer[1] += wallForce[1], steer);
@@ -26048,8 +26048,8 @@ function canonicalFactory209($bindings, $runtime) {
   	clamp(pos, new $runtime.PooledFloat32Array([1, 1]), new $runtime.PooledFloat32Array([resolution[0] - 1, resolution[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), pos);
   	};
   	age += 0.01600000075995922;
-  	var newPx = pos[0] / resolution[0];
-  	var newPy = pos[1] / resolution[1];
+  	var newPx = $runtime.fdiv(pos[0], resolution[0]);
+  	var newPy = $runtime.fdiv(pos[1], resolution[1]);
   	(outXYZ[0] = newPx, outXYZ[1] = newPy, outXYZ[2] = xyz[2], outXYZ[3] = 1, outXYZ);
   	(outVel[0] = velocity[0], outVel[1] = velocity[1], outVel[2] = age, outVel[3] = seed, outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
@@ -26081,7 +26081,7 @@ function canonicalFactory210($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -26230,7 +26230,7 @@ function canonicalFactory211($bindings, $runtime) {
   	};
   	var scale = max((max(resolution[0], resolution[1])) / 1024, 1);
   	var devFactor = 1 + (strideRand * 2) * strideDeviation;
-  	var actualStride = max(0.00009999999747378752, (((stride * 0.10000000149011612) * scale) * devFactor) / (max(resolution[0], resolution[1])));
+  	var actualStride = max(0.00009999999747378752, $runtime.fdiv(((stride * 0.10000000149011612) * scale) * devFactor, max(resolution[0], resolution[1])));
   	var newX = px + sin(finalAngle) * actualStride;
   	var newY = py + cos(finalAngle) * actualStride;
   	newX = fract(newX);
@@ -26266,7 +26266,7 @@ function canonicalFactory212($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -26298,7 +26298,7 @@ function canonicalFactory213($bindings, $runtime) {
   function main () {
   	var coord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
   	var stateSize = textureSize(xyzTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([(coord[0] + 0.5) / stateSize[0], (coord[1] + 0.5) / stateSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((coord[0] + 0.5), stateSize[0]), $runtime.fdiv((coord[1] + 0.5), stateSize[1])]);
   	var heightColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(heightTex, uv)));
   	var elevation = dot(heightColor, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   	(outXYZ[0] = (uv[0] - 0.5) * gridScale, outXYZ[1] = elevation * heightScale + heightOffset, outXYZ[2] = (0.5 - uv[1]) * gridScale, outXYZ[3] = 1, outXYZ);
@@ -26332,7 +26332,7 @@ function canonicalFactory214($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -26479,7 +26479,7 @@ function canonicalFactory215($bindings, $runtime) {
   	var targetVx = 0;
   	var targetVy = 0;
   	if (glen > 9.999999974752427e-7) {
-  	var scale = (stride * 0.10000000149011612) / glen;
+  	var scale = $runtime.fdiv((stride * 0.10000000149011612), glen);
   	targetVx = gx * scale;
   	targetVy = gy * scale;
   	};
@@ -26489,10 +26489,10 @@ function canonicalFactory215($bindings, $runtime) {
   	vy = mix(vy, targetVy, blendFactor);
   	x = wrap_float(x + vx, resolution[0]);
   	y = wrap_float(y + vy, resolution[1]);
-  	var newPx = x / resolution[0];
-  	var newPy = y / resolution[1];
-  	var normVx = vx / resolution[0];
-  	var normVy = vy / resolution[1];
+  	var newPx = $runtime.fdiv(x, resolution[0]);
+  	var newPy = $runtime.fdiv(y, resolution[1]);
+  	var normVx = $runtime.fdiv(vx, resolution[0]);
+  	var normVy = $runtime.fdiv(vy, resolution[1]);
   	(outXYZ[0] = newPx, outXYZ[1] = newPy, outXYZ[2] = xyz[2], outXYZ[3] = alive, outXYZ);
   	(outVel[0] = normVx, outVel[1] = normVy, outVel[2] = vz, outVel[3] = seed_f, outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
@@ -26524,7 +26524,7 @@ function canonicalFactory216($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -26584,21 +26584,21 @@ function canonicalFactory217($bindings, $runtime) {
   	var uv = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
   	var U = cpu_texture_r(fieldTex, uv);
   	var fieldSize = textureSize(fieldTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / fieldSize[0], 1 / fieldSize[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, fieldSize[0]), $runtime.fdiv(1, fieldSize[1])]);
   	var Ux_plus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0] + texelSize[0], uv[1]])));
   	var Ux_minus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0] - texelSize[0], uv[1]])));
   	var Uy_plus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0], uv[1] + texelSize[1]])));
   	var Uy_minus = cpu_texture_r(fieldTex, fract(new $runtime.PooledFloat32Array([uv[0], uv[1] - texelSize[1]])));
-  	var gradU = new $runtime.PooledFloat32Array([(Ux_plus - Ux_minus) / (2 * texelSize[0]), (Uy_plus - Uy_minus) / (2 * texelSize[1])]);
+  	var gradU = new $runtime.PooledFloat32Array([$runtime.fdiv((Ux_plus - Ux_minus), (2 * texelSize[0])), $runtime.fdiv((Uy_plus - Uy_minus), (2 * texelSize[1]))]);
   	var worldScale = (min(resolution[0], resolution[1])) * 0.05000000074505806;
-  	gradU = new $runtime.PooledFloat32Array([gradU[0] / worldScale, gradU[1] / worldScale]);
+  	gradU = new $runtime.PooledFloat32Array([$runtime.fdiv(gradU[0], worldScale), $runtime.fdiv(gradU[1], worldScale)]);
   	var dGdU = growthDerivative(U, muG, sigmaG);
   	var gradG = new $runtime.PooledFloat32Array([dGdU * gradU[0], dGdU * gradU[1]]);
   	var gradR = new $runtime.PooledFloat32Array([repulsion * gradU[0], repulsion * gradU[1]]);
   	var force = new $runtime.PooledFloat32Array([gradG[0] - gradR[0], gradG[1] - gradR[1]]);
   	var forceMag = length(force);
   	if (forceMag > 10) {
-  	(force[0] = (force[0] / forceMag) * 10, force[1] = (force[1] / forceMag) * 10, force);
+  	(force[0] = ($runtime.fdiv(force[0], forceMag)) * 10, force[1] = ($runtime.fdiv(force[1], forceMag)) * 10, force);
   	};
   	var newPos = new $runtime.PooledFloat32Array([uv[0] + (force[0] * dt) * 0.009999999776482582, uv[1] + (force[1] * dt) * 0.009999999776482582]);
   	fract(new $runtime.PooledFloat32Array([newPos[0] + 1, newPos[1] + 1])).reduce((res,el,i)=>(res[i] = el, res), newPos);
@@ -26665,8 +26665,8 @@ function canonicalFactory219($bindings, $runtime) {
   };
   function main () {
   	var densitySize = textureSize(densityTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / densitySize[0], gl_FragCoord[1] / densitySize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / densitySize[0], 1 / densitySize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], densitySize[0]), $runtime.fdiv(gl_FragCoord[1], densitySize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, densitySize[0]), $runtime.fdiv(1, densitySize[1])]);
   	var wK = 0;
   	var numSamples = 64;
   	var dr = searchRadius / (numSamples);
@@ -26796,10 +26796,10 @@ function canonicalFactory221($bindings, $runtime) {
   	return cpu_ivec2_vec2(clamp(new $runtime.PooledFloat32Array([pos[0] / cellSize[0], pos[1] / cellSize[1]]), new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([cpu_float(GRID_SIZE - 1), cpu_float(GRID_SIZE - 1)])));
   };
   function radialForce (dist, strength, prefDist, curveShape) {
-  	var normDist = (dist - minRadius) / (maxRadius - minRadius);
+  	var normDist = $runtime.fdiv((dist - minRadius), (maxRadius - minRadius));
   	var forceScale = maxSpeed * 10;
   	if (normDist < 0) {
-  	return (-repulsionScale * (1 - dist / minRadius)) * forceScale;
+  	return (-repulsionScale * (1 - $runtime.fdiv(dist, minRadius))) * forceScale;
   	};
   	if (normDist > 1) {
   	return 0;
@@ -26914,13 +26914,13 @@ function canonicalFactory221($bindings, $runtime) {
   	var prefDist = forceParams[1];
   	var curveShape = forceParams[2];
   	var forceMag = radialForce(dist, strength, prefDist, curveShape);
-  	var forceDir = new $runtime.PooledFloat32Array([diff[0] / dist, diff[1] / dist]);
+  	var forceDir = new $runtime.PooledFloat32Array([$runtime.fdiv(diff[0], dist), $runtime.fdiv(diff[1], dist)]);
   	(totalForce[0] += forceDir[0] * forceMag, totalForce[1] += forceDir[1] * forceMag, totalForce);
   	neighborCount++;
   	};
   	};
   	};
-  	totalForce = new $runtime.PooledFloat32Array([totalForce[0] / mass, totalForce[1] / mass]);
+  	totalForce = new $runtime.PooledFloat32Array([$runtime.fdiv(totalForce[0], mass), $runtime.fdiv(totalForce[1], mass)]);
   	(velocity[0] += totalForce[0], velocity[1] += totalForce[1], velocity);
   	velocity = new $runtime.PooledFloat32Array([velocity[0] * (1 - friction), velocity[1] * (1 - friction)]);
   	limitVec(velocity, maxSpeed).reduce((res,el,i)=>(res[i] = el, res), velocity);
@@ -27190,7 +27190,7 @@ function canonicalFactory225($bindings, $runtime) {
   	(fragColor[0] = 0, fragColor[1] = 0, fragColor[2] = 0, fragColor[3] = 0, fragColor);
   	return;
   	};
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var trailColor = texture(trailTex, uv);
   	var persistence = clamp(1 - decay, 0, 1);
   	(fragColor[0] = trailColor[0] * persistence, fragColor[1] = trailColor[1] * persistence, fragColor[2] = trailColor[2] * persistence, fragColor[3] = trailColor[3] * persistence, fragColor);
@@ -27352,7 +27352,7 @@ function canonicalFactory228($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -27373,7 +27373,7 @@ function canonicalFactory229($bindings, $runtime) {
   var intensity = $bindings["intensity"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var st = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var inputColor = texture(inputTex, st);
   	var accum = texture(accumTex, st);
   	var a = alpha / 100;
@@ -27402,7 +27402,7 @@ function canonicalFactory230($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -27413,7 +27413,7 @@ function canonicalFactory230($bindings, $runtime) {
 }
 
 function canonicalFactory231($bindings, $runtime) {
-  const { vec2, divide, texture, textureSize } = $runtime.stdlib
+  const { vec2, texture, textureSize } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var resolution = $bindings["resolution"];
@@ -27425,10 +27425,10 @@ function canonicalFactory231($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var globalUV = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / fullRes[0], (gl_FragCoord[1] + tileOffset[1]) / fullRes[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var pos = texture(positionsTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(positionsTex, 0)));
-  	var normal = texture(normalsTex, vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(normalsTex, 0)));
+  	var globalUV = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), fullRes[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), fullRes[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var pos = texture(positionsTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(positionsTex, 0)));
+  	var normal = texture(normalsTex, vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), textureSize(normalsTex, 0)));
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (globalUV[0] < 0.5) {
   	(color[0] = pos[0] * 0.5 + 0.5, color[1] = pos[1] * 0.5 + 0.5, color[2] = pos[2] * 0.5 + 0.5, color);
@@ -27531,7 +27531,7 @@ function canonicalFactory234($bindings, $runtime) {
   var blendMode = $bindings["blendMode"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var inputColor = texture(inputTex, uv);
   	var trailColor = texture(trailTex, uv);
   	var t = inputIntensity / 100;
@@ -27590,7 +27590,7 @@ function canonicalFactory236($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(sourceTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -27734,7 +27734,7 @@ function canonicalFactory239($bindings, $runtime) {
   	return mix(mix(texelFetch(defocusTex, a, 0), texelFetch(defocusTex, cpu_ivec2_float_float(b[0], a[1]), 0), f[0]), mix(texelFetch(defocusTex, cpu_ivec2_float_float(a[0], b[1]), 0), texelFetch(defocusTex, b, 0), f[0]), f[1]);
   };
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var trailColor = texture(trailTex, uv);
   	var decay = clamp(intensity / 100, 0, 1);
   	clamp(new $runtime.PooledFloat32Array([trailColor[0] * decay, trailColor[1] * decay, trailColor[2] * decay, trailColor[3] * decay]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), fragColor);
@@ -27844,12 +27844,12 @@ function canonicalFactory241($bindings, $runtime) {
   	var total = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	for (var y = start[1]; y < end[1]; y++) {
   	for (var x = start[0]; x < end[0]; x++) {
-  	var uv = new $runtime.PooledFloat32Array([(x + 0.5) / dims[0], (y + 0.5) / dims[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(x + 0.5, dims[0]), $runtime.fdiv(y + 0.5, dims[1])]);
   	var weight = max(new $runtime.PooledFloat32Array([0, 0]), abs(new $runtime.PooledFloat32Array([uv[0] * 4 - node[0], uv[1] * 4 - node[1]])).map(function (_) {return 1 - _;}));
   	total = total.map(function (_) {return _ + this;}, (texelFetch(spriteTex, cpu_ivec2(x, y), 0)) * (weight[0] * weight[1]));
   	};
   	};
-  	(fragColor[0] = total[0] / (cpu_float(dims[0] * dims[1])), fragColor[1] = total[1] / (cpu_float(dims[0] * dims[1])), fragColor[2] = total[2] / (cpu_float(dims[0] * dims[1])), fragColor[3] = total[3] / (cpu_float(dims[0] * dims[1])), fragColor);
+  	(fragColor[0] = $runtime.fdiv(total[0], cpu_float(dims[0] * dims[1])), fragColor[1] = $runtime.fdiv(total[1], cpu_float(dims[0] * dims[1])), fragColor[2] = $runtime.fdiv(total[2], cpu_float(dims[0] * dims[1])), fragColor[3] = $runtime.fdiv(total[3], cpu_float(dims[0] * dims[1])), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -27891,7 +27891,7 @@ function canonicalFactory242($bindings, $runtime) {
   };
   function main () {
   	var stateCoord = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / (stateSize), gl_FragCoord[1] / (stateSize)]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], (stateSize)), $runtime.fdiv(gl_FragCoord[1], (stateSize))]);
   	var agentSeed = (stateCoord[0] + stateCoord[1] * stateSize|0) + (seed|0);
   	var pPos = texelFetch(xyzTex, stateCoord, 0);
   	var pVel = texelFetch(velTex, stateCoord, 0);
@@ -27988,7 +27988,7 @@ function canonicalFactory243($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -28010,7 +28010,7 @@ function canonicalFactory244($bindings, $runtime) {
   var matteOpacity = $bindings["matteOpacity"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var inputColor = texture(inputTex, uv);
   	var trailColor = texture(trailTex, uv);
   	var t = inputIntensity / 100;
@@ -28036,7 +28036,7 @@ function canonicalFactory245($bindings, $runtime) {
   var resolution = $bindings["resolution"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	texture(sourceTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -28056,7 +28056,7 @@ function canonicalFactory246($bindings, $runtime) {
   var intensity = $bindings["intensity"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var trailColor = texture(trailTex, uv);
   	var decay = clamp(intensity / 100, 0, 1);
   	clamp(new $runtime.PooledFloat32Array([trailColor[0] * decay, trailColor[1] * decay, trailColor[2] * decay, trailColor[3] * decay]), 0, 1).reduce((res,el,i)=>(res[i] = el, res), fragColor);
@@ -28244,7 +28244,7 @@ function canonicalFactory247($bindings, $runtime) {
   };
   function calcNormal (p) {
   	p = $runtime.copy(p);
-  	var eps = 2 / (volumeSize);
+  	var eps = $runtime.fdiv(2, (volumeSize));
   	var dx = getField(new $runtime.PooledFloat32Array([p[0] + eps, p[1], p[2]])) - getField(new $runtime.PooledFloat32Array([p[0] - eps, p[1], p[2]]));
   	var dy = getField(new $runtime.PooledFloat32Array([p[0], p[1] + eps, p[2]])) - getField(new $runtime.PooledFloat32Array([p[0], p[1] - eps, p[2]]));
   	var dz = getField(new $runtime.PooledFloat32Array([p[0], p[1], p[2] + eps])) - getField(new $runtime.PooledFloat32Array([p[0], p[1], p[2] - eps]));
@@ -28278,7 +28278,7 @@ function canonicalFactory247($bindings, $runtime) {
   	return result;
   	};
   	var tStart = max(tEnter, 0);
-  	var stepSize = 1.5 / (volumeSize);
+  	var stepSize = $runtime.fdiv(1.5, (volumeSize));
   	var t = tStart instanceof Float32Array ? $runtime.copy(tStart) : tStart;
   	var prevField = getField(new $runtime.PooledFloat32Array([ro[0] + rd[0] * t, ro[1] + rd[1] * t, ro[2] + rd[2] * t]));
   	if (prevField < 0) {
@@ -28357,7 +28357,7 @@ function canonicalFactory247($bindings, $runtime) {
   	(fullRes[0] = 1024, fullRes[1] = 1024, fullRes);
   	};
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullRes[0]) / fullRes[1], (globalCoord[1] - 0.5 * fullRes[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - 0.5 * fullRes[0]), fullRes[1]), $runtime.fdiv((globalCoord[1] - 0.5 * fullRes[1]), fullRes[1])]);
   	var camDist = 3.5;
   	var angle = (-time * TAU) * (orbitSpeed);
   	var ro = new $runtime.PooledFloat32Array([sin(angle) * camDist, 0.5, cos(angle) * camDist]);
@@ -28590,7 +28590,7 @@ function canonicalFactory248($bindings, $runtime) {
   };
   function calcNormal (p) {
   	p = $runtime.copy(p);
-  	var eps = 2 / (volumeSize);
+  	var eps = $runtime.fdiv(2, (volumeSize));
   	var dx = getField(new $runtime.PooledFloat32Array([p[0] + eps, p[1], p[2]])) - getField(new $runtime.PooledFloat32Array([p[0] - eps, p[1], p[2]]));
   	var dy = getField(new $runtime.PooledFloat32Array([p[0], p[1] + eps, p[2]])) - getField(new $runtime.PooledFloat32Array([p[0], p[1] - eps, p[2]]));
   	var dz = getField(new $runtime.PooledFloat32Array([p[0], p[1], p[2] + eps])) - getField(new $runtime.PooledFloat32Array([p[0], p[1], p[2] - eps]));
@@ -28624,7 +28624,7 @@ function canonicalFactory248($bindings, $runtime) {
   	return result;
   	};
   	var tStart = max(tEnter, 0);
-  	var stepSize = 1.5 / (volumeSize);
+  	var stepSize = $runtime.fdiv(1.5, (volumeSize));
   	var t = tStart instanceof Float32Array ? $runtime.copy(tStart) : tStart;
   	var prevField = getField(new $runtime.PooledFloat32Array([ro[0] + rd[0] * t, ro[1] + rd[1] * t, ro[2] + rd[2] * t]));
   	if (prevField < 0) {
@@ -28702,7 +28702,7 @@ function canonicalFactory248($bindings, $runtime) {
   	if (fullRes[0] < 1) {
   	(fullRes[0] = 1024, fullRes[1] = 1024, fullRes);
   	};
-  	var uv = new $runtime.PooledFloat32Array([((gl_FragCoord[0] + tileOffset[0]) - 0.5 * fullRes[0]) / (0.5 * fullRes[1]), ((gl_FragCoord[1] + tileOffset[1]) - 0.5 * fullRes[1]) / (0.5 * fullRes[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(((gl_FragCoord[0] + tileOffset[0]) - 0.5 * fullRes[0]), (0.5 * fullRes[1])), $runtime.fdiv(((gl_FragCoord[1] + tileOffset[1]) - 0.5 * fullRes[1]), (0.5 * fullRes[1]))]);
   	var ro = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var rd = normalize(new $runtime.PooledFloat32Array([cubeBasis[0] * uv[0] + cubeBasis[3] * -uv[1] + cubeBasis[6], cubeBasis[1] * uv[0] + cubeBasis[4] * -uv[1] + cubeBasis[7], cubeBasis[2] * uv[0] + cubeBasis[5] * -uv[1] + cubeBasis[8]]));
   	var color = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -28826,7 +28826,7 @@ function canonicalFactory249($bindings, $runtime) {
   };
   function main () {
   	var res = (fullResolution[0] > 0) ? fullResolution : resolution;
-  	var uv = new $runtime.PooledFloat32Array([((gl_FragCoord[0] + tileOffset[0]) - 0.5 * res[0]) / (0.5 * res[1]), ((gl_FragCoord[1] + tileOffset[1]) - 0.5 * res[1]) / (0.5 * res[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(((gl_FragCoord[0] + tileOffset[0]) - 0.5 * res[0]), (0.5 * res[1])), $runtime.fdiv(((gl_FragCoord[1] + tileOffset[1]) - 0.5 * res[1]), (0.5 * res[1]))]);
   	var ro = new $runtime.PooledFloat32Array([0, 0, 0]);
   	var rd = normalize(new $runtime.PooledFloat32Array([cubeBasis[0] * uv[0] + cubeBasis[3] * -uv[1] + cubeBasis[6], cubeBasis[1] * uv[0] + cubeBasis[4] * -uv[1] + cubeBasis[7], cubeBasis[2] * uv[0] + cubeBasis[5] * -uv[1] + cubeBasis[8]]));
   	var col = new $runtime.PooledFloat32Array([0, 0, 0]);
@@ -29053,9 +29053,9 @@ function canonicalFactory250($bindings, $runtime) {
   function renderPerspective (uv) {
   	uv = $runtime.copy(uv);
   	var size = (volumeSize);
-  	var focalLength = 1 / (tan((clamp(fieldOfView, 10, 150)) * 0.008726646192371845));
+  	var focalLength = $runtime.fdiv(1, tan((clamp(fieldOfView, 10, 150)) * 0.008726646192371845));
   	var origin = (inverseRotation(new $runtime.PooledFloat32Array([-posX, -posY, 80 - posZ])).map(function (_) {return _ / 80;}).map(function (_) {return _ + 0.5;})).map(function (_) {return _ * size;});
-  	var framedUv = new $runtime.PooledFloat32Array([(uv[0] + panX) / (max(zoom, 0.0010000000474974513)), (uv[1] + panY) / (max(zoom, 0.0010000000474974513))]);
+  	var framedUv = new $runtime.PooledFloat32Array([$runtime.fdiv((uv[0] + panX), max(zoom, 0.0010000000474974513)), $runtime.fdiv((uv[1] + panY), max(zoom, 0.0010000000474974513))]);
   	var cameraRay = new $runtime.PooledFloat32Array([(framedUv[0] * 2) / (focalLength * (max(viewScale, 0.0010000000474974513))), (framedUv[1] * 2) / (focalLength * (max(viewScale, 0.0010000000474974513))), -1]);
   	var direction = inverseRotation(cameraRay).map(function (_) {return _ * (size / 80);});
   	var nearT = new $runtime.PooledFloat32Array([-1.0000000150474662e+30, -1.0000000150474662e+30, -1.0000000150474662e+30]);
@@ -29151,13 +29151,13 @@ function canonicalFactory250($bindings, $runtime) {
   	(fragColor[0] = bgColor[0] * bgAlpha, fragColor[1] = bgColor[1] * bgAlpha, fragColor[2] = bgColor[2] * bgAlpha, fragColor[3] = bgAlpha, fragColor);
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 1, geoOut[3] = 1, geoOut);
   	var fullRes = fullResolution[0] > 0 ? fullResolution : resolution;
-  	var uv = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0] - fullRes[0] * 0.5) / fullRes[1], (gl_FragCoord[1] + tileOffset[1] - fullRes[1] * 0.5) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0] - fullRes[0] * 0.5), fullRes[1]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1] - fullRes[1] * 0.5), fullRes[1])]);
   	if (VIEW_MODE == 2) {
   	renderPerspective(uv);
   	} else {
   	var size = (volumeSize);
-  	var aspect = fullRes[0] / fullRes[1];
-  	var span = (((max(1.632993221282959, 1.4142135381698608 / aspect)) * size) * 1.0800000429153442) / (max(zoom, 0.0010000000474974513));
+  	var aspect = $runtime.fdiv(fullRes[0], fullRes[1]);
+  	var span = $runtime.fdiv(((max(1.632993221282959, $runtime.fdiv(1.4142135381698608, aspect))) * size) * 1.0800000429153442, max(zoom, 0.0010000000474974513));
   	var right = new $runtime.PooledFloat32Array([0.7071067690849304, 0, -0.7071067690849304]);
   	var up = new $runtime.PooledFloat32Array([-0.40824830532073975, 0.8164966106414795, -0.40824830532073975]);
   	var origin = new $runtime.PooledFloat32Array([size * 2.5 + (right[0] * (uv[0] + panX)) * span + (up[0] * (uv[1] + panY)) * span, size * 2.5 + (right[1] * (uv[0] + panX)) * span + (up[1] * (uv[1] + panY)) * span, size * 2.5 + (right[2] * (uv[0] + panX)) * span + (up[2] * (uv[1] + panY)) * span]);
@@ -29189,7 +29189,7 @@ function canonicalFactory250($bindings, $runtime) {
   	isosurfaceNormal(p, normal).reduce((res,el,i)=>(res[i] = el, res), normal);
   	};
   	new $runtime.PooledFloat32Array([...lighting(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, sampleAtlasCoords(volumeCache, hit.coords, true))), normal, new $runtime.PooledFloat32Array([0.5773502588272095, 0.5773502588272095, 0.5773502588272095])), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
-  	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp(hitDist / (size * 4), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
+  	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp($runtime.fdiv(hitDist, (size * 4)), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
   	return;
   	};
   	for (var step = 0; step < (volumeSize * 3); step++) {
@@ -29201,7 +29201,7 @@ function canonicalFactory250($bindings, $runtime) {
   	if ((density > 0) && (density >= threshold)) {
   	var color = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texelFetch(volumeCache, atlas, 0)));
   	new $runtime.PooledFloat32Array([...lighting(color, normal, new $runtime.PooledFloat32Array([0.5773502588272095, 0.5773502588272095, 0.5773502588272095])), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
-  	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp(distance / (size * 4), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
+  	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp($runtime.fdiv(distance, (size * 4)), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
   	return;
   	};
   	distance = min(min(nextT[0], nextT[1]), nextT[2]);
@@ -29315,7 +29315,7 @@ function canonicalFactory251($bindings, $runtime) {
   };
   function calcNormal (p) {
   	p = $runtime.copy(p);
-  	var eps = 2 / (volumeSize);
+  	var eps = $runtime.fdiv(2, (volumeSize));
   	var dx = getField(new $runtime.PooledFloat32Array([p[0] + eps, p[1], p[2]])) - getField(new $runtime.PooledFloat32Array([p[0] - eps, p[1], p[2]]));
   	var dy = getField(new $runtime.PooledFloat32Array([p[0], p[1] + eps, p[2]])) - getField(new $runtime.PooledFloat32Array([p[0], p[1] - eps, p[2]]));
   	var dz = getField(new $runtime.PooledFloat32Array([p[0], p[1], p[2] + eps])) - getField(new $runtime.PooledFloat32Array([p[0], p[1], p[2] - eps]));
@@ -29410,7 +29410,7 @@ function canonicalFactory251($bindings, $runtime) {
   	};
   	var tStart = bounds[0];
   	var tEnd = bounds[1];
-  	var stepSize = 1.5 / (volumeSize);
+  	var stepSize = $runtime.fdiv(1.5, (volumeSize));
   	var t = tStart instanceof Float32Array ? $runtime.copy(tStart) : tStart;
   	var prevField = getField(new $runtime.PooledFloat32Array([ro[0] + rd[0] * t, ro[1] + rd[1] * t, ro[2] + rd[2] * t]));
   	if (prevField < 0) {
@@ -29501,7 +29501,7 @@ function canonicalFactory251($bindings, $runtime) {
   	(fullRes[0] = 1024, fullRes[1] = 1024, fullRes);
   	};
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - 0.5 * fullRes[0]) / fullRes[1], (globalCoord[1] - 0.5 * fullRes[1]) / fullRes[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - 0.5 * fullRes[0]), fullRes[1]), $runtime.fdiv((globalCoord[1] - 0.5 * fullRes[1]), fullRes[1])]);
   	var ro = new $runtime.PooledFloat32Array([cameraPosition[0] * 3.5, cameraPosition[1] * 3.5, cameraPosition[2] * 3.5]);
   	var forward = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (length(ro) < 0.0010000000474974513) {
@@ -29634,8 +29634,8 @@ function canonicalFactory252($bindings, $runtime) {
   	var rotated = new $runtime.PooledFloat32Array([centered[0] * c - centered[1] * s, centered[0] * s + centered[1] * c]);
   	var coord = new $runtime.PooledFloat32Array([rotated[0] + fullResolution[0] * 0.5, rotated[1] + fullResolution[1] * 0.5]);
   	var animOffset = floor((time * cpu_float(-speed|0)) * 256)|0;
-  	var x = (floor(coord[0] / pixelScale)|0) + offsetX + animOffset;
-  	var y = (floor(coord[1] / pixelScale)|0) + offsetY;
+  	var x = (floor($runtime.fdiv(coord[0], pixelScale))|0) + offsetX + animOffset;
+  	var y = (floor($runtime.fdiv(coord[1], pixelScale))|0) + offsetY;
   	x = x ^ seed;
   	y = y ^ (seed * 3);
   	var v = 0;
@@ -29650,7 +29650,7 @@ function canonicalFactory252($bindings, $runtime) {
   	(fragColor[0] = r, fragColor[1] = g, fragColor[2] = b, fragColor[3] = 1, fragColor);
   	} else {
   	v = bitOp(x, y, operation, mask);
-  	var hueScale = (mask) / (cpu_float(mask + 1));
+  	var hueScale = $runtime.fdiv((mask), cpu_float(mask + 1));
   	new $runtime.PooledFloat32Array([...hsv2rgb(new $runtime.PooledFloat32Array([v * hueScale, 1, 1])), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	};
   	};
@@ -29738,9 +29738,9 @@ function canonicalFactory253($bindings, $runtime) {
   };
   function cells (st, freq, cellSize, sides) {
   	st = $runtime.copy(st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
-  	(st[0] += (0.5 * fullResolution[0]) / fullResolution[1], st[1] += 0.5, st);
+  	(st[0] += $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] += 0.5, st);
   	new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, prng(new $runtime.PooledFloat32Array([(seed), (seed), (seed)])))).reduce((res,el,i)=>(res[i] += el, res), st);
   	var i = floor(st);
   	var f = fract(st);
@@ -29769,7 +29769,7 @@ function canonicalFactory253($bindings, $runtime) {
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var color = new $runtime.PooledFloat32Array([0, 0, 1, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var freq = map(scale, 1, 100, 20, 1);
   	var cellSize = map(cellScale, 1, 100, 3, 0.75);
   	var d = cells(st, freq, cellSize, metric);
@@ -29914,45 +29914,45 @@ function canonicalFactory254($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var state = 0;
   	if (smoothing == 0) {
-  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]));
+  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]));
   	} else {
   	if (smoothing == 3) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = catmullRom3x3(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 4) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = catmullRom4x4(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 5) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = quadratic(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 6) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = bicubic(fbTex, uv, texelSize)[1];
   	} else {
   	var texSize = textureSize(fbTex, 0);
-  	var nd2 = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var nd2 = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
   	var xy = new $runtime.PooledFloat32Array([globalCoord[0] - nd2[0] * 0.5, globalCoord[1] - nd2[1] * 0.5]);
-  	var v00 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([xy[0] / fullResolution[0], xy[1] / fullResolution[1]]));
-  	var v10 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1]) / fullResolution[1]]));
-  	var v01 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
-  	var v11 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
-  	var xAmount = fract(xy[0] / nd2[0]);
-  	var yAmount = fract(xy[1] / nd2[1]);
+  	var v00 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv(xy[0], fullResolution[0]), $runtime.fdiv(xy[1], fullResolution[1])]));
+  	var v10 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv((xy[0] + nd2[0]), fullResolution[0]), $runtime.fdiv((xy[1]), fullResolution[1])]));
+  	var v01 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv((xy[0]), fullResolution[0]), $runtime.fdiv((xy[1] + nd2[1]), fullResolution[1])]));
+  	var v11 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv((xy[0] + nd2[0]), fullResolution[0]), $runtime.fdiv((xy[1] + nd2[1]), fullResolution[1])]));
+  	var xAmount = fract($runtime.fdiv(xy[0], nd2[0]));
+  	var yAmount = fract($runtime.fdiv(xy[1], nd2[1]));
   	if (smoothing == 1) {
   	var v0 = mix(v00, v10, xAmount);
   	var v1 = mix(v01, v11, xAmount);
@@ -30152,8 +30152,8 @@ function canonicalFactory255($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(bufTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var state = cpu_texture_r(bufTex, uv);
   	var bufState = texture(bufTex, uv);
   	var bufferIsEmpty = ((bufState[0] == 0) && (bufState[1] == 0) && (bufState[2] == 0) && (bufState[3] == 0));
@@ -30308,8 +30308,8 @@ function canonicalFactory256($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var aspect = fullResolution[0] / fullResolution[1];
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var aspect = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var centered = new $runtime.PooledFloat32Array([(uv[0] - 0.5) * aspect, (uv[1] - 0.5)]);
   	var p = new $runtime.PooledFloat32Array([centered[0] * (21 - scale), centered[1] * (21 - scale), 0.5]);
   	var curl = curlNoise3D(p);
@@ -30412,7 +30412,7 @@ function canonicalFactory257($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var freq = map(scale, 1, 100, 20, 1);
   	var sigma = map(bandwidth, 1, 100, 0.05000000074505806, 0.3499999940395355);
   	var baseAngle = (orientation * 3.1415927410125732) / 180;
@@ -30475,7 +30475,7 @@ function canonicalFactory258($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function rotate2D (st, angle) {
   	st = $runtime.copy(st);
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	st[0] *= aspectRatio;
   	(st[0] -= aspectRatio * 0.5, st[1] -= 0.5, st);
   	var c = cos(angle);
@@ -30548,8 +30548,8 @@ function canonicalFactory258($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
-  	var aspectRatio = fullResolution[0] / fullResolution[1];
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var angle = (-rotation * 3.1415927410125732) / 180;
   	var rotatedSt = rotate2D(st, angle);
   	var centered = new $runtime.PooledFloat32Array([st[0] - 0.5, st[1] - 0.5]);
@@ -30675,7 +30675,7 @@ function canonicalFactory259($bindings, $runtime) {
   	p = $runtime.copy(p);
   	var r = length(p);
   	var theta = atan(p[1], p[0]) - 1.5707963705062866;
-  	var wedge = 6.2831854820251465 / (symmetry);
+  	var wedge = $runtime.fdiv(6.2831854820251465, (symmetry));
   	var twistRad = (twist * 3.1415927410125732) / 180;
   	var baseSize = 0.25 + thickness * 0.6499999761581421;
   	var dynTwistRad = twistRad instanceof Float32Array ? $runtime.copy(twistRad) : twistRad;
@@ -30707,7 +30707,7 @@ function canonicalFactory259($bindings, $runtime) {
   	var tangent = folded * Rlayer;
   	var lt = 0;
   	if (layers > 1) {
-  	lt = (i) / (cpu_float(layers - 1)) - 0.5;
+  	lt = $runtime.fdiv((i), cpu_float(layers - 1)) - 0.5;
   	};
   	var shapeSize = baseSize * (1 + shapeGrowth * lt);
   	if (animation == 6) {
@@ -30731,7 +30731,7 @@ function canonicalFactory259($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	(st[0] = (st[0] - 0.5) * 2, st[1] = (st[1] - 0.5) * 2, st);
   	st[0] *= aspect;
   	var rad = (rotation * 3.1415927410125732) / 180;
@@ -30896,7 +30896,7 @@ function canonicalFactory260($bindings, $runtime) {
   	fragCoord = $runtime.copy(fragCoord);
   	cX_df = $runtime.copy(cX_df);
   	cY_df = $runtime.copy(cY_df);
-  	var uv = new $runtime.PooledFloat32Array([(fragCoord[0] - 0.5 * fullResolution[0]) / (min(fullResolution[0], fullResolution[1])), (fragCoord[1] - 0.5 * fullResolution[1]) / (min(fullResolution[0], fullResolution[1]))]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((fragCoord[0] - 0.5 * fullResolution[0]), min(fullResolution[0], fullResolution[1])), $runtime.fdiv((fragCoord[1] - 0.5 * fullResolution[1]), min(fullResolution[0], fullResolution[1]))]);
   	var angle = (-rot * TAU) / 360;
   	var c = cos(angle);
   	var s = sin(angle);
@@ -31043,7 +31043,7 @@ function canonicalFactory260($bindings, $runtime) {
   	fragCoord = $runtime.copy(fragCoord);
   	cX_df = $runtime.copy(cX_df);
   	cY_df = $runtime.copy(cY_df);
-  	var eps = 1 / (min(fullResolution[0], fullResolution[1]));
+  	var eps = $runtime.fdiv(1, min(fullResolution[0], fullResolution[1]));
   	var h0 = computeValueAt_df64(fragCoord, cX_df, cY_df, z_zoom, rot, maxIter);
   	var hx = computeValueAt_df64(new $runtime.PooledFloat32Array([fragCoord[0] + 1, fragCoord[1]]), cX_df, cY_df, z_zoom, rot, maxIter);
   	var hy = computeValueAt_df64(new $runtime.PooledFloat32Array([fragCoord[0], fragCoord[1] + 1]), cX_df, cY_df, z_zoom, rot, maxIter);
@@ -31182,7 +31182,7 @@ function canonicalFactory261($bindings, $runtime) {
   	var size = imageSize instanceof Float32Array ? $runtime.copy(imageSize) : imageSize;
   	(st[0] = gl_FragCoord[0] / size[0], st[1] = gl_FragCoord[1] / size[1], st);
   	st[1] = 1 - st[1];
-  	var scale = 100 / scaleAmt;
+  	var scale = $runtime.fdiv(100, scaleAmt);
   	if (scale == 0) {
   	scale = 1;
   	};
@@ -31316,7 +31316,7 @@ function canonicalFactory261($bindings, $runtime) {
   	return text;
   };
   function main () {
-  	var st = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	st[1] = 1 - st[1];
   	getImage(st).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
@@ -31458,45 +31458,45 @@ function canonicalFactory262($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var state = 0;
   	if (smoothing == 0) {
-  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]));
+  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]));
   	} else {
   	if (smoothing == 3) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = catmullRom3x3(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 4) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = catmullRom4x4(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 5) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = quadratic(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 6) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = bicubic(fbTex, uv, texelSize)[1];
   	} else {
   	var texSize = textureSize(fbTex, 0);
-  	var nd2 = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
+  	var nd2 = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
   	var xy = new $runtime.PooledFloat32Array([globalCoord[0] - nd2[0] * 0.5, globalCoord[1] - nd2[1] * 0.5]);
-  	var v00 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([xy[0] / fullResolution[0], xy[1] / fullResolution[1]]));
-  	var v10 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1]) / fullResolution[1]]));
-  	var v01 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
-  	var v11 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([(xy[0] + nd2[0]) / fullResolution[0], (xy[1] + nd2[1]) / fullResolution[1]]));
-  	var xAmount = fract(xy[0] / nd2[0]);
-  	var yAmount = fract(xy[1] / nd2[1]);
+  	var v00 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv(xy[0], fullResolution[0]), $runtime.fdiv(xy[1], fullResolution[1])]));
+  	var v10 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv((xy[0] + nd2[0]), fullResolution[0]), $runtime.fdiv((xy[1]), fullResolution[1])]));
+  	var v01 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv((xy[0]), fullResolution[0]), $runtime.fdiv((xy[1] + nd2[1]), fullResolution[1])]));
+  	var v11 = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv((xy[0] + nd2[0]), fullResolution[0]), $runtime.fdiv((xy[1] + nd2[1]), fullResolution[1])]));
+  	var xAmount = fract($runtime.fdiv(xy[0], nd2[0]));
+  	var yAmount = fract($runtime.fdiv(xy[1], nd2[1]));
   	if (smoothing == 1) {
   	var v0 = mix(v00, v10, xAmount);
   	var v1 = mix(v01, v11, xAmount);
@@ -31645,8 +31645,8 @@ function canonicalFactory263($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(bufTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var state = cpu_texture_r(bufTex, uv);
   	var bufState = texture(bufTex, uv);
   	var bufferIsEmpty = ((bufState[0] == 0) && (bufState[1] == 0) && (bufState[2] == 0) && (bufState[3] == 0));
@@ -31731,7 +31731,7 @@ function canonicalFactory264($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - fullResolution[0] * 0.5) / (min(fullResolution[0], fullResolution[1])), (globalCoord[1] - fullResolution[1] * 0.5) / (min(fullResolution[0], fullResolution[1]))]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - fullResolution[0] * 0.5), min(fullResolution[0], fullResolution[1])), $runtime.fdiv((globalCoord[1] - fullResolution[1] * 0.5), min(fullResolution[0], fullResolution[1]))]);
   	var spd = floor(speed);
   	var anim = time * spd;
   	var s1 = 20.100000381469727 - scale1;
@@ -31813,7 +31813,7 @@ function canonicalFactory265($bindings, $runtime) {
   	var texSize = textureSize(fbTex, 0);
   	var minIdx = cpu_ivec2(0);
   	var maxIdx = ivec2.subtract([], texSize, cpu_ivec2(1));
-  	var texelPos = new $runtime.PooledFloat32Array([((globalCoord[0] * texSize[0]) / fullResolution[0]) - 0.5, ((globalCoord[1] * texSize[1]) / fullResolution[1]) - 0.5]);
+  	var texelPos = new $runtime.PooledFloat32Array([($runtime.fdiv(globalCoord[0] * texSize[0], fullResolution[0])) - 0.5, ($runtime.fdiv(globalCoord[1] * texSize[1], fullResolution[1])) - 0.5]);
   	var baseI = cpu_ivec2_vec2(floor(texelPos));
   	var f = fract(texelPos);
   	var v00 = texelFetch(fbTex, clamp(baseI, minIdx, maxIdx), 0)[2];
@@ -31827,7 +31827,7 @@ function canonicalFactory265($bindings, $runtime) {
   	var outCol = new $runtime.PooledFloat32Array([intensity, intensity, intensity]);
   	var blend = (clamp(inputIntensity, 0, 100)) * 0.009999999776482582;
   	if (blend > 0) {
-  	var inputUv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var inputUv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var inputColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, inputUv)));
   	mix(outCol, inputColor, blend).reduce((res,el,i)=>(res[i] = el, res), outCol);
   	};
@@ -31876,7 +31876,7 @@ function canonicalFactory266($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(bufTex, 0);
   	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
-  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(fragCoord[0], texSize[0]), $runtime.fdiv(fragCoord[1], texSize[1])]);
   	var here = texelFetch(bufTex, clamp(cpu_ivec2_vec2(fragCoord), cpu_ivec2(0), ivec2.subtract([], texSize, cpu_ivec2(1))), 0);
   	var u = new $runtime.PooledFloat32Array([here[0], here[1]]);
   	var dt = (clamp(speed, 0, 200)) * 0.00009999999747378752;
@@ -31912,8 +31912,8 @@ function canonicalFactory267($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(velTex, 0);
   	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(fragCoord[0], texSize[0]), $runtime.fdiv(fragCoord[1], texSize[1])]);
   	var uR = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]))));
   	var uL = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]))));
   	var uT = new $runtime.PooledFloat32Array([0, 1].map(function (x, i) { return this[x]}, texture(velTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]))));
@@ -31961,8 +31961,8 @@ function canonicalFactory268($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(velTex, 0);
   	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(fragCoord[0], texSize[0]), $runtime.fdiv(fragCoord[1], texSize[1])]);
   	var pR = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]));
   	var pL = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]));
   	var pT = cpu_texture_r(pressureTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]));
@@ -32004,8 +32004,8 @@ function canonicalFactory269($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(bufTex, 0);
   	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(fragCoord[0], texSize[0]), $runtime.fdiv(fragCoord[1], texSize[1])]);
   	var pR = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]]));
   	var pL = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0] - texel[0], uv[1]]));
   	var pT = cpu_texture_r(bufTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]]));
@@ -32077,7 +32077,7 @@ function canonicalFactory270($bindings, $runtime) {
   	var texSize = textureSize(canvasTex, 0);
   	var minIdx = cpu_ivec2(0);
   	var maxIdx = ivec2.subtract([], texSize, cpu_ivec2(1));
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var texelPos = new $runtime.PooledFloat32Array([uv[0] * texSize[0] - 0.5, uv[1] * texSize[1] - 0.5]);
   	var baseI = cpu_ivec2_vec2(floor(texelPos));
   	var f = fract(texelPos);
@@ -32203,7 +32203,7 @@ function canonicalFactory271($bindings, $runtime) {
   function main () {
   	var texSize = textureSize(bufTex, 0);
   	var fragCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]);
-  	var uv = new $runtime.PooledFloat32Array([fragCoord[0] / texSize[0], fragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(fragCoord[0], texSize[0]), $runtime.fdiv(fragCoord[1], texSize[1])]);
   	var prev = texture(bufTex, uv);
   	var bufferEmpty = (prev[3] == 0);
   	if (resetState || bufferEmpty) {
@@ -32217,7 +32217,7 @@ function canonicalFactory271($bindings, $runtime) {
   	var radius = 0.10000000149011612 + 0.05999999865889549 * (hash11(idf * 2.109999895095825 + seedF));
   	var d = new $runtime.PooledFloat32Array([uv[0] - c[0], uv[1] - c[1]]);
   	var r2 = dot(d, d);
-  	var falloff = exp(-r2 / ((2 * radius) * radius));
+  	var falloff = exp($runtime.fdiv(-r2, ((2 * radius) * radius)));
   	var tangent = new $runtime.PooledFloat32Array([-d[1], d[0]]);
   	(vel[0] += ((tangent[0] * sign) * falloff) * 12, vel[1] += ((tangent[1] * sign) * falloff) * 12, vel);
   	dye += falloff;
@@ -32231,7 +32231,7 @@ function canonicalFactory271($bindings, $runtime) {
   	var iForce = (clamp(inputForce, 0, 100)) * 0.009999999776482582;
   	var iDye = (clamp(inputDye, 0, 100)) * 0.009999999776482582;
   	if ((iForce > 0) || (iDye > 0)) {
-  	var texel = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
+  	var texel = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
   	var lc = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv))));
   	var lr = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + texel[0], uv[1]])))));
   	var lu = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + texel[1]])))));
@@ -32346,7 +32346,7 @@ function canonicalFactory272($bindings, $runtime) {
   	fragCoord = $runtime.copy(fragCoord);
   	cX_df = $runtime.copy(cX_df);
   	cY_df = $runtime.copy(cY_df);
-  	var uv = new $runtime.PooledFloat32Array([(fragCoord[0] - 0.5 * fullResolution[0]) / (min(fullResolution[0], fullResolution[1])), (fragCoord[1] - 0.5 * fullResolution[1]) / (min(fullResolution[0], fullResolution[1]))]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((fragCoord[0] - 0.5 * fullResolution[0]), min(fullResolution[0], fullResolution[1])), $runtime.fdiv((fragCoord[1] - 0.5 * fullResolution[1]), min(fullResolution[0], fullResolution[1]))]);
   	var angle = (-rot * TAU) / 360;
   	var c = cos(angle);
   	var s = sin(angle);
@@ -32453,7 +32453,7 @@ function canonicalFactory272($bindings, $runtime) {
   	if (k >= numRoots) {
   	break;
   	};
-  	var angle = (TAU * (k)) / (intDeg);
+  	var angle = $runtime.fdiv(TAU * (k), (intDeg));
   	(roots[k][0] = cos(angle), roots[k][1] = sin(angle), roots[k]);
   	};
   	var iter = 0;
@@ -32489,7 +32489,7 @@ function canonicalFactory272($bindings, $runtime) {
   	break;
   	};
   	var denom = fpzr_f * fpzr_f + fpzi_f * fpzi_f;
-  	var inv_denom = 1 / denom;
+  	var inv_denom = $runtime.fdiv(1, denom);
   	var nr = df64_add(df64_mul(fzr, fpzr), df64_mul(fzi, fpzi));
   	var ni = df64_sub(df64_mul(fzi, fpzr), df64_mul(fzr, fpzi));
   	var dr = df64_mul_f(nr, inv_denom);
@@ -32521,21 +32521,21 @@ function canonicalFactory272($bindings, $runtime) {
   	};
   	var smoothIter = iter instanceof Float32Array ? $runtime.copy(iter) : iter;
   	if ((convergedRoot >= 0) && (convergeDist > 0) && (convergeDist < tolerance)) {
-  	smoothIter = iter - log2(log(convergeDist) / log(tolerance));
+  	smoothIter = iter - log2($runtime.fdiv(log(convergeDist), log(tolerance)));
   	};
   	var value = 0;
   	var maxIterF = (maxIter);
   	var numRootsF = (numRoots);
   	if (outMode == 0) {
-  	value = smoothIter / maxIterF;
+  	value = $runtime.fdiv(smoothIter, maxIterF);
   	} else {
   	if (outMode == 1) {
   	if (convergedRoot >= 0) {
-  	value = (convergedRoot) / numRootsF;
+  	value = $runtime.fdiv((convergedRoot), numRootsF);
   	};
   	} else {
   	if (convergedRoot >= 0) {
-  	value = ((convergedRoot) + smoothIter / maxIterF) / numRootsF;
+  	value = $runtime.fdiv(((convergedRoot) + $runtime.fdiv(smoothIter, maxIterF)), numRootsF);
   	};
   	};
   	};
@@ -32877,24 +32877,24 @@ function canonicalFactory273($bindings, $runtime) {
   };
   function circles (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return dist * freq;
   };
   function rings (st, freq) {
   	st = $runtime.copy(st);
-  	var dist = length(new $runtime.PooledFloat32Array([st[0] - (0.5 * fullResolution[0]) / fullResolution[1], st[1] - 0.5]));
+  	var dist = length(new $runtime.PooledFloat32Array([st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] - 0.5]));
   	return cos((dist * 3.1415927410125732) * freq);
   };
   function diamonds (st, freq) {
   	st = $runtime.copy(st);
-  	(st[0] = globalCoord[0] / fullResolution[1], st[1] = globalCoord[1] / fullResolution[1], st);
-  	(st[0] -= (0.5 * fullResolution[0]) / fullResolution[1], st[1] -= 0.5, st);
+  	(st[0] = $runtime.fdiv(globalCoord[0], fullResolution[1]), st[1] = $runtime.fdiv(globalCoord[1], fullResolution[1]), st);
+  	(st[0] -= $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1]), st[1] -= 0.5, st);
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
   	return (cos(st[0] * 3.1415927410125732) + cos(st[1] * 3.1415927410125732));
   };
   function shape (st, sides, blend) {
   	st = $runtime.copy(st);
-  	(st[0] = st[0] * 2 - fullResolution[0] / fullResolution[1], st[1] = st[1] * 2 - 1, st);
+  	(st[0] = st[0] * 2 - $runtime.fdiv(fullResolution[0], fullResolution[1]), st[1] = st[1] * 2 - 1, st);
   	var a = atan(st[0], st[1]) + 3.1415927410125732;
   	var r = 6.2831854820251465 / (sides);
   	return (cos((floor(0.5 + a / r)) * r - a)) * length(st) * blend;
@@ -32909,7 +32909,7 @@ function canonicalFactory273($bindings, $runtime) {
   	return shape(st, 3, freq[0] * 0.5);
   	} else {
   	if (LOOP_OFFSET == 30) {
-  	return ((abs(st[0] - (0.5 * fullResolution[0]) / fullResolution[1]) + abs(st[1] - 0.5)) * freq[0]) * 0.5;
+  	return ((abs(st[0] - $runtime.fdiv(0.5 * fullResolution[0], fullResolution[1])) + abs(st[1] - 0.5)) * freq[0]) * 0.5;
   	} else {
   	if (LOOP_OFFSET == 40) {
   	return shape(st, 4, freq[0] * 0.5);
@@ -32945,7 +32945,7 @@ function canonicalFactory273($bindings, $runtime) {
   	return (st[1] * freq[0]) * 0.5;
   	} else {
   	if (LOOP_OFFSET == 300) {
-  	(st[0] -= (fullResolution[0] / fullResolution[1]) * 0.5, st[1] -= 0.5, st);
+  	(st[0] -= ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] -= 0.5, st);
   	return value(st, freq, (seed) + 50, 0);
   	} else {
   	if (LOOP_OFFSET == 400) {
@@ -33012,8 +33012,8 @@ function canonicalFactory273($bindings, $runtime) {
   function main () {
   	(globalCoord[0] = gl_FragCoord[0] + tileOffset[0], globalCoord[1] = gl_FragCoord[1] + tileOffset[1], globalCoord);
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 1]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
-  	var centered = new $runtime.PooledFloat32Array([st[0] - (fullResolution[0] / fullResolution[1]) * 0.5, st[1] - 0.5]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	var centered = new $runtime.PooledFloat32Array([st[0] - ($runtime.fdiv(fullResolution[0], fullResolution[1])) * 0.5, st[1] - 0.5]);
   	var freq = new $runtime.PooledFloat32Array([1, 1]);
   	var lf = new $runtime.PooledFloat32Array([1, 1]);
   	if (NOISE_TYPE == 11) {
@@ -33133,7 +33133,7 @@ function canonicalFactory274($bindings, $runtime) {
   	if (res[0] < 1) {
   	(res[0] = 1024, res[1] = 1024, res);
   	};
-  	var st = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / res[0], (gl_FragCoord[1] + tileOffset[1]) / res[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), res[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), res[1])]);
   	st = new $runtime.PooledFloat32Array([st[0] - 0.5, st[1] - 0.5]);
   	st[0] *= aspect;
   	var rotRad = (rotation * PI) / 180;
@@ -33334,7 +33334,7 @@ function canonicalFactory275($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	(st[0] = (st[0] - 0.5) * 2, st[1] = (st[1] - 0.5) * 2, st);
   	st[0] *= aspect;
   	var rad = (rotation * 3.1415927410125732) / 180;
@@ -33629,10 +33629,10 @@ function canonicalFactory276($bindings, $runtime) {
   	if (res[0] < 1) {
   	(res[0] = 1024, res[1] = 1024, res);
   	};
-  	var st = new $runtime.PooledFloat32Array([(gl_FragCoord[0] + tileOffset[0]) / res[0], (gl_FragCoord[1] + tileOffset[1]) / res[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + tileOffset[0]), res[0]), $runtime.fdiv((gl_FragCoord[1] + tileOffset[1]), res[1])]);
   	st = new $runtime.PooledFloat32Array([st[0] - 0.5, st[1] - 0.5]);
   	st[0] *= aspect;
-  	var freq = max(0.10000000149011612, 100 / (max(scale, 0.009999999776482582)));
+  	var freq = max(0.10000000149011612, $runtime.fdiv(100, max(scale, 0.009999999776482582)));
   	st = new $runtime.PooledFloat32Array([st[0] * freq, st[1] * freq]);
   	st = new $runtime.PooledFloat32Array([st[0] + 1000, st[1] + 1000]);
   	var timeAngle = (time * speed) * TAU;
@@ -33698,7 +33698,7 @@ function canonicalFactory277($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	(st[0] = (st[0] - 0.5) * 2, st[1] = (st[1] - 0.5) * 2, st);
   	st[0] *= aspect;
   	var c = cos((rotation * 3.1415927410125732) / 180);
@@ -33710,12 +33710,12 @@ function canonicalFactory277($bindings, $runtime) {
   	var cpu_vector_assignment_1 = new $runtime.PooledFloat32Array([st[1], -st[0]]);
   	(st[0] = cpu_vector_assignment_1[0], st[1] = cpu_vector_assignment_1[1], st);
   	};
-  	var d = (polygon(st, sidesF)) / (cos(3.1415927410125732 / sidesF));
+  	var d = $runtime.fdiv(polygon(st, sidesF), cos($runtime.fdiv(3.1415927410125732, sidesF)));
   	var m = smoothing == 0 ? (d <= radius ? 1 : 0) : smoothstep(radius, radius - smoothing, d);
   	var fgMask = m * fgAlpha;
   	var bgMask = (1 - m) * bgAlpha;
   	var totalAlpha = fgMask + bgMask;
-  	var outColor = totalAlpha > 0 ? new $runtime.PooledFloat32Array([(fgColor[0] * fgMask + bgColor[0] * bgMask) / totalAlpha, (fgColor[1] * fgMask + bgColor[1] * bgMask) / totalAlpha, (fgColor[2] * fgMask + bgColor[2] * bgMask) / totalAlpha]) : new $runtime.PooledFloat32Array([0, 0, 0]);
+  	var outColor = totalAlpha > 0 ? new $runtime.PooledFloat32Array([$runtime.fdiv((fgColor[0] * fgMask + bgColor[0] * bgMask), totalAlpha), $runtime.fdiv((fgColor[1] * fgMask + bgColor[1] * bgMask), totalAlpha), $runtime.fdiv((fgColor[2] * fgMask + bgColor[2] * bgMask), totalAlpha)]) : new $runtime.PooledFloat32Array([0, 0, 0]);
   	(fragColor[0] = outColor[0] * totalAlpha, fragColor[1] = outColor[1] * totalAlpha, fragColor[2] = outColor[2] * totalAlpha, fragColor[3] = totalAlpha, fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -33861,11 +33861,11 @@ function canonicalFactory278($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var state = 0;
   	if (smoothing == 0) {
-  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]));
+  	state = cpu_texture_g(fbTex, new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]));
   	} else {
   	if (smoothing == 2) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelPos = new $runtime.PooledFloat32Array([((globalCoord[0] * texSize[0]) / fullResolution[0]) - 0.5, ((globalCoord[1] * texSize[1]) / fullResolution[1]) - 0.5]);
+  	var texelPos = new $runtime.PooledFloat32Array([($runtime.fdiv(globalCoord[0] * texSize[0], fullResolution[0])) - 0.5, ($runtime.fdiv(globalCoord[1] * texSize[1], fullResolution[1])) - 0.5]);
   	var base = floor(texelPos);
   	var weights = fract(texelPos);
   	var next = new $runtime.PooledFloat32Array([base[0] + 1, base[1] + 1]);
@@ -33885,34 +33885,34 @@ function canonicalFactory278($bindings, $runtime) {
   	} else {
   	if (smoothing == 3) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = catmullRom3x3(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 4) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = catmullRom4x4(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 5) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = quadratic(fbTex, uv, texelSize)[1];
   	} else {
   	if (smoothing == 6) {
   	var texSize = textureSize(fbTex, 0);
-  	var texelSize = new $runtime.PooledFloat32Array([1 / texSize[0], 1 / texSize[1]]);
-  	var scaling = new $runtime.PooledFloat32Array([fullResolution[0] / texSize[0], fullResolution[1] / texSize[1]]);
-  	var uv = new $runtime.PooledFloat32Array([(globalCoord[0] - scaling[0] * 0.5) / fullResolution[0], (globalCoord[1] - scaling[1] * 0.5) / fullResolution[1]]);
+  	var texelSize = new $runtime.PooledFloat32Array([$runtime.fdiv(1, texSize[0]), $runtime.fdiv(1, texSize[1])]);
+  	var scaling = new $runtime.PooledFloat32Array([$runtime.fdiv(fullResolution[0], texSize[0]), $runtime.fdiv(fullResolution[1], texSize[1])]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv((globalCoord[0] - scaling[0] * 0.5), fullResolution[0]), $runtime.fdiv((globalCoord[1] - scaling[1] * 0.5), fullResolution[1])]);
   	state = bicubic(fbTex, uv, texelSize)[1];
   	} else {
   	var texSize = textureSize(fbTex, 0);
-  	var texelPos = new $runtime.PooledFloat32Array([((globalCoord[0] * texSize[0]) / fullResolution[0]) - 0.5, ((globalCoord[1] * texSize[1]) / fullResolution[1]) - 0.5]);
+  	var texelPos = new $runtime.PooledFloat32Array([($runtime.fdiv(globalCoord[0] * texSize[0], fullResolution[0])) - 0.5, ($runtime.fdiv(globalCoord[1] * texSize[1], fullResolution[1])) - 0.5]);
   	var base = floor(texelPos);
   	var weights = fract(texelPos);
   	var next = new $runtime.PooledFloat32Array([base[0] + 1, base[1] + 1]);
@@ -33944,7 +33944,7 @@ function canonicalFactory278($bindings, $runtime) {
   	var rdColor = new $runtime.PooledFloat32Array([intensity, intensity, intensity]);
   	var blend = inputIntensity * 0.009999999776482582;
   	if (blend > 0) {
-  	var inputUv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var inputUv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var inputColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, inputUv)));
   	mix(rdColor, inputColor, blend).reduce((res,el,i)=>(res[i] = el, res), rdColor);
   	};
@@ -34014,7 +34014,7 @@ function canonicalFactory279($bindings, $runtime) {
   };
   function main () {
   	var texSize = textureSize(bufTex, 0);
-  	var tex = texture(bufTex, new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]));
+  	var tex = texture(bufTex, new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]));
   	var a = tex[0];
   	var b = tex[1];
   	var bufferIsEmpty = ((tex[0] == 0) && (tex[1] == 0) && (tex[2] == 0) && (tex[3] == 0));
@@ -34028,7 +34028,7 @@ function canonicalFactory279($bindings, $runtime) {
   	return;
   	};
   	var color = lp(bufTex, new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), texSize);
-  	var prevFrameCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var prevFrameCoord = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	var prevFrame = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, prevFrameCoord)));
   	var prevLum = lum(prevFrame);
   	var f = feed * 0.0010000000474974513;
@@ -34158,7 +34158,7 @@ function canonicalFactory279($bindings, $runtime) {
 }
 
 function canonicalFactory280($bindings, $runtime) {
-  const { bool, vec2, sqrt, min, max, clamp, smoothstep, dot, lessThan, greaterThan, any, all, multiply, divide, texture } = $runtime.stdlib
+  const { bool, vec2, sqrt, min, max, clamp, smoothstep, dot, lessThan, greaterThan, any, all, multiply, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   var data = $bindings["data"];
@@ -34245,14 +34245,14 @@ function canonicalFactory280($bindings, $runtime) {
   function main () {
   	var globalPx = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var q = new $runtime.PooledFloat32Array([globalPx[0], fullResolution[1] - globalPx[1]]);
-  	var p = new $runtime.PooledFloat32Array([q[0] / fullResolution[0], q[1] / fullResolution[1]]);
-  	var sampleUv = vec2.divide([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), new $runtime.PooledFloat32Array([data[266], 1]));
+  	var p = new $runtime.PooledFloat32Array([$runtime.fdiv(q[0], fullResolution[0]), $runtime.fdiv(q[1], fullResolution[1])]);
+  	var sampleUv = vec2.divideMetal([], new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]), new $runtime.PooledFloat32Array([data[266], 1]));
   	var header = data[0];
   	var controls = data[1];
   	var activeCount = min(controls[0]|0, 8);
   	var featherPx = ((max(controls[1], 0)) * 0.05000000074505806) * (min(fullResolution[0], fullResolution[1]));
   	var needDist = featherPx > 0;
-  	var dilate = new $runtime.PooledFloat32Array([featherPx / fullResolution[0], featherPx / fullResolution[1]]);
+  	var dilate = new $runtime.PooledFloat32Array([$runtime.fdiv(featherPx, fullResolution[0]), $runtime.fdiv(featherPx, fullResolution[1])]);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   	for (var k = 0; k < 8; k++) {
   	var z = activeCount - 1 - k;
@@ -34316,7 +34316,7 @@ function canonicalFactory281($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var texSize = textureSize(inputTex, 0);
-  	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / texSize[0], gl_FragCoord[1] / texSize[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], texSize[0]), $runtime.fdiv(gl_FragCoord[1], texSize[1])]);
   	texture(inputTex, uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
@@ -34344,7 +34344,7 @@ function canonicalFactory282($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var scrollAmount = (speed * deltaTime) * 0.5;
   	var scrollUv = new $runtime.PooledFloat32Array([uv[0] - scrollAmount, uv[1]]);
   	var prev = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
@@ -34362,7 +34362,7 @@ function canonicalFactory282($bindings, $runtime) {
   	var keyFrac = fract(keyExact);
   	var maxVel = 0;
   	var lanePixels = fullResolution[1] / 16;
-  	var keysPerPixel = (keyRange) / lanePixels;
+  	var keysPerPixel = $runtime.fdiv((keyRange), lanePixels);
   	var spread = max(1, ceil(keysPerPixel)|0);
   	for (var dk = -spread; dk <= spread; dk++) {
   	var k = clamp(key + dk, 0, 127);
@@ -34372,7 +34372,7 @@ function canonicalFactory282($bindings, $runtime) {
   	maxVel = max(maxVel, noteData[0]);
   	};
   	};
-  	var edgeWidth = 4 / fullResolution[0];
+  	var edgeWidth = $runtime.fdiv(4, fullResolution[0]);
   	var noteVal = 0;
   	if ((uv[0] < edgeWidth) && (maxVel > 0)) {
   	noteVal = maxVel * gain;
@@ -34635,7 +34635,7 @@ function canonicalFactory283($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	(st[0] = (st[0] - 0.5) * 2, st[1] = (st[1] - 0.5) * 2, st);
   	st[0] *= aspect;
   	var rad = (rotation * 3.1415927410125732) / 180;
@@ -34705,7 +34705,7 @@ function canonicalFactory284($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var fIndex = uv[0] * 127;
   	var i0 = floor(fIndex)|0;
   	var i1 = min(i0 + 1, 127);
@@ -35069,7 +35069,7 @@ function canonicalFactory285($bindings, $runtime) {
   };
   function diamonds (st, freq) {
   	st = $runtime.copy(st);
-  	var stLocal = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
+  	var stLocal = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	(stLocal[0] -= 0.5 * aspectRatio, stLocal[1] -= 0.5, stLocal);
   	stLocal = new $runtime.PooledFloat32Array([stLocal[0] * freq, stLocal[1] * freq]);
   	return (cos(stLocal[0] * PI) + cos(stLocal[1] * PI));
@@ -35127,8 +35127,8 @@ function canonicalFactory285($bindings, $runtime) {
   function main () {
   	var color = new $runtime.PooledFloat32Array([0, 0, 0, 1]);
   	(globalCoord[0] = gl_FragCoord[0] + tileOffset[0], globalCoord[1] = gl_FragCoord[1] + tileOffset[1], globalCoord);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[1], globalCoord[1] / fullResolution[1]]);
-  	aspectRatio = fullResolution[0] / fullResolution[1];
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[1]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
+  	aspectRatio = $runtime.fdiv(fullResolution[0], fullResolution[1]);
   	var lf1 = map(loopAScale, 1, 100, 6, 1);
   	if (wrap) {
   	lf1 = floor(lf1);
@@ -35204,7 +35204,7 @@ function canonicalFactory287($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var fIndex = uv[0] * 127;
   	var i0 = floor(fIndex)|0;
   	var i1 = min(i0 + 1, 127);
@@ -35214,7 +35214,7 @@ function canonicalFactory287($bindings, $runtime) {
   	var mag = (mix(s0, s1, fract_i)) * gain;
   	var dist = (abs(uv[1] - mag)) * fullResolution[1];
   	var line = smoothstep(lineThickness + 1, lineThickness, dist);
-  	var fill = (smoothstep(mag + 1 / fullResolution[1], mag, uv[1])) * 0.15000000596046448;
+  	var fill = (smoothstep(mag + $runtime.fdiv(1, fullResolution[1]), mag, uv[1])) * 0.15000000596046448;
   	var alpha = max(line, fill);
   	(fragColor[0] = lineColor[0] * alpha, fragColor[1] = lineColor[1] * alpha, fragColor[2] = lineColor[2] * alpha, fragColor[3] = alpha, fragColor);
   };
@@ -35226,7 +35226,7 @@ function canonicalFactory287($bindings, $runtime) {
 }
 
 function canonicalFactory288($bindings, $runtime) {
-  const { float, abs, floor, fract, mod, min, max, clamp, mix, step, smoothstep, length, texture } = $runtime.stdlib
+  const { float, vec2, abs, floor, fract, mod, min, max, clamp, mix, step, smoothstep, length, subtract, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -35332,14 +35332,14 @@ function canonicalFactory288($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var st = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var st = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	var maxDepth = depth|0;
   	var dens = density / 100;
   	var fillType = fill|0;
   	var modeType = mode|0;
   	var spd = floor(speed) * 2;
-  	var outlineWidthX = (outline * renderScale) / fullResolution[0];
-  	var outlineWidthY = (outline * renderScale) / fullResolution[1];
+  	var outlineWidthX = $runtime.fdiv(outline * renderScale, fullResolution[0]);
+  	var outlineWidthY = $runtime.fdiv(outline * renderScale, fullResolution[1]);
   	var cellMin = new $runtime.PooledFloat32Array([0, 0]);
   	var cellMax = new $runtime.PooledFloat32Array([1, 1]);
   	var isOutline = false instanceof Float32Array ? $runtime.copy(false) : false;
@@ -35352,8 +35352,8 @@ function canonicalFactory288($bindings, $runtime) {
   	if (h < dens) {
   	var cellW = (cellMax[0] - cellMin[0]) * fullResolution[0];
   	var cellH = (cellMax[1] - cellMin[1]) * fullResolution[1];
-  	var canSplitH = (min(cellW, cellH * 0.5)) / (max(cellW, cellH * 0.5)) >= 0.20000000298023224;
-  	var canSplitV = (min(cellW * 0.5, cellH)) / (max(cellW * 0.5, cellH)) >= 0.20000000298023224;
+  	var canSplitH = ($runtime.fdiv(min(cellW, cellH * 0.5), max(cellW, cellH * 0.5))) >= 0.20000000298023224;
+  	var canSplitV = ($runtime.fdiv(min(cellW * 0.5, cellH), max(cellW * 0.5, cellH))) >= 0.20000000298023224;
   	if (modeType == 0) {
   	var dir = cellRand(cellMin, (level), 1, levelTime);
   	var splitDir = -1;
@@ -35423,10 +35423,10 @@ function canonicalFactory288($bindings, $runtime) {
   	var cellPixelH = cellSize[1] * fullResolution[1];
   	var minDim = min(cellPixelW, cellPixelH);
   	var centered = new $runtime.PooledFloat32Array([cellUv[0] - 0.5, cellUv[1] - 0.5]);
-  	centered[0] *= cellPixelW / minDim;
-  	centered[1] *= cellPixelH / minDim;
-  	var halfW = (cellPixelW / minDim) * 0.5;
-  	var halfH = (cellPixelH / minDim) * 0.5;
+  	centered[0] *= $runtime.fdiv(cellPixelW, minDim);
+  	centered[1] *= $runtime.fdiv(cellPixelH, minDim);
+  	var halfW = ($runtime.fdiv(cellPixelW, minDim)) * 0.5;
+  	var halfH = ($runtime.fdiv(cellPixelH, minDim)) * 0.5;
   	var visualT = time * spd + PHI * 7;
   	var curVisualTime = floor(visualT);
   	var nextVisualTime = curVisualTime + 1;
@@ -35457,20 +35457,20 @@ function canonicalFactory288($bindings, $runtime) {
   	var nextTexScale = 0.30000001192092896 + (cellRand(cellMin, 0, 5, nextVisualTime)) * 0.699999988079071;
   	var texScale = mix(curTexScale, nextTexScale, visualBlend);
   	var texUv = cellUv instanceof Float32Array ? $runtime.copy(cellUv) : cellUv;
-  	var cellAspect = (cellSize[0] * fullResolution[0]) / (cellSize[1] * fullResolution[1]);
-  	var texAspect = fullResolution[0] / fullResolution[1];
-  	var ratio = cellAspect / texAspect;
+  	var cellAspect = $runtime.fdiv((cellSize[0] * fullResolution[0]), (cellSize[1] * fullResolution[1]));
+  	var texAspect = $runtime.fdiv(fullResolution[0], fullResolution[1]);
+  	var ratio = $runtime.fdiv(cellAspect, texAspect);
   	if (ratio > 1) {
   	texUv[0] = 0.5 + (texUv[0] - 0.5) * ratio;
   	} else {
-  	texUv[1] = 0.5 + (texUv[1] - 0.5) / ratio;
+  	texUv[1] = 0.5 + $runtime.fdiv((texUv[1] - 0.5), ratio);
   	};
   	(texUv[0] = texUv[0] * texScale, texUv[1] = texUv[1] * texScale, texUv);
   	texUv[0] += (mix(cellRand(cellMin, 0, 6, curVisualTime), cellRand(cellMin, 0, 6, nextVisualTime), visualBlend)) * (1 - texScale);
   	texUv[1] += (mix(cellRand(cellMin, 0, 7, curVisualTime), cellRand(cellMin, 0, 7, nextVisualTime), visualBlend)) * (1 - texScale);
   	var wrapMode = wrap|0;
   	if (wrapMode == 0) {
-  	abs(mod(new $runtime.PooledFloat32Array([texUv[0] + 1, texUv[1] + 1]), 2).map(function (_) {return _ - 1;})).reduce((res,el,i)=>(res[i] = el, res), texUv);
+  	abs((vec2.subtract([], texUv, floor(new $runtime.PooledFloat32Array([(texUv[0] + 1) * 0.5, (texUv[1] + 1) * 0.5])).map(function (_) {return 2 * _;})))).reduce((res,el,i)=>(res[i] = el, res), texUv);
   	} else {
   	if (wrapMode == 1) {
   	mod(texUv, 1).reduce((res,el,i)=>(res[i] = el, res), texUv);
@@ -35584,7 +35584,7 @@ function canonicalFactory289($bindings, $runtime) {
   	var n = max(gridSize, 1);
   	var cellUV = fract(new $runtime.PooledFloat32Array([uv[0] * (n), uv[1] * (n)]));
   	var edge = min(cellUV, new $runtime.PooledFloat32Array([1 - cellUV[0], 1 - cellUV[1]]));
-  	var fw = new $runtime.PooledFloat32Array([(1 / fullResolution[0]) * (n), (1 / fullResolution[1]) * (n)]);
+  	var fw = new $runtime.PooledFloat32Array([($runtime.fdiv(1, fullResolution[0])) * (n), ($runtime.fdiv(1, fullResolution[1])) * (n)]);
   	var line = 1 - (smoothstep(0, 2 * fw[0], edge[0])) * (smoothstep(0, 2 * fw[1], edge[1]));
   	return new $runtime.PooledFloat32Array([line, line, line, 1]);
   };
@@ -35614,7 +35614,7 @@ function canonicalFactory289($bindings, $runtime) {
   };
   function main () {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([globalCoord[0] / fullResolution[0], globalCoord[1] / fullResolution[1]]);
+  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], fullResolution[0]), $runtime.fdiv(globalCoord[1], fullResolution[1])]);
   	if (pattern == 1) {
   	colorBars(uv).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	} else {
@@ -35732,16 +35732,16 @@ function canonicalFactory290($bindings, $runtime) {
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
   	return;
   	};
-  	var p = new $runtime.PooledFloat32Array([(x) / (volSizeF - 1) * 2 - 1, (y) / (volSizeF - 1) * 2 - 1, (z) / (volSizeF - 1) * 2 - 1]);
+  	var p = new $runtime.PooledFloat32Array([($runtime.fdiv((x), (volSizeF - 1))) * 2 - 1, ($runtime.fdiv((y), (volSizeF - 1))) * 2 - 1, ($runtime.fdiv((z), (volSizeF - 1))) * 2 - 1]);
   	var scaledP = new $runtime.PooledFloat32Array([p[0] * (16 - scale), p[1] * (16 - scale), p[2] * (16 - scale)]);
   	var result = cellNoise3D(scaledP);
   	var dist = result[0];
   	var cellId = result[1];
-  	var eps = 0.009999999776482582 / scale;
+  	var eps = $runtime.fdiv(0.009999999776482582, scale);
   	var dxp = cellNoise3D(new $runtime.PooledFloat32Array([scaledP[0] + eps, scaledP[1], scaledP[2]]))[0];
   	var dyp = cellNoise3D(new $runtime.PooledFloat32Array([scaledP[0], scaledP[1] + eps, scaledP[2]]))[0];
   	var dzp = cellNoise3D(new $runtime.PooledFloat32Array([scaledP[0], scaledP[1], scaledP[2] + eps]))[0];
-  	var gradient = new $runtime.PooledFloat32Array([(dxp - dist) / eps, (dyp - dist) / eps, (dzp - dist) / eps]);
+  	var gradient = new $runtime.PooledFloat32Array([$runtime.fdiv(dxp - dist, eps), $runtime.fdiv(dyp - dist, eps), $runtime.fdiv(dzp - dist, eps)]);
   	var normal = normalize(new $runtime.PooledFloat32Array([-gradient[0] + 9.999999974752427e-7, -gradient[1] + 9.999999974752427e-7, -gradient[2] + 9.999999974752427e-7]));
   	var normalizer = 0;
   	if (metric == 0) {
@@ -36229,7 +36229,7 @@ function canonicalFactory292($bindings, $runtime) {
   	applyCollisionAvoidance(camPos).reduce((res,el,i)=>(res[i] = el, res), camPos);
   	var camRight = normalize(cross(camDir, camUp));
   	normalize(cross(camRight, camDir)).reduce((res,el,i)=>(res[i] = el, res), camUp);
-  	var normalizedCoord = new $runtime.PooledFloat32Array([((vx) / (volSizeF - 1)) * 2 - 1, ((vy) / (volSizeF - 1)) * 2 - 1, ((vz) / (volSizeF - 1)) * 2 - 1]);
+  	var normalizedCoord = new $runtime.PooledFloat32Array([($runtime.fdiv((vx), (volSizeF - 1))) * 2 - 1, ($runtime.fdiv((vy), (volSizeF - 1))) * 2 - 1, ($runtime.fdiv((vz), (volSizeF - 1))) * 2 - 1]);
   	var halfExtent = voiSize * 0.5;
   	var voiOffset = new $runtime.PooledFloat32Array([camDir[0] * halfExtent, camDir[1] * halfExtent, camDir[2] * halfExtent]);
   	var worldPos = new $runtime.PooledFloat32Array([camPos[0] + voiOffset[0] + (camRight[0] * normalizedCoord[0]) * halfExtent + (camUp[0] * normalizedCoord[1]) * halfExtent + (camDir[0] * normalizedCoord[2]) * halfExtent, camPos[1] + voiOffset[1] + (camRight[1] * normalizedCoord[0]) * halfExtent + (camUp[1] * normalizedCoord[1]) * halfExtent + (camDir[1] * normalizedCoord[2]) * halfExtent, camPos[2] + voiOffset[2] + (camRight[2] * normalizedCoord[0]) * halfExtent + (camUp[2] * normalizedCoord[1]) * halfExtent + (camDir[2] * normalizedCoord[2]) * halfExtent]);
@@ -36442,7 +36442,7 @@ function canonicalFactory293($bindings, $runtime) {
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
   	return;
   	};
-  	var p = new $runtime.PooledFloat32Array([((x) / (volSizeF - 1) * 2 - 1) * 1.5, ((y) / (volSizeF - 1) * 2 - 1) * 1.5, ((z) / (volSizeF - 1) * 2 - 1) * 1.5]);
+  	var p = new $runtime.PooledFloat32Array([(($runtime.fdiv((x), (volSizeF - 1))) * 2 - 1) * 1.5, (($runtime.fdiv((y), (volSizeF - 1))) * 2 - 1) * 1.5, (($runtime.fdiv((z), (volSizeF - 1))) * 2 - 1) * 1.5]);
   	var juliaC = new $runtime.PooledFloat32Array([juliaX * 0.009999999776482582, juliaY * 0.009999999776482582, juliaZ * 0.009999999776482582]);
   	var result = computeFractal(p, juliaC);
   	var dist = result[0];
@@ -36681,16 +36681,16 @@ function canonicalFactory295($bindings, $runtime) {
   	(geoOut[0] = 0.5, geoOut[1] = 0.5, geoOut[2] = 0.5, geoOut[3] = 0, geoOut);
   	return;
   	};
-  	var p = new $runtime.PooledFloat32Array([(x) / (volSizeF - 1) * 2 - 1, (y) / (volSizeF - 1) * 2 - 1, (z) / (volSizeF - 1) * 2 - 1]);
+  	var p = new $runtime.PooledFloat32Array([($runtime.fdiv((x), (volSizeF - 1))) * 2 - 1, ($runtime.fdiv((y), (volSizeF - 1))) * 2 - 1, ($runtime.fdiv((z), (volSizeF - 1))) * 2 - 1]);
   	var scaledP = new $runtime.PooledFloat32Array([p[0] * scale, p[1] * scale, p[2] * scale]);
   	var w = (time * speed) * W_PERIOD;
   	var p4d = new $runtime.PooledFloat32Array([scaledP[0], scaledP[1], scaledP[2], w]);
   	var noiseVal = fbm4D(p4d);
-  	var eps = 0.009999999776482582 / scale;
+  	var eps = $runtime.fdiv(0.009999999776482582, scale);
   	var nx = fbm4D(new $runtime.PooledFloat32Array([scaledP[0] + eps, scaledP[1], scaledP[2], w]));
   	var ny = fbm4D(new $runtime.PooledFloat32Array([scaledP[0], scaledP[1] + eps, scaledP[2], w]));
   	var nz = fbm4D(new $runtime.PooledFloat32Array([scaledP[0], scaledP[1], scaledP[2] + eps, w]));
-  	var gradient = new $runtime.PooledFloat32Array([(nx - noiseVal) / eps, (ny - noiseVal) / eps, (nz - noiseVal) / eps]);
+  	var gradient = new $runtime.PooledFloat32Array([$runtime.fdiv(nx - noiseVal, eps), $runtime.fdiv(ny - noiseVal, eps), $runtime.fdiv(nz - noiseVal, eps)]);
   	var normal = normalize(new $runtime.PooledFloat32Array([-gradient[0] + 9.999999974752427e-7, -gradient[1] + 9.999999974752427e-7, -gradient[2] + 9.999999974752427e-7]));
   	if (COLOR_MODE == 0) {
   	(fragColor[0] = noiseVal, fragColor[1] = noiseVal, fragColor[2] = noiseVal, fragColor[3] = 1, fragColor);
@@ -36816,7 +36816,7 @@ function canonicalFactory296($bindings, $runtime) {
   	var r1 = (rate1 * 0.009999999776482582) / 6;
   	var r2 = (rate2 * 0.009999999776482582) / 6;
   	var iterF = max(1, (iterations));
-  	var s = (speed * 0.009999999776482582) / iterF;
+  	var s = $runtime.fdiv((speed * 0.009999999776482582), iterF);
   	var newA = a + (r1 * lap[1] - (a * b) * b + f * (1 - a)) * s;
   	var newB = b + (r2 * lap[0] + (a * b) * b - (k + f) * b) * s;
   	if (weight > 0) {
@@ -37001,15 +37001,15 @@ function canonicalFactory297($bindings, $runtime) {
   	var yAtlas = gl_FragCoord[1]|0;
   	var y = yAtlas % volSize;
   	var z = Math.trunc(yAtlas / volSize);
-  	var p = new $runtime.PooledFloat32Array([(x) / (volSizeF - 1), (y) / (volSizeF - 1), (z) / (volSizeF - 1)]);
+  	var p = new $runtime.PooledFloat32Array([$runtime.fdiv((x), (volSizeF - 1)), $runtime.fdiv((y), (volSizeF - 1)), $runtime.fdiv((z), (volSizeF - 1))]);
   	var lf1 = map(loopAScale, 1, 100, 6, 1);
   	var lf2 = map(loopBScale, 1, 100, 6, 1);
   	var d = computeValue(p, lf1, lf2);
-  	var eps = 1 / volSizeF;
+  	var eps = $runtime.fdiv(1, volSizeF);
   	var dx = computeValue(new $runtime.PooledFloat32Array([p[0] + eps, p[1], p[2]]), lf1, lf2);
   	var dy = computeValue(new $runtime.PooledFloat32Array([p[0], p[1] + eps, p[2]]), lf1, lf2);
   	var dz = computeValue(new $runtime.PooledFloat32Array([p[0], p[1], p[2] + eps]), lf1, lf2);
-  	var gradient = new $runtime.PooledFloat32Array([(dx - d) / eps, (dy - d) / eps, (dz - d) / eps]);
+  	var gradient = new $runtime.PooledFloat32Array([$runtime.fdiv(dx - d, eps), $runtime.fdiv(dy - d, eps), $runtime.fdiv(dz - d, eps)]);
   	var normal = normalize(new $runtime.PooledFloat32Array([-gradient[0] + 9.999999974752427e-7, -gradient[1] + 9.999999974752427e-7, -gradient[2] + 9.999999974752427e-7]));
   	(fragColor[0] = d, fragColor[1] = d, fragColor[2] = d, fragColor[3] = 1, fragColor);
   	(geoOut[0] = normal[0] * 0.5 + 0.5, geoOut[1] = normal[1] * 0.5 + 0.5, geoOut[2] = normal[2] * 0.5 + 0.5, geoOut[3] = d, geoOut);

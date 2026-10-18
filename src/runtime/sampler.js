@@ -36,6 +36,32 @@ export function sampleNearestBottomLeft(surface, u, v, out, offset = 0) {
   return out
 }
 
+// The texel a GPU nearest sampler selects: it scales the normalized
+// coordinate in float32 and takes the floor, so a coordinate whose scaled
+// value rounds up onto a texel boundary selects the texel above it. A NaN
+// coordinate selects the last texel. Measured on the Apple M4 authority
+// (ANGLE Metal).
+function nearestTexel(coordinate, size) {
+  const scaled = Math.fround(coordinate * size)
+  if (scaled !== scaled) return size - 1
+  return clamp(Math.floor(scaled), 0, size - 1)
+}
+
+// sampleNearestBottomLeft with the GPU's texel selection (`nearestTexel`),
+// for the transpiled GLSL kernels.
+export function sampleNearestTexelBottomLeft(surface, u, v, out, offset = 0) {
+  assertSampleTarget(out, offset)
+  const x = nearestTexel(u, surface.width)
+  const y = surface.height - 1 - nearestTexel(v, surface.height)
+  const source = (y * surface.width + x) * 4
+  const data = surface.data
+  out[offset] = data[source]
+  out[offset + 1] = data[source + 1]
+  out[offset + 2] = data[source + 2]
+  out[offset + 3] = data[source + 3]
+  return out
+}
+
 export function sampleBilinear(surface, u, v, out, offset = 0) {
   assertSampleTarget(out, offset)
   const width = surface.width

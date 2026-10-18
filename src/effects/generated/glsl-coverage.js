@@ -8,7 +8,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1066c6794400f025288147568179b2913b3f6464201e21fa470f3f5a1f6ca06b",
     "sourceBytes": 12748,
     "normalizedBytes": 13272,
-    "generatedBytes": 13422
+    "generatedBytes": 13542
   },
   {
     "effectId": "classicNoisedeck/caustic",
@@ -18,7 +18,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "161cb6114f312a223d88a5c60a3ecb694a4c8766fca91b3fc47ae92078f2a00d",
     "sourceBytes": 15645,
     "normalizedBytes": 16018,
-    "generatedBytes": 17726
+    "generatedBytes": 17840
   },
   {
     "effectId": "classicNoisedeck/cellNoise",
@@ -28,7 +28,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "9fd76306b377ef501a5dd340263179f04e3e890cc05d5e82f524f7bdf793d3b8",
     "sourceBytes": 9643,
     "normalizedBytes": 9886,
-    "generatedBytes": 11882
+    "generatedBytes": 12031
   },
   {
     "effectId": "classicNoisedeck/cellRefract",
@@ -37,8 +37,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "aa93167faa07ee22ff0be9c653b5602ac88b1b962e405548cafab43b9e867a70",
     "sourceBytes": 13719,
-    "normalizedBytes": 14040,
-    "generatedBytes": 16080
+    "normalizedBytes": 14052,
+    "generatedBytes": 16205
   },
   {
     "effectId": "classicNoisedeck/coalesce",
@@ -48,7 +48,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a0f96df68ce058e5e2154c78880b5a611eaf5ab9adcd64242368978c813b6b58",
     "sourceBytes": 9962,
     "normalizedBytes": 10024,
-    "generatedBytes": 14602
+    "generatedBytes": 14670
   },
   {
     "effectId": "classicNoisedeck/colorLab",
@@ -58,7 +58,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4bf9ea925634ee684e01917ea3b690d332b37905d21c8aa7377bf88625570945",
     "sourceBytes": 9276,
     "normalizedBytes": 9392,
-    "generatedBytes": 13698
+    "generatedBytes": 13759
   },
   {
     "effectId": "classicNoisedeck/composite",
@@ -68,7 +68,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ae3f29a129016653a5705647cb61c5c6448504e44ad321539fb4ce2e120d9123",
     "sourceBytes": 6120,
     "normalizedBytes": 6062,
-    "generatedBytes": 7243
+    "generatedBytes": 7281
   },
   {
     "effectId": "classicNoisedeck/effects",
@@ -78,7 +78,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b4f4279698ce60bd3c0c45f8339a4869cd6c2f0714f219ee6b2e997328057316",
     "sourceBytes": 28403,
     "normalizedBytes": 28804,
-    "generatedBytes": 28954
+    "generatedBytes": 29132
   },
   {
     "effectId": "classicNoisedeck/fractal",
@@ -98,7 +98,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4bb633e963eed011c4724d9b18470baed3ac474eadce98e06288ace5c382846a",
     "sourceBytes": 8268,
     "normalizedBytes": 8399,
-    "generatedBytes": 11410
+    "generatedBytes": 11477
   },
   {
     "effectId": "classicNoisedeck/kaleido",
@@ -108,7 +108,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "18a201e5189430578a2cd1d03cea911957a08f3bd7f3e74e78b97eb9f946ed52",
     "sourceBytes": 27570,
     "normalizedBytes": 28389,
-    "generatedBytes": 29015
+    "generatedBytes": 29221
   },
   {
     "effectId": "classicNoisedeck/lensDistortion",
@@ -118,7 +118,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f4e6453fe233692fa67c5fdbb3eb8f7a512d21bc722e63af6fc23166a62dd444",
     "sourceBytes": 8269,
     "normalizedBytes": 8503,
-    "generatedBytes": 11039
+    "generatedBytes": 11153
   },
   {
     "effectId": "classicNoisedeck/moodscape",
@@ -128,7 +128,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a2580a36096208dd7a63965d2b277be9356f29a8d3af634d1736df9142db1a44",
     "sourceBytes": 19559,
     "normalizedBytes": 19953,
-    "generatedBytes": 22038
+    "generatedBytes": 22080
   },
   {
     "effectId": "classicNoisedeck/noise",
@@ -138,7 +138,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d86306e285a2f80dae86fe79cde92ceb89ec898ef78e6a15d140bfdf0e030bb2",
     "sourceBytes": 32527,
     "normalizedBytes": 33447,
-    "generatedBytes": 31501
+    "generatedBytes": 31723
   },
   {
     "effectId": "classicNoisedeck/noise3d",
@@ -148,7 +148,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f359a11d4a3799686a554ee4dbaca725235ef38781a7b91e37628537cebb220f",
     "sourceBytes": 19654,
     "normalizedBytes": 20394,
-    "generatedBytes": 29680
+    "generatedBytes": 29736
   },
   {
     "effectId": "classicNoisedeck/refract",
@@ -157,8 +157,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "d9675b5de9c329aa619f4ef68129611faac8cbe515b6e80aa8528c593a49cfa2",
     "sourceBytes": 7973,
-    "normalizedBytes": 7976,
-    "generatedBytes": 10958
+    "normalizedBytes": 7988,
+    "generatedBytes": 11065
   },
   {
     "effectId": "classicNoisedeck/shapeMixer",
@@ -168,7 +168,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "51bee071387b3498bd9e8abad5ca3b93b3e38100b9a56b8f4abcb177ea9d675b",
     "sourceBytes": 21721,
     "normalizedBytes": 22327,
-    "generatedBytes": 22775
+    "generatedBytes": 22971
   },
   {
     "effectId": "classicNoisedeck/shapes",
@@ -178,7 +178,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "28775b3e960c9051a320d48c7974792fbef33eaab80e5ca9aed5af43e8645d5e",
     "sourceBytes": 21292,
     "normalizedBytes": 21798,
-    "generatedBytes": 23156
+    "generatedBytes": 23330
   },
   {
     "effectId": "classicNoisedeck/shapes3d",
@@ -188,7 +188,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "818badfbadcf295d1863d208c0d0582a1349ff64f44dbf43f905a92fcfd4c5ad",
     "sourceBytes": 16152,
     "normalizedBytes": 16442,
-    "generatedBytes": 18089
+    "generatedBytes": 18145
   },
   {
     "effectId": "classicNoisedeck/splat",
@@ -198,7 +198,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cfdcc4edcc5097043ad72602feb62a40622c14ba1bee66fb1ac2e414d1b3cced",
     "sourceBytes": 5069,
     "normalizedBytes": 5189,
-    "generatedBytes": 7311
+    "generatedBytes": 7382
   },
   {
     "effectId": "filter/adjust",
@@ -208,7 +208,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dafbae039de5463cb5a94bb5e3046fd65b3212240e15a14996186e3d4d88b71d",
     "sourceBytes": 3955,
     "normalizedBytes": 4090,
-    "generatedBytes": 5424
+    "generatedBytes": 5494
   },
   {
     "effectId": "filter/bloom",
@@ -218,7 +218,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "db9bb2dbe897ee03435cae86aa88a766b7d8e6bc58e61103fa5e66c3c3dbc880",
     "sourceBytes": 1360,
     "normalizedBytes": 1499,
-    "generatedBytes": 1431
+    "generatedBytes": 1445
   },
   {
     "effectId": "filter/bloom",
@@ -238,7 +238,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f11c983976cb8450d611e8d888bd151a4c2cfdda8d9d772f906608dedb99d237",
     "sourceBytes": 2196,
     "normalizedBytes": 2159,
-    "generatedBytes": 1922
+    "generatedBytes": 1992
   },
   {
     "effectId": "filter/blur",
@@ -248,7 +248,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c4283e820b2ade9148358ad4582d350bc7f4a5ccb5fc60f2e1b76bcda58deecc",
     "sourceBytes": 1120,
     "normalizedBytes": 1240,
-    "generatedBytes": 1618
+    "generatedBytes": 1686
   },
   {
     "effectId": "filter/blur",
@@ -258,7 +258,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cc33343032b34e1ede6eed15fbdcb9229ad64484a092b2914065b09fa957fb9b",
     "sourceBytes": 1118,
     "normalizedBytes": 1238,
-    "generatedBytes": 1618
+    "generatedBytes": 1686
   },
   {
     "effectId": "filter/bulge",
@@ -267,8 +267,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "87f26ffa13ffe946d94d92a00bd45ca3a9787b9ee402dfe04ebc3d4a911eb170",
     "sourceBytes": 2352,
-    "normalizedBytes": 2378,
-    "generatedBytes": 3272
+    "normalizedBytes": 2390,
+    "generatedBytes": 3380
   },
   {
     "effectId": "filter/celShading",
@@ -278,7 +278,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "182d5b48d026e923aa2c412c659c633541859ffc3e9bc03315d5c5e18385f69f",
     "sourceBytes": 905,
     "normalizedBytes": 1182,
-    "generatedBytes": 1494
+    "generatedBytes": 1522
   },
   {
     "effectId": "filter/celShading",
@@ -288,7 +288,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "90fa87484d3549bdaa2ddca4836a7ca8602ad4f1f30aa87a72841d4e013521f4",
     "sourceBytes": 2780,
     "normalizedBytes": 2910,
-    "generatedBytes": 3571
+    "generatedBytes": 3627
   },
   {
     "effectId": "filter/celShading",
@@ -308,7 +308,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b237868c688bcfe51deb56155b0fbfe66a3fcf0db5cba93177ec2198ae48e9e7",
     "sourceBytes": 676,
     "normalizedBytes": 657,
-    "generatedBytes": 839
+    "generatedBytes": 844
   },
   {
     "effectId": "filter/chroma",
@@ -318,7 +318,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "520627b0a7461e42baad13d20851ff4c0a2cb1a7d050776f3592ade9f800dcfb",
     "sourceBytes": 1453,
     "normalizedBytes": 1588,
-    "generatedBytes": 1763
+    "generatedBytes": 1791
   },
   {
     "effectId": "filter/chromaticAberration",
@@ -328,7 +328,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "bd8fafacdad36703c280204fb007cb6e260ecb4455fcb754a756ae04d51562b6",
     "sourceBytes": 1885,
     "normalizedBytes": 1798,
-    "generatedBytes": 2358
+    "generatedBytes": 2443
   },
   {
     "effectId": "filter/chrome",
@@ -338,7 +338,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cd2cfbb3d6abefd90dd3777704060c28a8fadfa25b43f6447a6eef81f0eff43a",
     "sourceBytes": 1178,
     "normalizedBytes": 1197,
-    "generatedBytes": 1160
+    "generatedBytes": 1224
   },
   {
     "effectId": "filter/chrome",
@@ -348,7 +348,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b6e49ae5eeb8528e57266a50f7ebba7b937712f01db40c69f819ca790ffc3b9b",
     "sourceBytes": 984,
     "normalizedBytes": 1003,
-    "generatedBytes": 1160
+    "generatedBytes": 1224
   },
   {
     "effectId": "filter/chrome",
@@ -358,7 +358,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4329fdfb95fc912608b3f5ce0f1efd282d5965e9c2f8326bc2d845cfe4aa9dae",
     "sourceBytes": 5009,
     "normalizedBytes": 4987,
-    "generatedBytes": 1855
+    "generatedBytes": 1939
   },
   {
     "effectId": "filter/clouds",
@@ -368,7 +368,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "fe73bfd7ea5daec2f31d588dc147d8231f127680929dd90d679c4e0a2c9f299d",
     "sourceBytes": 4564,
     "normalizedBytes": 4659,
-    "generatedBytes": 5875
+    "generatedBytes": 6025
   },
   {
     "effectId": "filter/colorReplace",
@@ -378,7 +378,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e85d80a109a48d551d60ff6136efedb4a131e0b973ad9637b82df9b46449f5fb",
     "sourceBytes": 1221,
     "normalizedBytes": 1363,
-    "generatedBytes": 1560
+    "generatedBytes": 1565
   },
   {
     "effectId": "filter/convolutionFeedback",
@@ -398,7 +398,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ab116ed830bb31a9103dfd30c8bd809ab8d9b478d860c0a2a76e45458020f88a",
     "sourceBytes": 1573,
     "normalizedBytes": 1761,
-    "generatedBytes": 1936
+    "generatedBytes": 1950
   },
   {
     "effectId": "filter/convolutionFeedback",
@@ -408,7 +408,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "97d8e84b9ae47100cc2ea384a953e719675c61aee274c6739f1eb9f32caf0baa",
     "sourceBytes": 1642,
     "normalizedBytes": 1830,
-    "generatedBytes": 2180
+    "generatedBytes": 2194
   },
   {
     "effectId": "filter/corrupt",
@@ -418,7 +418,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b81642d2e63294f9f51656eb2441cdaf479c495c5e4acb0d3a4907a13b070d02",
     "sourceBytes": 7421,
     "normalizedBytes": 7818,
-    "generatedBytes": 7763
+    "generatedBytes": 7833
   },
   {
     "effectId": "filter/craquelure",
@@ -428,7 +428,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a21be5c20bec6d75d648c0a2debcc69843193e676f5195efff7b643bb0cc9e2b",
     "sourceBytes": 9516,
     "normalizedBytes": 9611,
-    "generatedBytes": 4907
+    "generatedBytes": 4935
   },
   {
     "effectId": "filter/crt",
@@ -438,7 +438,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dfbba2918a68889c5b82ef619bf472387acec116b4d72bf76d62f35a60c9aa7f",
     "sourceBytes": 19644,
     "normalizedBytes": 20240,
-    "generatedBytes": 21054
+    "generatedBytes": 21124
   },
   {
     "effectId": "filter/degauss",
@@ -448,7 +448,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cfefff702ef78db421c088a3b679da2c576b7f4484c777f1d414c66aef0c1a1a",
     "sourceBytes": 11490,
     "normalizedBytes": 11966,
-    "generatedBytes": 13341
+    "generatedBytes": 13401
   },
   {
     "effectId": "filter/deriv",
@@ -458,7 +458,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e1283736b0b1aeacf1bb795eda742871f0b6027bdf98659a3c7fa4a68d91f3ce",
     "sourceBytes": 1137,
     "normalizedBytes": 1273,
-    "generatedBytes": 1872
+    "generatedBytes": 1900
   },
   {
     "effectId": "filter/directionalBlur",
@@ -468,7 +468,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1e4a9d6371683b75a1dbefa968e1536e0017e921fe02f80e600e8f1482e8691c",
     "sourceBytes": 1153,
     "normalizedBytes": 1196,
-    "generatedBytes": 1474
+    "generatedBytes": 1502
   },
   {
     "effectId": "filter/dither",
@@ -478,7 +478,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a966f1746213c8206c5cb57a88cafd8033eb8f8cb08b207209eb31479a11abdb",
     "sourceBytes": 19391,
     "normalizedBytes": 20259,
-    "generatedBytes": 19012
+    "generatedBytes": 19054
   },
   {
     "effectId": "filter/edge",
@@ -488,7 +488,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "841f9f547d06aace8444953f401009abd02758f9dff271097b2799424c1db5d0",
     "sourceBytes": 6530,
     "normalizedBytes": 6655,
-    "generatedBytes": 7749
+    "generatedBytes": 7777
   },
   {
     "effectId": "filter/emboss",
@@ -498,7 +498,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "872eff00bdfe411a0dceb66e8b203b5ea1c03015e3eea041d821966354713191",
     "sourceBytes": 5160,
     "normalizedBytes": 5124,
-    "generatedBytes": 7083
+    "generatedBytes": 7234
   },
   {
     "effectId": "filter/extrude",
@@ -507,8 +507,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "3be128643867dc78184bd209306cbe524538fd8d6d53a21817fb87f746100e29",
     "sourceBytes": 16945,
-    "normalizedBytes": 16934,
-    "generatedBytes": 9593
+    "normalizedBytes": 16972,
+    "generatedBytes": 9782
   },
   {
     "effectId": "filter/feedback",
@@ -518,7 +518,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
-    "generatedBytes": 545
+    "generatedBytes": 573
   },
   {
     "effectId": "filter/feedback",
@@ -528,7 +528,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d0048fb91c30eafbb4532b2f02ed416e3dff61b14ce5861ce3565db81a743ca2",
     "sourceBytes": 10931,
     "normalizedBytes": 11085,
-    "generatedBytes": 14408
+    "generatedBytes": 14562
   },
   {
     "effectId": "filter/fibers",
@@ -548,7 +548,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ce6ddc95ded4628892f42ca6b9889234983ad91a8cf985b15d81940611835d8e",
     "sourceBytes": 2619,
     "normalizedBytes": 2755,
-    "generatedBytes": 2297
+    "generatedBytes": 2353
   },
   {
     "effectId": "filter/fxaa",
@@ -568,7 +568,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e5df47ffdea81d4f7403d4a3133acd42f2955da8870fd62e6052c2dbeef1d3fd",
     "sourceBytes": 2965,
     "normalizedBytes": 2946,
-    "generatedBytes": 4101
+    "generatedBytes": 4202
   },
   {
     "effectId": "filter/glyphMap",
@@ -578,7 +578,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dc0af9a6a6fb4d0cd62ea25c4508a714a36a1dc66923f5578d91ac190d9f4dd6",
     "sourceBytes": 8145,
     "normalizedBytes": 8411,
-    "generatedBytes": 5926
+    "generatedBytes": 6010
   },
   {
     "effectId": "filter/grade",
@@ -618,7 +618,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "97a3a6497e3bc03716e875b75b7efab058d9848c915f806b68239154e313e71d",
     "sourceBytes": 6013,
     "normalizedBytes": 6152,
-    "generatedBytes": 5441
+    "generatedBytes": 5483
   },
   {
     "effectId": "filter/grade",
@@ -628,7 +628,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "50dbb470cec43a2f7db7e1caf319c3dd2465bf85e09f0250e7a13eadaf975522",
     "sourceBytes": 4172,
     "normalizedBytes": 4311,
-    "generatedBytes": 4256
+    "generatedBytes": 4340
   },
   {
     "effectId": "filter/grade",
@@ -648,7 +648,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6edf8deec35e2fa3a32fc150c2be8cb6d71a9356c1c7a3cff5bd3c6c7df764f0",
     "sourceBytes": 8796,
     "normalizedBytes": 9558,
-    "generatedBytes": 9313
+    "generatedBytes": 9341
   },
   {
     "effectId": "filter/grime",
@@ -658,7 +658,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "15a88fff0e951bf7fa01f4c982532cf79d835663cb2a81c2076c5fecbd9c351f",
     "sourceBytes": 5776,
     "normalizedBytes": 5896,
-    "generatedBytes": 7078
+    "generatedBytes": 7134
   },
   {
     "effectId": "filter/halftone",
@@ -668,7 +668,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "063ddb13f5fffc6f957d4be0a60b0408ff706d6111fd4e3ba52582f7507c7ad7",
     "sourceBytes": 8440,
     "normalizedBytes": 8523,
-    "generatedBytes": 6211
+    "generatedBytes": 6377
   },
   {
     "effectId": "filter/hatch",
@@ -678,7 +678,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "510c07e58308c1b0ffb16aafdd90362decc92f818fe25da676bb6c348b120106",
     "sourceBytes": 9577,
     "normalizedBytes": 9641,
-    "generatedBytes": 7184
+    "generatedBytes": 7268
   },
   {
     "effectId": "filter/highPass",
@@ -688,7 +688,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d2254ef3ad99291669d5e705529350f9fe383995760f83654af3d1de9f8195b9",
     "sourceBytes": 960,
     "normalizedBytes": 979,
-    "generatedBytes": 1175
+    "generatedBytes": 1239
   },
   {
     "effectId": "filter/highPass",
@@ -698,7 +698,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "8d4f5b6f17480c441fbf0bc26f05c42409472344b5dd410fa5663b7337cddd3c",
     "sourceBytes": 958,
     "normalizedBytes": 977,
-    "generatedBytes": 1175
+    "generatedBytes": 1239
   },
   {
     "effectId": "filter/highPass",
@@ -708,7 +708,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1dc649d0010cee700cdd56b0e35f4867bbadee7426cb04cad49a126ad1e95284",
     "sourceBytes": 603,
     "normalizedBytes": 581,
-    "generatedBytes": 823
+    "generatedBytes": 851
   },
   {
     "effectId": "filter/historicPalette",
@@ -728,7 +728,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a18fa342ca8507983495ff5eeaaa7704f227b58d476cf413476b230cbd5d6de4",
     "sourceBytes": 736,
     "normalizedBytes": 871,
-    "generatedBytes": 1019
+    "generatedBytes": 1047
   },
   {
     "effectId": "filter/lens",
@@ -738,7 +738,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6633d8c7b1ab23600cb25bb87f3f67c5d1d148b0626169f24de520fbce9e64a5",
     "sourceBytes": 2909,
     "normalizedBytes": 3045,
-    "generatedBytes": 3493
+    "generatedBytes": 3605
   },
   {
     "effectId": "filter/lensFlare",
@@ -748,7 +748,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "46ba9da4e66a3978f92b18810bcb5db9d0f2f01fb4a80843c2091381f2001244",
     "sourceBytes": 10007,
     "normalizedBytes": 9914,
-    "generatedBytes": 9412
+    "generatedBytes": 9482
   },
   {
     "effectId": "filter/lensWarp",
@@ -757,8 +757,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "543b53a26b14dfdcf979e2601eaad32d6ec683c41427301b851173334a670480",
     "sourceBytes": 4033,
-    "normalizedBytes": 4142,
-    "generatedBytes": 5288
+    "normalizedBytes": 4154,
+    "generatedBytes": 5536
   },
   {
     "effectId": "filter/lightLeak",
@@ -768,7 +768,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "61bcb2989992c109dcf73ac5b34bb4dfa7f6603b54c111a84e69b6f73a9501bb",
     "sourceBytes": 5047,
     "normalizedBytes": 5370,
-    "generatedBytes": 6721
+    "generatedBytes": 6749
   },
   {
     "effectId": "filter/lighting",
@@ -778,7 +778,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a0601f7012f385c14c1bdb9f462e5dcb303fe05cfbb4645484d5d1bd629e1a4f",
     "sourceBytes": 6049,
     "normalizedBytes": 6752,
-    "generatedBytes": 8579
+    "generatedBytes": 8693
   },
   {
     "effectId": "filter/lowPoly",
@@ -788,7 +788,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "2f6a184ef4d372ebf811eaa59420bbce66fa25702e23a278557521679ce7b2f5",
     "sourceBytes": 8719,
     "normalizedBytes": 8954,
-    "generatedBytes": 7819
+    "generatedBytes": 8001
   },
   {
     "effectId": "filter/median",
@@ -808,7 +808,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "9c9b20313b5a112d7684d34ee3f62cb49d04c34aa75f0c846dc9443c6380ba70",
     "sourceBytes": 2126,
     "normalizedBytes": 2060,
-    "generatedBytes": 1473
+    "generatedBytes": 1529
   },
   {
     "effectId": "filter/morphology",
@@ -818,7 +818,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "68818a6c62f0b9960aacd671a8dce1622c6860df44b3c1381abf47447a6504b5",
     "sourceBytes": 1255,
     "normalizedBytes": 1201,
-    "generatedBytes": 1007
+    "generatedBytes": 1063
   },
   {
     "effectId": "filter/mosaicTiles",
@@ -828,7 +828,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1495023febe8ffccc57fa8738c6dc027b57d98e77fc88108ae639a8590c2fd47",
     "sourceBytes": 11349,
     "normalizedBytes": 11446,
-    "generatedBytes": 7028
+    "generatedBytes": 7168
   },
   {
     "effectId": "filter/motionBlur",
@@ -838,7 +838,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
-    "generatedBytes": 545
+    "generatedBytes": 573
   },
   {
     "effectId": "filter/motionBlur",
@@ -848,7 +848,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "fea5905d92b575b94c500f674a9cc1449f379f8c31ec13e1f71439e75e09df4f",
     "sourceBytes": 954,
     "normalizedBytes": 932,
-    "generatedBytes": 677
+    "generatedBytes": 705
   },
   {
     "effectId": "filter/normalMap",
@@ -868,7 +868,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c59c0bad843a38c823bd2fc6396d0b9bca1cac7f1fe074aaf5dbc9622522e855",
     "sourceBytes": 738,
     "normalizedBytes": 884,
-    "generatedBytes": 1260
+    "generatedBytes": 1302
   },
   {
     "effectId": "filter/normalize",
@@ -907,8 +907,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "193ed3406281cde12a460560438c9ce839f07e9f7a96f11aac50c23d3a31039f",
     "sourceBytes": 4889,
-    "normalizedBytes": 5066,
-    "generatedBytes": 5467
+    "normalizedBytes": 5080,
+    "generatedBytes": 5577
   },
   {
     "effectId": "filter/oilPaint",
@@ -928,7 +928,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "0275b2a69a9d884ab1d2f6bb230229252e77dd702f1113769dc94ec572dfc84e",
     "sourceBytes": 5533,
     "normalizedBytes": 5582,
-    "generatedBytes": 6189
+    "generatedBytes": 6301
   },
   {
     "effectId": "filter/osd",
@@ -948,7 +948,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "5cf1613b00702bda4ccd5a03c1beee0aa779c1a947dc77d2adb78c854dad1a0d",
     "sourceBytes": 1003,
     "normalizedBytes": 1141,
-    "generatedBytes": 1332
+    "generatedBytes": 1360
   },
   {
     "effectId": "filter/outline",
@@ -968,7 +968,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "8d6504a8464a44cb4d1e86d2596c0d7a60d4924d18bd2114dc1f5ce5d49434cb",
     "sourceBytes": 1770,
     "normalizedBytes": 1908,
-    "generatedBytes": 2205
+    "generatedBytes": 2229
   },
   {
     "effectId": "filter/palette",
@@ -988,7 +988,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "5ce5dce2ec8e8d7ebd3024c6a5bd5dcb068d0cf322bfd105c4fb3546e1b97642",
     "sourceBytes": 2430,
     "normalizedBytes": 2398,
-    "generatedBytes": 2486
+    "generatedBytes": 2556
   },
   {
     "effectId": "filter/patchwork",
@@ -998,7 +998,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "39e866a841c98d5c716ab853b23bc9dea919585f135e5010d264d2bb3a04b53e",
     "sourceBytes": 10534,
     "normalizedBytes": 10502,
-    "generatedBytes": 3693
+    "generatedBytes": 3777
   },
   {
     "effectId": "filter/photocopy",
@@ -1008,7 +1008,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4c4ca404f015f0112dc81cf8161b2f15743287baf3720a9590d3cc3fe061aa68",
     "sourceBytes": 1152,
     "normalizedBytes": 1171,
-    "generatedBytes": 1155
+    "generatedBytes": 1219
   },
   {
     "effectId": "filter/photocopy",
@@ -1018,7 +1018,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a718a4793dc36d8008cd8c67378b6bc65d84f57b6f7507245859ebd32d44ab15",
     "sourceBytes": 920,
     "normalizedBytes": 939,
-    "generatedBytes": 1155
+    "generatedBytes": 1219
   },
   {
     "effectId": "filter/photocopy",
@@ -1028,7 +1028,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "67f0d9c44fe0142c326691427ffa6bb819a9e04bd8bd8c7aa0f639c659aeba03",
     "sourceBytes": 2985,
     "normalizedBytes": 2963,
-    "generatedBytes": 1324
+    "generatedBytes": 1352
   },
   {
     "effectId": "filter/pinch",
@@ -1037,8 +1037,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "031405e087822fd10b07d972e53f2f6d2da95f67d9c56605cbc104e0b955d71c",
     "sourceBytes": 2296,
-    "normalizedBytes": 2321,
-    "generatedBytes": 3281
+    "normalizedBytes": 2333,
+    "generatedBytes": 3389
   },
   {
     "effectId": "filter/pixelSort",
@@ -1048,7 +1048,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6ce61bb5cb69bb22ac51f48603d5b40755b1e3f700acad1bc685a1e8a4dea6a4",
     "sourceBytes": 1417,
     "normalizedBytes": 1633,
-    "generatedBytes": 1148
+    "generatedBytes": 1160
   },
   {
     "effectId": "filter/pixelSort",
@@ -1057,8 +1057,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "99a84b4b2f5196788c227915b500a44542d74e5cc7cb41bbf637361ae327ad87",
     "sourceBytes": 1824,
-    "normalizedBytes": 1997,
-    "generatedBytes": 3145
+    "normalizedBytes": 2009,
+    "generatedBytes": 3211
   },
   {
     "effectId": "filter/pixelSort",
@@ -1068,7 +1068,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c94b2ccb8882c7713b66f78b0e14d1bdaaa6786a6814cf60ef6daa4a244782ae",
     "sourceBytes": 1045,
     "normalizedBytes": 1270,
-    "generatedBytes": 977
+    "generatedBytes": 989
   },
   {
     "effectId": "filter/pixelSort",
@@ -1078,7 +1078,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a45eb039bae3e7b0a5f804de68c441092b6b7826b594c4aa5221c22a6c7b1386",
     "sourceBytes": 1896,
     "normalizedBytes": 2133,
-    "generatedBytes": 1467
+    "generatedBytes": 1479
   },
   {
     "effectId": "filter/pixelSort",
@@ -1088,7 +1088,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "da27454ff4cc3fcc40b296c8ea8bd8913a00165b2c001aef3cd9e6bd05db0298",
     "sourceBytes": 1280,
     "normalizedBytes": 1468,
-    "generatedBytes": 1447
+    "generatedBytes": 1459
   },
   {
     "effectId": "filter/pixelSort",
@@ -1097,8 +1097,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "2418f2a2bb05e85a88c7b38d7a8fdf5b797d6181e829997123373d8b258ddeb2",
     "sourceBytes": 1242,
-    "normalizedBytes": 1287,
-    "generatedBytes": 1827
+    "normalizedBytes": 1299,
+    "generatedBytes": 1865
   },
   {
     "effectId": "filter/pixels",
@@ -1108,7 +1108,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "06919a5f0cb829fdae9c04ae878aa4d7a12072e176ce3c98fb1ccf2623661e6e",
     "sourceBytes": 1094,
     "normalizedBytes": 1229,
-    "generatedBytes": 1526
+    "generatedBytes": 1666
   },
   {
     "effectId": "filter/plasticWrap",
@@ -1118,7 +1118,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6c0c36d1f9c5b658d87c5cd4abe30da3c9969aafd14d12893a8a103a9a17fe93",
     "sourceBytes": 1253,
     "normalizedBytes": 1272,
-    "generatedBytes": 1148
+    "generatedBytes": 1212
   },
   {
     "effectId": "filter/plasticWrap",
@@ -1128,7 +1128,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cc214498ee40dcfeaf3b411a4becde7b336d8e238495e27ffc996ea3f3576cea",
     "sourceBytes": 939,
     "normalizedBytes": 958,
-    "generatedBytes": 1148
+    "generatedBytes": 1212
   },
   {
     "effectId": "filter/plasticWrap",
@@ -1138,7 +1138,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "a26cbadc9c0aec753494f3e2a95964f35358eb8bf283107c2d7c624055c87767",
     "sourceBytes": 4131,
     "normalizedBytes": 4109,
-    "generatedBytes": 2938
+    "generatedBytes": 3006
   },
   {
     "effectId": "filter/polar",
@@ -1148,7 +1148,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "391b82e45bc2ea9799de1a200afbd735af96ad15627695d46cfc8caa1298a36d",
     "sourceBytes": 2027,
     "normalizedBytes": 2162,
-    "generatedBytes": 3230
+    "generatedBytes": 3272
   },
   {
     "effectId": "filter/pondRipples",
@@ -1157,8 +1157,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "2958de77f0cdf2a21a00d1505ea75f26df5b66dd7f2cb98431e27178d3386c3d",
     "sourceBytes": 5187,
-    "normalizedBytes": 5186,
-    "generatedBytes": 3360
+    "normalizedBytes": 5198,
+    "generatedBytes": 3496
   },
   {
     "effectId": "filter/posterize",
@@ -1168,7 +1168,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "460910a8d1103eca5cc0b4df82f39fd91fbc447b9a815250ae7d34dfab8ee5b2",
     "sourceBytes": 2630,
     "normalizedBytes": 2608,
-    "generatedBytes": 3299
+    "generatedBytes": 3332
   },
   {
     "effectId": "filter/prismaticAberration",
@@ -1178,7 +1178,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "513eac95fdf7f67a6839ee5d96e5bbfd76b6cfa62d3254df6fed23d8effe380e",
     "sourceBytes": 4247,
     "normalizedBytes": 4206,
-    "generatedBytes": 5804
+    "generatedBytes": 5888
   },
   {
     "effectId": "filter/reindex",
@@ -1188,7 +1188,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "651bb6930d3fe51629fc3a17c88bfa7c7831e78fa18be0ea16d0f3f9d3c5154d",
     "sourceBytes": 2616,
     "normalizedBytes": 2798,
-    "generatedBytes": 2927
+    "generatedBytes": 2969
   },
   {
     "effectId": "filter/reindex",
@@ -1218,7 +1218,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "bc2fba2fc1a766f59890289bea39e4001b0403983b7c81e47be5259a5e2bb260",
     "sourceBytes": 1411,
     "normalizedBytes": 1448,
-    "generatedBytes": 1190
+    "generatedBytes": 1254
   },
   {
     "effectId": "filter/relief",
@@ -1228,7 +1228,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "da3ea200f6e5296fa03af42a1ec9f01dd3f9edfc0965534813b1f0c8ec481ec8",
     "sourceBytes": 984,
     "normalizedBytes": 1021,
-    "generatedBytes": 1190
+    "generatedBytes": 1254
   },
   {
     "effectId": "filter/relief",
@@ -1238,7 +1238,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dda1113e9cca57b25fa93c0843cd19fa76880724059fe1b56c5e5735f671ea90",
     "sourceBytes": 5873,
     "normalizedBytes": 5918,
-    "generatedBytes": 3899
+    "generatedBytes": 3955
   },
   {
     "effectId": "filter/repeat",
@@ -1247,8 +1247,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "6fe9a919129c3424f66c145aca77b4a4101c7edc46828c2d85bff40d4f67ebbc",
     "sourceBytes": 1366,
-    "normalizedBytes": 1348,
-    "generatedBytes": 1793
+    "normalizedBytes": 1377,
+    "generatedBytes": 1907
   },
   {
     "effectId": "filter/reverb",
@@ -1257,8 +1257,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "4dde4b901aded65365d0d46145a7d50dcd2b8d279e32c3d1e7bf02cfc7f78bcb",
     "sourceBytes": 1816,
-    "normalizedBytes": 1955,
-    "generatedBytes": 2718
+    "normalizedBytes": 1967,
+    "generatedBytes": 2840
   },
   {
     "effectId": "filter/ridge",
@@ -1268,7 +1268,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "0e3cc0289ff2057145afd5bb8ceeef71bfbbee0aee149eb0f609937f0571694c",
     "sourceBytes": 818,
     "normalizedBytes": 956,
-    "generatedBytes": 1356
+    "generatedBytes": 1384
   },
   {
     "effectId": "filter/rotate",
@@ -1277,8 +1277,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "c23e8462e8240f25a715fa3eb05e567269c8d410d27943ba346ebccdd0de1f8f",
     "sourceBytes": 1197,
-    "normalizedBytes": 1317,
-    "generatedBytes": 1633
+    "normalizedBytes": 1329,
+    "generatedBytes": 1713
   },
   {
     "effectId": "filter/scale",
@@ -1287,8 +1287,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "e0902531c605af1fefd15fe7f1df7e53d892647531df8df58b3c707637b70d27",
     "sourceBytes": 1120,
-    "normalizedBytes": 1102,
-    "generatedBytes": 1555
+    "normalizedBytes": 1119,
+    "generatedBytes": 1682
   },
   {
     "effectId": "filter/scanlineError",
@@ -1298,7 +1298,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "66556b29659b479edd397f8e0c87c176cafa7560c426eab8211b6939a08f2198",
     "sourceBytes": 13302,
     "normalizedBytes": 13767,
-    "generatedBytes": 15731
+    "generatedBytes": 15829
   },
   {
     "effectId": "filter/scatter",
@@ -1308,7 +1308,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71",
     "sourceBytes": 4475,
     "normalizedBytes": 4531,
-    "generatedBytes": 3863
+    "generatedBytes": 3975
   },
   {
     "effectId": "filter/scatter",
@@ -1318,7 +1318,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "124931637680f4f1fd9eed63bd0b63bf961204c5667236c9a67ce1b24ab0e602",
     "sourceBytes": 1138,
     "normalizedBytes": 1114,
-    "generatedBytes": 988
+    "generatedBytes": 1044
   },
   {
     "effectId": "filter/scratches",
@@ -1337,8 +1337,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "ce2117916b0d9513890942332835c6cfd1753a39d9d773626c66c6107050d457",
     "sourceBytes": 1124,
-    "normalizedBytes": 1106,
-    "generatedBytes": 1585
+    "normalizedBytes": 1123,
+    "generatedBytes": 1661
   },
   {
     "effectId": "filter/seamless",
@@ -1348,7 +1348,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d54569f8e394430d771ecb51edc9258ecde17483674843fab8a9f6efb733dabf",
     "sourceBytes": 1513,
     "normalizedBytes": 1651,
-    "generatedBytes": 1492
+    "generatedBytes": 1520
   },
   {
     "effectId": "filter/sharpen",
@@ -1358,7 +1358,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c9a9b196e61a2904b37ad89c7fc46bee1b40b6bba81293dde3d7cd37527773e7",
     "sourceBytes": 1625,
     "normalizedBytes": 1760,
-    "generatedBytes": 2720
+    "generatedBytes": 2786
   },
   {
     "effectId": "filter/simpleAberration",
@@ -1368,7 +1368,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c6d3f57f92c9cc0e7e1a1a8e1381699cc0ddb95d83b9d8b1c1a3da19d782f245",
     "sourceBytes": 1171,
     "normalizedBytes": 1152,
-    "generatedBytes": 1618
+    "generatedBytes": 1675
   },
   {
     "effectId": "filter/sine",
@@ -1378,7 +1378,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "569f2d820d99a6d9ac2b310b6fd646cd961c70a6d9eec2bcfd5d8f3686553f07",
     "sourceBytes": 1043,
     "normalizedBytes": 1178,
-    "generatedBytes": 1345
+    "generatedBytes": 1373
   },
   {
     "effectId": "filter/skew",
@@ -1387,8 +1387,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "4eb375b32775efa3fc34a07a539350b41576932c344c3b082c2fabcd51f56480",
     "sourceBytes": 1728,
-    "normalizedBytes": 1924,
-    "generatedBytes": 2121
+    "normalizedBytes": 1941,
+    "generatedBytes": 2248
   },
   {
     "effectId": "filter/smooth",
@@ -1398,7 +1398,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c317194f9bbdba9d95c5dcae47e2354221cf0cdb05ffcf14e335a94a4ef3729c",
     "sourceBytes": 6858,
     "normalizedBytes": 7288,
-    "generatedBytes": 8087
+    "generatedBytes": 8143
   },
   {
     "effectId": "filter/smooth",
@@ -1418,7 +1418,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "505b938cf202f02760d527a127e3c234e5fe527ba1c31e7df25fea70dce59c83",
     "sourceBytes": 562,
     "normalizedBytes": 697,
-    "generatedBytes": 1054
+    "generatedBytes": 1082
   },
   {
     "effectId": "filter/snow",
@@ -1428,7 +1428,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ae057787cc101755743c17b4cdf46b51d70ed8b9896fed9535a058c8b252f48a",
     "sourceBytes": 2982,
     "normalizedBytes": 3518,
-    "generatedBytes": 4146
+    "generatedBytes": 4160
   },
   {
     "effectId": "filter/sobel",
@@ -1438,7 +1438,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ef459738b931929a65422df36f852da4e7cbe4e90387690bea747a34a2e52f84",
     "sourceBytes": 2136,
     "normalizedBytes": 2271,
-    "generatedBytes": 3399
+    "generatedBytes": 3465
   },
   {
     "effectId": "filter/spatter",
@@ -1448,7 +1448,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "9d8cb56f43761cdb52a36935a7c3b66d758189d82db0c52ad93b5090206579af",
     "sourceBytes": 8034,
     "normalizedBytes": 8438,
-    "generatedBytes": 8021
+    "generatedBytes": 8091
   },
   {
     "effectId": "filter/spinBlur",
@@ -1458,7 +1458,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "bd83ef6a8fb02370d51c333e63285c13406ad9ef4bafa64513b2018e61050a4e",
     "sourceBytes": 2304,
     "normalizedBytes": 2407,
-    "generatedBytes": 2522
+    "generatedBytes": 2592
   },
   {
     "effectId": "filter/spiral",
@@ -1467,8 +1467,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "3d609c5028c859d82c060af21b0675dd0dd0ec6f720dbc9e3b3b21a65893ef4a",
     "sourceBytes": 2869,
-    "normalizedBytes": 2874,
-    "generatedBytes": 3359
+    "normalizedBytes": 2886,
+    "generatedBytes": 3467
   },
   {
     "effectId": "filter/spookyTicker",
@@ -1488,7 +1488,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "2177384617ed22ade9338585025b881166adbe2a1c1d31b3cae6f194e232e2ad",
     "sourceBytes": 1180,
     "normalizedBytes": 1199,
-    "generatedBytes": 1160
+    "generatedBytes": 1224
   },
   {
     "effectId": "filter/stamp",
@@ -1498,7 +1498,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cbcd8aba19f19c99653416b1b9b6ffff27f40e7f6b9ca7330936d2645a84bd7f",
     "sourceBytes": 921,
     "normalizedBytes": 940,
-    "generatedBytes": 1160
+    "generatedBytes": 1224
   },
   {
     "effectId": "filter/stamp",
@@ -1508,7 +1508,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d93168982b13907e32e1264c021c39f9d434ae122efd7d11898733293ee5da94",
     "sourceBytes": 3467,
     "normalizedBytes": 3512,
-    "generatedBytes": 2459
+    "generatedBytes": 2487
   },
   {
     "effectId": "filter/step",
@@ -1518,7 +1518,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4f5680a9b25a2c12cecdcef3cc1ba106c2ee7a8390790544a3425890153cb7bf",
     "sourceBytes": 709,
     "normalizedBytes": 844,
-    "generatedBytes": 1509
+    "generatedBytes": 1537
   },
   {
     "effectId": "filter/stipple",
@@ -1528,7 +1528,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "69d75b6fab4281fe0a0997eaf6b7b81e5ab30f0da5dfec9255c9dbb6e914c609",
     "sourceBytes": 8490,
     "normalizedBytes": 8711,
-    "generatedBytes": 5817
+    "generatedBytes": 5985
   },
   {
     "effectId": "filter/strayHair",
@@ -1548,7 +1548,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b911bd1b40452044205ee2e7bb8ae90f54cc56faaa0225430d5baa67e5ec949f",
     "sourceBytes": 1375,
     "normalizedBytes": 1361,
-    "generatedBytes": 1424
+    "generatedBytes": 1480
   },
   {
     "effectId": "filter/strokes",
@@ -1558,7 +1558,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dac057232a650f3c9eb56829aa12507b639d8632f6fc132cbd067a28996fa4db",
     "sourceBytes": 14787,
     "normalizedBytes": 14894,
-    "generatedBytes": 13019
+    "generatedBytes": 13173
   },
   {
     "effectId": "filter/temporalAberration",
@@ -1568,7 +1568,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ad1376bf6f09e0f778f1ecf00bae7b2dc16d14b110e404fee1637b9b72f9fa8f",
     "sourceBytes": 677,
     "normalizedBytes": 815,
-    "generatedBytes": 538
+    "generatedBytes": 566
   },
   {
     "effectId": "filter/temporalAberration",
@@ -1578,7 +1578,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d5d298c95e663f89972292ac78767f35c8eba4c3ed08eb24381ac95b97bbc190",
     "sourceBytes": 2291,
     "normalizedBytes": 2414,
-    "generatedBytes": 2889
+    "generatedBytes": 2917
   },
   {
     "effectId": "filter/tetraColorArray",
@@ -1588,7 +1588,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "68c7cabce311a0a05ba116ce8d34bd5e70e0c09bfb8eab06c93f4f9e01fa5438",
     "sourceBytes": 9754,
     "normalizedBytes": 9758,
-    "generatedBytes": 8844
+    "generatedBytes": 8872
   },
   {
     "effectId": "filter/tetraCosine",
@@ -1598,7 +1598,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "538f13b472519cc521b5d30dbd72a799c7fa46a820691ab88117aff4d93f0ffd",
     "sourceBytes": 5314,
     "normalizedBytes": 5310,
-    "generatedBytes": 4970
+    "generatedBytes": 4998
   },
   {
     "effectId": "filter/text",
@@ -1608,7 +1608,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "7a492aea1422528421c352187d108ea32a1d5bf48991ef74f099f8dafbe5ccea",
     "sourceBytes": 1978,
     "normalizedBytes": 1956,
-    "generatedBytes": 1427
+    "generatedBytes": 1460
   },
   {
     "effectId": "filter/texture",
@@ -1618,7 +1618,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "8e95251ef9a7789b1de4e51718ab3bebd9fc6d20db8acd0969191e288ec7454c",
     "sourceBytes": 14344,
     "normalizedBytes": 14827,
-    "generatedBytes": 15485
+    "generatedBytes": 15513
   },
   {
     "effectId": "filter/threshold",
@@ -1628,7 +1628,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cef36d6704f2c2070f7b02ce88c9789a2c667db699d41c2e21a872836918561e",
     "sourceBytes": 552,
     "normalizedBytes": 533,
-    "generatedBytes": 757
+    "generatedBytes": 762
   },
   {
     "effectId": "filter/tile",
@@ -1638,7 +1638,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ff85419a24f0cdcc7f12334885cb87bca74a51cf6617ab549d3ebdc6d34e03a7",
     "sourceBytes": 3517,
     "normalizedBytes": 3494,
-    "generatedBytes": 3159
+    "generatedBytes": 3257
   },
   {
     "effectId": "filter/tint",
@@ -1648,7 +1648,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d10c38ae0a90c8dbd4b0998362b199af71c549ff743a9479a23decc5f7c3037d",
     "sourceBytes": 2045,
     "normalizedBytes": 2187,
-    "generatedBytes": 2651
+    "generatedBytes": 2698
   },
   {
     "effectId": "filter/translate",
@@ -1657,8 +1657,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "70f5c44a2d8275f3dd51a9c11fa997dbb0ffc829c5b3565d651ebbfa246db987",
     "sourceBytes": 760,
-    "normalizedBytes": 895,
-    "generatedBytes": 1185
+    "normalizedBytes": 907,
+    "generatedBytes": 1251
   },
   {
     "effectId": "filter/tunnel",
@@ -1668,7 +1668,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c0ebe43eead7a1c040dd4a37162d634fe4b1a93ea0b8704bac502fbc5a978193",
     "sourceBytes": 3062,
     "normalizedBytes": 3192,
-    "generatedBytes": 4288
+    "generatedBytes": 4330
   },
   {
     "effectId": "filter/unsharpMask",
@@ -1678,7 +1678,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "86ee319a6cc22695b679507e569e9b4338083a0100ecb4afeee3cd8e9217917c",
     "sourceBytes": 748,
     "normalizedBytes": 767,
-    "generatedBytes": 1102
+    "generatedBytes": 1166
   },
   {
     "effectId": "filter/unsharpMask",
@@ -1688,7 +1688,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "43528782e9f3cc69d8a6aefd9a213bd120088653ad76d2503c578deece812e7a",
     "sourceBytes": 746,
     "normalizedBytes": 765,
-    "generatedBytes": 1102
+    "generatedBytes": 1166
   },
   {
     "effectId": "filter/unsharpMask",
@@ -1698,7 +1698,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d5bc1d96fd7f241579d705688045ef2ba4975c382c99e1aec3f1f69bf0b3c03c",
     "sourceBytes": 866,
     "normalizedBytes": 844,
-    "generatedBytes": 918
+    "generatedBytes": 946
   },
   {
     "effectId": "filter/vaseline",
@@ -1708,7 +1708,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "39055a214903d09a9b2dd8db9ec5b2023a920c22707ec424ae90d5fb90ebf461",
     "sourceBytes": 2524,
     "normalizedBytes": 2652,
-    "generatedBytes": 3650
+    "generatedBytes": 3739
   },
   {
     "effectId": "filter/vignette",
@@ -1718,7 +1718,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "0b7f632bb4c11cd61ff340ab9ef4ca82186a848ea70fe24e69aad5a0dfb63b6d",
     "sourceBytes": 1427,
     "normalizedBytes": 1562,
-    "generatedBytes": 2000
+    "generatedBytes": 2056
   },
   {
     "effectId": "filter/warp",
@@ -1727,8 +1727,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "f3034ac02a2926b819ff874d2d1d0d3dacebf2b7a409c983237d6a71865942ee",
     "sourceBytes": 3095,
-    "normalizedBytes": 3188,
-    "generatedBytes": 4451
+    "normalizedBytes": 3200,
+    "generatedBytes": 4531
   },
   {
     "effectId": "filter/watercolor",
@@ -1738,7 +1738,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b3f03b27f84a4a9629c1eb2808edaaf63a3c696fa385e871d853cacce21dcaa6",
     "sourceBytes": 3785,
     "normalizedBytes": 3830,
-    "generatedBytes": 4314
+    "generatedBytes": 4370
   },
   {
     "effectId": "filter/watercolor",
@@ -1748,7 +1748,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e3158e856ebb45df82222fcf26708c83d5bdba7b9af2f017e18f4fde696633da",
     "sourceBytes": 368,
     "normalizedBytes": 346,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "filter/watercolor",
@@ -1758,7 +1758,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "81e668d554920b70353a2cccaaa414f1ad4eebd83bd1d7100ca05f44a11f8b5c",
     "sourceBytes": 2233,
     "normalizedBytes": 2211,
-    "generatedBytes": 3063
+    "generatedBytes": 3119
   },
   {
     "effectId": "filter/waves",
@@ -1767,8 +1767,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "f4cddf1b3a6c9c68aa677b6743af313e1cdb2bf0a857ce9a1c13edc80f54e3aa",
     "sourceBytes": 2622,
-    "normalizedBytes": 2628,
-    "generatedBytes": 3388
+    "normalizedBytes": 2640,
+    "generatedBytes": 3487
   },
   {
     "effectId": "filter/wind",
@@ -1778,7 +1778,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "68eb0f4deca51ab5352307fa06509b153cf19a29cea4820d054adafa42655f22",
     "sourceBytes": 3520,
     "normalizedBytes": 3487,
-    "generatedBytes": 3085
+    "generatedBytes": 3153
   },
   {
     "effectId": "filter/wobble",
@@ -1787,8 +1787,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "1bdd1e3bed9111743dfeb7e3418e14c42aa8d93ed4636167a99d17cb143a38cc",
     "sourceBytes": 3105,
-    "normalizedBytes": 3294,
-    "generatedBytes": 3465
+    "normalizedBytes": 3306,
+    "generatedBytes": 3503
   },
   {
     "effectId": "filter/wormhole",
@@ -1798,7 +1798,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dee5cfdc0f16be116355c951be3d4f185d49d64c85578bef71001253c1920377",
     "sourceBytes": 1635,
     "normalizedBytes": 1606,
-    "generatedBytes": 1608
+    "generatedBytes": 1646
   },
   {
     "effectId": "filter/wormhole",
@@ -1828,7 +1828,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "3b24e68c6aec2161bbac73f5cac3d21e658531fff6a365ae78a4982179a707bd",
     "sourceBytes": 1496,
     "normalizedBytes": 1790,
-    "generatedBytes": 2440
+    "generatedBytes": 2496
   },
   {
     "effectId": "filter3d/flow3d",
@@ -1838,7 +1838,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f4e3622f4def27221de0bd0b93ed1152f56f835957361e0fcffea8b84d3ce356",
     "sourceBytes": 9859,
     "normalizedBytes": 10250,
-    "generatedBytes": 7496
+    "generatedBytes": 7508
   },
   {
     "effectId": "filter3d/flow3d",
@@ -1848,7 +1848,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "22c4ad697b9d365ab53cb5703f9aa76326cf2d47393bc41c27347ef48c6312c6",
     "sourceBytes": 1154,
     "normalizedBytes": 1314,
-    "generatedBytes": 1299
+    "generatedBytes": 1327
   },
   {
     "effectId": "filter3d/flow3d",
@@ -1858,7 +1858,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6fae73fc5c59a210d64610e35060076370ebf853264f47cde01247d5296813db",
     "sourceBytes": 466,
     "normalizedBytes": 626,
-    "generatedBytes": 587
+    "generatedBytes": 615
   },
   {
     "effectId": "filter3d/flow3d",
@@ -1878,7 +1878,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6730670173a744b12d7a8e837ca917779fe7a9bc28b78078d6e975f079480711",
     "sourceBytes": 725,
     "normalizedBytes": 885,
-    "generatedBytes": 809
+    "generatedBytes": 837
   },
   {
     "effectId": "filter3d/palette3d",
@@ -1888,7 +1888,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6425d323befb35d590b818a2bdb269e7bd6fb11aebf148a0c040b3eff0655015",
     "sourceBytes": 15170,
     "normalizedBytes": 16799,
-    "generatedBytes": 19937
+    "generatedBytes": 19965
   },
   {
     "effectId": "mixer/alphaMask",
@@ -1898,7 +1898,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "eb9575c06da965149deab73905b19fcb68a7a4c74530f98732812e490bbddc12",
     "sourceBytes": 1475,
     "normalizedBytes": 1456,
-    "generatedBytes": 1764
+    "generatedBytes": 1769
   },
   {
     "effectId": "mixer/applyMode",
@@ -1908,7 +1908,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "636174ce4937e5e3da07b757117caf98c760c70ff85e1eb822049fafe2c45670",
     "sourceBytes": 2032,
     "normalizedBytes": 2013,
-    "generatedBytes": 2914
+    "generatedBytes": 2952
   },
   {
     "effectId": "mixer/blendMode",
@@ -1918,7 +1918,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "02a68bb4aa158a0aeb4ed6ba4aa7026b2ed81b0a505658ed9d4087adb31f2d2d",
     "sourceBytes": 4279,
     "normalizedBytes": 4260,
-    "generatedBytes": 5443
+    "generatedBytes": 5565
   },
   {
     "effectId": "mixer/cellSplit",
@@ -1928,7 +1928,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c6de84cdf428b367ac95d345cf6d72f3438ddeeb728136ea34e8937af72ceff9",
     "sourceBytes": 4058,
     "normalizedBytes": 4201,
-    "generatedBytes": 4762
+    "generatedBytes": 4842
   },
   {
     "effectId": "mixer/centerMask",
@@ -1938,7 +1938,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "55d708d50af0c0d0a6caf8a32ca3621f8137ff0d489aeb8d5f579e20984599e2",
     "sourceBytes": 4859,
     "normalizedBytes": 4840,
-    "generatedBytes": 5137
+    "generatedBytes": 5221
   },
   {
     "effectId": "mixer/channelCombine",
@@ -1948,7 +1948,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6332e5524f694f9fd85a70d15d462019b530c5d2eb99d80daceb7da16db4c735",
     "sourceBytes": 820,
     "normalizedBytes": 801,
-    "generatedBytes": 1275
+    "generatedBytes": 1318
   },
   {
     "effectId": "mixer/distortion",
@@ -1958,7 +1958,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "569fbab57b57baad275a60facfd70b913afe76d69a724b682e821883d40dcae8",
     "sourceBytes": 8117,
     "normalizedBytes": 8698,
-    "generatedBytes": 11314
+    "generatedBytes": 11398
   },
   {
     "effectId": "mixer/focusBlur",
@@ -1968,7 +1968,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dff787c7de67122abe60ac14f0fc8995e8087fc4549626e6fe678d8f86b3d7d1",
     "sourceBytes": 2268,
     "normalizedBytes": 2382,
-    "generatedBytes": 2704
+    "generatedBytes": 2766
   },
   {
     "effectId": "mixer/mashup",
@@ -1978,7 +1978,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "defacb16704d2e7ca69c85959fad97d09587523caa731252f263004cc1e01fe6",
     "sourceBytes": 3196,
     "normalizedBytes": 3126,
-    "generatedBytes": 2749
+    "generatedBytes": 2791
   },
   {
     "effectId": "mixer/patternMix",
@@ -1988,7 +1988,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b7fab7bc3646f4936fa2f730a07df9ffb9fd36b21250410fc5d0f4718a06d21d",
     "sourceBytes": 5579,
     "normalizedBytes": 5313,
-    "generatedBytes": 5501
+    "generatedBytes": 5581
   },
   {
     "effectId": "mixer/shadow",
@@ -1997,8 +1997,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "6a321002481cd9dcbf92b11abb37089e7a6a2995494bf8a5befa2145fb1066aa",
     "sourceBytes": 4121,
-    "normalizedBytes": 4140,
-    "generatedBytes": 3842
+    "normalizedBytes": 4157,
+    "generatedBytes": 3976
   },
   {
     "effectId": "mixer/shapeMask",
@@ -2008,7 +2008,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "2503c37ae4bb9f81b5d77931445b69743067b7e43370a50779d5a09d86bf0374",
     "sourceBytes": 3775,
     "normalizedBytes": 3765,
-    "generatedBytes": 4194
+    "generatedBytes": 4274
   },
   {
     "effectId": "mixer/split",
@@ -2018,7 +2018,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "5e6aa68831e8e5749d76f8cc9721d2dadca6149f06f79991bdf671106f04c0b8",
     "sourceBytes": 2079,
     "normalizedBytes": 2047,
-    "generatedBytes": 2125
+    "generatedBytes": 2205
   },
   {
     "effectId": "mixer/thresholdMix",
@@ -2028,7 +2028,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "66a51769ab16f2b2575101d5c347860a19fc0a7618af6dd7d06c561af22d1a87",
     "sourceBytes": 3022,
     "normalizedBytes": 2995,
-    "generatedBytes": 2869
+    "generatedBytes": 2907
   },
   {
     "effectId": "mixer/uvRemap",
@@ -2038,7 +2038,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ec2514ab283fa6cd67687c3cbf717d4d8596d3bdc075a7ea3d7c7dab800694e5",
     "sourceBytes": 1500,
     "normalizedBytes": 1482,
-    "generatedBytes": 2109
+    "generatedBytes": 2165
   },
   {
     "effectId": "points/attractor",
@@ -2058,7 +2058,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "points/buddhabrot",
@@ -2078,7 +2078,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "points/buddhabrot",
@@ -2098,7 +2098,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "5f11d2d5096ac4f54b243a2e9de1d7526960be76c460314f8ec7142c21c9995a",
     "sourceBytes": 5928,
     "normalizedBytes": 6105,
-    "generatedBytes": 5944
+    "generatedBytes": 5956
   },
   {
     "effectId": "points/dla",
@@ -2108,7 +2108,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "21e17a96f09141870bb930c7707d1fc8b2ba5e97f699fdd5c7b8246720974d58",
     "sourceBytes": 274,
     "normalizedBytes": 255,
-    "generatedBytes": 317
+    "generatedBytes": 345
   },
   {
     "effectId": "points/dla",
@@ -2128,7 +2128,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "bcc9ca92c223dc0aadf5f74b40d54c49de8da7928e36c381e011c1fef6830242",
     "sourceBytes": 1811,
     "normalizedBytes": 1859,
-    "generatedBytes": 1939
+    "generatedBytes": 1967
   },
   {
     "effectId": "points/dla",
@@ -2138,7 +2138,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d422ca4f58ab159fb5fe78892c9611d485c6848631b09afa526f5afb70c02046",
     "sourceBytes": 860,
     "normalizedBytes": 841,
-    "generatedBytes": 839
+    "generatedBytes": 867
   },
   {
     "effectId": "points/flock",
@@ -2148,7 +2148,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4c664f7443b1085a37896730b5077ed6399ce345a7b5a25101a7a91e00b18363",
     "sourceBytes": 9726,
     "normalizedBytes": 9903,
-    "generatedBytes": 10012
+    "generatedBytes": 10124
   },
   {
     "effectId": "points/flock",
@@ -2158,7 +2158,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "points/flow",
@@ -2168,7 +2168,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "0584139db3b2e14af99788458a48094a0d650a03ae540a0468309bf2f097bb6b",
     "sourceBytes": 5848,
     "normalizedBytes": 6042,
-    "generatedBytes": 5363
+    "generatedBytes": 5373
   },
   {
     "effectId": "points/flow",
@@ -2178,7 +2178,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "points/heightGrid",
@@ -2188,7 +2188,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "9edb336514439c0cbe2c29eb38ad8acb26586bd5d59ac0f68ed999ba2ce9024a",
     "sourceBytes": 1180,
     "normalizedBytes": 1252,
-    "generatedBytes": 1427
+    "generatedBytes": 1455
   },
   {
     "effectId": "points/heightGrid",
@@ -2198,7 +2198,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "points/hydraulic",
@@ -2208,7 +2208,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "988fe48308354bc7cd8eaa1cb768bccf9ac37b3ce8ebb4256f567eb8419f1001",
     "sourceBytes": 6329,
     "normalizedBytes": 6451,
-    "generatedBytes": 5195
+    "generatedBytes": 5265
   },
   {
     "effectId": "points/hydraulic",
@@ -2218,7 +2218,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "points/lenia",
@@ -2228,7 +2228,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "dc6f5ea902d32e0fb7da530b93c2269ae095f99ac3a76d403a887d4078ef3237",
     "sourceBytes": 3542,
     "normalizedBytes": 3771,
-    "generatedBytes": 3558
+    "generatedBytes": 3670
   },
   {
     "effectId": "points/lenia",
@@ -2248,7 +2248,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "911443464a21bac3436a3d8a9505859b1f6eda97aa0e24ce633aa312970dbc44",
     "sourceBytes": 2019,
     "normalizedBytes": 2112,
-    "generatedBytes": 1566
+    "generatedBytes": 1622
   },
   {
     "effectId": "points/lenia",
@@ -2278,7 +2278,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "78513907f1480250cef2e603e91a012aa4972c2e9e4bd66fc5aefa089a9a4775",
     "sourceBytes": 9544,
     "normalizedBytes": 9685,
-    "generatedBytes": 8302
+    "generatedBytes": 8386
   },
   {
     "effectId": "points/life",
@@ -2328,7 +2328,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c1b316f77d7ae5a5880dc8d667b05afb0e7dd2c3d346397ebee609953ffeb6f8",
     "sourceBytes": 708,
     "normalizedBytes": 689,
-    "generatedBytes": 718
+    "generatedBytes": 746
   },
   {
     "effectId": "points/physarum",
@@ -2358,7 +2358,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "render/loopBegin",
@@ -2368,7 +2368,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "5ddaa003e23b516d8f17dde75e09f106fea0f0b938898b1f3880d025167c2168",
     "sourceBytes": 1064,
     "normalizedBytes": 1045,
-    "generatedBytes": 797
+    "generatedBytes": 825
   },
   {
     "effectId": "render/loopEnd",
@@ -2378,7 +2378,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
-    "generatedBytes": 545
+    "generatedBytes": 573
   },
   {
     "effectId": "render/meshLoader",
@@ -2388,7 +2388,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ab3377a09a9dc38c652d4e9636a89ad9f0e8842971a5ed86bcae0ee8a16493aa",
     "sourceBytes": 1455,
     "normalizedBytes": 1436,
-    "generatedBytes": 1396
+    "generatedBytes": 1462
   },
   {
     "effectId": "render/meshRender",
@@ -2418,7 +2418,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c057535d715351b5f725248f7d16982cd30398fbf4f2cce2d6230e5d057aa527",
     "sourceBytes": 1302,
     "normalizedBytes": 1378,
-    "generatedBytes": 1896
+    "generatedBytes": 1924
   },
   {
     "effectId": "render/pointsBillboardRender",
@@ -2438,7 +2438,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b4fae08087b09cf8fb049e60ed07d7c80ac12401e49f44fb3f3022388b3dc889",
     "sourceBytes": 286,
     "normalizedBytes": 338,
-    "generatedBytes": 447
+    "generatedBytes": 475
   },
   {
     "effectId": "render/pointsBillboardRender",
@@ -2478,7 +2478,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "3e4b3866bf3249e999f9e8d7b361391af9c4e31f969001b913e782bc095cf6a1",
     "sourceBytes": 1358,
     "normalizedBytes": 1587,
-    "generatedBytes": 1853
+    "generatedBytes": 1881
   },
   {
     "effectId": "render/pointsBillboardRender",
@@ -2498,7 +2498,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e81c8f169c10a4168acd07489bafa55ecd349540c35bb1607df1fbba65261cc7",
     "sourceBytes": 1125,
     "normalizedBytes": 1393,
-    "generatedBytes": 2147
+    "generatedBytes": 2219
   },
   {
     "effectId": "render/pointsEmit",
@@ -2508,7 +2508,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "cd266c795b298b372f077e6aeb6f862c75a0970999fba2f87c4462b322592402",
     "sourceBytes": 5236,
     "normalizedBytes": 5390,
-    "generatedBytes": 4545
+    "generatedBytes": 4573
   },
   {
     "effectId": "render/pointsEmit",
@@ -2518,7 +2518,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1c1145ed8c73427276030c0d975c994718b43c9cea1efe97f4f0fc83a3ab775e",
     "sourceBytes": 214,
     "normalizedBytes": 195,
-    "generatedBytes": 320
+    "generatedBytes": 348
   },
   {
     "effectId": "render/pointsRender",
@@ -2528,7 +2528,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "22c07cd12838f88611ae2bba729c59dd8dee2cf54d2caf1a69a22ebc4e28fa0d",
     "sourceBytes": 1055,
     "normalizedBytes": 1059,
-    "generatedBytes": 988
+    "generatedBytes": 1016
   },
   {
     "effectId": "render/pointsRender",
@@ -2538,7 +2538,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b4fae08087b09cf8fb049e60ed07d7c80ac12401e49f44fb3f3022388b3dc889",
     "sourceBytes": 286,
     "normalizedBytes": 290,
-    "generatedBytes": 363
+    "generatedBytes": 391
   },
   {
     "effectId": "render/pointsRender",
@@ -2558,7 +2558,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e34a1a875649930e3eff5d22e394c97afb088d325562d78368e463a8dda59afb",
     "sourceBytes": 620,
     "normalizedBytes": 624,
-    "generatedBytes": 596
+    "generatedBytes": 624
   },
   {
     "effectId": "render/render3d",
@@ -2568,7 +2568,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30",
     "sourceBytes": 14393,
     "normalizedBytes": 14959,
-    "generatedBytes": 14409
+    "generatedBytes": 14465
   },
   {
     "effectId": "render/renderCubemap3d",
@@ -2578,7 +2578,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "bcebff481c2d945e140870b50ce3e32e12bc3f198f75a53dc6d2450d5777db26",
     "sourceBytes": 14026,
     "normalizedBytes": 14597,
-    "generatedBytes": 14015
+    "generatedBytes": 14071
   },
   {
     "effectId": "render/renderCubemapSurface",
@@ -2588,7 +2588,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ce467e742120b8a2ec9c34898a2fd1e2f56a85cbe5d27774bcbb1b7f204511fc",
     "sourceBytes": 4410,
     "normalizedBytes": 4703,
-    "generatedBytes": 5049
+    "generatedBytes": 5077
   },
   {
     "effectId": "render/renderLandscape3d",
@@ -2598,7 +2598,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c9e9ab5c4d7226e774f8d1b9f8aff9d54fd4d6cd97e07c2d3c907df1d7b07ff8",
     "sourceBytes": 13406,
     "normalizedBytes": 14016,
-    "generatedBytes": 17563
+    "generatedBytes": 17693
   },
   {
     "effectId": "render/renderLit3d",
@@ -2608,7 +2608,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627",
     "sourceBytes": 12406,
     "normalizedBytes": 12849,
-    "generatedBytes": 12899
+    "generatedBytes": 12955
   },
   {
     "effectId": "synth/bitwise",
@@ -2618,7 +2618,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1beb9d4b4fff3466587b9c942af3b1a46c0f35a1bf41874c7461c18dcf2f923f",
     "sourceBytes": 3095,
     "normalizedBytes": 3116,
-    "generatedBytes": 2907
+    "generatedBytes": 2947
   },
   {
     "effectId": "synth/cell",
@@ -2628,7 +2628,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b2cae5ecdfd315194d4b3b04d2c5b39d1b48c56a9bd1a10396827e3b8d413a18",
     "sourceBytes": 3813,
     "normalizedBytes": 3903,
-    "generatedBytes": 4718
+    "generatedBytes": 4770
   },
   {
     "effectId": "synth/cellularAutomata",
@@ -2638,7 +2638,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "147eb021eb138adc47149edf9440b94e8c1128d2a35dfb236a9a76f091397e15",
     "sourceBytes": 11253,
     "normalizedBytes": 11299,
-    "generatedBytes": 14342
+    "generatedBytes": 14874
   },
   {
     "effectId": "synth/cellularAutomata",
@@ -2648,7 +2648,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1668346247db9567e6880d69290cef113c50edc0ba576cf2d29cf497227fef89",
     "sourceBytes": 7949,
     "normalizedBytes": 8061,
-    "generatedBytes": 5305
+    "generatedBytes": 5361
   },
   {
     "effectId": "synth/curl",
@@ -2658,7 +2658,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "33d1f2bd0215d6439b51a0aa8d50b5c3637abc0b5cade8f3e451b8d258d0afce",
     "sourceBytes": 7290,
     "normalizedBytes": 7368,
-    "generatedBytes": 9162
+    "generatedBytes": 9204
   },
   {
     "effectId": "synth/gabor",
@@ -2668,7 +2668,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "91665da2d584d6d88b38e8ba314dfc0b546dd49d29aa161f5d66aecf6bf67bf5",
     "sourceBytes": 3870,
     "normalizedBytes": 3999,
-    "generatedBytes": 3915
+    "generatedBytes": 3943
   },
   {
     "effectId": "synth/gradient",
@@ -2678,7 +2678,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "308537be8f376750a2239be89a07e558e54ee1661a0ea360c6a3e48b8c6e7a75",
     "sourceBytes": 5439,
     "normalizedBytes": 5592,
-    "generatedBytes": 5833
+    "generatedBytes": 5889
   },
   {
     "effectId": "synth/julia",
@@ -2698,7 +2698,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "ef97349f9f3003d356bf73ecea6292bbe8ad41c6c2605eff4a8468a44215dea2",
     "sourceBytes": 5124,
     "normalizedBytes": 4935,
-    "generatedBytes": 4193
+    "generatedBytes": 4247
   },
   {
     "effectId": "synth/mandelbrot",
@@ -2708,7 +2708,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "6e6f740356f7ced1cbd40b3a991dd0ef654e39ecaeec8c52e091a08f68e3b3bd",
     "sourceBytes": 14931,
     "normalizedBytes": 14942,
-    "generatedBytes": 11629
+    "generatedBytes": 11665
   },
   {
     "effectId": "synth/media",
@@ -2718,7 +2718,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "3f26aa8aa6d813e0825f7ccbe1c0ab6d9e91445283d27d6d87d72eeb0b7b0c9c",
     "sourceBytes": 6598,
     "normalizedBytes": 6774,
-    "generatedBytes": 6113
+    "generatedBytes": 6155
   },
   {
     "effectId": "synth/mnca",
@@ -2728,7 +2728,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "725c245f6f52a1629f7427b98a211b527c546fd3e0dcecbb9c5b65ecf3ee239a",
     "sourceBytes": 11142,
     "normalizedBytes": 11188,
-    "generatedBytes": 14289
+    "generatedBytes": 14821
   },
   {
     "effectId": "synth/mnca",
@@ -2738,7 +2738,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4a1b1bbb1e52f66871808d878068f1ff6b379d2b68ca0dd8053f89659c8bf9d6",
     "sourceBytes": 5044,
     "normalizedBytes": 5150,
-    "generatedBytes": 4538
+    "generatedBytes": 4594
   },
   {
     "effectId": "synth/modPattern",
@@ -2748,7 +2748,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "5bf4fc9ed8fdf68fa58e9c66f79e1f42624234500f89fb1ee63da64839d3dc2e",
     "sourceBytes": 3818,
     "normalizedBytes": 3804,
-    "generatedBytes": 3969
+    "generatedBytes": 3993
   },
   {
     "effectId": "synth/navierStokes",
@@ -2758,7 +2758,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f2c930b585558c5b90b1e502fc71ffef4ea28c6b5c0d75c0c9d20cccf727a36f",
     "sourceBytes": 1719,
     "normalizedBytes": 2063,
-    "generatedBytes": 2229
+    "generatedBytes": 2281
   },
   {
     "effectId": "synth/navierStokes",
@@ -2768,7 +2768,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "fda5781baa1fffca8fcae28ef599652580135c1dba57307db4692eecc7df64f8",
     "sourceBytes": 1954,
     "normalizedBytes": 2128,
-    "generatedBytes": 2294
+    "generatedBytes": 2322
   },
   {
     "effectId": "synth/navierStokes",
@@ -2778,7 +2778,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "7cf59c745b982c23bcd6eb67ab23cdc723416cdeda835ec36579d71fa18c708e",
     "sourceBytes": 1168,
     "normalizedBytes": 1296,
-    "generatedBytes": 1558
+    "generatedBytes": 1614
   },
   {
     "effectId": "synth/navierStokes",
@@ -2788,7 +2788,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "b247c640a0ac51e14b30b894c2427b994b3c545d9be2b19bd186bd7b57a40a9b",
     "sourceBytes": 991,
     "normalizedBytes": 1283,
-    "generatedBytes": 1445
+    "generatedBytes": 1501
   },
   {
     "effectId": "synth/navierStokes",
@@ -2798,7 +2798,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "3f2dd662ebc4e141a40959456739f09fd075655917197da3492ab99611482251",
     "sourceBytes": 932,
     "normalizedBytes": 1366,
-    "generatedBytes": 1449
+    "generatedBytes": 1505
   },
   {
     "effectId": "synth/navierStokes",
@@ -2808,7 +2808,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "964147d68d182e7afe016e5fee82ad010e047946121fa407873386cc1c4b4453",
     "sourceBytes": 5301,
     "normalizedBytes": 5495,
-    "generatedBytes": 8346
+    "generatedBytes": 8374
   },
   {
     "effectId": "synth/navierStokes",
@@ -2818,7 +2818,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "c3e88bac9c8afa8ed31baec34756db36ad30dd0e73588b35ffc320cba36d3f37",
     "sourceBytes": 3251,
     "normalizedBytes": 3427,
-    "generatedBytes": 3168
+    "generatedBytes": 3238
   },
   {
     "effectId": "synth/newton",
@@ -2828,7 +2828,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "603090e299ccb08fd4db4bf54a2aa6668ed81be971a84a8b679c7f560e5c27ac",
     "sourceBytes": 10325,
     "normalizedBytes": 10357,
-    "generatedBytes": 9010
+    "generatedBytes": 9130
   },
   {
     "effectId": "synth/noise",
@@ -2838,7 +2838,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274",
     "sourceBytes": 18131,
     "normalizedBytes": 18748,
-    "generatedBytes": 21223
+    "generatedBytes": 21369
   },
   {
     "effectId": "synth/osc2d",
@@ -2848,7 +2848,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e25335112291f2b3f7e9e7f5803948b602a44058bb10c20f835c461f0b6a3512",
     "sourceBytes": 4562,
     "normalizedBytes": 4518,
-    "generatedBytes": 3028
+    "generatedBytes": 3056
   },
   {
     "effectId": "synth/pattern",
@@ -2858,7 +2858,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d3ce98d432c1548553fac6446a040d2dab8f0fbb7f852457aa4fc4f139d44c5c",
     "sourceBytes": 8370,
     "normalizedBytes": 8041,
-    "generatedBytes": 7226
+    "generatedBytes": 7254
   },
   {
     "effectId": "synth/perlin",
@@ -2868,7 +2868,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318",
     "sourceBytes": 10882,
     "normalizedBytes": 11060,
-    "generatedBytes": 9451
+    "generatedBytes": 9491
   },
   {
     "effectId": "synth/polygon",
@@ -2878,7 +2878,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e43087ee8ade2e59ff1a2098c1e6ceb4357a3eb9ee63755a3f8a3879824115e6",
     "sourceBytes": 1707,
     "normalizedBytes": 1915,
-    "generatedBytes": 2211
+    "generatedBytes": 2305
   },
   {
     "effectId": "synth/reactionDiffusion",
@@ -2888,7 +2888,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "2c7c242db938ea81fa738b4f5a4fff9f067afca63802e39689aec49d4955f53c",
     "sourceBytes": 12782,
     "normalizedBytes": 13031,
-    "generatedBytes": 16089
+    "generatedBytes": 16529
   },
   {
     "effectId": "synth/reactionDiffusion",
@@ -2898,7 +2898,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "1b0a2ce5b7594005e778b0487a14c1c83c081b7ce3d0db50f81809ac931be976",
     "sourceBytes": 5763,
     "normalizedBytes": 5873,
-    "generatedBytes": 6703
+    "generatedBytes": 6759
   },
   {
     "effectId": "synth/remap",
@@ -2908,7 +2908,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "500f761ac9b0a58aedc7574f974994abfdaf4d41cb9947a11b4cdd18b0482b9b",
     "sourceBytes": 7225,
     "normalizedBytes": 6844,
-    "generatedBytes": 4805
+    "generatedBytes": 4866
   },
   {
     "effectId": "synth/roll",
@@ -2918,7 +2918,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "629a13aaba037b2eb01219741ea98b3e2161fda3f2c38b8533fe4bbebab3563e",
     "sourceBytes": 351,
     "normalizedBytes": 486,
-    "generatedBytes": 545
+    "generatedBytes": 573
   },
   {
     "effectId": "synth/roll",
@@ -2928,7 +2928,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "92b426fa60df51c3db057b8f93ce3c6525cf087fd2398c6e038046f9ede1d8c9",
     "sourceBytes": 2305,
     "normalizedBytes": 2261,
-    "generatedBytes": 2339
+    "generatedBytes": 2395
   },
   {
     "effectId": "synth/sacredGeometry",
@@ -2938,7 +2938,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "24e5bc642f5a1f368d4514fd33590ef7d479f56c1c862144576f7bde321f53de",
     "sourceBytes": 9710,
     "normalizedBytes": 9422,
-    "generatedBytes": 8953
+    "generatedBytes": 8981
   },
   {
     "effectId": "synth/scope",
@@ -2948,7 +2948,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e5e4d09db8e884a41f1cc2ce908f438dc4cff9f2f22741c30877e3f9aae91b90",
     "sourceBytes": 1124,
     "normalizedBytes": 1105,
-    "generatedBytes": 1080
+    "generatedBytes": 1108
   },
   {
     "effectId": "synth/shape",
@@ -2958,7 +2958,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "d917d2027c873f05bc4183277a2b1dffe158c13cfd1281461580a31e0cd7d67f",
     "sourceBytes": 15986,
     "normalizedBytes": 16286,
-    "generatedBytes": 18045
+    "generatedBytes": 18115
   },
   {
     "effectId": "synth/solid",
@@ -2978,7 +2978,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "552157fb5fad42e56c767a38468e0b04095f5d93e1c6ede55044d5da76cb78fb",
     "sourceBytes": 1104,
     "normalizedBytes": 1085,
-    "generatedBytes": 1162
+    "generatedBytes": 1204
   },
   {
     "effectId": "synth/subdivide",
@@ -2987,8 +2987,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "65e57d82c8982040240528c4410328453bc39de4f4d9519da2497266b1b500bd",
     "sourceBytes": 9154,
-    "normalizedBytes": 9278,
-    "generatedBytes": 8941
+    "normalizedBytes": 9293,
+    "generatedBytes": 9170
   },
   {
     "effectId": "synth/testPattern",
@@ -2998,7 +2998,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "f913300a1312c6630d56fa1cc2faf2cb17fe0643d832473fdec7b66dd373cb20",
     "sourceBytes": 5919,
     "normalizedBytes": 5897,
-    "generatedBytes": 4956
+    "generatedBytes": 5012
   },
   {
     "effectId": "synth3d/cell3d",
@@ -3008,7 +3008,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "83ef13ab1e5997c76e64280d11e0bdb0eaedd6f41a504d2b1e79761cd1dd1755",
     "sourceBytes": 5081,
     "normalizedBytes": 5793,
-    "generatedBytes": 5469
+    "generatedBytes": 5567
   },
   {
     "effectId": "synth3d/cellularAutomata3d",
@@ -3028,7 +3028,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "e4288dfc3384f76e63eda968ad4ce3219a9b96989d8e6ff38755dbcf44f788f3",
     "sourceBytes": 11404,
     "normalizedBytes": 11328,
-    "generatedBytes": 9283
+    "generatedBytes": 9325
   },
   {
     "effectId": "synth3d/fractal3d",
@@ -3038,7 +3038,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "4bc39fb7920cf0829cc6a6fc4670cdac9f5ea68c5438f569050a4732c1e6de19",
     "sourceBytes": 6882,
     "normalizedBytes": 6939,
-    "generatedBytes": 6644
+    "generatedBytes": 6692
   },
   {
     "effectId": "synth3d/heightmap3d",
@@ -3058,7 +3058,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "60ce97d188bf78bc84176c063943f29c25371e4325f13cedbb4eec889c905727",
     "sourceBytes": 7667,
     "normalizedBytes": 8342,
-    "generatedBytes": 8663
+    "generatedBytes": 8761
   },
   {
     "effectId": "synth3d/reactionDiffusion3d",
@@ -3068,7 +3068,7 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "23a23fcf7cfda986215efc76e21f79faf237bef0c362881d801b040407766b17",
     "sourceBytes": 6257,
     "normalizedBytes": 6581,
-    "generatedBytes": 5114
+    "generatedBytes": 5128
   },
   {
     "effectId": "synth3d/shape3d",
@@ -3078,6 +3078,6 @@ export const programCoverage = Object.freeze([
     "sourceSha256": "53b240191c2f0d2e61b5dacecb532ecd3b8aad3973bbf8e38d8712073d50d14f",
     "sourceBytes": 6508,
     "normalizedBytes": 6424,
-    "generatedBytes": 5290
+    "generatedBytes": 5382
   }
 ])

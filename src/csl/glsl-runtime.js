@@ -1,4 +1,5 @@
-import { sampleBilinear, sampleNearestBottomLeft } from '../runtime/sampler.js'
+import { sampleBilinear, sampleNearestTexelBottomLeft } from '../runtime/sampler.js'
+import { metalDivide } from './metal-division.js'
 
 const F32 = Math.fround
 const DEG_TO_RAD = Math.PI / 180
@@ -126,6 +127,9 @@ export class GlslCpuRuntime {
       return out
     }
     this.stdlib = this.#createStdlib()
+    // GLSL float division by a run-time divisor, as the Metal authority
+    // compiles it (metal-division.js). The kernel generator emits these calls.
+    this.fdiv = metalDivide
   }
 
   alloc(length) {
@@ -209,7 +213,7 @@ export class GlslCpuRuntime {
   #texture(surface, coord) {
     if (!surface?.data) throw new TypeError('GLSL texture sampler must be a Surface')
     if (surface.filter === 'linear') return sampleBilinear(surface, coord[0], 1 - coord[1], this.alloc(4))
-    return sampleNearestBottomLeft(surface, coord[0], coord[1], this.alloc(4))
+    return sampleNearestTexelBottomLeft(surface, coord[0], coord[1], this.alloc(4))
   }
 
   #texelFetch(surface, coord) {
@@ -255,6 +259,10 @@ export class GlslCpuRuntime {
       },
       divide(out, left, right) {
         for (let index = 0; index < left.length; index += 1) out[index] = F32(left[index] / right[index])
+        return out
+      },
+      divideMetal(out, left, right) {
+        for (let index = 0; index < left.length; index += 1) out[index] = F32(metalDivide(left[index], right[index]))
         return out
       },
       xor(out, left, right) {
