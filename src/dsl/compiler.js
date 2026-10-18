@@ -1,14 +1,32 @@
 import { DslError } from './error.js'
 import { parseDsl } from './parser.js'
+import { isAutomationValue } from '../runtime/automation.js'
 
 // Mirrors upstream std_enums.js oscKind (sine..noise2d; noise/noise1d alias kind 5,
 // noise2d is the two-stage periodic noise added upstream at eabb537e).
 const OSC_KINDS = { sine: 0, tri: 1, saw: 2, sawInv: 3, square: 4, noise: 5, noise1d: 5, noise2d: 6 }
 const OSC_PARAM_ORDER = ['type', 'min', 'max', 'speed', 'offset', 'seed']
 const MAX_AUTOMATION_DEPTH = 8
+const AUTOMATION_CALLS = new Set(['osc', 'midi', 'audio'])
+
+// The upstream std_enums.js enums that automation descriptors resolve. A dotted
+// path or bare name outside these tables does not resolve, which upstream reports
+// as a warning (S002) and replaces with the field's fallback.
+const STD_ENUMS = {
+  oscKind: OSC_KINDS,
+  midiMode: {
+    noteChange: 0, gateNote: 1, gateVelocity: 2, triggerNote: 3, velocity: 4,
+    cc: 5, cc14: 6, nrpn: 7, pitchBend: 8, pressure: 9, polyPressure: 10,
+  },
+  midiZone: { lower: 0, upper: 1 },
+  audioBand: { low: 0, mid: 1, high: 2, vol: 3, raw: 4 },
+  oscType: { sine: 0, linear: 1, sawtooth: 2, sawtoothInv: 3, square: 4, noise1d: 5, noise2d: 6 },
+  channel: { r: 0, g: 1, b: 2, a: 3 },
+  color: { mono: 0, rgb: 1, hsv: 2 },
+}
 
 function isOscValue(value) {
-  return !!value && typeof value === 'object' && value.type === 'Oscillator'
+  return isAutomationValue(value)
 }
 
 function clamp01(value) {
@@ -82,12 +100,227 @@ function compileOscillator(call, bindings, depth) {
   }
 }
 
+// --- midi() and audio() -------------------------------------------------------
+//
+// A port of upstream's parser transformMidiInvocation/transformAudioInvocation and
+// the validator's compileAutomationDescriptor for Midi and Audio nodes. Errors that
+// upstream reports with severity "error" (its P003 parser errors, S001 and S003)
+// throw DslError. Upstream warnings (S002) keep the field's fallback value and mark
+// the descriptor `_invalid` where upstream does, so the program still compiles.
+
+const MIDI_POSITIONAL = ['channel', 'mode', 'min', 'max', 'sensitivity']
+const MIDI_KEYWORD_ONLY = ['name', 'id', 'cc', 'nrpn', 'zone', 'members']
+const AUDIO_POSITIONAL = ['band', 'min', 'max']
+const AUDIO_KEYWORD_ONLY = ['channel', 'name', 'id']
+
+// Replaces an identifier bound by `let` with the bound expression, as upstream's
+// validator substitutes symbols before it compiles an automation descriptor, and
+// folds arithmetic to a number, as upstream's parser does.
+function substituteField(node, bindings, seen = new Set()) {
+  if (node?.kind === 'unary' || node?.kind === 'binary') return evaluateValue(node, bindings)
+  if (!node || typeof node !== 'object' || node.kind !== 'identifier' || node.name.includes('.')) return node
+  const binding = bindings.get(node.name)
+  if (!binding || seen.has(node.name)) return node
+  seen.add(node.name)
+  if (binding.kind === 'value') return substituteField(binding.ast, bindings, seen)
+  if (binding.kind === 'alias') return { kind: 'identifier', name: binding.name, loc: node.loc }
+  // An effect partial is a call that is not an automation source.
+  return { kind: 'Call', name: binding.call.name, args: [], argMode: null, loc: node.loc }
+}
+
+function resolveStdEnum(path) {
+  const [head, ...rest] = path.split('.')
+  if (rest.length !== 1 || !Object.hasOwn(STD_ENUMS, head)) return undefined
+  return Object.hasOwn(STD_ENUMS[head], rest[0]) ? STD_ENUMS[head][rest[0]] : undefined
+}
+
+// Upstream resolveAutomationEnum: a number, an enum path, or a bare member name of
+// `enumName`. A string literal is an error; any other unresolved value is a warning
+// that keeps the fallback.
+function resolveAutomationEnum(node, enumName, fallback, validValues, call, field) {
+  let resolved
+  if (typeof node === 'number') resolved = node
+  else if (node?.kind === 'identifier') {
+    resolved = node.name.includes('.') ? resolveStdEnum(node.name) : resolveStdEnum(`${enumName}.${node.name}`)
+  }
+  if (typeof resolved === 'number' && validValues.has(resolved)) return resolved
+  if (typeof node === 'string') throw new DslError(`String literal not allowed for ${call.name}() ${field}`, call.loc)
+  return fallback
+}
+
+// Upstream resolveAutomationNumber. Returns { value, valid }; `valid` is false where
+// upstream reports a warning and calls the field's onInvalid callback.
+function resolveAutomationNumber(node, bindings, depth, call, field, fallback, options = {}) {
+  if (node === undefined) return { value: fallback, valid: true }
+  const invalid = { value: fallback, valid: false }
+  let value
+  if (typeof node === 'number') value = node
+  else if (typeof node === 'boolean' && options.allowBoolean) value = node ? 1 : 0
+  else if (node?.kind === 'identifier' && node.name.includes('.') && options.allowMember !== false) {
+    value = resolveStdEnum(node.name)
+  } else if (node?.kind === 'Call' && AUTOMATION_CALLS.has(node.name) && options.allowAutomation) {
+    const compiled = compileAutomationCall(node, bindings, depth + 1)
+    return { value: compiled, valid: compiled._invalid !== true }
+  } else if (typeof node === 'string') {
+    throw new DslError(`String literal not allowed for ${call.name}() ${field}`, call.loc)
+  } else if (node?.kind === 'identifier' && !node.name.includes('.')) {
+    throw new DslError(`Undefined automation source '${node.name}' for ${call.name}() ${field}`, call.loc)
+  } else {
+    return invalid
+  }
+  if (typeof value !== 'number' || !Number.isFinite(value)) return invalid
+  if (options.integer && !Number.isInteger(value)) return invalid
+  if (options.min !== undefined && value < options.min) return invalid
+  if (options.max !== undefined && value > options.max) return invalid
+  return { value: options.clamp01 ? clamp01(value) : value, valid: true }
+}
+
+// Splits a midi()/audio() call into upstream's resolved fields: positional
+// arguments fill the positional order densely, keyword arguments take their own
+// slots (the last duplicate keyword wins), and omitted fields take defaults.
+function automationFields(call, bindings, positionalOrder, keywordOnly, defaults) {
+  const valid = [...positionalOrder, ...keywordOnly]
+  const positional = call.args.filter((arg) => arg.name === null)
+  const kwargs = new Map()
+  for (const arg of call.args) if (arg.name !== null) kwargs.set(arg.name, arg.value)
+  if (positional.length > positionalOrder.length) {
+    const names = call.name === 'audio' ? 'channel, name and id' : 'name, id, cc, nrpn, zone and members'
+    throw new DslError(`${call.name}() ${names} are keyword-only`, call.loc)
+  }
+  for (const key of kwargs.keys()) {
+    if (!valid.includes(key)) throw new DslError(`${call.name}() unknown parameter '${key}'; valid: ${valid.join(', ')}`, call.loc)
+  }
+  const fields = {}
+  let cursor = 0
+  for (const field of positionalOrder) {
+    if (kwargs.has(field)) fields[field] = kwargs.get(field)
+    else if (cursor < positional.length) fields[field] = positional[cursor++].value
+    else if (field in defaults) fields[field] = defaults[field]
+  }
+  if (cursor < positional.length) throw new DslError(`${call.name}() has an excess positional argument`, call.loc)
+  for (const field of keywordOnly) if (kwargs.has(field)) fields[field] = kwargs.get(field)
+  for (const field of Object.keys(fields)) {
+    if (field !== 'name' && field !== 'id') fields[field] = substituteField(fields[field], bindings)
+  }
+  return fields
+}
+
+// The selector strings must be non-empty string literals (upstream parser).
+function checkSelectorStrings(call, fields) {
+  for (const field of ['name', 'id']) {
+    if (!(field in fields)) continue
+    if (typeof fields[field] !== 'string') throw new DslError(`${call.name}() '${field}' requires a quoted string`, call.loc)
+    if (fields[field].length === 0) throw new DslError(`${call.name}() '${field}' must not be empty`, call.loc)
+  }
+}
+
+function compileMidi(call, bindings, depth) {
+  if (depth > MAX_AUTOMATION_DEPTH) {
+    throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
+  }
+  const fields = automationFields(call, bindings, MIDI_POSITIONAL, MIDI_KEYWORD_ONLY, { mode: 4, min: 0, max: 1, sensitivity: 1 })
+  const hasZone = 'zone' in fields
+  if (!('channel' in fields) && !hasZone) throw new DslError("midi() requires 'channel' or 'zone' argument", call.loc)
+  if ('channel' in fields && hasZone) throw new DslError("midi() 'channel' and 'zone' are mutually exclusive", call.loc)
+  if ('members' in fields && !hasZone) throw new DslError("midi() 'members' requires 'zone'", call.loc)
+  if ('id' in fields && !('name' in fields)) throw new DslError("midi() 'id' requires readable 'name'", call.loc)
+  checkSelectorStrings(call, fields)
+
+  const mode = resolveAutomationEnum(fields.mode, 'midiMode', 4, new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), call, 'mode')
+  const zone = hasZone ? resolveAutomationEnum(fields.zone, 'midiZone', undefined, new Set([0, 1]), call, 'zone') : undefined
+  let validSelection = !hasZone || zone !== undefined
+  let members
+  if ('members' in fields) {
+    const result = resolveAutomationNumber(fields.members, bindings, depth, call, 'members', undefined, { integer: true, min: 1, max: 15, allowMember: false })
+    members = result.value
+    if (!result.valid) validSelection = false
+  }
+  let validChannel = true
+  let channel
+  if (!hasZone) {
+    const result = resolveAutomationNumber(fields.channel, bindings, depth, call, 'channel', 1, { integer: true, min: 1, max: 16, allowMember: false })
+    channel = result.value
+    validChannel = result.valid
+  }
+  let validCc = true
+  let cc
+  if ('cc' in fields || mode === 5 || mode === 6) {
+    const result = resolveAutomationNumber(fields.cc, bindings, depth, call, 'cc', 1, { integer: true, min: 0, max: mode === 6 ? 31 : 127, allowMember: false })
+    cc = result.value
+    validCc = result.valid
+  }
+  let nrpn
+  if ('nrpn' in fields || mode === 7) {
+    if (!('nrpn' in fields)) validSelection = false
+    const result = resolveAutomationNumber(fields.nrpn, bindings, depth, call, 'nrpn', undefined, { integer: true, min: 0, max: 16382, allowMember: false })
+    nrpn = result.value
+    if (!result.valid) validSelection = false
+  }
+  const numberOptions = { allowBoolean: true, allowAutomation: true }
+  const descriptor = {
+    type: 'Midi',
+    channel,
+    mode,
+    ...(cc !== undefined && { cc }),
+    ...(nrpn !== undefined && { nrpn }),
+    ...(hasZone && { zone }),
+    ...('members' in fields && { members }),
+    min: resolveAutomationNumber(fields.min, bindings, depth, call, 'min', 0, { ...numberOptions, clamp01: true }).value,
+    max: resolveAutomationNumber(fields.max, bindings, depth, call, 'max', 1, { ...numberOptions, clamp01: true }).value,
+    sensitivity: resolveAutomationNumber(fields.sensitivity, bindings, depth, call, 'sensitivity', 1, numberOptions).value,
+    name: fields.name,
+    id: fields.id,
+  }
+  if (!validCc || !validChannel || !validSelection) descriptor._invalid = true
+  return descriptor
+}
+
+function compileAudio(call, bindings, depth) {
+  if (depth > MAX_AUTOMATION_DEPTH) {
+    throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
+  }
+  const fields = automationFields(call, bindings, AUDIO_POSITIONAL, AUDIO_KEYWORD_ONLY, { min: 0, max: 1 })
+  if (!('band' in fields)) throw new DslError("audio() requires 'band' argument", call.loc)
+  if ('id' in fields && !('name' in fields)) throw new DslError("audio() 'id' requires readable 'name'", call.loc)
+  if ('name' in fields && !('channel' in fields)) throw new DslError("audio() selected device requires both 'name' and 'channel'", call.loc)
+  checkSelectorStrings(call, fields)
+
+  const band = resolveAutomationEnum(fields.band, 'audioBand', undefined, new Set([0, 1, 2, 3, 4]), call, 'band')
+  const numberOptions = { allowAutomation: true, allowMember: false, clamp01: true }
+  const min = resolveAutomationNumber(fields.min, bindings, depth, call, 'min', 0, numberOptions)
+  const max = resolveAutomationNumber(fields.max, bindings, depth, call, 'max', 1, numberOptions)
+  let channel
+  let validChannel = true
+  if ('channel' in fields) {
+    const node = fields.channel
+    if (typeof node === 'number' && Number.isInteger(node) && node >= 1 && node <= 32) channel = node
+    else if (typeof node === 'string') throw new DslError('String literal not allowed for audio() channel', call.loc)
+    else validChannel = false
+  }
+  return {
+    type: 'Audio',
+    band,
+    min: min.value,
+    max: max.value,
+    channel,
+    name: fields.name,
+    id: fields.id,
+    _invalid: band === undefined || !min.valid || !max.valid || !validChannel,
+  }
+}
+
+function compileAutomationCall(call, bindings, depth) {
+  if (call.name === 'midi') return compileMidi(call, bindings, depth)
+  if (call.name === 'audio') return compileAudio(call, bindings, depth)
+  return compileOscillator(call, bindings, depth)
+}
+
 function evaluateValue(value, bindings, oscDepth = 0) {
   if (Array.isArray(value)) return value.map((item) => evaluateValue(item, bindings, oscDepth))
   if (!value || typeof value !== 'object') return value
   if (value.kind === 'surface') return value
   if (value.kind === 'Call') {
-    if (value.name === 'osc') return compileOscillator(value, bindings, oscDepth)
+    if (AUTOMATION_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth)
     throw new DslError(`Unsupported DSL value ${value.kind} "${value.name}"`, value.loc)
   }
   if (value.kind === 'identifier') {
@@ -143,10 +376,10 @@ export function compileDsl(source, registry, options = {}) {
   const bindings = new Map()
   for (const binding of ast.bindings) {
     if (bindings.has(binding.name)) throw new DslError(`Duplicate binding "${binding.name}"`, binding.loc)
-    if (binding.value?.kind === 'Call' && binding.value.name !== 'osc') {
+    if (binding.value?.kind === 'Call' && !AUTOMATION_CALLS.has(binding.value.name)) {
       bindings.set(binding.name, { kind: 'partial', call: { ...binding.value, args: resolveArgs(binding.value.args, bindings) } })
     } else {
-      bindings.set(binding.name, { kind: 'value', value: evaluateValue(binding.value, bindings) })
+      bindings.set(binding.name, { kind: 'value', value: evaluateValue(binding.value, bindings), ast: binding.value })
     }
   }
 

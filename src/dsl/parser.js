@@ -104,12 +104,15 @@ class Parser {
     this.consume('(')
     const args = []
     let mode = null
+    // Upstream's parseCall lets the midi() and audio() value calls mix positional and
+    // keyword arguments (`allowMixed`); every other call keeps one form.
+    const allowMixed = name.lexeme === 'midi' || name.lexeme === 'audio'
     if (!this.check(')')) {
       do {
         const isNamed = this.peek().type === 'identifier' && this.peek(1).lexeme === ':'
         const nextMode = isNamed ? 'named' : 'positional'
-        if (mode && mode !== nextMode) throw new DslError('Cannot mix positional and named arguments', location(this.peek()))
-        mode = nextMode
+        if (mode && mode !== nextMode && !allowMixed) throw new DslError('Cannot mix positional and named arguments', location(this.peek()))
+        mode = mode && mode !== nextMode ? 'mixed' : nextMode
         let argName = null
         if (isNamed) {
           argName = this.identifier().lexeme
@@ -199,11 +202,10 @@ class Parser {
         this.consume(')')
         return { kind: 'vector', width: Number(name.at(-1)), values, loc: location(token) }
       }
-      // `osc(...)` is the one value-position call the DSL supports (oscillator
-      // automation, matching upstream's parser); it parses as a regular call and
-      // the compiler turns it into an Oscillator automation value. Every other
-      // call in a value position stays a parse error via the dangling '('.
-      if (name === 'osc' && this.peek().lexeme === '(') {
+      // `osc(...)`, `midi(...)` and `audio(...)` are the automation value calls of
+      // upstream's parser; each parses as a regular call and the compiler turns it
+      // into an Oscillator, Midi or Audio automation value.
+      if ((name === 'osc' || name === 'midi' || name === 'audio') && this.peek().lexeme === '(') {
         this.current -= 1
         return this.parseCall()
       }
