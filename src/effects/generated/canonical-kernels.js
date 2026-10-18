@@ -18612,9 +18612,11 @@ function canonicalFactory126($bindings, $runtime) {
 }
 
 function canonicalFactory127($bindings, $runtime) {
-  const { floor, fract, min, max, clamp, length, dot, texture } = $runtime.stdlib
+  const { float, floor, fract, min, max, clamp, length, dot, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   var cpu_vector_write_0_0, cpu_vector_write_0_1;
+  
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
   
   var MODE = $bindings["MODE"];
   var inputTex = $bindings["inputTex"];
@@ -18625,17 +18627,17 @@ function canonicalFactory127($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function hash22 (p) {
   	p = $runtime.copy(p);
-  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031, p[1] * 0.103, p[0] * 0.0973]));
-  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33, p3[2] + 33.33, p3[0] + 33.33])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33, p3[2] + 33.33, p3[0] + 33.33])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33, p3[2] + 33.33, p3[0] + 33.33]))]);
-  	return fract(new $runtime.PooledFloat32Array([(p3[0] + p3[1]) * p3[2], (p3[0] + p3[2]) * p3[1]]));
+  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.10300000011920929, p[0] * 0.09730000048875809]));
+  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469]))]);
+  	return fract(new $runtime.PooledFloat32Array([cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]), cpu_float((cpu_float(p3[0] + p3[2])) * p3[1])]));
   };
   function lum (c) {
   	c = $runtime.copy(c);
-  	return dot(c, new $runtime.PooledFloat32Array([0.2126, 0.7152, 0.0722]));
+  	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   };
   function lumGradient (uv) {
   	uv = $runtime.copy(uv);
-  	var px = new $runtime.PooledFloat32Array([1.0 / resolution[0], 1.0 / resolution[1]]);
+  	var px = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
   	var tl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1]])))));
   	var l = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1]])))));
   	var bl = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0] * -1, uv[1] + px[1] * -1])))));
@@ -18644,26 +18646,26 @@ function canonicalFactory127($bindings, $runtime) {
   	var br = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + px[0], uv[1] + px[1] * -1])))));
   	var t = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + px[1]])))));
   	var b = lum(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, new $runtime.PooledFloat32Array([uv[0], uv[1] + px[1] * -1])))));
-  	return new $runtime.PooledFloat32Array([tr + 2.0 * r + br - tl - 2.0 * l - bl, tl + 2.0 * t + tr - bl - 2.0 * b - br]);
+  	return new $runtime.PooledFloat32Array([tr + 2 * r + br - tl - 2 * l - bl, tl + 2 * t + tr - bl - 2 * b - br]);
   };
   function main () {
   	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var hashCoord = globalCoord instanceof Float32Array ? $runtime.copy(globalCoord) : globalCoord;
   	if (MODE == 4) {
-  	floor(new $runtime.PooledFloat32Array([globalCoord[0] / 3.0, globalCoord[1] / 3.0])).map(function (_) {return _ * 3.0;}).reduce((res,el,i)=>(res[i] = el, res), hashCoord);
+  	floor(new $runtime.PooledFloat32Array([globalCoord[0] / 3, globalCoord[1] / 3])).map(function (_) {return _ * 3;}).reduce((res,el,i)=>(res[i] = el, res), hashCoord);
   	};
-  	var rnd = hash22(new $runtime.PooledFloat32Array([hashCoord[0] + (seed) * 101.7, hashCoord[1] + (seed) * 101.7])).map(function (_) {return _ - 0.5;});
-  	var offset = new $runtime.PooledFloat32Array([(rnd[0] * 2.0) * radius, (rnd[1] * 2.0) * radius]);
+  	var rnd = hash22(new $runtime.PooledFloat32Array([hashCoord[0] + (seed) * 101.69999694824219, hashCoord[1] + (seed) * 101.69999694824219])).map(function (_) {return _ - 0.5;});
+  	var offset = new $runtime.PooledFloat32Array([(rnd[0] * 2) * radius, (rnd[1] * 2) * radius]);
   	if (MODE == 3) {
   	var grad = lumGradient(uv);
   	var gradLen = length(grad);
-  	if (gradLen > 1e-5) {
+  	if (gradLen > 0.000009999999747378752) {
   	var perp = new $runtime.PooledFloat32Array([-grad[1] / gradLen, grad[0] / gradLen]);
   	(cpu_vector_write_0_0 = (dot(offset, perp)) * perp[0], cpu_vector_write_0_1 = (dot(offset, perp)) * perp[1], offset[0] = cpu_vector_write_0_0, offset[1] = cpu_vector_write_0_1, offset);
   	};
   	};
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(gl_FragCoord[0] + offset[0]) / resolution[0], (gl_FragCoord[1] + offset[1]) / resolution[1]]), 0.0, 1.0);
+  	var sampleUV = clamp(new $runtime.PooledFloat32Array([(gl_FragCoord[0] + offset[0]) / resolution[0], (gl_FragCoord[1] + offset[1]) / resolution[1]]), 0, 1);
   	var src = texture(inputTex, uv);
   	var samp = texture(inputTex, sampleUV);
   	var result = samp instanceof Float32Array ? $runtime.copy(samp) : samp;
@@ -18694,19 +18696,19 @@ function canonicalFactory128($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   function main () {
   	var uv = new $runtime.PooledFloat32Array([gl_FragCoord[0] / resolution[0], gl_FragCoord[1] / resolution[1]]);
-  	var texel = new $runtime.PooledFloat32Array([1.0 / resolution[0], 1.0 / resolution[1]]);
+  	var texel = new $runtime.PooledFloat32Array([1 / resolution[0], 1 / resolution[1]]);
   	var src = texture(inputTex, uv);
   	var sum = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
-  	var wsum = 0.0;
+  	var wsum = 0;
   	for (var y = -1; y <= 1; y++) {
   	for (var x = -1; x <= 1; x++) {
-  	var w = (2.0 - abs((x))) * (2.0 - abs((y)));
+  	var w = (2 - abs((x))) * (2 - abs((y)));
   	texture(inputTex, new $runtime.PooledFloat32Array([uv[0] + (x) * texel[0], uv[1] + (y) * texel[1]])).map(function (_) {return _ * w;}).reduce((res,el,i)=>(res[i] += el, res), sum);
   	wsum += w;
   	};
   	};
   	var blurred = new $runtime.PooledFloat32Array([sum[0] / wsum, sum[1] / wsum, sum[2] / wsum, sum[3] / wsum]);
-  	mix(src, blurred, clamp(smoothness / 100.0, 0.0, 1.0)).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	mix(src, blurred, clamp(smoothness / 100, 0, 1)).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)

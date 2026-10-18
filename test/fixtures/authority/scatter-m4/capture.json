@@ -1,0 +1,279 @@
+{
+  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in red and green, so every output pixel names the texel its jitter sampled. The CPU reproduces them after the scatter hash is evaluated with float32 literals and float32 operation boundaries. The NEAR cases differ only at pixels whose sample lands exactly on a texel edge; reviewed side by side at native size, they look the same.",
+  "tolerance": 2,
+  "capture": {
+    "at": "2026-10-17",
+    "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+    "sources": [
+      {
+        "path": "shaders/effects/filter/scatter/definition.js",
+        "size": 2320,
+        "sha256": "0471e14233f7e8a48647163182861ad14f1501862e12674465255d1fe28c04cb"
+      },
+      {
+        "path": "shaders/effects/filter/scatter/glsl/scatterJitter.glsl",
+        "size": 4475,
+        "sha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71"
+      },
+      {
+        "path": "shaders/effects/filter/scatter/glsl/scatterSmooth.glsl",
+        "size": 1138,
+        "sha256": "124931637680f4f1fd9eed63bd0b63bf961204c5667236c9a67ce1b24ab0e602"
+      },
+      {
+        "path": "shaders/effects/synth/noise/definition.js",
+        "size": 4657,
+        "sha256": "c1f3d5b83ee7fbf4fef2e00f2d943686fed39bffa90d495622df4b2766dc74b9"
+      },
+      {
+        "path": "shaders/effects/synth/noise/glsl/noise.glsl",
+        "size": 18131,
+        "sha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274"
+      },
+      {
+        "path": "shaders/effects/synth/media/definition.js",
+        "size": 4642,
+        "sha256": "9dd0c2bd5b7ace0fbb29cbfd02f56d4156b9da04a366ed5c6dfcbb45a4020f24"
+      },
+      {
+        "path": "shaders/effects/synth/media/glsl/mediaInput.glsl",
+        "size": 6598,
+        "sha256": "3f26aa8aa6d813e0825f7ccbe1c0ab6d9e91445283d27d6d87d72eeb0b7b0c9c"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 90314,
+        "sha256": "eadd0fd9ca8578f31744d94efce85879429149dee354b5bb73b95b5fbe8872af"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 81454,
+        "sha256": "951ce0245fefaa29dda4dffe3e6fe0835773aa2a6f0e6889825676c772da894c"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "host": "Apple M4, macOS 26.6.2 (25G83)",
+    "browserVersion": "156.0.8078.4",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Metal. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL, apply the demo ProgramState step values, upload the case input (or a transparent canvas) to every media step with flipY true, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
+  },
+  "cases": [
+    {
+      "name": "noise-scatter-41x23",
+      "width": 41,
+      "height": 23,
+      "time": 0.75,
+      "seed": 7,
+      "program": "search filter, synth\n\nnoise(seed: 7, ridges: true)\n  .scatter(seed: 7)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "bf6832dcf99d9e920b696c7060001dfdec98297be7de690ab2d00cd4b1105c2d",
+      "expect": "near",
+      "near": {
+        "candidateRgbaSha256": "c55e98191dadc5bae00ce98d7f71edfd3faffc91b8bdba7e14d3ee7ee5e69adc",
+        "maxError": 158,
+        "channelsOverTolerance": 8,
+        "differingChannels": 12
+      },
+      "reference": {
+        "image": "noise-scatter-41x23.png",
+        "pngSha256": "c73c468231cffa0a556ec5caf8f20af9ae49b79b3347f18b8fd7ace8686cd203",
+        "rgbaSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646"
+      },
+      "independentCaptures": {
+        "writeSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646",
+        "repeatSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646",
+        "independentSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646"
+      }
+    },
+    {
+      "name": "noise-scatter-64x64-fixture-seeds",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .scatter(seed: 1)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "b3df29e42e3e35500e465abc4ec745f5abb4fa0aec65a587632471e0c9786670",
+      "expect": "strict",
+      "reference": {
+        "image": "noise-scatter-64x64-fixture-seeds.png",
+        "pngSha256": "fec6b8bbb15f8f6eb8f533b7ddaf606bd60ac16bb02c516c9ed1679e9d7539da",
+        "rgbaSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1"
+      },
+      "independentCaptures": {
+        "writeSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1",
+        "repeatSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1",
+        "independentSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1"
+      }
+    },
+    {
+      "name": "coordinate-scatter-64x64-seed7",
+      "width": 64,
+      "height": 64,
+      "time": 0.75,
+      "seed": 1,
+      "program": "search synth, filter\nmedia(imageSize: [64,64], bgAlpha: 0).scatter(seed: 7).write(o0)\nrender(o0)\n",
+      "programSha256": "f8161deca4abf403b9f7a918478241365b08e6fa665364542a00ead1ecf9b576",
+      "input": {
+        "image": "coordinates-64x64.png",
+        "pngSha256": "3b852c0e836fdffd74b2602aef0cfa237beed87f9af54cf6f8931c3fbab01926",
+        "rgbaSha256": "e50c65661a94426618438cf9bd778fcafc1f35c32938d8c1bdd935e6422a04f7",
+        "formula": {
+          "red": "round(x*255/(width-1))",
+          "green": "round(y*255/(height-1))",
+          "blue": 128,
+          "alpha": 255
+        }
+      },
+      "expect": "exact",
+      "reference": {
+        "image": "coordinate-scatter-64x64-seed7.png",
+        "pngSha256": "338d251aa9f5143e5bca6e0faadf8c44391711aae6c624d7c47ef488cc297a19",
+        "rgbaSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20"
+      },
+      "independentCaptures": {
+        "writeSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20",
+        "repeatSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20",
+        "independentSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20"
+      }
+    },
+    {
+      "name": "coordinate-scatter-64x64-seed42",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nmedia(imageSize: [64,64], bgAlpha: 0).scatter(seed: 42).write(o0)\nrender(o0)\n",
+      "programSha256": "94af465571cc42f20b85993088295f3ef814e8b9b988538bcafe93b0690046c2",
+      "input": {
+        "image": "coordinates-64x64.png",
+        "pngSha256": "3b852c0e836fdffd74b2602aef0cfa237beed87f9af54cf6f8931c3fbab01926",
+        "rgbaSha256": "e50c65661a94426618438cf9bd778fcafc1f35c32938d8c1bdd935e6422a04f7",
+        "formula": {
+          "red": "round(x*255/(width-1))",
+          "green": "round(y*255/(height-1))",
+          "blue": 128,
+          "alpha": 255
+        }
+      },
+      "expect": "exact",
+      "reference": {
+        "image": "coordinate-scatter-64x64-seed42.png",
+        "pngSha256": "8a87e164af13e26a67d8e39f525be4f8a5f8ae019fa8a39068ee2a8f60236daf",
+        "rgbaSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58"
+      },
+      "independentCaptures": {
+        "writeSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58",
+        "repeatSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58",
+        "independentSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58"
+      }
+    },
+    {
+      "name": "coordinate-scatter-64x64-clumped-radius25",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nmedia(imageSize: [64,64], bgAlpha: 0).scatter(seed: 3, mode: 4, radius: 25).write(o0)\nrender(o0)\n",
+      "programSha256": "90f66cea84d6ee638d5d1a6c35dbd7692eff55bdc1c62aba06b19dcb5395904a",
+      "input": {
+        "image": "coordinates-64x64.png",
+        "pngSha256": "3b852c0e836fdffd74b2602aef0cfa237beed87f9af54cf6f8931c3fbab01926",
+        "rgbaSha256": "e50c65661a94426618438cf9bd778fcafc1f35c32938d8c1bdd935e6422a04f7",
+        "formula": {
+          "red": "round(x*255/(width-1))",
+          "green": "round(y*255/(height-1))",
+          "blue": 128,
+          "alpha": 255
+        }
+      },
+      "expect": "exact",
+      "reference": {
+        "image": "coordinate-scatter-64x64-clumped-radius25.png",
+        "pngSha256": "e0c8dc4a846715d57cb32828610eec20433f6f20b4f2d18147eca6fedb324301",
+        "rgbaSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813"
+      },
+      "independentCaptures": {
+        "writeSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813",
+        "repeatSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813",
+        "independentSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813"
+      }
+    },
+    {
+      "name": "coordinate-scatter-8x8-seed1",
+      "width": 8,
+      "height": 8,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nmedia(imageSize: [8,8], bgAlpha: 0).scatter(seed: 1).write(o0)\nrender(o0)\n",
+      "programSha256": "140744be2a995d1675c99f4799e732511f5aa3dcf6768244fdc58e85c712544b",
+      "input": {
+        "image": "coordinates-8x8.png",
+        "pngSha256": "8dbff42f1adcfd6c61ddd7d43c0a1bbad64bb00f58db0061fdd501e93eb2e7cd",
+        "rgbaSha256": "9542068fb423ca277e122e5a4e27471cc382cb58744f02844b70b17535e53a47",
+        "formula": {
+          "red": "round(x*255/(width-1))",
+          "green": "round(y*255/(height-1))",
+          "blue": 128,
+          "alpha": 255
+        }
+      },
+      "expect": "exact",
+      "reference": {
+        "image": "coordinate-scatter-8x8-seed1.png",
+        "pngSha256": "bda9411c364a00d0c11315b7ff2b89818f1056dff0119bbe184cf9db8752e7b2",
+        "rgbaSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940"
+      },
+      "independentCaptures": {
+        "writeSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940",
+        "repeatSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940",
+        "independentSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940"
+      }
+    },
+    {
+      "name": "coordinate-scatter-41x23-seed7",
+      "width": 41,
+      "height": 23,
+      "time": 0.75,
+      "seed": 1,
+      "program": "search synth, filter\nmedia(imageSize: [41,23], bgAlpha: 0).scatter(seed: 7).write(o0)\nrender(o0)\n",
+      "programSha256": "5c74b59071a39a775ea83b64668220936f595072ecde5e082caffb60e5a5a86a",
+      "input": {
+        "image": "coordinates-41x23.png",
+        "pngSha256": "e4286eaaf0d97cf82dff70d317d6f2f3a907566fc77c2d928b2dcdc9da79ce40",
+        "rgbaSha256": "3d2afc2db9bcb8de4ec120b9de1eadd79757ac7b973f3b62234ef011d86d8a39",
+        "formula": {
+          "red": "round(x*255/(width-1))",
+          "green": "round(y*255/(height-1))",
+          "blue": 128,
+          "alpha": 255
+        }
+      },
+      "expect": "near",
+      "near": {
+        "candidateRgbaSha256": "8908b8d5e76942c7f1b8e42a98f60127fd328095b45964c25050e05f151ca123",
+        "maxError": 7,
+        "channelsOverTolerance": 3,
+        "differingChannels": 3
+      },
+      "reference": {
+        "image": "coordinate-scatter-41x23-seed7.png",
+        "pngSha256": "fbd2442596f8e021a6c0a324e1c2b0ea58fe00f55feb8b0d320d263dd06a829c",
+        "rgbaSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d"
+      },
+      "independentCaptures": {
+        "writeSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d",
+        "repeatSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d",
+        "independentSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d"
+      }
+    }
+  ]
+}

@@ -8,9 +8,11 @@ import { decodePng } from '../src/node/png.js'
 import { compareRgba8 } from '../scripts/parity/lib.js'
 
 // Apple M4 authority captures of single-frame programs outside the 8x8 default
-// fixtures (other sizes, seeds and times). Each directory's capture.json records
-// the pinned sources, the capture host and protocol, and one entry per case.
-const CAPTURE_DIRECTORIES = ['spookyTicker-m4']
+// fixtures (other sizes, seeds, times and inputs). Each directory's capture.json
+// records the pinned sources, the capture host and protocol, and one entry per
+// case. A case expects exact bytes, the ±2 contract (strict), or a reviewed NEAR
+// residual whose CPU candidate and measured difference are pinned.
+const CAPTURE_DIRECTORIES = ['scatter-m4', 'spookyTicker-m4']
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex')
 
 const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
@@ -48,22 +50,39 @@ for (const directory of CAPTURE_DIRECTORIES) {
         surface.format = 'rgba16f'
         return surface
       }
+      let imageTex = blank
+      if (kase.input) {
+        const inputPng = await readFile(new URL(kase.input.image, root))
+        assert.equal(sha256(inputPng), kase.input.pngSha256)
+        const input = decodePng(inputPng)
+        assert.deepEqual([input.width, input.height], [kase.width, kase.height])
+        assert.equal(sha256(input.data), kase.input.rgbaSha256)
+        imageTex = () => Surface.fromRgba8(kase.width, kase.height, input.data)
+      }
       const options = () => ({
         width: kase.width,
         height: kase.height,
         time: kase.time,
         seed: kase.seed,
-        externalTextures: { imageTex: blank(), textTex: blank() },
+        externalTextures: { imageTex: imageTex(), textTex: blank() },
         oneShot: 'initial',
       })
       const renderer = () => new CpuRenderer({ registry: createDefaultRegistry(), kernelFactories })
       const actual = renderer().render(kase.program, options()).toRgba8()
+      const comparison = compareRgba8(actual, reference.data, fixture.tolerance)
       if (kase.expect === 'exact') {
         assert.equal(sha256(actual), kase.reference.rgbaSha256)
-      } else {
-        assert.equal(kase.expect, 'strict')
-        const comparison = compareRgba8(actual, reference.data, fixture.tolerance)
+      } else if (kase.expect === 'strict') {
         assert.ok(comparison.pass, JSON.stringify(comparison))
+      } else {
+        assert.equal(kase.expect, 'near')
+        assert.equal(sha256(actual), kase.near.candidateRgbaSha256)
+        const { maxError, channelsOverTolerance, differingChannels } = comparison
+        assert.deepEqual({ maxError, channelsOverTolerance, differingChannels }, {
+          maxError: kase.near.maxError,
+          channelsOverTolerance: kase.near.channelsOverTolerance,
+          differingChannels: kase.near.differingChannels,
+        })
       }
       const asynchronous = await renderer().renderAsync(kase.program, options())
       assert.deepEqual(asynchronous.toRgba8(), actual)

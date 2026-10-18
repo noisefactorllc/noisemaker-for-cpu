@@ -239,5 +239,46 @@
         }
       ]
     }
+  },
+  "defaults/filter__scatter.golden.png": {
+    "captureRevision": "2026-10-17-m4-metal-webgl2-gap002-scatter",
+    "captureRecord": {
+      "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+      "fixtureSha256": "b3df29e42e3e35500e465abc4ec745f5abb4fa0aec65a587632471e0c9786670",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "browser": "HeadlessChrome/156.0.8078.4",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "surface": {
+        "read": "global_o0_read",
+        "write": "global_o0_write",
+        "presented": "global_o0_write"
+      },
+      "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source, served to headless Chromium with ANGLE Metal on an Apple M4 (macOS 26.6.2). Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, render(0.25) once, and read global_o0_write twice and global_o0_read once as top-down RGBA8 through WebGL2Backend.readPixels. Two renderers in each of two headless browser sessions returned identical bytes.",
+      "readbacks": [
+        {
+          "id": "global_o0_write",
+          "sha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c",
+          "repeatSha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c"
+        },
+        {
+          "id": "global_o0_read",
+          "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+        }
+      ],
+      "replaces": {
+        "pngSha256": "2ff6f8ffa2499cb295a12722d17b4172eb5e9173fb21d96ee38c9eac40f4eaf4",
+        "rgbaSha256": "5073f8c2827de460d4db8ab491a133012cbd075010a1b50361cacc93e849ab23",
+        "provenance": "unknown",
+        "freshCaptureDifference": {
+          "maxError": 49,
+          "channelsOverTolerance": 3,
+          "tolerance": 2
+        },
+        "approval": "The operator approved replacing the retained golden with this M4 authority capture on 2026-10-17."
+      }
+    }
   }
 }

@@ -758,21 +758,19 @@ function adaptCanonicalSource(effectId, source) {
   // one typed-array constructor, erasing the float32 operation boundaries
   // between the add and multiply. Explicit float casts retain the GLSL hash
   // result while still compiling to allocation-free Math.fround calls.
-  if (effectId !== 'filter/scatter') {
-    source = source
-      .replaceAll(
-        'if (hit.dist > 0.0) {',
-        'float cpuVoxelHitDist = hit.dist;\n        if (cpuVoxelHitDist > 0.0) {',
-      )
-      .replaceAll(
-        'return fract((p3.x + p3.y) * p3.z);',
-        'return fract(float(float(p3.x + p3.y) * p3.z));',
-      )
-      .replaceAll(
-        'return fract((p3.xx + p3.yz) * p3.zy);',
-        'return fract(vec2(float(float(p3.x + p3.y) * p3.z), float(float(p3.x + p3.z) * p3.y)));',
-      )
-  }
+  source = source
+    .replaceAll(
+      'if (hit.dist > 0.0) {',
+      'float cpuVoxelHitDist = hit.dist;\n        if (cpuVoxelHitDist > 0.0) {',
+    )
+    .replaceAll(
+      'return fract((p3.x + p3.y) * p3.z);',
+      'return fract(float(float(p3.x + p3.y) * p3.z));',
+    )
+    .replaceAll(
+      'return fract((p3.xx + p3.yz) * p3.zy);',
+      'return fract(vec2(float(float(p3.x + p3.y) * p3.z), float(float(p3.x + p3.z) * p3.y)));',
+    )
   if (effectId === 'render/renderLandscape3d') {
     source = source
       .replaceAll(
@@ -992,10 +990,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   }
   transpiled = lowerUnsignedJavaScript(transpiled, originalSource)
   transpiled = preserveUintCastOperands(transpiled, originalSource)
-  // ANGLE's optimized scatter hash straddles a nearest-sampling boundary in
-  // the canonical default. Its original scalar lowering matches that backend;
-  // strict literal lowering moves one texel to the opposite side.
-  if (effectId !== 'filter/scatter') transpiled = lowerFloatLiterals(transpiled)
+  transpiled = lowerFloatLiterals(transpiled)
   transpiled = preserveIntCastPrecedence(transpiled)
   transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
   transpiled = restoreIntegerDivision(transpiled, originalSource, effectId)
