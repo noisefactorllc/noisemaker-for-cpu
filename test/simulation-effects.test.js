@@ -52,8 +52,10 @@ const REPEAT_CARRIED = new Set(['synth/navierStokes', 'synth/reactionDiffusion']
 // these have genuinely reached a stable configuration:
 const SETTLES_BY_N8 = new Set([
   'filter/feedback', // a delay-line/blend loop that stabilizes within a handful of frames.
-  'render/pointsBillboardRender',
 ])
+// `render/pointsBillboardRender` used to settle here: its 40-pixel sprites saturated the
+// canvas. Its fixture now draws density 0.1 at pointSize 4, so it measurably advances between
+// N=4 and N=8 and takes the strict advancing branch.
 // `points/physical`, `render/pointsEmit`, and `render/pointsRender` (all three share one fixture)
 // used to be listed here as settled; after the generated `hash_uint` kernels were routed to the
 // LCG body the pinned authority GLSL declares, their agent respawn sequences no longer freeze the
