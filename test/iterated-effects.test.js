@@ -260,8 +260,9 @@ function markResolutionFactory($bindings, runtime) {
 
 // MRT pass mirroring points/life's real shape (an agent pass that writes xyz alongside a
 // per-step-declared name, life_data, in one MRT call): out[0] passes xyz through, out[4]/out[5]
-// mark the SHARED MRT resolution and the bound `stateSize` uniform respectively — proving both
+// mark the SHARED MRT pixel grid and the bound `stateSize` uniform respectively — proving both
 // size and shader-visible uniform observe the group owner's stateSize, not the joining step's own.
+// out[6] marks the bound `resolution` uniform, which is the render size, as upstream binds it.
 function agentMrtFactory($bindings, runtime) {
   const sample = runtime.stdlib.texture
   return function agentMrtKernel(context, out) {
@@ -271,9 +272,9 @@ function agentMrtFactory($bindings, runtime) {
     out[1] = 0
     out[2] = 0
     out[3] = 1
-    out[4] = $bindings.resolution[0]
+    out[4] = context.resolution[0]
     out[5] = $bindings.stateSize
-    out[6] = 0
+    out[6] = $bindings.resolution[0]
     out[7] = 1
   }
 }
@@ -632,12 +633,14 @@ test('a joining step inherits the group owner\'s stateSize for its group-scoped 
   const program = 'search points\ntestEmitState(stateSize: 8).testJoinState(stateSize: 4).write(o0)\nrender(o0)'
   assert.doesNotThrow(() => fixture().render(program, { width: 2, height: 2 }))
   const result = fixture().render(program, { width: 2, height: 2 })
-  assert.equal(result.surface.data[0], 8, 'the shared MRT resolution (global_xyz, the owner-declared texture) must be the owner\'s stateSize (8), not mismatched against life_data')
+  assert.equal(result.surface.data[0], 8, 'the shared MRT pixel grid (global_xyz, the owner-declared texture) must be the owner\'s stateSize (8), not mismatched against life_data')
   assert.equal(result.surface.data[1], 8, 'the joining step\'s own bound stateSize uniform must observe the owner\'s value (8), not its own declared default/argument (4)')
+  assert.equal(result.surface.data[2], 2, 'the agent MRT pass binds the render width (2) as resolution, not its state texture size')
 })
 
 test('an ungrouped (standalone) points effect keeps using its own stateSize default — inheritance only applies to steps that actually joined an owner', () => {
   const result = fixture().render('search points\ntestJoinState().write(o0)\nrender(o0)', { width: 2, height: 2 })
   assert.equal(result.surface.data[0], 4, 'no owner is present, so global_xyz falls back to this step\'s own stateSize default (4)')
   assert.equal(result.surface.data[1], 4, 'no owner is present, so the stateSize uniform stays this step\'s own default (4)')
+  assert.equal(result.surface.data[2], 2, 'the agent MRT pass binds the render width (2) as resolution, not its state texture size')
 })

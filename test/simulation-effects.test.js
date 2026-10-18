@@ -60,17 +60,16 @@ const SETTLES_BY_N8 = new Set([
 // output between N=4 and N=8, so they take the strict advancing branch.
 //
 // `PLATEAUS_BY_N8`: the output is NOT stable - N=4..8 is a deterministic plateau at THIS exact
-// test scale, but iterating further resumes changing the output (re-verified for points/lenia:
-// first differs at N=22). This is a small-scale artifact, not evidence of settling: re-run at a
-// larger scale (32x32 canvas, stateSize:128) and the plateau disappears. Do not describe this as
-// "settled" or "converged" in code or docs.
+// test scale, but iterating further resumes changing the output. This is a small-scale artifact,
+// not evidence of settling. Do not describe this as "settled" or "converged" in code or docs.
+// `points/lenia` used to plateau here (first differing at N=22) while its agent pass bound the
+// state texture size as `resolution`; with the render size bound, as upstream does, it advances
+// between N=4 and N=8 and takes the strict advancing branch.
 // `points/flow`, `points/life`, and `points/physarum` used to plateau here too (byte-identical
 // N=4..8, flow/life first differing at N=10 and physarum at N=11); after the generated
 // `hash_uint` kernels were routed to the LCG body the pinned authority GLSL declares, all three
 // measurably advance between N=4 and N=8, so they take the strict advancing branch.
-const PLATEAUS_BY_N8 = new Set([
-  'points/lenia',
-])
+const PLATEAUS_BY_N8 = new Set([])
 const CONVERGES_BY_N8 = new Set([...SETTLES_BY_N8, ...PLATEAUS_BY_N8])
 
 // `synth/cellularAutomata`, `synth/mnca`, and `synth/reactionDiffusion` size their internal

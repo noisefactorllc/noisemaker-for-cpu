@@ -1150,8 +1150,10 @@ export class CpuRenderer {
           const destinations = this.groupMrtDestinations(definition, pass, factory, state, stepStates, iterationOptions, owned)
           const surfaceList = destinations.map((entry) => entry.surface)
           const kernel = bindCanonicalKernel(factory, {
-            width: surfaceList[0].width,
-            height: surfaceList[0].height,
+            // Upstream binds the canvas size as `resolution` to every pass; the pixel loop
+            // still covers the state-sized MRT destinations.
+            width: iterationOptions.width,
+            height: iterationOptions.height,
             time: iterationOptions.time,
             frame: iterationOptions.frame,
             deltaTime: iterationOptions.deltaTime,
@@ -1285,8 +1287,10 @@ export class CpuRenderer {
           const destinations = this.groupMrtDestinations(definition, pass, factory, state, stepStates, iterationOptions, owned)
           const surfaceList = destinations.map((entry) => entry.surface)
           const kernel = bindCanonicalKernel(factory, {
-            width: surfaceList[0].width,
-            height: surfaceList[0].height,
+            // Upstream binds the canvas size as `resolution` to every pass; the pixel loop
+            // still covers the state-sized MRT destinations.
+            width: iterationOptions.width,
+            height: iterationOptions.height,
             time: iterationOptions.time,
             frame: iterationOptions.frame,
             deltaTime: iterationOptions.deltaTime,
@@ -1447,8 +1451,10 @@ export class CpuRenderer {
           const destinations = this.canonicalMrtDestinations(step.definition, pass, factory, params, renderOptions, owned, resources)
           const surfaceList = destinations.map((entry) => entry.surface)
           const kernel = bindCanonicalKernel(factory, {
-            width: surfaceList[0].width,
-            height: surfaceList[0].height,
+            // Upstream binds the canvas size as `resolution` to every pass; the pixel loop
+            // still covers the state-sized MRT destinations.
+            width: renderOptions.width,
+            height: renderOptions.height,
             time: renderOptions.time,
             frame: renderOptions.frame,
             seed: renderOptions.seed,
@@ -1617,8 +1623,10 @@ export class CpuRenderer {
           const destinations = this.canonicalMrtDestinations(step.definition, pass, factory, params, renderOptions, owned, resources)
           const surfaceList = destinations.map((entry) => entry.surface)
           const kernel = bindCanonicalKernel(factory, {
-            width: surfaceList[0].width,
-            height: surfaceList[0].height,
+            // Upstream binds the canvas size as `resolution` to every pass; the pixel loop
+            // still covers the state-sized MRT destinations.
+            width: renderOptions.width,
+            height: renderOptions.height,
             time: renderOptions.time,
             frame: renderOptions.frame,
             seed: renderOptions.seed,
