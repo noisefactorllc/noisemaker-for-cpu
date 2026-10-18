@@ -12,7 +12,7 @@ import { compareRgba8 } from '../scripts/parity/lib.js'
 // records the pinned sources, the capture host and protocol, and one entry per
 // case. A case expects exact bytes, the ±2 contract (strict), or a reviewed NEAR
 // residual whose CPU candidate and measured difference are pinned.
-const CAPTURE_DIRECTORIES = ['scatter-m4', 'spookyTicker-m4']
+const CAPTURE_DIRECTORIES = ['scatter-m4', 'snow-m4', 'spookyTicker-m4']
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex')
 
 const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))

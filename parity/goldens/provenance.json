@@ -789,11 +789,48 @@
       "captureRecord": null
     },
     "defaults/filter__snow.golden.png": {
-      "sha256": "63774e640bc12311d4e50373528cb91d17d5c05162497202123a9cfbfe02a4ff",
+      "sha256": "89e3c6c044de053e9ee715f6ad9a971a590fe83128f2c1740009a7e73aa15612",
       "bytes": 332,
       "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
-      "captureRevision": null,
-      "captureRecord": null
+      "captureRevision": "2026-10-17-m4-metal-webgl2-gap002-snow",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "bc7cda94cc581966687bfd20feca2f8bc7d66fbb61b554ed794cafc50a57c251",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "surface": {
+          "read": "global_o0_read",
+          "write": "global_o0_write",
+          "presented": "global_o0_write"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source, served to headless Chromium with ANGLE Metal on an Apple M4 (macOS 26.6.2). Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, render(0.25) once, and read global_o0_write twice and global_o0_read once as top-down RGBA8 through WebGL2Backend.readPixels. Two renderers in each of two headless browser sessions returned identical bytes.",
+        "readbacks": [
+          {
+            "id": "global_o0_write",
+            "sha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81",
+            "repeatSha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81"
+          },
+          {
+            "id": "global_o0_read",
+            "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+          }
+        ],
+        "replaces": {
+          "pngSha256": "63774e640bc12311d4e50373528cb91d17d5c05162497202123a9cfbfe02a4ff",
+          "rgbaSha256": "265c080d91f72036a5bcc2bde8d152652fda63dc357b4a55da8c8adae9cc5801",
+          "provenance": "unknown",
+          "freshCaptureDifference": {
+            "maxError": 52,
+            "channelsOverTolerance": 41,
+            "tolerance": 2
+          },
+          "approval": "The operator approved replacing the retained golden with this M4 authority capture on 2026-10-17."
+        }
+      }
     },
     "defaults/filter__sobel.golden.png": {
       "sha256": "3bafb913ea6d4b9eced71e62110ee94870af47f47070a414a68e46787f027ef9",

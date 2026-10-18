@@ -1,0 +1,187 @@
+{
+  "note": "filter/snow against the Apple M4 authority. The solid cases isolate the static and limiter noise: density 100 with alpha 1 outputs the static value itself. The CPU reproduces them after the snow hash uses the M4 fused multiply-add order and z_base keeps the float32 cosine of time * TAU.",
+  "tolerance": 2,
+  "capture": {
+    "at": "2026-10-17",
+    "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+    "sources": [
+      {
+        "path": "shaders/effects/filter/snow/definition.js",
+        "size": 1068,
+        "sha256": "4008170b96868f4c2074a72ff665c964143cfe74850d6436e9e82c3172745fbc"
+      },
+      {
+        "path": "shaders/effects/filter/snow/glsl/snow.glsl",
+        "size": 2982,
+        "sha256": "ae057787cc101755743c17b4cdf46b51d70ed8b9896fed9535a058c8b252f48a"
+      },
+      {
+        "path": "shaders/effects/synth/noise/definition.js",
+        "size": 4657,
+        "sha256": "c1f3d5b83ee7fbf4fef2e00f2d943686fed39bffa90d495622df4b2766dc74b9"
+      },
+      {
+        "path": "shaders/effects/synth/noise/glsl/noise.glsl",
+        "size": 18131,
+        "sha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274"
+      },
+      {
+        "path": "shaders/effects/synth/solid/definition.js",
+        "size": 803,
+        "sha256": "8d4620efd3b1a10178827252eb6fe7dc6034ac65e20b685beb211089ecba525c"
+      },
+      {
+        "path": "shaders/effects/synth/solid/glsl/solid.glsl",
+        "size": 273,
+        "sha256": "82afae3ccf523d1938cd02eadc6bfae5e4440a9b22a4f5629688d1d05856287c"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 90314,
+        "sha256": "eadd0fd9ca8578f31744d94efce85879429149dee354b5bb73b95b5fbe8872af"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 81454,
+        "sha256": "951ce0245fefaa29dda4dffe3e6fe0835773aa2a6f0e6889825676c772da894c"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "host": "Apple M4, macOS 26.6.2 (25G83)",
+    "browserVersion": "156.0.8078.4",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Metal. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL, apply the demo ProgramState step values, upload the case input (or a transparent canvas) to every media step with flipY true, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
+  },
+  "cases": [
+    {
+      "name": "noise-snow-41x23",
+      "width": 41,
+      "height": 23,
+      "time": 0.75,
+      "seed": 7,
+      "program": "search filter, synth\n\nnoise(seed: 7, ridges: true)\n  .snow()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "8eccc8301db18807fce32ff8a4d80006d36504274b51b9cb9b7061abcb6d3980",
+      "expect": "strict",
+      "reference": {
+        "image": "noise-snow-41x23.png",
+        "pngSha256": "fb3ac587760b60b0a2e37bbec9725ef90b90e1085f6b734db64ad30a9057a0ee",
+        "rgbaSha256": "8299b14a060c5c304a50e7b26559bb03796bee7b70c8a56150b767b09e00a44f"
+      },
+      "independentCaptures": {
+        "writeSha256": "8299b14a060c5c304a50e7b26559bb03796bee7b70c8a56150b767b09e00a44f",
+        "repeatSha256": "8299b14a060c5c304a50e7b26559bb03796bee7b70c8a56150b767b09e00a44f",
+        "independentSha256": "8299b14a060c5c304a50e7b26559bb03796bee7b70c8a56150b767b09e00a44f"
+      }
+    },
+    {
+      "name": "noise-snow-64x64-fixture-seeds",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .snow()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "bc7cda94cc581966687bfd20feca2f8bc7d66fbb61b554ed794cafc50a57c251",
+      "expect": "strict",
+      "reference": {
+        "image": "noise-snow-64x64-fixture-seeds.png",
+        "pngSha256": "eff91ec203d954781d1eee0c3af24cbb81b482af1425bb096ad2f4284d1368f8",
+        "rgbaSha256": "524c12777672a3a206b21c788c0a10fb9d3056b8acc7bc94e2c9353d022a01b6"
+      },
+      "independentCaptures": {
+        "writeSha256": "524c12777672a3a206b21c788c0a10fb9d3056b8acc7bc94e2c9353d022a01b6",
+        "repeatSha256": "524c12777672a3a206b21c788c0a10fb9d3056b8acc7bc94e2c9353d022a01b6",
+        "independentSha256": "524c12777672a3a206b21c788c0a10fb9d3056b8acc7bc94e2c9353d022a01b6"
+      }
+    },
+    {
+      "name": "noise-snow-8x8-default",
+      "width": 8,
+      "height": 8,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search filter, synth\n\nnoise(seed: 1, ridges: true)\n  .snow()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "bc7cda94cc581966687bfd20feca2f8bc7d66fbb61b554ed794cafc50a57c251",
+      "expect": "exact",
+      "reference": {
+        "image": "noise-snow-8x8-default.png",
+        "pngSha256": "89e3c6c044de053e9ee715f6ad9a971a590fe83128f2c1740009a7e73aa15612",
+        "rgbaSha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81"
+      },
+      "independentCaptures": {
+        "writeSha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81",
+        "repeatSha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81",
+        "independentSha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81"
+      }
+    },
+    {
+      "name": "black-snow-64x64",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nsolid(color: #000000).snow(alpha: 1).write(o0)\nrender(o0)\n",
+      "programSha256": "7fab550bd3c3d55a3bce994fcce5a8958ab90e07d64595f986d1135453bac6f0",
+      "expect": "strict",
+      "reference": {
+        "image": "black-snow-64x64.png",
+        "pngSha256": "4dc2de2514332665850efa14171b7371f106ac61a4125c5e646d178dd909b73d",
+        "rgbaSha256": "a904fa0e93c034d1577ed7741af6a34b295beafe08bc46156a117f6c333c5d66"
+      },
+      "independentCaptures": {
+        "writeSha256": "a904fa0e93c034d1577ed7741af6a34b295beafe08bc46156a117f6c333c5d66",
+        "repeatSha256": "a904fa0e93c034d1577ed7741af6a34b295beafe08bc46156a117f6c333c5d66",
+        "independentSha256": "a904fa0e93c034d1577ed7741af6a34b295beafe08bc46156a117f6c333c5d66"
+      }
+    },
+    {
+      "name": "white-snow-64x64",
+      "width": 64,
+      "height": 64,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nsolid(color: #ffffff).snow(alpha: 1).write(o0)\nrender(o0)\n",
+      "programSha256": "d09597ff679186c9c6a0baf50fc9ec8123dad04f2b7bb1ffec5e9723630a8245",
+      "expect": "strict",
+      "reference": {
+        "image": "white-snow-64x64.png",
+        "pngSha256": "a674f333c00eb0e78cb48e0a1c0569dfcd7ec5cb105dcd9c4db0b900b264c08b",
+        "rgbaSha256": "7ff10fef744627895e9f9493e99a27244cc9c44ee566de2cb597dfea81b3e108"
+      },
+      "independentCaptures": {
+        "writeSha256": "7ff10fef744627895e9f9493e99a27244cc9c44ee566de2cb597dfea81b3e108",
+        "repeatSha256": "7ff10fef744627895e9f9493e99a27244cc9c44ee566de2cb597dfea81b3e108",
+        "independentSha256": "7ff10fef744627895e9f9493e99a27244cc9c44ee566de2cb597dfea81b3e108"
+      }
+    },
+    {
+      "name": "static-snow-41x23",
+      "width": 41,
+      "height": 23,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nsolid(color: #000000).snow(density: 100, alpha: 1).write(o0)\nrender(o0)\n",
+      "programSha256": "86a0f5acf9308bd47e4616d26cbb00974dc897571b1be215a0b3caaef3a41a32",
+      "expect": "strict",
+      "reference": {
+        "image": "static-snow-41x23.png",
+        "pngSha256": "32e077aa81b9bd080ac15063f8e37fd013dbf8f6a2d993358ad0f3723f90e6ee",
+        "rgbaSha256": "3b66bee5c6a8e3adbe9ad96433b05ecd6210bd22cb0ca46232bcc035acbc8cd6"
+      },
+      "independentCaptures": {
+        "writeSha256": "3b66bee5c6a8e3adbe9ad96433b05ecd6210bd22cb0ca46232bcc035acbc8cd6",
+        "repeatSha256": "3b66bee5c6a8e3adbe9ad96433b05ecd6210bd22cb0ca46232bcc035acbc8cd6",
+        "independentSha256": "3b66bee5c6a8e3adbe9ad96433b05ecd6210bd22cb0ca46232bcc035acbc8cd6"
+      }
+    }
+  ]
+}

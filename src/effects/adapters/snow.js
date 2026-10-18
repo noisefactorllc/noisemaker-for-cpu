@@ -1,3 +1,5 @@
+import { fma32 } from './crt.js'
+
 const F32 = Math.fround
 const TAU = F32(6.283185307179586)
 const INV_TAU = F32(1 / 6.283185307179586)
@@ -23,22 +25,21 @@ function periodicValue(time, value) {
   return mul(add(sine(mul(sub(time, value), TAU)), 1), 0.5)
 }
 
+// The M4 / macOS 26 Metal compile evaluates the dot product as the fused
+// multiply-add chain fma(z, bz, fma(y, by, x * bx)) and reassociates
+// (x + dot) + (y + dot) into (x + y) + 2 * dot.
 function snowHash(x, y, z) {
   const sx = fract(mul(x, F32(0.1031)))
   const sy = fract(mul(y, F32(0.1031)))
   const sz = fract(mul(z, F32(0.1031)))
-  const dot = F32(
-    F32(sx * add(sy, F32(33.33)) + mul(sy, add(sz, F32(33.33)))) +
-    sz * add(sx, F32(33.33)),
-  )
-  const shiftedXY = F32(sx + sy + F32(2 * dot))
-  return clamp01(fract(F32(shiftedXY * add(sz, dot))))
+  const dot = fma32(sz, add(sx, F32(33.33)), fma32(sy, add(sz, F32(33.33)), mul(sx, add(sy, F32(33.33)))))
+  return clamp01(fract(mul(add(add(sx, sy), 2 * dot), add(sz, dot))))
 }
 
 function snowNoise(x, y, time, speed, seed) {
   const angle = mul(time, TAU)
   const cosineValue = cosine(angle)
-  const zBase = Math.abs(cosineValue) < F32(0.0000001) ? 0 : mul(cosineValue, speed)
+  const zBase = mul(cosineValue, speed)
   const baseValue = snowHash(add(x, seed[0]), add(y, seed[1]), add(zBase, seed[2]))
   if (speed === 0 || time === 0) return baseValue
 
