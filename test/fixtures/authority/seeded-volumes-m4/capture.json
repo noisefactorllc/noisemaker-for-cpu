@@ -1,0 +1,267 @@
+{
+  "width": 41,
+  "height": 23,
+  "time": 0.75,
+  "tolerance": 2,
+  "description": "Seeded 3D volumes (synth3d/noise3d, synth3d/cell3d) at 16^3 through every renderer of the parity fixtures, with seeds whose hash words depend on the authority's float32 evaluation order.",
+  "cases": [
+    {
+      "name": "filter3d__palette3d__s7",
+      "seed": 7,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 7, volumeSize: x16)\n  .palette3d()\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "4a36d3fa7382a5405d7fcc31c022a40e2b6a2e5e954ea86ed6ca7d0b4608971a",
+      "image": "filter3d__palette3d__s7.png",
+      "pngSha256": "dc259040e31621749f34f4890b1d537e47de6d44e1b066ae6b3dbf41801c0b65",
+      "rgbaSha256": "d0d6a162139dff7663aa746b4c90cb041bff456a11e768c1b870e23c3e796ac8"
+    },
+    {
+      "name": "synth3d__noise3d__s7",
+      "seed": 7,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 7, volumeSize: x16)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "b16b758a7ee1a0f60b668469f117301c657fee43a7d893b7d23ab307817c3537",
+      "image": "synth3d__noise3d__s7.png",
+      "pngSha256": "af677b1ca7cae9a39bcfb8e33cbbbfb226d6352e3472ddd8bdee237af124df3a",
+      "rgbaSha256": "2dc99f8f5634a347d88780ee4dce4f7065c9d670effd19fec16e4daa39c3c3ff"
+    },
+    {
+      "name": "render__renderCubemap3d__s7",
+      "seed": 7,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 7, volumeSize: x16)\n  .renderCubemap3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "828ae3d8817a782c2185cddc7cff0c0616d626877a4ac0bd6a60f9f59aa4c6f6",
+      "image": "render__renderCubemap3d__s7.png",
+      "pngSha256": "89f37a595b51518d6f7490ac873dbfb48d91b1befa55aa4527056501b10591a6",
+      "rgbaSha256": "8d10f7e96f0dc4336f691aa83f40ddcf99d51562b61d9690fd3bba0e7aa6180d"
+    },
+    {
+      "name": "render__renderLit3d__s7",
+      "seed": 7,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 7, volumeSize: x16)\n.renderLit3d(specularIntensity: 2, shininess: 256)\n.write(o0)\n",
+      "programSha256": "da0f9c6e65066e14ba725344fc4961ecffcaf6911428ac148115c26254ab5375",
+      "image": "render__renderLit3d__s7.png",
+      "pngSha256": "acc7e5b17e559b2aeca2c480ecfa260b479861fef517a3ea418a637f70bbdf04",
+      "rgbaSha256": "84cd3b2e01bd82f21f0643ca7541ad9366d96de96867842e974aacf61cd3818a"
+    },
+    {
+      "name": "synth3d__cell3d__s7",
+      "seed": 7,
+      "program": "search synth3d, filter3d, render\n\ncell3d(seed: 7, volumeSize: x16)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "6d6049eba176e83b8890dde7fcf331432f76ac9890561994f2d43800a7a432fd",
+      "image": "synth3d__cell3d__s7.png",
+      "pngSha256": "5c3e317a691577b3d320f6ef078a231c5bc1e51cdc8cd43b6c4338c2d4c69cc8",
+      "rgbaSha256": "70960bc65c90c4f94db8f5d42642153d9716e490a2201b1c8e711ec747253728"
+    },
+    {
+      "name": "render__renderCubemapSurface__s7",
+      "seed": 7,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 7, volumeSize: x16)\n  .renderCubemapSurface()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "a8da536c8f6396369343a34ff15f189427b779b135e5aa74bb12e4565d8f880c",
+      "image": "render__renderCubemapSurface__s7.png",
+      "pngSha256": "1d2a25e6d9af738a776e84e819f4a40b363028dff34c651424260b923a32903a",
+      "rgbaSha256": "b49187109578ac3b350e29df7dd952a09962109a7c1fc1bc0fde371d5a2073cb"
+    },
+    {
+      "name": "synth3d__noise3d__s2",
+      "seed": 2,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 2, volumeSize: x16)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "f29f8fb9ed28dba7b61470b3eca153ef0e1487b7d88f92a3da449d6d28f957b5",
+      "image": "synth3d__noise3d__s2.png",
+      "pngSha256": "d02edfbb3a74518eb06bb5cc4ed468cfe42fa53a6cfcba570d7f20f8e562963a",
+      "rgbaSha256": "04469829770df0d1606d518c02321165e3b2da83db9fd3a8ac8d077186165f40"
+    },
+    {
+      "name": "synth3d__noise3d__s3",
+      "seed": 3,
+      "program": "search synth3d, filter3d, render\n\nnoise3d(seed: 3, volumeSize: x16)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "5a6a432e21ead6b19dd522b66b19490b3822f4cb4cd6bd059e3bf4861fb9bb4e",
+      "image": "synth3d__noise3d__s3.png",
+      "pngSha256": "3565a70b5a3804a496a50421edbdb0e5f62eeaec5ea1da2d92d71cb33cb89fc2",
+      "rgbaSha256": "cf98cd2a4261b8abce3ed389b1e55e19dca989fcb89cf5cfaa01cdb9360de5af"
+    },
+    {
+      "name": "synth3d__cell3d__s2",
+      "seed": 2,
+      "program": "search synth3d, filter3d, render\n\ncell3d(seed: 2, volumeSize: x16)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "3af4e5e67bb6b6e87040a094936feab5c54fdeae8c028c472b26fee14d4b8735",
+      "image": "synth3d__cell3d__s2.png",
+      "pngSha256": "d8a833b0c67888aadd012f69a91e4a3655bb84be228b0639320d494a6f2a1302",
+      "rgbaSha256": "f8fad276d51ab3bc96832e272d3a1e77fc4d4bd1ba526ad0f4ac9f9401efa55b"
+    },
+    {
+      "name": "synth3d__cell3d__s3",
+      "seed": 3,
+      "program": "search synth3d, filter3d, render\n\ncell3d(seed: 3, volumeSize: x16)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "d869fb06dc094dffb8b9c505f76c455ef665331d5aaf5f13c561167db405a409",
+      "image": "synth3d__cell3d__s3.png",
+      "pngSha256": "09a0e19a320e35159897ae5c3f2b0413851da1f94bdafc7a52a1a1cd4c1751f8",
+      "rgbaSha256": "3f21ea5e5e2f57173bc7a300aa205d26a1519f1a0e5cdd7a8112c7e65c9306a6"
+    }
+  ],
+  "volumes": [
+    {
+      "name": "noise3d-volume-s4",
+      "effect": "synth3d/noise3d",
+      "seed": 4,
+      "time": 0.25,
+      "volumeSize": 16,
+      "program": "search synth3d, render\n\nnoise3d(seed: 4, volumeSize: x16)\n  .write3d(vol0, geo0)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "d556ba559375a589d305862687772d03d94fab4890c94b94cf7b985ea45dc13d",
+      "surface": "vol0",
+      "image": "noise3d-volume-s4.png",
+      "pngSha256": "203e11cadef70bb2e5aa909366d0e1a7098f15d1e3727fb19b55d0fee253c55d",
+      "rgbaSha256": "b2944143b0f8ad23c4ddc951af56dc6311d8d4d79a6ab14823a9be2c3d2debd9"
+    },
+    {
+      "name": "noise3d-volume-s13",
+      "effect": "synth3d/noise3d",
+      "seed": 13,
+      "time": 0.25,
+      "volumeSize": 16,
+      "program": "search synth3d, render\n\nnoise3d(seed: 13, volumeSize: x16)\n  .write3d(vol0, geo0)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "a2f38d6643df19c89e433f15f581af21d42403825d9529b8460216821e15b428",
+      "surface": "vol0",
+      "image": "noise3d-volume-s13.png",
+      "pngSha256": "57c94d0f6984c687be3f3fb9541743c66f9ec8feeddfab0794d7f3b84c5346ea",
+      "rgbaSha256": "3830567bea0fc04a3f2fa77f29605074777f421891b0a10561ee0c319eb87871"
+    },
+    {
+      "name": "cell3d-volume-s4",
+      "effect": "synth3d/cell3d",
+      "seed": 4,
+      "time": 0.25,
+      "volumeSize": 16,
+      "program": "search synth3d, render\n\ncell3d(seed: 4, volumeSize: x16)\n  .write3d(vol0, geo0)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "ed2d2828e323c817727eb53223a85a715b5afc885d3f63578fa2dae1f4669616",
+      "surface": "vol0",
+      "image": "cell3d-volume-s4.png",
+      "pngSha256": "83846ee99459b386191090571d0049ef47791407491e5a894e8bb59e6e548e3b",
+      "rgbaSha256": "6543379cf708e6be4244de238a10ce2b56c641b39e4198ffbe4ebf863d7e40ce"
+    },
+    {
+      "name": "cell3d-volume-s13",
+      "effect": "synth3d/cell3d",
+      "seed": 13,
+      "time": 0.25,
+      "volumeSize": 16,
+      "program": "search synth3d, render\n\ncell3d(seed: 13, volumeSize: x16)\n  .write3d(vol0, geo0)\n  .render3d()\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "f89c9c28c969323ad64bfdc255b4e9f0ba374ded2457dd55f8eb601648a11eb7",
+      "surface": "vol0",
+      "image": "cell3d-volume-s13.png",
+      "pngSha256": "f9fb76dbb688d477d5e402a510c271f20f1de250fb2cef58c5c94cb07a1862b0",
+      "rgbaSha256": "43239d1cfc45a239a9e9e389e9ab97fa155f446a74097779114fc303185b323a"
+    }
+  ],
+  "capture": {
+    "at": {
+      "cases": "2026-10-17T19:04:12-06:00",
+      "volumes": "2026-10-17T18:44:03-06:00"
+    },
+    "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+    "sourceDigest": "7cd5fc55dcf37098c1c6fa39054c901d0b44196fef3ee99e69c0f0fd56df7ebf",
+    "sources": [
+      {
+        "path": "shaders/effects/filter3d/palette3d/definition.js",
+        "size": 2901,
+        "sha256": "070b16496ef076823d52268bb662e44b2a28529251d3bc47a0e8bb94712a58f9"
+      },
+      {
+        "path": "shaders/effects/filter3d/palette3d/glsl/palette3d.glsl",
+        "size": 15170,
+        "sha256": "6425d323befb35d590b818a2bdb269e7bd6fb11aebf148a0c040b3eff0655015"
+      },
+      {
+        "path": "shaders/effects/render/render3d/definition.js",
+        "size": 3692,
+        "sha256": "cfef9f05340eaae9f19b097dab7a3db465268bc130626b19bd0e72ee9847ea7e"
+      },
+      {
+        "path": "shaders/effects/render/render3d/glsl/render3d.glsl",
+        "size": 14393,
+        "sha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemap3d/definition.js",
+        "size": 3414,
+        "sha256": "95ad600e12511aa9ab019ed7beff35f1152a1ae510eb8e4716ec204be17ba483"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemap3d/glsl/renderCubemap3d.glsl",
+        "size": 14026,
+        "sha256": "bcebff481c2d945e140870b50ce3e32e12bc3f198f75a53dc6d2450d5777db26"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemapSurface/definition.js",
+        "size": 2805,
+        "sha256": "fc17c202527caf30cedf63347d1415adb4552d2a185bd82d93a1a0693d298c7c"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemapSurface/glsl/renderCubemapSurface.glsl",
+        "size": 4410,
+        "sha256": "ce467e742120b8a2ec9c34898a2fd1e2f56a85cbe5d27774bcbb1b7f204511fc"
+      },
+      {
+        "path": "shaders/effects/render/renderLit3d/definition.js",
+        "size": 5977,
+        "sha256": "0ddd55e2fbd000590b980a3980480c57c459319e0b973dcfdd08f3445fe3054e"
+      },
+      {
+        "path": "shaders/effects/render/renderLit3d/glsl/renderLit3d.glsl",
+        "size": 12406,
+        "sha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627"
+      },
+      {
+        "path": "shaders/effects/synth3d/cell3d/definition.js",
+        "size": 2970,
+        "sha256": "05a2636b6a6fc3cd838a94ca46a805a8bcecada88059cddd784246941baf7788"
+      },
+      {
+        "path": "shaders/effects/synth3d/cell3d/glsl/precompute.glsl",
+        "size": 5081,
+        "sha256": "83ef13ab1e5997c76e64280d11e0bdb0eaedd6f41a504d2b1e79761cd1dd1755"
+      },
+      {
+        "path": "shaders/effects/synth3d/noise3d/definition.js",
+        "size": 3616,
+        "sha256": "669f0bcae5595251fe8679810a6b051af36b5790417ff2b9ebf3b4f9e750497f"
+      },
+      {
+        "path": "shaders/effects/synth3d/noise3d/glsl/precompute.glsl",
+        "size": 7667,
+        "sha256": "60ce97d188bf78bc84176c063943f29c25371e4325f13cedbb4eec889c905727"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 90314,
+        "sha256": "eadd0fd9ca8578f31744d94efce85879429149dee354b5bb73b95b5fbe8872af"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 81454,
+        "sha256": "951ce0245fefaa29dda4dffe3e6fe0835773aa2a6f0e6889825676c772da894c"
+      },
+      {
+        "path": "shaders/src/runtime/expander.js",
+        "size": 71845,
+        "sha256": "588d815aa439ad60fcab27bc1574df38d3fe7b69da42de2ebf6ca7d728d98138"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "browserVersion": "156.0.8078.4",
+    "playwrightCore": "1.64.1",
+    "harness": {
+      "sweep-runner.mjs": "684f464ea197a69ed2e52f4efccaeb889724960e7fbd249311841ba34c69f8c2",
+      "sweep.html": "6c23661ffcba7e59d031d6168929422177e7639f656bf724fab9f826507508f1"
+    },
+    "protocol": "One fresh page per case and two independent CanvasRenderer instances from the pinned upstream archive (headless Chromium, --use-angle=metal). loadManifest, loadEffects, compile the recorded DSL, apply the demo ProgramState step values, upload a transparent canvas to every media step, render one frame at time 0.75, and read global_o0_write twice as top-down RGBA8. Both reads of both instances are byte-identical for every case. Volume cases chain write3d(vol0, geo0) before render3d and read global_vol0_write instead: the 16x256 rgba16f atlas, converted by readPixels to RGBA8 with round(value * 255)."
+  }
+}

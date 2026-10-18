@@ -3007,8 +3007,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "83ef13ab1e5997c76e64280d11e0bdb0eaedd6f41a504d2b1e79761cd1dd1755",
     "sourceBytes": 5081,
-    "normalizedBytes": 5533,
-    "generatedBytes": 5165
+    "normalizedBytes": 5793,
+    "generatedBytes": 5469
   },
   {
     "effectId": "synth3d/cellularAutomata3d",
@@ -3057,8 +3057,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "60ce97d188bf78bc84176c063943f29c25371e4325f13cedbb4eec889c905727",
     "sourceBytes": 7667,
-    "normalizedBytes": 8228,
-    "generatedBytes": 7991
+    "normalizedBytes": 8342,
+    "generatedBytes": 8663
   },
   {
     "effectId": "synth3d/reactionDiffusion3d",

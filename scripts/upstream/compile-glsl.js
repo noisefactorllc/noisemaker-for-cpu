@@ -660,8 +660,62 @@ function lowerVectorEquality(source) {
     operator === '==' ? `all(equal(${left}, ${right}))` : `any(notEqual(${left}, ${right}))`)
 }
 
+// The 3D volume hashes turn a lattice point into integer words with
+// `p + float(seed) * 0.1` and then `ivec(p * 1000.0)`. Every hash input lands
+// next to an integer multiple of 0.001, so the float32 rounding of that sum
+// decides the word, and the authority (ANGLE Metal on Apple M4) evaluates the
+// sum in its own order:
+// - the seed product is rounded to float32 before any add (it is one uniform
+//   shared by every hash call, never fused into an fma);
+// - the compile-time constants of the call (noise4D's corner offset, grad4's
+//   127.1/269.5/419.2, cell3d's unrolled x neighbor offset) fold in float32,
+//   then add to the seed term, and the lattice coordinate is added last:
+//   R(base + R(R(constant) + seed term));
+// - cell3d's y and z neighbor offsets behave as runtime loop values: they add
+//   to the coordinate first, then the seed term: R(R(base + offset) + seed term).
+// Float32 readbacks of the authority's hash outputs decode the words its
+// noise3d and cell3d volumes use. With this model the CPU 16^3 volumes match the
+// authority's vol0 readbacks within one 8-bit step for seeds 0-10, 13, 42, 50,
+// 51 and 99. synth/perlin's 3D path and the reactionDiffusion3d and
+// cellularAutomata3d seeding hashes use the same idiom but are not measured, so
+// they keep the generic lowering.
+function lowerSeededLatticeHashes(effectId, source) {
+  const replaceOnce = (text, from, to) => {
+    if (!text.includes(from)) throw new Error(`${effectId}: seeded lattice hash source changed (${from.split('\n')[0]})`)
+    return text.replace(from, to)
+  }
+  if (effectId === 'synth3d/noise3d') {
+    source = replaceOnce(source,
+      'float hash4(vec4 p) {\n    vec4 ps = p + (seed) * 0.1;',
+      'float hash4(vec4 p, vec4 k) {\n' +
+      '    float cpuSeedOffset = float((seed) * 0.1);\n' +
+      '    vec4 cpuLatticeOffset = k + cpuSeedOffset;\n' +
+      '    vec4 ps = p + cpuLatticeOffset;')
+    source = replaceOnce(source,
+      'vec4 grad4(vec4 p) {\n    float h1 = hash4(p);\n    float h2 = hash4(p + 127.1);\n    float h3 = hash4(p + 269.5);\n    float h4 = hash4(p + 419.2);',
+      'vec4 grad4(vec4 p, vec4 k) {\n    float h1 = hash4(p, k);\n    float h2 = hash4(p, k + 127.1);\n    float h3 = hash4(p, k + 269.5);\n    float h4 = hash4(p, k + 419.2);')
+    let corners = 0
+    source = source.replace(/grad4\(vec4\(i\.xyz, (iw[01])\) \+ (vec4\([01],[01],[01],0\))\)/g, (_, w, corner) => {
+      corners += 1
+      return `grad4(vec4(i.xyz, ${w}), ${corner})`
+    })
+    if (corners !== 16) throw new Error(`${effectId}: expected 16 noise4D corner hashes, found ${corners}`)
+  }
+  if (effectId === 'synth3d/cell3d') {
+    source = replaceOnce(source,
+      'vec3 hash3(vec3 p) {\n    p = p + (seed) * 0.1;',
+      'vec3 hash3(vec3 base, vec3 neighbor) {\n' +
+      '    float cpuSeedOffset = float((seed) * 0.1);\n' +
+      '    vec3 cpuCellPos = base + neighbor;\n' +
+      '    vec3 p = vec3(base.x + float(neighbor.x + cpuSeedOffset), cpuCellPos.y + cpuSeedOffset, cpuCellPos.z + cpuSeedOffset);')
+    source = replaceOnce(source, 'vec3 randomOffset = hash3(cellPos);', 'vec3 randomOffset = hash3(i, neighbor);')
+  }
+  return source
+}
+
 function adaptCanonicalSource(effectId, source) {
   source = lowerVectorEquality(source)
+  source = lowerSeededLatticeHashes(effectId, source)
   // glsl-transpiler flattens these common hash swizzles into scalar JS inside
   // one typed-array constructor, erasing the float32 operation boundaries
   // between the add and multiply. Explicit float casts retain the GLSL hash

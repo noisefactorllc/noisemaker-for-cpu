@@ -35655,9 +35655,10 @@ function canonicalFactory289($bindings, $runtime) {
 canonicalFactory289.usesDerivatives = true
 
 function canonicalFactory290($bindings, $runtime) {
-  const { vec3, ivec2, ivec3, abs, floor, fract, max, clamp, mix, length, normalize, add } = $runtime.stdlib
+  const { float, vec3, ivec2, ivec3, abs, floor, fract, max, clamp, mix, length, normalize, add } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
+  function cpu_float (value) { return $runtime.stdlib.float(value); };
   function cpu_ivec3 (a, b, c) { return $runtime.stdlib.ivec3(a, b, c); };
   function cpu_ivec3_vec3 (a, b, c) { return $runtime.stdlib.ivec3(a, b, c); };
   function cpu_ivec3_float_float_float (a, b, c) { return $runtime.stdlib.ivec3(a, b, c); };
@@ -35679,9 +35680,12 @@ function canonicalFactory290($bindings, $runtime) {
   var fragColor = new Float32Array([0, 0, 0, 0]);
   var geoOut = new Float32Array([0, 0, 0, 0]);
   function pcg3d (value) { return $runtime.stdlib.pcg3d(value); };
-  function hash3 (p) {
-  	p = $runtime.copy(p);
-  	(p[0] = p[0] + (seed) * 0.10000000149011612, p[1] = p[1] + (seed) * 0.10000000149011612, p[2] = p[2] + (seed) * 0.10000000149011612, p);
+  function hash3 (base, neighbor) {
+  	base = $runtime.copy(base);
+  	neighbor = $runtime.copy(neighbor);
+  	var cpuSeedOffset = cpu_float((seed) * 0.10000000149011612);
+  	var cpuCellPos = new $runtime.PooledFloat32Array([base[0] + neighbor[0], base[1] + neighbor[1], base[2] + neighbor[2]]);
+  	var p = new $runtime.PooledFloat32Array([base[0] + cpu_float(neighbor[0] + cpuSeedOffset), cpuCellPos[1] + cpuSeedOffset, cpuCellPos[2] + cpuSeedOffset]);
   	var q = cpu_uvec3_vec3(cpu_ivec3_vec3(new $runtime.PooledFloat32Array([p[0] * 1000, p[1] * 1000, p[2] * 1000])).map(function (_) {return _ + 65536;}));
   	pcg3d(q).reduce((res,el,i)=>(res[i] = el, res), q);
   	return new $runtime.PooledFloat32Array([q[0] / 4294967296, q[1] / 4294967296, q[2] / 4294967296]);
@@ -35697,7 +35701,7 @@ function canonicalFactory290($bindings, $runtime) {
   	for (var x = -1; x <= 1; x++) {
   	var neighbor = new $runtime.PooledFloat32Array([(x), (y), (z)]);
   	var cellPos = new $runtime.PooledFloat32Array([i[0] + neighbor[0], i[1] + neighbor[1], i[2] + neighbor[2]]);
-  	var randomOffset = hash3(cellPos);
+  	var randomOffset = hash3(i, neighbor);
   	var jitter = cellVariation * 0.009999999776482582;
   	var cellPoint = vec3.add([], neighbor, mix(new $runtime.PooledFloat32Array([0.5, 0.5, 0.5]), randomOffset, jitter));
   	var diff = new $runtime.PooledFloat32Array([cellPoint[0] - f[0], cellPoint[1] - f[1], cellPoint[2] - f[2]]);
@@ -36573,9 +36577,12 @@ function canonicalFactory295($bindings, $runtime) {
   var geoOut = new Float32Array([0, 0, 0, 0]);
   var TAU = 6.2831854820251465;
   var W_PERIOD = 4;
-  function hash4 (p) {
+  function hash4 (p, k) {
   	p = $runtime.copy(p);
-  	var ps = new $runtime.PooledFloat32Array([p[0] + (seed) * 0.10000000149011612, p[1] + (seed) * 0.10000000149011612, p[2] + (seed) * 0.10000000149011612, p[3] + (seed) * 0.10000000149011612]);
+  	k = $runtime.copy(k);
+  	var cpuSeedOffset = cpu_float((seed) * 0.10000000149011612);
+  	var cpuLatticeOffset = new $runtime.PooledFloat32Array([k[0] + cpuSeedOffset, k[1] + cpuSeedOffset, k[2] + cpuSeedOffset, k[3] + cpuSeedOffset]);
+  	var ps = new $runtime.PooledFloat32Array([p[0] + cpuLatticeOffset[0], p[1] + cpuLatticeOffset[1], p[2] + cpuLatticeOffset[2], p[3] + cpuLatticeOffset[3]]);
   	var q = cpu_uvec4_vec4(cpu_ivec4_vec4(new $runtime.PooledFloat32Array([ps[0] * 1000, ps[1] * 1000, ps[2] * 1000, ps[3] * 1000])).map(function (_) {return _ + 65536;}));
   	(q[0] = (cpu_umul(q[0], 1664525) + 1013904223) >>> 0, q[1] = (cpu_umul(q[1], 1664525) + 1013904223) >>> 0, q[2] = (cpu_umul(q[2], 1664525) + 1013904223) >>> 0, q[3] = (cpu_umul(q[3], 1664525) + 1013904223) >>> 0, q);
   	q[0] = (q[0] + cpu_umul(q[1], q[2])) >>> 0;
@@ -36589,12 +36596,13 @@ function canonicalFactory295($bindings, $runtime) {
   	q[3] = (q[3] + cpu_umul(q[0], q[1])) >>> 0;
   	return (cpu_float((((q[0] ^ q[1]) ^ q[2]) ^ q[3]) >>> 0)) / 4294967296;
   };
-  function grad4 (p) {
+  function grad4 (p, k) {
   	p = $runtime.copy(p);
-  	var h1 = hash4(p);
-  	var h2 = hash4(new $runtime.PooledFloat32Array([p[0] + 127.0999984741211, p[1] + 127.0999984741211, p[2] + 127.0999984741211, p[3] + 127.0999984741211]));
-  	var h3 = hash4(new $runtime.PooledFloat32Array([p[0] + 269.5, p[1] + 269.5, p[2] + 269.5, p[3] + 269.5]));
-  	var h4 = hash4(new $runtime.PooledFloat32Array([p[0] + 419.20001220703125, p[1] + 419.20001220703125, p[2] + 419.20001220703125, p[3] + 419.20001220703125]));
+  	k = $runtime.copy(k);
+  	var h1 = hash4(p, k);
+  	var h2 = hash4(p, new $runtime.PooledFloat32Array([k[0] + 127.0999984741211, k[1] + 127.0999984741211, k[2] + 127.0999984741211, k[3] + 127.0999984741211]));
+  	var h3 = hash4(p, new $runtime.PooledFloat32Array([k[0] + 269.5, k[1] + 269.5, k[2] + 269.5, k[3] + 269.5]));
+  	var h4 = hash4(p, new $runtime.PooledFloat32Array([k[0] + 419.20001220703125, k[1] + 419.20001220703125, k[2] + 419.20001220703125, k[3] + 419.20001220703125]));
   	var g = new $runtime.PooledFloat32Array([h1 * 2 - 1, h2 * 2 - 1, h3 * 2 - 1, h4 * 2 - 1]);
   	return normalize(g);
   };
@@ -36611,22 +36619,22 @@ function canonicalFactory295($bindings, $runtime) {
   	var u = new $runtime.PooledFloat32Array([quintic(f[0]), quintic(f[1]), quintic(f[2]), quintic(f[3])]);
   	var iw0 = wrapW(i[3]);
   	var iw1 = wrapW(i[3] + 1);
-  	var n0000 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0])), new $runtime.PooledFloat32Array([f[0], f[1], f[2], f[3]]));
-  	var n1000 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1], i[2], iw0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2], f[3]]));
-  	var n0100 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1] + 1, i[2], iw0])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2], f[3]]));
-  	var n1100 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1] + 1, i[2], iw0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2], f[3]]));
-  	var n0010 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2] + 1, iw0])), new $runtime.PooledFloat32Array([f[0], f[1], f[2] - 1, f[3]]));
-  	var n1010 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1], i[2] + 1, iw0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2] - 1, f[3]]));
-  	var n0110 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1] + 1, i[2] + 1, iw0])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2] - 1, f[3]]));
-  	var n1110 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1] + 1, i[2] + 1, iw0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2] - 1, f[3]]));
-  	var n0001 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1])), new $runtime.PooledFloat32Array([f[0], f[1], f[2], f[3] - 1]));
-  	var n1001 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1], i[2], iw1])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2], f[3] - 1]));
-  	var n0101 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1] + 1, i[2], iw1])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2], f[3] - 1]));
-  	var n1101 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1] + 1, i[2], iw1])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2], f[3] - 1]));
-  	var n0011 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2] + 1, iw1])), new $runtime.PooledFloat32Array([f[0], f[1], f[2] - 1, f[3] - 1]));
-  	var n1011 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1], i[2] + 1, iw1])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2] - 1, f[3] - 1]));
-  	var n0111 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1] + 1, i[2] + 1, iw1])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2] - 1, f[3] - 1]));
-  	var n1111 = dot(grad4(new $runtime.PooledFloat32Array([i[0] + 1, i[1] + 1, i[2] + 1, iw1])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2] - 1, f[3] - 1]));
+  	var n0000 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([0, 0, 0, 0])), new $runtime.PooledFloat32Array([f[0], f[1], f[2], f[3]]));
+  	var n1000 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([1, 0, 0, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2], f[3]]));
+  	var n0100 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([0, 1, 0, 0])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2], f[3]]));
+  	var n1100 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([1, 1, 0, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2], f[3]]));
+  	var n0010 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([0, 0, 1, 0])), new $runtime.PooledFloat32Array([f[0], f[1], f[2] - 1, f[3]]));
+  	var n1010 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([1, 0, 1, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2] - 1, f[3]]));
+  	var n0110 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([0, 1, 1, 0])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2] - 1, f[3]]));
+  	var n1110 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw0]), new $runtime.PooledFloat32Array([1, 1, 1, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2] - 1, f[3]]));
+  	var n0001 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([0, 0, 0, 0])), new $runtime.PooledFloat32Array([f[0], f[1], f[2], f[3] - 1]));
+  	var n1001 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([1, 0, 0, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2], f[3] - 1]));
+  	var n0101 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([0, 1, 0, 0])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2], f[3] - 1]));
+  	var n1101 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([1, 1, 0, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2], f[3] - 1]));
+  	var n0011 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([0, 0, 1, 0])), new $runtime.PooledFloat32Array([f[0], f[1], f[2] - 1, f[3] - 1]));
+  	var n1011 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([1, 0, 1, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1], f[2] - 1, f[3] - 1]));
+  	var n0111 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([0, 1, 1, 0])), new $runtime.PooledFloat32Array([f[0], f[1] - 1, f[2] - 1, f[3] - 1]));
+  	var n1111 = dot(grad4(new $runtime.PooledFloat32Array([i[0], i[1], i[2], iw1]), new $runtime.PooledFloat32Array([1, 1, 1, 0])), new $runtime.PooledFloat32Array([f[0] - 1, f[1] - 1, f[2] - 1, f[3] - 1]));
   	var nx000 = mix(n0000, n1000, u[0]);
   	var nx100 = mix(n0100, n1100, u[0]);
   	var nx010 = mix(n0010, n1010, u[0]);
