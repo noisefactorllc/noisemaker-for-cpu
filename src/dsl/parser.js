@@ -144,7 +144,9 @@ class Parser {
       while (this.peek().type === 'identifier' && this.peek(1).lexeme === ':') {
         const key = this.identifier().lexeme
         this.consume(':')
-        if (this.peek().type !== 'string') throw new DslError(`Expected string value for subchain ${key}`, location(this.peek()))
+        // A value that is not a string ends the arguments, so the closing ')'
+        // check below reports it.
+        if (this.peek().type !== 'string') break
         const value = this.tokens[this.current++].value
         if (key === 'name' || key === 'id') meta[key] = value
         this.match(',')
@@ -152,15 +154,16 @@ class Parser {
     }
     this.consume(')')
     this.consume('{')
+    // The body holds at least one element, so an empty block fails on its
+    // missing '.'.
     const body = []
-    while (!this.check('}')) {
+    do {
       this.consume('.')
       const call = this.parseCall()
       if (call.name === 'write' || call.name === 'write3d') throw new DslError('Expected effect or IO function name', call.loc)
       body.push(call)
-    }
+    } while (!this.check('}'))
     this.consume('}')
-    if (body.length === 0) throw new DslError('Subchain body cannot be empty', location(start))
     return { kind: 'Subchain', name: meta.name || null, id: meta.id || null, body, loc: location(start) }
   }
 

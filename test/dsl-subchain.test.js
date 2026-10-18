@@ -44,10 +44,11 @@ const ACCEPTED = [
   'search synth, filter\nnoise(seed: 1).subchain(name: "a",) { .invert() .posterize(levels: 4) }.write(o0)\nrender(o0)\n',
 ]
 
-// Each rejected program fails on the pinned authority and on the port.
+// Each rejected program fails on the pinned authority and on the port. The port
+// reports each one with an existing message template.
 const REJECTED = [
   // An empty block.
-  ['search synth, filter\nnoise(seed: 1).subchain(name: "x") { }.write(o0)\nrender(o0)\n', /Subchain body cannot be empty/],
+  ['search synth, filter\nnoise(seed: 1).subchain(name: "x") { }.write(o0)\nrender(o0)\n', /Expected "\."/],
   // A block at the start of a chain.
   ['search synth, filter\nsubchain(name: "x") { .invert() }.write(o0)\nrender(o0)\n', /Expected effect or IO function name/],
   // A generator inside a block.
@@ -61,7 +62,7 @@ const REJECTED = [
   // A body element without its leading dot.
   ['search synth, filter\nnoise(seed: 1).subchain() { invert() }.write(o0)\nrender(o0)\n', /Expected "\."/],
   // Argument forms that upstream's parseSubchainCall rejects.
-  ['search synth, filter\nnoise(seed: 1).subchain(name: 5) { .invert() }.write(o0)\nrender(o0)\n', /Expected string value for subchain name/],
+  ['search synth, filter\nnoise(seed: 1).subchain(name: 5) { .invert() }.write(o0)\nrender(o0)\n', /Expected "\)"/],
   ['search synth, filter\nnoise(seed: 1).subchain("look", id: "sc1") { .invert() }.write(o0)\nrender(o0)\n', /Expected "\)"/],
   ['search synth, filter\nnoise(seed: 1).subchain(look) { .invert() }.write(o0)\nrender(o0)\n', /Expected "\)"/],
   ['search synth, filter\nnoise(seed: 1).subchain() .invert().write(o0)\nrender(o0)\n', /Expected "\{"/],
