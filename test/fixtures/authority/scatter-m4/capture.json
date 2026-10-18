@@ -1,5 +1,5 @@
 {
-  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in red and green, so every output pixel names the texel its jitter sampled. The CPU reproduces them after the scatter hash is evaluated with float32 literals and float32 operation boundaries. The NEAR cases differ only at pixels whose sample lands exactly on a texel edge; reviewed side by side at native size, they look the same.",
+  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The CPU reproduces them after the scatter hash uses float32 literals, float32 operation boundaries and a float32 seed term. The NEAR cases differ only at pixels whose sample lands exactly on a texel edge, where the M4 division rounds the sample coordinate to the upper texel; reviewed side by side at native size, they look the same.",
   "tolerance": 2,
   "capture": {
     "at": "2026-10-17",
@@ -273,6 +273,43 @@
         "writeSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d",
         "repeatSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d",
         "independentSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d"
+      }
+    },
+    {
+      "name": "coordinate-scatter-512x20-seed7",
+      "width": 512,
+      "height": 20,
+      "time": 0.25,
+      "seed": 1,
+      "program": "search synth, filter\nmedia(imageSize: [512,20], bgAlpha: 0).scatter(seed: 7).write(o0)\nrender(o0)\n",
+      "programSha256": "a87bbc2be9267558a9c53c4dbabf33367818a4d042c5c8be9d63d07b065a62e6",
+      "input": {
+        "image": "coordinates-512x20.png",
+        "pngSha256": "8cfb5cf126f7c27af9ba155ad72730bc679db21db87eca15693de1a2b8e8012d",
+        "rgbaSha256": "574525714a052a11955b3dbcfed837718cf65bda2f0f66b585d464d2a550214e",
+        "formula": {
+          "red": "x & 255",
+          "green": "y & 255",
+          "blue": "(x >> 8) | ((y >> 8) << 4)",
+          "alpha": 255
+        }
+      },
+      "expect": "near",
+      "near": {
+        "candidateRgbaSha256": "1ce6c0dda6864742cc119255271ac5dd79fa82caf00496411223eb17d0f5001c",
+        "maxError": 1,
+        "channelsOverTolerance": 0,
+        "differingChannels": 8
+      },
+      "reference": {
+        "image": "coordinate-scatter-512x20-seed7.png",
+        "pngSha256": "d1ab5acb15701dc1ec969861c943b7f0f27375f41464b37d0cd40443264a046a",
+        "rgbaSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e"
+      },
+      "independentCaptures": {
+        "writeSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e",
+        "repeatSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e",
+        "independentSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e"
       }
     }
   ]

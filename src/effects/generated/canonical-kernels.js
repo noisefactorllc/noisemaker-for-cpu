@@ -18655,7 +18655,7 @@ function canonicalFactory127($bindings, $runtime) {
   	if (MODE == 4) {
   	floor(new $runtime.PooledFloat32Array([globalCoord[0] / 3, globalCoord[1] / 3])).map(function (_) {return _ * 3;}).reduce((res,el,i)=>(res[i] = el, res), hashCoord);
   	};
-  	var rnd = hash22(new $runtime.PooledFloat32Array([hashCoord[0] + (seed) * 101.69999694824219, hashCoord[1] + (seed) * 101.69999694824219])).map(function (_) {return _ - 0.5;});
+  	var rnd = hash22(new $runtime.PooledFloat32Array([hashCoord[0] + cpu_float((seed) * 101.69999694824219), hashCoord[1] + cpu_float((seed) * 101.69999694824219)])).map(function (_) {return _ - 0.5;});
   	var offset = new $runtime.PooledFloat32Array([(rnd[0] * 2) * radius, (rnd[1] * 2) * radius]);
   	if (MODE == 3) {
   	var grad = lumGradient(uv);

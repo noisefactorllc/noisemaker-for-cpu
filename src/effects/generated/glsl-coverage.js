@@ -1307,8 +1307,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71",
     "sourceBytes": 4475,
-    "normalizedBytes": 4520,
-    "generatedBytes": 3841
+    "normalizedBytes": 4531,
+    "generatedBytes": 3863
   },
   {
     "effectId": "filter/scatter",

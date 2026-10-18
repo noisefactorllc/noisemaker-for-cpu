@@ -933,6 +933,18 @@ function adaptCanonicalSource(effectId, source) {
       )
     source = preserveScalarFloatDeclarations(source)
   }
+  if (effectId === 'filter/scatter' && source.includes('vec2 rnd = hash22(')) {
+    // The authority rounds the seed term `float(seed) * 101.7` to float32 before it
+    // adds the pixel coordinate, as the seeded volume hashes above do. One float64
+    // rounding of the whole sum lands one float32 step away for 64,710 of 409,600
+    // (seed 1-100, coordinate 0.5-4095.5) pairs, and the hash turns that step into a
+    // different offset. Apple M4 coordinate-decode probes at 512x20 seed 7 and
+    // 1024x12 seed 13 match every pixel only with the rounded seed term.
+    // Normalization has already lowered `float(seed)` to `(seed)`.
+    const seedTerm = 'hash22(hashCoord + (seed) * 101.7)'
+    if (!source.includes(seedTerm)) throw new Error('Unable to find the canonical scatter seed term')
+    source = source.replace(seedTerm, 'hash22(hashCoord + float((seed) * 101.7))')
+  }
   if (effectId === 'synth/navierStokes' && source.includes('float hash11(float x) {')) {
     // nsSplat's hash11 seeds each vortex sign and radius. The authority evaluates
     // its argument, the scaled sine input, the sine and the 43758.5453 product in
