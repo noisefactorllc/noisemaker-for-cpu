@@ -1,5 +1,5 @@
 {
-  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The CPU reproduces them after the scatter hash uses float32 literals, float32 operation boundaries and a float32 seed term. The NEAR cases differ only at pixels whose sample lands exactly on a texel edge, where the M4 division rounds the sample coordinate to the upper texel; reviewed side by side at native size, they look the same.",
+  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The CPU reproduces them after the scatter hash uses float32 literals, float32 operation boundaries and a float32 seed term. Where a sample lands exactly on a texel edge, the M4 divides with its hardware reciprocal and rounds the sample coordinate to the upper texel; the CPU follows that division (src/csl/metal-division.js), so those pixels match too.",
   "tolerance": 2,
   "capture": {
     "at": "2026-10-17",
@@ -76,13 +76,7 @@
       "seed": 7,
       "program": "search filter, synth\n\nnoise(seed: 7, ridges: true)\n  .scatter(seed: 7)\n  .write(o0)\n\nrender(o0)\n",
       "programSha256": "bf6832dcf99d9e920b696c7060001dfdec98297be7de690ab2d00cd4b1105c2d",
-      "expect": "near",
-      "near": {
-        "candidateRgbaSha256": "c55e98191dadc5bae00ce98d7f71edfd3faffc91b8bdba7e14d3ee7ee5e69adc",
-        "maxError": 158,
-        "channelsOverTolerance": 8,
-        "differingChannels": 12
-      },
+      "expect": "strict",
       "reference": {
         "image": "noise-scatter-41x23.png",
         "pngSha256": "c73c468231cffa0a556ec5caf8f20af9ae49b79b3347f18b8fd7ace8686cd203",
@@ -257,13 +251,7 @@
           "alpha": 255
         }
       },
-      "expect": "near",
-      "near": {
-        "candidateRgbaSha256": "8908b8d5e76942c7f1b8e42a98f60127fd328095b45964c25050e05f151ca123",
-        "maxError": 7,
-        "channelsOverTolerance": 3,
-        "differingChannels": 3
-      },
+      "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-41x23-seed7.png",
         "pngSha256": "fbd2442596f8e021a6c0a324e1c2b0ea58fe00f55feb8b0d320d263dd06a829c",
@@ -294,13 +282,7 @@
           "alpha": 255
         }
       },
-      "expect": "near",
-      "near": {
-        "candidateRgbaSha256": "1ce6c0dda6864742cc119255271ac5dd79fa82caf00496411223eb17d0f5001c",
-        "maxError": 1,
-        "channelsOverTolerance": 0,
-        "differingChannels": 8
-      },
+      "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-512x20-seed7.png",
         "pngSha256": "d1ab5acb15701dc1ec969861c943b7f0f27375f41464b37d0cd40443264a046a",
