@@ -390,8 +390,12 @@ export function compileDsl(source, registry, options = {}) {
     let hasVolume = false
     let startsWithGenerator = false
     let openLoop = null
-    for (let index = 0; index < chain.calls.length; index += 1) {
-      let call = chain.calls[index]
+    // A subchain block contributes its body calls in place. Upstream's validator
+    // wraps them in `_subchain_begin`/`_subchain_end` markers, which its expander
+    // passes through without a render pass.
+    const calls = chain.calls.flatMap((element) => element.kind === 'Subchain' ? element.body : [element])
+    for (let index = 0; index < calls.length; index += 1) {
+      let call = calls[index]
       const partial = bindings.get(call.name)
       if (partial) {
         if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)

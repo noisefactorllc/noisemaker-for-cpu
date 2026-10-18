@@ -4,7 +4,9 @@
 // the choice enums it returns, and the starter ops from isStarterEffect). The
 // returned `compile` mirrors stage 1 of upstream's runtime/compiler.js
 // compileGraph: lex, parse and validate, then reject the program when any
-// diagnostic has severity "error". Warnings do not reject a program.
+// diagnostic has severity "error". Warnings do not reject a program. The
+// returned `unparse` writes a compiled program back to DSL text with upstream's
+// unparser, as a host that saves the program does.
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -18,6 +20,7 @@ async function load(root) {
   const enums = await importTree('shaders/src/lang/enums.js')
   const stdEnums = await importTree('shaders/src/lang/std_enums.js')
   const validator = await importTree('shaders/src/lang/validator.js')
+  const effects = await importTree('shaders/src/runtime/registry.js')
   await enums.mergeIntoEnums(stdEnums.stdEnums)
 
   const effectsRoot = join(root, 'shaders', 'effects')
@@ -51,7 +54,13 @@ async function load(root) {
     }
   }
 
-  return { effectIds, compile }
+  function unparse(source) {
+    const outcome = compile(source)
+    if (!outcome.accepted) throw new Error(`reference compiler rejected the program: ${outcome.errors.join('; ')}`)
+    return lang.unparse(outcome.result, {}, { getEffectDef: (op) => effects.getEffect(op) })
+  }
+
+  return { effectIds, compile, unparse }
 }
 
 export function loadReferenceCompiler(root) {

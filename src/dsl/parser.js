@@ -95,8 +95,48 @@ class Parser {
   parseChain() {
     const first = this.parseCall()
     const calls = [first]
-    while (this.match('.')) calls.push(this.parseCall())
+    while (this.match('.')) calls.push(this.atSubchain() ? this.parseSubchain() : this.parseCall())
     return { kind: 'Chain', calls, loc: first.loc }
+  }
+
+  atSubchain() {
+    return this.peek().type === 'keyword' && this.peek().lexeme === 'subchain'
+  }
+
+  // Port of upstream parseSubchainCall: `subchain(name: "...", id: "...") { .a() .b() }`.
+  // A single leading string is shorthand for `name`. Unknown keys, duplicate keys and
+  // a missing ',' between keys are upstream warnings (P008-P010): the program still
+  // compiles, an unknown key's value is discarded and the last duplicate wins. The
+  // body holds one or more '.'-prefixed calls and cannot hold write(), write3d() or
+  // another subchain, which upstream's lexer reserves as keywords.
+  parseSubchain() {
+    const start = this.tokens[this.current++]
+    this.consume('(')
+    const meta = { name: null, id: null }
+    if (this.peek().type === 'string') {
+      meta.name = this.tokens[this.current++].value
+    } else {
+      while (this.peek().type === 'identifier' && this.peek(1).lexeme === ':') {
+        const key = this.identifier().lexeme
+        this.consume(':')
+        if (this.peek().type !== 'string') throw new DslError(`Expected string value for subchain ${key}`, location(this.peek()))
+        const value = this.tokens[this.current++].value
+        if (key === 'name' || key === 'id') meta[key] = value
+        this.match(',')
+      }
+    }
+    this.consume(')')
+    this.consume('{')
+    const body = []
+    while (!this.check('}')) {
+      this.consume('.')
+      const call = this.parseCall()
+      if (call.name === 'write' || call.name === 'write3d') throw new DslError('Expected effect or IO function name', call.loc)
+      body.push(call)
+    }
+    this.consume('}')
+    if (body.length === 0) throw new DslError('Subchain body cannot be empty', location(start))
+    return { kind: 'Subchain', name: meta.name || null, id: meta.id || null, body, loc: location(start) }
   }
 
   parseCall() {

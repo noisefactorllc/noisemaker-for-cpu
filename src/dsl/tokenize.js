@@ -1,7 +1,9 @@
 import { DslError } from './error.js'
 
-const KEYWORDS = new Set(['search', 'let', 'render', 'true', 'false'])
-const PUNCTUATION = new Set(['(', ')', '[', ']', ',', '.', ':', '=', ';'])
+// `subchain` is reserved as in upstream's lexer (RESERVED_KEYWORDS), so it can
+// only open a subchain block after a '.' in a chain.
+const KEYWORDS = new Set(['search', 'let', 'render', 'true', 'false', 'subchain'])
+const PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', '.', ':', '=', ';'])
 const OPERATORS = new Set(['+', '-', '*', '/'])
 
 export function tokenizeDsl(source, options = {}) {
