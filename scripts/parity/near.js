@@ -11,10 +11,18 @@ const root = fileURLToPath(new URL('../../', import.meta.url))
 const authorityRevision = '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d'
 const renderer = 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)'
 
+// Particle simulations are chaotic, so a reviewed visual match passes for them
+// (operator, 2026-10-17): "for particle effects, we're letting visual matches
+// pass. our goal is passable ports, not perfect ports." Such a policy also records
+// a 128x128 review capture of the same program on both sides, by SHA-256, with its
+// measured difference.
+const PARTICLE_VISUAL_MATCH = 'particle visual match (operator 2026-10-17: passable ports, not perfect ports)'
+
 // One reviewed NEAR policy per case. Each binds the case fixture, the reviewed CPU
 // candidate bytes, the pinned authority, the capture protocol, and every retained
 // authority surface with its measured differences. The pinned reference capture
-// and the candidate capture looked the same side by side at native size.
+// and the candidate capture were reviewed side by side at native size; a
+// visual-match policy states its verdict and its review capture.
 const POLICIES = new Map([
   ['points/buddhabrot', {
     captureRevision: '2026-10-16-m4-metal-webgl2-gap035-buddhabrot',
@@ -79,6 +87,15 @@ const POLICIES = new Map([
       size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial',
       frames: 60, frameTimeStep: 1 / 600, renderer,
     },
+    visualVerdict: 'same at the 128x128 review size: the same eroded channel structure, palette and coverage; mean difference 0.151',
+    mechanism: PARTICLE_VISUAL_MATCH,
+    review: {
+      size: 128, frames: 60,
+      authority: { surface: 'global_o0_read', rawSha256: '2edc0f24f645e6bcda803b5469061e66cc06d3aaf2247633dfaab8a4ccbb6ac4', pngSha256: '2aeaf5049e93ac9290470d995a4e096bb190815c7fafa96f9f9436e0a65f8e8c' },
+      candidate: { rawSha256: '2705d8e399e5eca9e9330fdbdbfd0d8bf4da2cc0b914fd3e634c8f4416aa7e5e' },
+      sheetSha256: '89f67a51ccd5dcdac820b6d93236006e8535d043d8fa6afd701b0b1472fa4b42',
+      maxError: 201, meanError: 0.1511993408203125, channelsOverTolerance: 297,
+    },
     captures: [
       {
         surface: 'global_o0_read',
@@ -88,6 +105,69 @@ const POLICIES = new Map([
         maxError: 62, meanError: 2.01171875,
         differingChannels: 16, channelsOverTolerance: 16,
         pixels: [6, 7, 15, 27, 30, 37],
+      },
+    ],
+  }],
+  // Particle visual match: at 8x8 two pixels differ (max 40) after 60 frames.
+  ['points/dla', {
+    captureRevision: '2026-10-18-m4-metal-webgl2-gap039-dla-timed60',
+    reviewedCandidateRevision: 'fc746e13a4b317b9edf459e9eb04e9b8e97aa8f0',
+    candidateSha256: 'e6f72ed48a555e9d707770e2c360b4c3ca90c96c92a6efb5bd973d6c9efad222',
+    fixtureSha256: 'c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a',
+    protocol: {
+      size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial',
+      frames: 60, frameTimeStep: 1 / 600, renderer,
+    },
+    visualVerdict: 'same character at the 128x128 review size: sparse multicolored deposits with the same regional palette, density and coverage; a few particle positions differ',
+    mechanism: PARTICLE_VISUAL_MATCH,
+    review: {
+      size: 128, frames: 60,
+      authority: { surface: 'global_o0_read', rawSha256: '63046bdbfe0a431f5b48c290c43c1f8f4ec3b4b14a52b4271f2dc1e4678f45fd', pngSha256: '61454eaf5053c8083be3feaedda9415297f5d137d3252f3233cbdd206c408693' },
+      candidate: { rawSha256: 'b641469776c5d8037abdb90ec7d1a9da474ec016a595d80819137a7d33b3f88c' },
+      sheetSha256: '1179f46bef24aedf78bd17dcdadd97c7dafe83f39c9aaec478ec715e1ae91480',
+      maxError: 243, meanError: 0.719085693359375, channelsOverTolerance: 1582,
+    },
+    captures: [
+      {
+        surface: 'global_o0_read',
+        image: 'parity/goldens/defaults/points__dla.golden.png',
+        pngSha256: '7ab91c13ee526db34321aef75c38756043899eb804f0c464f19cb161d81fe129',
+        rawSha256: '77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1',
+        maxError: 40, meanError: 0.37890625,
+        differingChannels: 4, channelsOverTolerance: 4,
+        pixels: [0, 62],
+      },
+    ],
+  }],
+  // Particle visual match: boid positions diverge chaotically over 60 frames, so 52 of
+  // 64 pixels differ at 8x8 while the 128x128 review frames have the same character.
+  ['points/flock', {
+    captureRevision: '2026-10-18-m4-metal-webgl2-gap039-flock-timed60',
+    reviewedCandidateRevision: 'fc746e13a4b317b9edf459e9eb04e9b8e97aa8f0',
+    candidateSha256: '8339c3884c17cce21363ad1cc9ba0af560f89e82ec3b074bb3eeb1c344156121',
+    fixtureSha256: '486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024',
+    protocol: {
+      size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial',
+      frames: 60, frameTimeStep: 1 / 600, renderer,
+    },
+    visualVerdict: 'same character at the 128x128 review size: curved dotted boid trails with the same palette, density and coverage; particle positions differ',
+    mechanism: PARTICLE_VISUAL_MATCH,
+    review: {
+      size: 128, frames: 60,
+      authority: { surface: 'global_o0_read', rawSha256: '661ddeabac1c8da1e199bd03cce3a5863b1db4794813a075dbf2bebbe6ae213d', pngSha256: 'abf4dfbb6ae33dc28b9a25ae93d502f982194b008d6a2edcdba3a38df2f87a66' },
+      candidate: { rawSha256: '51d0cc431c78b9dae7367384009d992561f67158f2440cb89f4228e406d91c23' },
+      sheetSha256: '57f038b878bb7c481719265368fd2c90aa79608cff36678670a92292ae892ce4',
+      maxError: 245, meanError: 1.861053466796875, channelsOverTolerance: 3126,
+    },
+    captures: [
+      {
+        surface: 'global_o0_read',
+        image: 'parity/goldens/defaults/points__flock.golden.png',
+        pngSha256: 'f675b6088cf64e87eb6bfdc3624a71fb49c7fa09f5bd355bac35bbe1064158bc',
+        rawSha256: 'd2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d',
+        maxError: 203, meanError: 39.046875,
+        differingChannels: 134, channelsOverTolerance: 133,
+        pixels: [1, 2, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 46, 47, 48, 50, 52, 53, 54, 55, 56, 57, 59, 60, 61, 63],
       },
     ],
   }],
@@ -109,7 +189,9 @@ function expectedReview(policy) {
     fixtureSha256: policy.fixtureSha256,
     authorityRevision,
     protocol: { ...policy.protocol },
-    visualVerdict: 'indistinguishable at native size',
+    visualVerdict: policy.visualVerdict ?? 'indistinguishable at native size',
+    ...(policy.mechanism ? { mechanism: policy.mechanism } : {}),
+    ...(policy.review ? { review: structuredClone(policy.review) } : {}),
     surfaces: policy.captures.map(({ differingChannels, channelsOverTolerance, pixels, ...capture }) => ({
       ...capture,
       exact: false, pass: false,

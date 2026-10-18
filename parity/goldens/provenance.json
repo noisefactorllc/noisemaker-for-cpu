@@ -1155,18 +1155,100 @@
       "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
     },
     "defaults/points__dla.golden.png": {
-      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
-      "bytes": 72,
+      "sha256": "7ab91c13ee526db34321aef75c38756043899eb804f0c464f19cb161d81fe129",
+      "bytes": 170,
       "introducedIn": "9e202113c4fa1830c5cbdc697c8363b92259515d",
-      "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-18-m4-metal-webgl2-gap039-dla-timed60",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 60,
+        "frameTimes": {
+          "first": 0.15166666666666662,
+          "last": 0.25,
+          "step": "1/600",
+          "rule": "wrap01(0.25 - (59 - i) / 600) for frame i = 0..59"
+        },
+        "surface": {
+          "read": "global_o0_read",
+          "write": "global_o0_write",
+          "presented": "global_o0_read"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source (1588 files under shaders, share and demo), served to headless Chromium with ANGLE Metal on an Apple M4. Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, then call render(t) for the 60 frame times on one renderer, as the CPU iterationCount 60 schedule does. After 60 frames the presented surface is the read texture. Read the read and write textures as top-down RGBA8 through WebGL2Backend.readPixels. A second renderer returned the same bytes for both textures.",
+        "readbacks": [
+          {
+            "id": "global_o0_write",
+            "sha256": "ce33af03da641fdd0e7aa520d16b1edbe4775155c155f2022c66c83d191005ad",
+            "repeatSha256": "ce33af03da641fdd0e7aa520d16b1edbe4775155c155f2022c66c83d191005ad",
+            "independentSha256": "ce33af03da641fdd0e7aa520d16b1edbe4775155c155f2022c66c83d191005ad"
+          },
+          {
+            "id": "global_o0_read",
+            "sha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1",
+            "independentSha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1"
+          }
+        ],
+        "distinctRgba": 22,
+        "replaces": {
+          "pngSha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+          "rgbaSha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
+          "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
+          "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+        }
+      }
     },
     "defaults/points__flock.golden.png": {
-      "sha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
-      "bytes": 72,
+      "sha256": "f675b6088cf64e87eb6bfdc3624a71fb49c7fa09f5bd355bac35bbe1064158bc",
+      "bytes": 240,
       "introducedIn": "9e202113c4fa1830c5cbdc697c8363b92259515d",
-      "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
-      "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+      "captureRevision": "2026-10-18-m4-metal-webgl2-gap039-flock-timed60",
+      "captureRecord": {
+        "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+        "fixtureSha256": "486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "browser": "HeadlessChrome/156.0.8078.4",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 60,
+        "frameTimes": {
+          "first": 0.15166666666666662,
+          "last": 0.25,
+          "step": "1/600",
+          "rule": "wrap01(0.25 - (59 - i) / 600) for frame i = 0..59"
+        },
+        "surface": {
+          "read": "global_o0_read",
+          "write": "global_o0_write",
+          "presented": "global_o0_read"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source (1588 files under shaders, share and demo), served to headless Chromium with ANGLE Metal on an Apple M4. Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, then call render(t) for the 60 frame times on one renderer, as the CPU iterationCount 60 schedule does. After 60 frames the presented surface is the read texture. Read the read and write textures as top-down RGBA8 through WebGL2Backend.readPixels. A second renderer returned the same bytes for both textures.",
+        "readbacks": [
+          {
+            "id": "global_o0_write",
+            "sha256": "773f732dc62bbd6a7afd279528a5648c24df3f22691f2a69c4a835df607e753c",
+            "repeatSha256": "773f732dc62bbd6a7afd279528a5648c24df3f22691f2a69c4a835df607e753c",
+            "independentSha256": "773f732dc62bbd6a7afd279528a5648c24df3f22691f2a69c4a835df607e753c"
+          },
+          {
+            "id": "global_o0_read",
+            "sha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d",
+            "independentSha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d"
+          }
+        ],
+        "distinctRgba": 42,
+        "replaces": {
+          "pngSha256": "f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda",
+          "rgbaSha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
+          "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
+          "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+        }
+      }
     },
     "defaults/points__flow.golden.png": {
       "sha256": "d1051d3ebcbe3fcf0812e23ef5e99f54dc9a1ada88a439750aa65855c0bf3246",

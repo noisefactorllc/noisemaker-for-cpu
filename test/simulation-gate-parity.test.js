@@ -85,3 +85,42 @@ test('points/hydraulic gate golden is a non-uniform 60-frame authority capture, 
   }).toRgba8()
   assert.equal(compareRgba8(one, golden.data, 2).pass, false)
 })
+
+// Particle cases whose CPU output is not within ±2 of their non-uniform authority capture.
+// They pass only as reviewed visual matches under the operator's 2026-10-17 particle
+// direction (scripts/parity/near.js), bound to these exact candidate bytes and to their
+// 128x128 review captures. A one-step run is neither within ±2 nor a reviewed match.
+for (const id of ['points/dla', 'points/flock']) {
+  test(`${id} gate golden is non-uniform and passes only as its reviewed visual match`, async () => {
+    const { reviewedNearComparison } = await import('../scripts/parity/near.js')
+    const name = id.replace('/', '__')
+    const fixture = readFileSync(resolve(root, `parity/upstream-defaults/${name}.dsl`), 'utf8')
+    const key = `defaults/${name}.golden.png`
+    const golden = await readPng(resolve(root, 'parity/goldens', key))
+    assert.ok(distinctRgba(golden.data) >= 2, `${key} holds one RGBA value`)
+
+    const result = await runSummary({ requested: [id] })
+    assert.deepEqual([result.summary.executed, result.summary.exact, result.summary.strict, result.summary.near, result.summary.fail], [1, 0, 0, 1, 0])
+    const review = result.rendered[0].near
+    assert.equal(review.accepted, true)
+    assert.match(review.mechanism, /operator 2026-10-17/)
+    assert.equal(review.review.size, 128)
+
+    const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernelFactories })
+    const blank = new Surface(8, 8)
+    blank.format = 'rgba16f'
+    const options = { width: 8, height: 8, seed: 1, time: 0.25, oneShot: 'initial', externalTextures: { imageTex: blank, textTex: blank } }
+    const stepped = fixture.replace('pointsEmit(seed: 0, ', 'pointsEmit(seed: 0, iterationCount: 1, ')
+    assert.notEqual(stepped, fixture)
+    const one = renderer.render(stepped, options).toRgba8()
+    assert.equal(compareRgba8(one, golden.data, 2).pass, false)
+    const reference = { ...result.rendered[0].reference }
+    assert.equal(await reviewedNearComparison({ id, actual: one, source: stepped, meta: { size: 8, time: 0.25, seed: 1, tolerance: 2 }, reference, authorityRevision: '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d' }), null)
+
+    // The reviewed 128x128 candidate is reproducible from this source.
+    const reviewBlank = new Surface(128, 128)
+    reviewBlank.format = 'rgba16f'
+    const large = renderer.render(fixture, { ...options, width: 128, height: 128, externalTextures: { imageTex: reviewBlank, textTex: reviewBlank } }).toRgba8()
+    assert.equal(createHash('sha256').update(large).digest('hex'), review.review.candidate.rawSha256)
+  })
+}

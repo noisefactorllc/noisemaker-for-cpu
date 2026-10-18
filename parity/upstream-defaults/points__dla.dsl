@@ -1,9 +1,9 @@
 search points, synth, render
 
 perlin(seed: 0)
-  .pointsEmit(seed: 0)
+  .pointsEmit(seed: 0, stateSize: x64)
   .dla()
-  .pointsRender()
+  .pointsRender(density: 5)
   .write(o0)
 
 render(o0)
