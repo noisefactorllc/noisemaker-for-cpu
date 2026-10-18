@@ -67,6 +67,30 @@ const POLICIES = new Map([
       },
     ],
   }],
+  // A particle simulation: all 65,536 agents match the authority within 5e-8 after the
+  // first frame. Float rounding at the wrap and at texel edges then moves a few agents,
+  // which changes 6 of 64 pixels after 60 frames. A one-iteration run still fails.
+  ['points/hydraulic', {
+    captureRevision: '2026-10-18-m4-metal-webgl2-gap039-hydraulic-timed60',
+    reviewedCandidateRevision: '518dd693293c8d2a57a1b631fef7cb5b616c939b',
+    candidateSha256: 'fb9970c5f600e93af53d97a5e1320307f4c5034130fbfaa9635ab234bbbc0a25',
+    fixtureSha256: '829684dd36eba52f34a5eb023bf85e3a83b633ac416c900e8153a3fac8312590',
+    protocol: {
+      size: 8, time: 0.25, seed: 1, tolerance: 2, oneShot: 'initial',
+      frames: 60, frameTimeStep: 1 / 600, renderer,
+    },
+    captures: [
+      {
+        surface: 'global_o0_read',
+        image: 'parity/goldens/defaults/points__hydraulic.golden.png',
+        pngSha256: '0b1c6f1283c7efb43e57e7cb6cd16d25640060f711fe1567e3ee3e0409ce09df',
+        rawSha256: 'd538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634',
+        maxError: 62, meanError: 2.01171875,
+        differingChannels: 16, channelsOverTolerance: 16,
+        pixels: [6, 7, 15, 27, 30, 37],
+      },
+    ],
+  }],
 ])
 
 export const NEAR_CASE_IDS = Object.freeze([...POLICIES.keys()])
