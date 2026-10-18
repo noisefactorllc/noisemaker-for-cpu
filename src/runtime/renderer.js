@@ -1826,6 +1826,55 @@ export class CpuRenderer {
     }
   }
 
+  // Runs one compiled chain and returns its final value. A step's `inlineChains`
+  // (chain arguments such as `tex: solid(color: #f00)`) run before the iteration
+  // group that holds the step, and each writes the hidden surface that the step's
+  // argument names. Upstream compiles those chains into steps directly ahead of the
+  // consuming effect; they read nothing that the group itself writes.
+  runChainSync(chain, surfaces, owned, renderOptions, stats) {
+    let current = null
+    for (const group of computeIterationGroups(chain.steps)) {
+      const only = group.steps.length === 1 ? group.steps[0] : null
+      if (only?.kind === 'read') {
+        current = surfaces.get(only.surface)
+        if (!current) throw new Error(`Surface ${only.surface} has not been written`)
+      } else if (only?.kind === 'write') {
+        this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
+      } else {
+        for (const step of group.steps) {
+          for (const inline of step.inlineChains ?? []) {
+            const value = this.runChainSync(inline.chain, surfaces, owned, renderOptions, stats)
+            this.writeSurface(inline.surface, chainBundle(value).image, surfaces, owned)
+          }
+        }
+        current = this.runIterationGroupSync(group, current, surfaces, owned, renderOptions, stats)
+      }
+    }
+    return current
+  }
+
+  async runChainAsync(chain, surfaces, owned, renderOptions, stats, scheduler) {
+    let current = null
+    for (const group of computeIterationGroups(chain.steps)) {
+      const only = group.steps.length === 1 ? group.steps[0] : null
+      if (only?.kind === 'read') {
+        current = surfaces.get(only.surface)
+        if (!current) throw new Error(`Surface ${only.surface} has not been written`)
+      } else if (only?.kind === 'write') {
+        this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
+      } else {
+        for (const step of group.steps) {
+          for (const inline of step.inlineChains ?? []) {
+            const value = await this.runChainAsync(inline.chain, surfaces, owned, renderOptions, stats, scheduler)
+            this.writeSurface(inline.surface, chainBundle(value).image, surfaces, owned)
+          }
+        }
+        current = await this.runIterationGroupAsync(group, current, surfaces, owned, renderOptions, stats, scheduler)
+      }
+    }
+    return current
+  }
+
   render(source, options = {}) {
     const startedAt = performance.now()
     const renderOptions = assertRenderOptions(options)
@@ -1835,20 +1884,7 @@ export class CpuRenderer {
     const owned = new Set()
     const stats = { passes: 0, pixels: 0 }
     try {
-      for (const chain of plan.chains) {
-        let current = null
-        for (const group of computeIterationGroups(chain.steps)) {
-          const only = group.steps.length === 1 ? group.steps[0] : null
-          if (only?.kind === 'read') {
-            current = surfaces.get(only.surface)
-            if (!current) throw new Error(`Surface ${only.surface} has not been written`)
-          } else if (only?.kind === 'write') {
-            this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
-          } else {
-            current = this.runIterationGroupSync(group, current, surfaces, owned, renderOptions, stats)
-          }
-        }
-      }
+      for (const chain of plan.chains) this.runChainSync(chain, surfaces, owned, renderOptions, stats)
       const result = this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
       this._submitToSinks(result, options.presentationTimestamp)
       return result
@@ -1867,20 +1903,7 @@ export class CpuRenderer {
     const stats = { passes: 0, pixels: 0 }
     const scheduler = options.scheduler ?? (() => new Promise((resolve) => setTimeout(resolve, 0)))
     try {
-      for (const chain of plan.chains) {
-        let current = null
-        for (const group of computeIterationGroups(chain.steps)) {
-          const only = group.steps.length === 1 ? group.steps[0] : null
-          if (only?.kind === 'read') {
-            current = surfaces.get(only.surface)
-            if (!current) throw new Error(`Surface ${only.surface} has not been written`)
-          } else if (only?.kind === 'write') {
-            this.writeSurface(only.surface, chainBundle(current).image, surfaces, owned)
-          } else {
-            current = await this.runIterationGroupAsync(group, current, surfaces, owned, renderOptions, stats, scheduler)
-          }
-        }
-      }
+      for (const chain of plan.chains) await this.runChainAsync(chain, surfaces, owned, renderOptions, stats, scheduler)
       const result = this.finish(plan, surfaces, owned, renderOptions, stats, startedAt)
       this._submitToSinks(result, options.presentationTimestamp)
       return result

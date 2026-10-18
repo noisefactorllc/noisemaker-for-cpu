@@ -352,11 +352,34 @@ function evaluateValue(value, bindings, oscDepth = 0) {
     if (value.operator === '*') return left * right
     return left / right
   }
+  if (value.kind === 'Chain' && bindings.pending) return bindings.compileInlineChain(value)
   throw new DslError(`Unsupported DSL value ${value.kind}`, value.loc)
 }
 
 function resolveArgs(args, bindings) {
   return args.map((arg) => ({ ...arg, value: evaluateValue(arg.value, bindings) }))
+}
+
+// The `let` bindings of a program, plus the compiler of chain arguments. A chain in
+// an argument (`tex: solid(color: #f00)`) compiles to its own chain that writes a
+// hidden surface. The consuming step carries it in `inlineChains`, and the
+// renderer runs it before the step, as upstream's validator compiles the chain into
+// temporary steps ahead of the consuming effect.
+class CompileScope extends Map {
+  constructor(registry, search) {
+    super()
+    this.registry = registry
+    this.search = search
+    this.pending = null
+    this.inlineCount = 0
+  }
+
+  compileInlineChain(chain) {
+    const compiled = compileChain(chain, this, { inline: true })
+    const surface = `inline:${this.inlineCount++}`
+    this.pending.push(Object.freeze({ surface, chain: compiled }))
+    return { kind: 'surface', name: surface, loc: chain.loc }
+  }
 }
 
 function mergePartial(stored, call) {
@@ -369,104 +392,124 @@ function mergePartial(stored, call) {
   return { ...call, name: stored.name, args: [...merged.values()], argMode: 'named' }
 }
 
+// Compiles one chain. A statement chain that begins with a generator must end with
+// write(oN). A chain argument (`inline`) needs no write(): its last image is the
+// argument's surface.
+function compileChain(chain, bindings, { inline = false } = {}) {
+  const { registry, search } = bindings
+  const steps = []
+  let hasInput = false
+  let hasImage = false
+  let hasVolume = false
+  let startsWithGenerator = false
+  let openLoop = null
+  // A subchain block contributes its body calls in place. Upstream's validator
+  // wraps them in `_subchain_begin`/`_subchain_end` markers, which its expander
+  // passes through without a render pass.
+  const calls = chain.calls.flatMap((element) => element.kind === 'Subchain' ? element.body : [element])
+  for (let index = 0; index < calls.length; index += 1) {
+    let call = calls[index]
+    const partial = bindings.get(call.name)
+    if (partial) {
+      if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
+      call = mergePartial(partial.call, call)
+    }
+    // Chain arguments compile while the arguments resolve; they belong to this call.
+    const outerPending = bindings.pending
+    bindings.pending = []
+    let args
+    let inlineChains
+    try {
+      args = resolveArgs(call.args, bindings)
+    } finally {
+      inlineChains = bindings.pending
+      bindings.pending = outerPending
+    }
+    if (call.name === 'read') {
+      if (index !== 0 || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('read(surface) must begin a chain', call.loc)
+      steps.push({ kind: 'read', surface: args[0].value.name, loc: call.loc })
+      hasInput = true
+      hasImage = true
+      continue
+    }
+    if (call.name === 'write') {
+      if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
+      if (!hasImage || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('write(surface) requires a current image', call.loc)
+      steps.push({ kind: 'write', surface: args[0].value.name, loc: call.loc })
+      continue
+    }
+    const definition = registry.resolve(call.name, search)
+    if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${search.join(', ')}`, call.loc)
+    if (definition.domain === 'volume-generator') {
+      if (index !== 0 && !(definition.iterated && hasVolume)) {
+        throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
+      }
+      if (index === 0) startsWithGenerator = true
+      hasInput = true
+      hasVolume = true
+    } else if (definition.domain === 'volume-filter') {
+      if (!hasVolume) throw new DslError(`volume filter ${definition.id} requires a volume input`, call.loc)
+      hasInput = true
+    } else if (definition.domain === 'volume-renderer') {
+      if (!hasVolume) throw new DslError(`volume renderer ${definition.id} requires a volume input`, call.loc)
+      hasInput = true
+      hasImage = true
+    } else if (definition.domain === 'loop-begin') {
+      if (!hasImage) throw new DslError(`${definition.id} requires a current image`, call.loc)
+      if (openLoop) throw new DslError('nested loopBegin regions are not supported', call.loc)
+      openLoop = call.loc
+    } else if (definition.domain === 'loop-end') {
+      if (!openLoop) throw new DslError('loopEnd has no matching loopBegin', call.loc)
+      if (!hasImage) throw new DslError(`${definition.id} requires a current image`, call.loc)
+      openLoop = null
+    } else if (definition.kind === 'generator') {
+      if (index !== 0) throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
+      startsWithGenerator = true
+      hasInput = true
+      hasImage = true
+    } else if (!hasImage) {
+      const requiresInputTex = definition.passes.some((pass) => Object.values(pass.inputs ?? {}).includes('inputTex'))
+      if (requiresInputTex) {
+        throw new DslError(`${definition.kind} ${definition.id} requires an input; begin with a generator or read(oN)`, call.loc)
+      }
+      hasInput = true
+      hasImage = true
+    }
+    let params
+    try {
+      params = definition.normalizeArguments(args)
+    } catch (error) {
+      throw new DslError(error.message, call.loc)
+    }
+    const explicitParams = Object.freeze(args.map((arg, argumentIndex) => {
+      return arg.name ?? definition.paramNames[argumentIndex]
+    }))
+    const step = { kind: 'effect', definition, params, explicitParams, loc: call.loc }
+    if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
+    steps.push(step)
+  }
+  if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before the chain ends', openLoop)
+  if (!inline && startsWithGenerator && steps.at(-1)?.kind !== 'write') throw new DslError('Generator chain must end with write(oN)', chain.loc)
+  return { steps, loc: chain.loc }
+}
+
 export function compileDsl(source, registry, options = {}) {
   const ast = parseDsl(source, options)
   if (ast.search.length === 0) throw new DslError('Missing required search directive', ast.loc)
 
-  const bindings = new Map()
+  const bindings = new CompileScope(registry, ast.search)
   for (const binding of ast.bindings) {
     if (bindings.has(binding.name)) throw new DslError(`Duplicate binding "${binding.name}"`, binding.loc)
     if (binding.value?.kind === 'Call' && !AUTOMATION_CALLS.has(binding.value.name)) {
-      bindings.set(binding.name, { kind: 'partial', call: { ...binding.value, args: resolveArgs(binding.value.args, bindings) } })
+      // A partial keeps its call unresolved. Its arguments resolve where it is
+      // called, as upstream's validator substitutes a symbol at each use.
+      bindings.set(binding.name, { kind: 'partial', call: binding.value })
     } else {
       bindings.set(binding.name, { kind: 'value', value: evaluateValue(binding.value, bindings), ast: binding.value })
     }
   }
 
-  const chains = ast.chains.map((chain) => {
-    const steps = []
-    let hasInput = false
-    let hasImage = false
-    let hasVolume = false
-    let startsWithGenerator = false
-    let openLoop = null
-    // A subchain block contributes its body calls in place. Upstream's validator
-    // wraps them in `_subchain_begin`/`_subchain_end` markers, which its expander
-    // passes through without a render pass.
-    const calls = chain.calls.flatMap((element) => element.kind === 'Subchain' ? element.body : [element])
-    for (let index = 0; index < calls.length; index += 1) {
-      let call = calls[index]
-      const partial = bindings.get(call.name)
-      if (partial) {
-        if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
-        call = mergePartial(partial.call, call)
-      }
-      const args = resolveArgs(call.args, bindings)
-      if (call.name === 'read') {
-        if (index !== 0 || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('read(surface) must begin a chain', call.loc)
-        steps.push({ kind: 'read', surface: args[0].value.name, loc: call.loc })
-        hasInput = true
-        hasImage = true
-        continue
-      }
-      if (call.name === 'write') {
-        if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
-        if (!hasImage || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('write(surface) requires a current image', call.loc)
-        steps.push({ kind: 'write', surface: args[0].value.name, loc: call.loc })
-        continue
-      }
-      const definition = registry.resolve(call.name, ast.search)
-      if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${ast.search.join(', ')}`, call.loc)
-      if (definition.domain === 'volume-generator') {
-        if (index !== 0 && !(definition.iterated && hasVolume)) {
-          throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
-        }
-        if (index === 0) startsWithGenerator = true
-        hasInput = true
-        hasVolume = true
-      } else if (definition.domain === 'volume-filter') {
-        if (!hasVolume) throw new DslError(`volume filter ${definition.id} requires a volume input`, call.loc)
-        hasInput = true
-      } else if (definition.domain === 'volume-renderer') {
-        if (!hasVolume) throw new DslError(`volume renderer ${definition.id} requires a volume input`, call.loc)
-        hasInput = true
-        hasImage = true
-      } else if (definition.domain === 'loop-begin') {
-        if (!hasImage) throw new DslError(`${definition.id} requires a current image`, call.loc)
-        if (openLoop) throw new DslError('nested loopBegin regions are not supported', call.loc)
-        openLoop = call.loc
-      } else if (definition.domain === 'loop-end') {
-        if (!openLoop) throw new DslError('loopEnd has no matching loopBegin', call.loc)
-        if (!hasImage) throw new DslError(`${definition.id} requires a current image`, call.loc)
-        openLoop = null
-      } else if (definition.kind === 'generator') {
-        if (index !== 0) throw new DslError(`Generator ${definition.id} must begin a chain`, call.loc)
-        startsWithGenerator = true
-        hasInput = true
-        hasImage = true
-      } else if (!hasImage) {
-        const requiresInputTex = definition.passes.some((pass) => Object.values(pass.inputs ?? {}).includes('inputTex'))
-        if (requiresInputTex) {
-          throw new DslError(`${definition.kind} ${definition.id} requires an input; begin with a generator or read(oN)`, call.loc)
-        }
-        hasInput = true
-        hasImage = true
-      }
-      let params
-      try {
-        params = definition.normalizeArguments(args)
-      } catch (error) {
-        throw new DslError(error.message, call.loc)
-      }
-      const explicitParams = Object.freeze(args.map((arg, argumentIndex) => {
-        return arg.name ?? definition.paramNames[argumentIndex]
-      }))
-      steps.push({ kind: 'effect', definition, params, explicitParams, loc: call.loc })
-    }
-    if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before the chain ends', openLoop)
-    if (startsWithGenerator && steps.at(-1)?.kind !== 'write') throw new DslError('Generator chain must end with write(oN)', chain.loc)
-    return { steps, loc: chain.loc }
-  })
+  const chains = ast.chains.map((chain) => compileChain(chain, bindings))
 
   let lastWrittenSurface = null
   for (const chain of chains) {

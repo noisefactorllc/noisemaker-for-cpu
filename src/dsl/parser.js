@@ -103,6 +103,29 @@ class Parser {
     return this.peek().type === 'keyword' && this.peek().lexeme === 'subchain'
   }
 
+  isPunctuation(lexeme) {
+    return this.peek().type === 'punctuation' && this.peek().lexeme === lexeme
+  }
+
+  // A chain in a value position (upstream parseChain in its 'expression' context).
+  // It may hold subchain blocks, and it cannot hold write() or write3d().
+  parseExpressionChain(first) {
+    const calls = [first]
+    while (this.isPunctuation('.')) {
+      this.current += 1
+      if (this.atSubchain()) {
+        calls.push(this.parseSubchain())
+        continue
+      }
+      const call = this.parseCall()
+      if (call.name === 'write' || call.name === 'write3d') {
+        throw new DslError("'.write()' is only allowed in statement context", call.loc)
+      }
+      calls.push(call)
+    }
+    return { kind: 'Chain', calls, loc: first.loc }
+  }
+
   // Port of upstream parseSubchainCall: `subchain(name: "...", id: "...") { .a() .b() }`.
   // A single leading string is shorthand for `name`. Unknown keys, duplicate keys and
   // a missing ',' between keys are upstream warnings (P008-P010): the program still
@@ -231,6 +254,12 @@ class Parser {
         }
         const surface = this.parseSurface()
         this.consume(')')
+        // `read(oN).effect()` in a value position is a chain argument that starts
+        // from the surface. A bare `read(oN)` stays a plain surface reference.
+        if (this.isPunctuation('.')) {
+          const read = { kind: 'Call', name: 'read', args: [{ name: null, value: surface, loc: surface.loc }], argMode: 'positional', loc: location(token) }
+          return this.parseExpressionChain(read)
+        }
         return surface
       }
       if (['vec2', 'vec3', 'vec4'].includes(name) && this.match('(')) {
@@ -248,6 +277,12 @@ class Parser {
       if ((name === 'osc' || name === 'midi' || name === 'audio') && this.peek().lexeme === '(') {
         this.current -= 1
         return this.parseCall()
+      }
+      // Any other call in a value position starts a chain argument
+      // (upstream `Expr ::= Chain`), for example `tex: solid(color: #f00)`.
+      if (this.isPunctuation('(')) {
+        this.current -= 1
+        return this.parseExpressionChain(this.parseCall())
       }
       let path = name
       while (this.match('.')) path += `.${this.identifier('Expected enum member').lexeme}`

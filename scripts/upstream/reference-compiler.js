@@ -31,7 +31,10 @@ async function load(root) {
     for (const entry of readdirSync(join(effectsRoot, namespace.name), { withFileTypes: true })) {
       const definitionPath = join(effectsRoot, namespace.name, entry.name, 'definition.js')
       if (!entry.isDirectory() || !existsSync(definitionPath)) continue
-      const instance = (await import(pathToFileURL(definitionPath).href)).default
+      // A definition exports an Effect instance or an Effect subclass, which
+      // upstream's loader instantiates (CanvasRenderer.loadEffectDefinition).
+      const exported = (await import(pathToFileURL(definitionPath).href)).default
+      const instance = typeof exported === 'function' ? new exported() : exported
       const effect = { namespace: namespace.name, name: entry.name, instance }
       const choices = canvas.CanvasRenderer.prototype.registerEffectWithRuntime.call({}, effect)
       if (choices) await enums.mergeIntoEnums(choices)
