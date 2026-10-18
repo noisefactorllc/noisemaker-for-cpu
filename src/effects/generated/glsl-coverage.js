@@ -2867,8 +2867,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318",
     "sourceBytes": 10882,
-    "normalizedBytes": 11060,
-    "generatedBytes": 9491
+    "normalizedBytes": 11221,
+    "generatedBytes": 10040
   },
   {
     "effectId": "synth/polygon",
@@ -3017,8 +3017,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "e29a5b033304463b8610c86823f46c16751270a3cbaa37f1204df968c6c5394a",
     "sourceBytes": 8843,
-    "normalizedBytes": 9171,
-    "generatedBytes": 6738
+    "normalizedBytes": 9335,
+    "generatedBytes": 6746
   },
   {
     "effectId": "synth3d/flythrough3d",
@@ -3067,8 +3067,8 @@ export const programCoverage = Object.freeze([
     "status": "generated",
     "sourceSha256": "23a23fcf7cfda986215efc76e21f79faf237bef0c362881d801b040407766b17",
     "sourceBytes": 6257,
-    "normalizedBytes": 6581,
-    "generatedBytes": 5128
+    "normalizedBytes": 6745,
+    "generatedBytes": 5136
   },
   {
     "effectId": "synth3d/shape3d",

@@ -9,15 +9,17 @@ import { decodePng } from '../src/node/png.js'
 import { float16Truncate } from '../src/runtime/texture-format.js'
 import { compareRgba8 } from '../scripts/parity/lib.js'
 
-// M4 authority captures of seeded synth3d/noise3d and synth3d/cell3d volumes. Their
-// hash words depend on the order in which the authority adds the lattice point, the
-// call's constants and the seed term (scripts/upstream/compile-glsl.js,
+// M4 authority captures of seeded hashes: synth3d/noise3d and synth3d/cell3d volumes,
+// synth/perlin's 3D path and the synth3d/reactionDiffusion3d seeding pass. Their hash
+// words depend on the order in which the authority adds the lattice point, the call's
+// constants and the seed term (scripts/upstream/compile-glsl.js,
 // lowerSeededLatticeHashes); a left-to-right float32 sum moves whole cells.
 const fixtures = new URL('./fixtures/authority/seeded-volumes-m4/', import.meta.url)
+const hashFixtures = new URL('./fixtures/authority/seeded-hashes-m4/', import.meta.url)
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex')
 
-async function loadFixture() {
-  const fixture = JSON.parse(await readFile(new URL('capture.json', fixtures), 'utf8'))
+async function loadFixture(directory = fixtures) {
+  const fixture = JSON.parse(await readFile(new URL('capture.json', directory), 'utf8'))
   const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
   const pinnedSources = new Map(manifest.entries.map((entry) => [entry.path, entry]))
   assert.equal(fixture.capture.authorityRevision, manifest.revision)
@@ -28,9 +30,9 @@ async function loadFixture() {
   return fixture
 }
 
-async function loadReference(kase, width, height) {
+async function loadReference(kase, width, height, directory = fixtures) {
   assert.equal(sha256(kase.program), kase.programSha256, kase.name)
-  const png = await readFile(new URL(kase.image, fixtures))
+  const png = await readFile(new URL(kase.image, directory))
   assert.equal(sha256(png), kase.pngSha256, kase.name)
   const reference = decodePng(png)
   assert.deepEqual([reference.width, reference.height], [width, height], kase.name)
@@ -79,6 +81,19 @@ test('seeded noise3d and cell3d 16^3 volume atlases match the M4 authority vol0 
         }
       }
     }
+    const comparison = compareRgba8(actual, reference, fixture.tolerance)
+    assert.ok(comparison.pass, `${kase.name}: ${JSON.stringify(comparison)}`)
+  }
+})
+
+test('seeded perlin 3D and reactionDiffusion3d renders match the M4 authority', async () => {
+  const fixture = await loadFixture(hashFixtures)
+  assert.equal(fixture.cases.length, 9)
+  for (const kase of fixture.cases) {
+    const { width, height, time, seed } = kase
+    const reference = await loadReference(kase, width, height, hashFixtures)
+    const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernelFactories })
+    const actual = renderer.render(kase.program, { width, height, time, seed }).toRgba8()
     const comparison = compareRgba8(actual, reference, fixture.tolerance)
     assert.ok(comparison.pass, `${kase.name}: ${JSON.stringify(comparison)}`)
   }

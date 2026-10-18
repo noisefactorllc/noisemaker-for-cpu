@@ -837,25 +837,27 @@ function lowerVectorEquality(source) {
     operator === '==' ? `all(equal(${left}, ${right}))` : `any(notEqual(${left}, ${right}))`)
 }
 
-// The 3D volume hashes turn a lattice point into integer words with
-// `p + float(seed) * 0.1` and then `ivec(p * 1000.0)`. Every hash input lands
-// next to an integer multiple of 0.001, so the float32 rounding of that sum
-// decides the word, and the authority (ANGLE Metal on Apple M4) evaluates the
-// sum in its own order:
+// The seeded 3D hashes start with `p + float(seed) * 0.1`. In the lattice
+// hashes (noise3d, cell3d, perlin's 3D path) `ivec(p * 1000.0)` follows, so every
+// input lands next to an integer multiple of 0.001 and the float32 rounding of
+// that sum decides the word. The authority (ANGLE Metal on Apple M4) evaluates
+// the sum in its own order:
 // - the seed product is rounded to float32 before any add (it is one uniform
 //   shared by every hash call, never fused into an fma);
-// - the compile-time constants of the call (noise4D's corner offset, grad4's
-//   127.1/269.5/419.2, cell3d's unrolled x neighbor offset) fold in float32,
-//   then add to the seed term, and the lattice coordinate is added last:
-//   R(base + R(R(constant) + seed term));
+// - the compile-time constants of the call (the noise corner offset, the
+//   127.1/269.5/419.2 gradient offsets, cell3d's unrolled x neighbor offset)
+//   fold in float32, then add to the seed term, and the lattice coordinate is
+//   added last: R(base + R(R(constant) + seed term));
+// - perlin's z coordinate, which comes from time alone, adds the seed term
+//   first and the constant last: R(R(base + seed term) + constant);
 // - cell3d's y and z neighbor offsets behave as runtime loop values: they add
 //   to the coordinate first, then the seed term: R(R(base + offset) + seed term).
 // Float32 readbacks of the authority's hash outputs decode the words its
 // noise3d and cell3d volumes use. With this model the CPU 16^3 volumes match the
 // authority's vol0 readbacks within one 8-bit step for seeds 0-10, 13, 42, 50,
-// 51 and 99. synth/perlin's 3D path and the reactionDiffusion3d and
-// cellularAutomata3d seeding hashes use the same idiom but are not measured, so
-// they keep the generic lowering.
+// 51 and 99, and perlin's 3D renders match its captures byte for byte for 16
+// seeds at three times. reactionDiffusion3d and cellularAutomata3d seed with a
+// fract-based hash, lowered below.
 function lowerSeededLatticeHashes(effectId, source) {
   const replaceOnce = (text, from, to) => {
     if (!text.includes(from)) throw new Error(`${effectId}: seeded lattice hash source changed (${from.split('\n')[0]})`)
@@ -886,6 +888,46 @@ function lowerSeededLatticeHashes(effectId, source) {
       '    vec3 cpuCellPos = base + neighbor;\n' +
       '    vec3 p = vec3(base.x + float(neighbor.x + cpuSeedOffset), cpuCellPos.y + cpuSeedOffset, cpuCellPos.z + cpuSeedOffset);')
     source = replaceOnce(source, 'vec3 randomOffset = hash3(cellPos);', 'vec3 randomOffset = hash3(i, neighbor);')
+  }
+  if (effectId === 'synth/perlin') {
+    // The 3D path (DIMENSIONS == 3) has noise3d's structure in three dimensions.
+    // Its z lattice coordinate comes from time alone, and for that uniform
+    // coordinate the authority adds the seed term first and the constant last.
+    source = replaceOnce(source,
+      'float hash3(vec3 p) {\n    // Add seed to input to vary the noise pattern\n    p = p + (seed) * 0.1;',
+      'float hash3(vec3 p, vec3 k) {\n' +
+      '    float cpuSeedOffset = float((seed) * 0.1);\n' +
+      '    vec2 cpuLatticeOffset = k.xy + cpuSeedOffset;\n' +
+      '    p = vec3(p.x + cpuLatticeOffset.x, p.y + cpuLatticeOffset.y, float(p.z + cpuSeedOffset) + k.z);')
+    source = replaceOnce(source,
+      'vec3 grad3(vec3 p) {\n    // Generate 3 independent random values\n    float h1 = hash3(p);\n    float h2 = hash3(p + 127.1);\n    float h3 = hash3(p + 269.5);',
+      'vec3 grad3(vec3 p, vec3 k) {\n    float h1 = hash3(p, k);\n    float h2 = hash3(p, k + 127.1);\n    float h3 = hash3(p, k + 269.5);')
+    let corners = 0
+    source = source.replace(/grad3\(vec3\(i\.xy, (iz[01])\) \+ (vec3\([01],[01],0\))\)/g, (_, z, corner) => {
+      corners += 1
+      return `grad3(vec3(i.xy, ${z}), ${corner})`
+    })
+    if (corners !== 8) throw new Error(`${effectId}: expected 8 noise3D corner hashes, found ${corners}`)
+  }
+  if (effectId === 'synth3d/reactionDiffusion3d' || effectId === 'synth3d/cellularAutomata3d') {
+    // The seeding hash takes the voxel coordinate with no constant offset, so
+    // only the rounded seed term applies. The shader reads only the returned
+    // hash, and the authority sums (p.x + d) + (p.y + d) as (p.x + p.y) + (d + d),
+    // rounding each step in float32. Float32 readbacks of the hash for every voxel
+    // of a 32^3 volume (seeds 1, 2, 3, 7, 9, 13, 42) match this form exactly.
+    source = replaceOnce(source,
+      'float hash3(vec3 p) {\n' +
+      '    p = p + (seed) * 0.1;\n' +
+      '    p = fract(p * vec3(0.1031, 0.1030, 0.0973));\n' +
+      '    p += dot(p, p.yxz + 33.33);\n' +
+      '    return fract((p.x + p.y) * p.z);\n' +
+      '}',
+      'float hash3(vec3 p) {\n' +
+      '    p = p + float((seed) * 0.1);\n' +
+      '    p = fract(p * vec3(0.1031, 0.1030, 0.0973));\n' +
+      '    float cpuHashDot = dot(p, p.yxz + 33.33);\n' +
+      '    return fract(float(float(float(p.x + p.y) + float(cpuHashDot + cpuHashDot)) * float(p.z + cpuHashDot)));\n' +
+      '}')
   }
   return source
 }

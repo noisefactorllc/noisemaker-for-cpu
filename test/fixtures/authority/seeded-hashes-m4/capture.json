@@ -1,0 +1,185 @@
+{
+  "tolerance": 2,
+  "description": "Seeded hashes of synth/perlin with dimensions: 3 and of the synth3d/reactionDiffusion3d seeding pass, whose float32 evaluation order on the authority decides the noise lattice words and the seeded voxels.",
+  "cases": [
+    {
+      "name": "perlin3d-64x40-t0.75-s2",
+      "seed": 2,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth\n\nperlin(seed: 2, dimensions: 3)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "7178afe3abaaa75b92a51ad391aa4c6f53ca9d2f1300cdf498527215dcb9ab80",
+      "image": "perlin3d-64x40-t0.75-s2.png",
+      "pngSha256": "0fa6976578d01463d7f4c3ba9a6b995f3fa07e9dc01e394fd0404981311c947b",
+      "rgbaSha256": "662af324159362418bc18e6f28676f6156ea85c55a268b03e07f518ae1f88b01"
+    },
+    {
+      "name": "perlin3d-64x40-t0.75-s3",
+      "seed": 3,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth\n\nperlin(seed: 3, dimensions: 3)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "8c75bb70624592fa9a5cc3002124b83352108c35f84a1e1c35a0348d7b494dc8",
+      "image": "perlin3d-64x40-t0.75-s3.png",
+      "pngSha256": "0648b4efe437e8c3b171f918e939a54a072b7f781b5a2757a682de0d788d8630",
+      "rgbaSha256": "ffd73c11afad6aff7b7cd02230d7b8e8e727a3f6b74c0995845fae8068547c15"
+    },
+    {
+      "name": "perlin3d-64x40-t0.75-s7",
+      "seed": 7,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth\n\nperlin(seed: 7, dimensions: 3)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "c54f1f214527ebcaf9ee0295e57cfdad5f2d7769a104036bcbfc2bba2a8efc8f",
+      "image": "perlin3d-64x40-t0.75-s7.png",
+      "pngSha256": "5d653ef8a7bf176ff027d6c9cbf6ea5dd830a403b38cc2ac6032fb0308138a12",
+      "rgbaSha256": "87fff885a93b737adafed8c936907bb60985cdf0e046c454846ad46d8b3ec30b"
+    },
+    {
+      "name": "perlin3d-64x40-t0.75-s42",
+      "seed": 42,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth\n\nperlin(seed: 42, dimensions: 3)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "80b6f92da6d978b340c986ba9d955606d22a7b78f7cd1b9537566af447119860",
+      "image": "perlin3d-64x40-t0.75-s42.png",
+      "pngSha256": "8f7c13ca10a7894d6ecd31097e6f10b5e5423d2d9bd52c9c6f470b22deb70f71",
+      "rgbaSha256": "f27c19570582e50b48268393a22b04001533ee0600ce9017c7feebfc9c8a96d9"
+    },
+    {
+      "name": "perlin3d-41x23-t0.25-s13",
+      "seed": 13,
+      "width": 41,
+      "height": 23,
+      "time": 0.25,
+      "program": "search synth\n\nperlin(seed: 13, dimensions: 3)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "8f864593aa0ae512b362b299d74214a21b681b33506d9f3645694f223215931d",
+      "image": "perlin3d-41x23-t0.25-s13.png",
+      "pngSha256": "d97acdcd78d8d31872423c671873816dd64daa92b02ba856e532e3516e760a9b",
+      "rgbaSha256": "14b1618abd0b0c1b501f20d5b8b56760962942d103ce65037c02a2d19359701c"
+    },
+    {
+      "name": "reactionDiffusion3d-64x40-t0.75-s1",
+      "seed": 1,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth3d, filter3d, render\n\nreactionDiffusion3d(seed: 1, volumeSize: x32)\n  .render3d(volumeSize: v32)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "e1c60e95d3d91bc323b7c2dcec8ae6394e1996af5fc3d38bf57cebfa4c59f9a5",
+      "image": "reactionDiffusion3d-64x40-t0.75-s1.png",
+      "pngSha256": "63d96d9c28dcad46b0a028b9450773d65f553661956aae2214a82162f1fb273f",
+      "rgbaSha256": "9221744224f27bbfac0042120096d763fb491c95471c68aeab39cba239b00999"
+    },
+    {
+      "name": "reactionDiffusion3d-64x40-t0.75-s7",
+      "seed": 7,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth3d, filter3d, render\n\nreactionDiffusion3d(seed: 7, volumeSize: x32)\n  .render3d(volumeSize: v32)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "bec93b33ffacbb6c87f2cb84634a31175f75152eeb102643716eb81d8218a2f8",
+      "image": "reactionDiffusion3d-64x40-t0.75-s7.png",
+      "pngSha256": "b8ae52f8088c395c4f1d7f1f960b1e6c83288d14518d03bac01b7d446f8cd11c",
+      "rgbaSha256": "77d0be155aafd9e5684509d02212064e85397215f70e6e1a8305ebf1d33992e3"
+    },
+    {
+      "name": "reactionDiffusion3d-64x40-t0.75-s42",
+      "seed": 42,
+      "width": 64,
+      "height": 40,
+      "time": 0.75,
+      "program": "search synth3d, filter3d, render\n\nreactionDiffusion3d(seed: 42, volumeSize: x32)\n  .render3d(volumeSize: v32)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "a3f69294c3c5ae1e4ed1eb3dfbc3ba8476577b76d4ee880961727e300fe4e7ed",
+      "image": "reactionDiffusion3d-64x40-t0.75-s42.png",
+      "pngSha256": "a595b362b10a1a91220d15cd1ad80803ccd40bed63b12d899550cc9a239faa79",
+      "rgbaSha256": "714827d32911468fb0698b2f628cc79cead4989f5cd2a88292925b5270048d87"
+    },
+    {
+      "name": "reactionDiffusion3d-41x23-t0.75-s13",
+      "seed": 13,
+      "width": 41,
+      "height": 23,
+      "time": 0.75,
+      "program": "search synth3d, filter3d, render\n\nreactionDiffusion3d(seed: 13, volumeSize: x32)\n  .render3d(volumeSize: v32)\n  .write(o0)\n\nrender(o0)\n",
+      "programSha256": "cab2ca848f94b50c7ccf529f1c99569cc12c877934128264b7e81c5141773d15",
+      "image": "reactionDiffusion3d-41x23-t0.75-s13.png",
+      "pngSha256": "3f405564291cffaf514d59bd4a61446f5ea70eb13027c8fe9db887f3b560caad",
+      "rgbaSha256": "97ea04ea3f2f45b120428a09d53543c0ae4cc26ba70ebd50402bf859c10fa3ed"
+    }
+  ],
+  "capture": {
+    "at": "2026-10-17T23:22:07-06:00",
+    "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+    "sourceDigest": "7cd5fc55dcf37098c1c6fa39054c901d0b44196fef3ee99e69c0f0fd56df7ebf",
+    "sources": [
+      {
+        "path": "shaders/effects/render/render3d/definition.js",
+        "size": 3692,
+        "sha256": "cfef9f05340eaae9f19b097dab7a3db465268bc130626b19bd0e72ee9847ea7e"
+      },
+      {
+        "path": "shaders/effects/render/render3d/glsl/render3d.glsl",
+        "size": 14393,
+        "sha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30"
+      },
+      {
+        "path": "shaders/effects/synth/perlin/definition.js",
+        "size": 3072,
+        "sha256": "8ef8bdc3c5005dd5a30d02876a47cc8a036d14faa0f5cd7349c3743e3ef4c8e3"
+      },
+      {
+        "path": "shaders/effects/synth/perlin/glsl/perlin.glsl",
+        "size": 10882,
+        "sha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318"
+      },
+      {
+        "path": "shaders/effects/synth3d/reactionDiffusion3d/definition.js",
+        "size": 4730,
+        "sha256": "94a812290d2310b8af85859e322a9289b1b52b3959c92eb16a6e9a29d25cabd8"
+      },
+      {
+        "path": "shaders/effects/synth3d/reactionDiffusion3d/glsl/simulate.glsl",
+        "size": 6257,
+        "sha256": "23a23fcf7cfda986215efc76e21f79faf237bef0c362881d801b040407766b17"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 90314,
+        "sha256": "eadd0fd9ca8578f31744d94efce85879429149dee354b5bb73b95b5fbe8872af"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 81454,
+        "sha256": "951ce0245fefaa29dda4dffe3e6fe0835773aa2a6f0e6889825676c772da894c"
+      },
+      {
+        "path": "shaders/src/runtime/expander.js",
+        "size": 71845,
+        "sha256": "588d815aa439ad60fcab27bc1574df38d3fe7b69da42de2ebf6ca7d728d98138"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "browserVersion": "156.0.8078.4",
+    "playwrightCore": "1.64.1",
+    "harness": {
+      "sweep-runner.mjs": "684f464ea197a69ed2e52f4efccaeb889724960e7fbd249311841ba34c69f8c2",
+      "sweep.html": "6c23661ffcba7e59d031d6168929422177e7639f656bf724fab9f826507508f1"
+    },
+    "protocol": "One fresh page per case and two independent CanvasRenderer instances from the pinned upstream archive (headless Chromium, --use-angle=metal). loadManifest, loadEffects, compile the recorded DSL, apply the demo ProgramState step values, upload a transparent canvas to every media step, render one frame at the case time, and read global_o0_write twice as top-down RGBA8. Both reads of both instances are byte-identical for every case."
+  }
+}
