@@ -18,6 +18,8 @@ test('odd-size authority fixtures are pinned to the authority source', async () 
   for (const entry of fixture.capture.sources) {
     assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
   }
+  assert.equal(fixture.capture.gpu, 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)')
+  for (const field of ['host', 'os', 'browser']) assert.ok(fixture.capture[field], field)
   assert.equal(fixture.tolerance, 2)
   assert.equal(fixture.cases.length, 18)
 })

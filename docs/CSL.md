@@ -85,6 +85,7 @@ Compact sampler inputs are linear RGBA float surfaces with clamp-to-edge behavio
 - signed integer and overflowing uint32 arithmetic, PCG, and bit reinterpretation
 - scalar/vector overloads, swizzles, matrices, arrays, `cross`, and compile-time defines
 - `texture`, `textureLod`, `textureSize`, `texelFetch`, and canonical filtering/origin rules
+- nearest-texel selection from the float32-scaled coordinate, and float division by a run-time divisor through the measured Apple M4 hardware reciprocal (`src/csl/metal-division.js`)
 - `dFdx`, `dFdy`, and `fwidth` through deterministic 2×2 quad replay
 - multi-pass render graphs, multi-render-target outputs, flattened volume atlases, named attachments, external textures, and half-float attachment truncation
 

@@ -20,6 +20,29 @@ const toBits = (value) => {
 }
 const fixture = async (name) => JSON.parse(await readFile(new URL(`./fixtures/authority/${name}`, import.meta.url), 'utf8'))
 
+const AUTHORITY_REVISION = '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d'
+const M4_RENDERER = 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)'
+
+test('the reciprocal data module is the pinned M4 capture', async () => {
+  // Git can check the module out with CRLF line endings; hash it as LF.
+  const source = (await readFile(new URL('../src/csl/metal-reciprocal-data.js', import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
+  assert.equal(createHash('sha256').update(source).digest('hex'), '4591d5cdc19b65d8d70f7a20a419517ebea056cecc44d882cab288c681446fb6')
+  assert.deepEqual(METAL_RECIPROCAL.capture, {
+    host: 'zig.local',
+    os: 'macOS 26.6.2 (25G83)',
+    gpu: M4_RENDERER,
+    browser: 'HeadlessChrome 156.0.8078.4 (--use-angle=metal)',
+    authorityRevision: AUTHORITY_REVISION,
+    capturedAt: '2026-10-18',
+  })
+  for (const name of ['metal-division-m4.json', 'nearest-texel-m4.json']) {
+    const { provenance } = await fixture(name)
+    assert.equal(provenance.gpu, M4_RENDERER, name)
+    assert.equal(provenance.authorityRevision, AUTHORITY_REVISION, name)
+    for (const field of ['host', 'os', 'browser']) assert.ok(provenance[field], `${name} ${field}`)
+  }
+})
+
 test('the reciprocal band data rebuilds the captured 2-bit table', () => {
   const deviations = decodeReciprocalDeviations()
   const table = new Uint8Array((1 << 23) >> 2)

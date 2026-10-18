@@ -216,7 +216,7 @@ The renderer is CPU-bound by design. `npm run bench -- --size 128` reports local
 
 ## Coordinates and color
 
-Shader coordinates follow GLSL: `uv=(0,0)` is bottom-left and pixel centers are `(x+0.5,y+0.5)`. Surfaces remain top-down for Canvas, PNG, and `ImageData`. Sampling converts the origin at the boundary. Canonical internal texture sampling is nearest unless a source is explicitly linear. External image inputs use linear sampling. Pass attachment formats, including half-float truncation, follow the canonical graph. PNG/Canvas conversion clamps to `[0,1]`, maps non-finite values to zero, and rounds to straight 8-bit RGBA.
+Shader coordinates follow GLSL: `uv=(0,0)` is bottom-left and pixel centers are `(x+0.5,y+0.5)`. Surfaces remain top-down for Canvas, PNG, and `ImageData`. Sampling converts the origin at the boundary. Canonical internal texture sampling is nearest unless a source is explicitly linear; a nearest sample selects the texel of the float32-scaled coordinate, as the Apple M4 authority does. External image inputs use linear sampling. In the generated kernels, a float division whose divisor is a run-time value follows the measured Apple M4 hardware reciprocal, which is not correctly rounded (`src/csl/metal-division.js`; `scripts/parity/capture-metal-reciprocal.mjs` captures it on the authority host). Divisions by constants keep float64 arithmetic. Pass attachment formats, including half-float truncation, follow the canonical graph. PNG/Canvas conversion clamps to `[0,1]`, maps non-finite values to zero, and rounds to straight 8-bit RGBA.
 
 ## License
 
