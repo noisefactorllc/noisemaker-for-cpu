@@ -210,7 +210,7 @@ jobs:
             grep -E '^(NAME|VERSION)=' /etc/os-release
             node --version
             ls -d /ms-playwright/firefox-*
-            /ms-playwright/firefox-1295/firefox/firefox --version || true
+            HOME=/root /ms-playwright/firefox-1295/firefox/firefox --version || true
           } | tee "$receipt/identity.log"
           [[ "$(node --version)" == v26.* ]]
           test -d /ms-playwright/firefox-1295
@@ -227,6 +227,10 @@ jobs:
           test "$(node -p "require('$client/node_modules/playwright-core/package.json').version")" = 1.15.2
       - name: Run the demo browser check on Firefox 92
         shell: bash
+        # The container runs as root, but the runner's HOME (/github/home) belongs to
+        # uid 1001, and Firefox refuses to start as root in another user's HOME.
+        env:
+          HOME: /root
         run: |
           set -uo pipefail
           receipt="$RUNNER_TEMP/cpu-platform-firefox"
