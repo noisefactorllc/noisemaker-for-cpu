@@ -7,18 +7,19 @@
  * `noisemaker-cpu` package root) over local HTTP, opens
  * `examples/browser/index.html` in a Chromium-family browser over the raw
  * DevTools protocol, in Safari over its built-in WebDriver, or in a Playwright
- * WebKit build, waits for the demo's first render to complete, and asserts
+ * WebKit or Firefox build, waits for the demo's first render to complete, and asserts
  * that the demo initialized, every same-origin module loaded, and the canvas
  * carries a rendered frame.
  *
  * Options:
  *   --root <dir>        Directory to serve (default: repository root)
  *   --url <url>         Check this URL directly instead of serving --root
- *   --browser <name>    chromium (default), safari, or webkit
+ *   --browser <name>    chromium (default), safari, webkit, or firefox
  *   --executable <path> Browser or safaridriver binary (default: discovered)
- *   --playwright <dir>  Installed playwright-core package that drives WebKit
- *                       (webkit only; its bundled WebKit build is the engine
- *                       under test, so the package version picks the version)
+ *   --playwright <dir>  Installed playwright-core package that drives WebKit or
+ *                       Firefox (webkit and firefox only; its bundled browser
+ *                       build is the engine under test, so the package version
+ *                       picks the version)
  *   --timeout <ms>      Render wait budget (default: 120000)
  *
  * Prints one `BROWSER-CHECK {…}` JSON line. Exit 0 on pass, 1 on failure.
@@ -37,6 +38,13 @@ import { fileURLToPath } from 'node:url'
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(scriptDir, '..')
 
+// Browsers driven through an installed playwright-core package: the package's
+// browser type export and the product name the result reports.
+const PLAYWRIGHT_BROWSERS = {
+  webkit: { type: 'webkit', product: 'WebKit' },
+  firefox: { type: 'firefox', product: 'Firefox' },
+}
+
 function parseArgs(argv) {
   const args = { root: repoRoot, timeout: 120000, browser: 'chromium' }
   for (let i = 0; i < argv.length; i++) {
@@ -49,8 +57,8 @@ function parseArgs(argv) {
     else if (key === '--timeout') args.timeout = Number(argv[++i])
     else throw new Error(`unknown argument: ${key}`)
   }
-  if (!['chromium', 'safari', 'webkit'].includes(args.browser)) throw new Error(`unsupported browser: ${args.browser}`)
-  if (args.browser === 'webkit' && !args.playwright) throw new Error('--browser webkit needs --playwright <playwright-core dir>')
+  if (!['chromium', 'safari', 'webkit', 'firefox'].includes(args.browser)) throw new Error(`unsupported browser: ${args.browser}`)
+  if (PLAYWRIGHT_BROWSERS[args.browser] && !args.playwright) throw new Error(`--browser ${args.browser} needs --playwright <playwright-core dir>`)
   if (!Number.isFinite(args.timeout) || args.timeout <= 0) throw new Error('timeout must be positive')
   return args
 }
@@ -385,10 +393,10 @@ async function runSafari(args, executable, server, targetURL, requests) {
   }
 }
 
-// Drives a Playwright WebKit build. The page error recorder is the one the
-// served Safari page carries, so early module exceptions count the same way;
-// Playwright's own pageerror events and failed same-origin requests are added.
-export async function inspectWebkit({ engine, targetURL, baseURL, requests, executable, timeout }) {
+// Drives a Playwright WebKit or Firefox build. The page error recorder is the
+// one the served Safari page carries, so early module exceptions count the same
+// way; Playwright's own pageerror events and failed same-origin requests are added.
+export async function inspectPlaywright({ engine, product, targetURL, baseURL, requests, executable, timeout }) {
   const browser = await engine.launch({ headless: true, ...(executable ? { executablePath: executable } : {}) })
   try {
     const page = await browser.newPage()
@@ -421,7 +429,7 @@ export async function inspectWebkit({ engine, targetURL, baseURL, requests, exec
       moduleFailures.length === 0 && pageErrors.length === 0
     return {
       pass,
-      browser: { product: `WebKit ${browser.version()}`, userAgent, executable: executable || 'playwright' },
+      browser: { product: `${product} ${browser.version()}`, userAgent, executable: executable || 'playwright' },
       platform: process.platform,
       url: targetURL,
       httpStatus: mainFrameStatus,
@@ -436,12 +444,21 @@ export async function inspectWebkit({ engine, targetURL, baseURL, requests, exec
   }
 }
 
-async function runWebkit(args, server, baseURL, targetURL, requests) {
+export function inspectWebkit(options) {
+  return inspectPlaywright({ ...options, product: PLAYWRIGHT_BROWSERS.webkit.product })
+}
+
+export function inspectFirefox(options) {
+  return inspectPlaywright({ ...options, product: PLAYWRIGHT_BROWSERS.firefox.product })
+}
+
+async function runPlaywright(args, server, baseURL, targetURL, requests) {
   try {
-    const { webkit } = createRequire(import.meta.url)(args.playwright)
-    if (!webkit) throw new Error(`${args.playwright} exports no webkit browser type`)
-    const result = await inspectWebkit({
-      engine: webkit, targetURL, baseURL, requests, executable: args.executable, timeout: args.timeout,
+    const { type, product } = PLAYWRIGHT_BROWSERS[args.browser]
+    const engine = createRequire(import.meta.url)(args.playwright)[type]
+    if (!engine) throw new Error(`${args.playwright} exports no ${type} browser type`)
+    const result = await inspectPlaywright({
+      engine, product, targetURL, baseURL, requests, executable: args.executable, timeout: args.timeout,
     })
     console.log(`BROWSER-CHECK ${JSON.stringify(result)}`)
     process.exitCode = result.pass ? 0 : 1
@@ -542,11 +559,11 @@ async function run() {
     return
   }
 
-  if (args.browser === 'webkit') {
+  if (PLAYWRIGHT_BROWSERS[args.browser]) {
     const requests = []
     const server = await serve(args.root, { safari: true, requests })
     const baseURL = `http://127.0.0.1:${server.address().port}`
-    await runWebkit(args, server, baseURL, `${baseURL}${demoPath}`, requests)
+    await runPlaywright(args, server, baseURL, `${baseURL}${demoPath}`, requests)
     return
   }
 

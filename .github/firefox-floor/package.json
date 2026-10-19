@@ -1,0 +1,8 @@
+{
+  "name": "noisemaker-cpu-firefox-floor",
+  "private": true,
+  "description": "CI-only client for the Firefox 92 browser floor check. Never installed by the package or the export kit.",
+  "dependencies": {
+    "playwright-core": "1.15.2"
+  }
+}

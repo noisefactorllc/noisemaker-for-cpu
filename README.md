@@ -36,7 +36,7 @@ canvas, and no module failures or page errors
 ([CI run](https://github.com/noisefactorllc/noisemaker-for-cpu/actions/runs/39053714268)).
 The dedicated `.github/workflows/platform-browser.yml` runs `npm test` and the
 demo check on Windows Chrome and real Safari (`node scripts/browser-check.mjs
---browser safari`). It runs the check on WebKit 15.4 too (`--browser webkit`). At source `8c146483`, macOS
+--browser safari`). It runs the check on WebKit 15.4 too (`--browser webkit`), and on Firefox 92 (`--browser firefox`, Playwright 1.15.2's Firefox build) with a CI-only client pinned in `.github/firefox-floor` that neither the package nor the export kit includes. At source `8c146483`, macOS
 26.6.2 with Safari 26.6.2 passed the real Safari check: HTTP 200, a 256 × 256
 non-blank canvas, and no same-origin module failures or page errors
 ([CI run](https://github.com/noisefactorllc/noisemaker-for-cpu/actions/runs/38214471227)).

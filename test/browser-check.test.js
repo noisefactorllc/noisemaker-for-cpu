@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findExecutable, inspectChromium, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
+import { findExecutable, inspectChromium, inspectFirefox, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
@@ -147,7 +147,7 @@ test('missing Safari driver fails promptly without opening a test server', () =>
 // A stand-in for a Playwright browser type: it loads the served page through
 // the real test server (so the recorder injection and request log are the real
 // ones), answers the status probe, and records whether the browser closed.
-function fakeWebkit(mode) {
+function fakeWebkit(mode, { version = '15.4', userAgent = 'Mozilla/5.0 AppleWebKit/605.1.15 Version/15.4 Safari/605.1.15' } = {}) {
   const state = { closed: false, launched: null }
   const engine = {
     async launch(options) {
@@ -171,13 +171,13 @@ function fakeWebkit(mode) {
           if (mode === 'goto-error') throw new Error('navigation timed out')
         },
         async evaluate(expression) {
-          if (expression === 'navigator.userAgent') return 'Mozilla/5.0 AppleWebKit/605.1.15 Version/15.4 Safari/605.1.15'
+          if (expression === 'navigator.userAgent') return userAgent
           if (!expression.includes('__browserCheckErrors') || !expression.includes('canvas')) throw new Error('status probe omitted diagnostics or canvas')
           return JSON.stringify({ rendering: false, status: '20 passes', appContainer: true,
             canvas: { width: 10, height: 10, nonZeroPixels: mode === 'blank' ? 0 : 100 }, pageErrors: [] })
         },
       }
-      return { version: () => '15.4', newPage: async () => page, close: async () => { state.closed = true } }
+      return { version: () => version, newPage: async () => page, close: async () => { state.closed = true } }
     },
   }
   return { engine, state }
@@ -325,4 +325,41 @@ test('Chromium check fails at the deadline when the page never becomes ready', a
   assert.equal(result.pass, false)
   assert.equal(result.render.completed, false)
   assert.ok(state.evaluations > 1)
+})
+
+const FIREFOX_92 = { version: '92.0', userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0' }
+
+async function runFakeFirefox(mode) {
+  const requests = []
+  const web = await serve(root, { safari: true, requests })
+  const baseURL = `http://127.0.0.1:${web.address().port}`
+  const { engine, state } = fakeWebkit(mode, FIREFOX_92)
+  try {
+    const result = await inspectFirefox({ engine, targetURL: `${baseURL}/examples/browser/index.html`, baseURL, requests, timeout: 3000 })
+    return { result, state }
+  } finally {
+    await close(web)
+  }
+}
+
+test('Playwright Firefox checks the rendered canvas and reports the Firefox version', async () => {
+  const { result, state } = await runFakeFirefox('pass')
+  assert.equal(result.pass, true)
+  assert.equal(result.browser.product, 'Firefox 92.0')
+  assert.match(result.browser.userAgent, /Firefox\/92\.0/)
+  assert.equal(result.httpStatus, 200)
+  assert.deepEqual(state.launched, { headless: true })
+  assert.equal(state.closed, true)
+})
+
+test('Playwright Firefox rejects an engine page error and a blank canvas', async () => {
+  assert.equal((await runFakeFirefox('page-error')).result.pass, false)
+  assert.equal((await runFakeFirefox('blank')).result.pass, false)
+})
+
+test('firefox without a Playwright package fails at argument parsing', () => {
+  const result = spawnSync(process.execPath, ['scripts/browser-check.mjs', '--browser', 'firefox'],
+    { cwd: root, encoding: 'utf8', timeout: 5000 })
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /--browser firefox needs --playwright/)
 })

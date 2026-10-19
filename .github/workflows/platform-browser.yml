@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/platform-browser.yml'
+      - '.github/firefox-floor/**'
       - 'scripts/browser-check.mjs'
       - 'test/**'
       - 'examples/browser/**'
@@ -174,4 +175,71 @@ jobs:
         with:
           name: cpu-webkit-floor-browser-${{ github.sha }}
           path: ${{ runner.temp }}/cpu-platform-webkit/
+          if-no-files-found: warn
+
+  firefox-floor:
+    # The README's declared Firefox floor is 92. This leg runs the same demo check
+    # on Playwright 1.15.2's Firefox (browsers.json revision 1295, release notes
+    # "Mozilla Firefox 92.0"), preinstalled in its focal image. The image has no
+    # Playwright client, so the job installs playwright-core 1.15.2 and its
+    # dependencies from the pinned CI-only lockfile in .github/firefox-floor into the
+    # runner's temporary directory. That set never enters the package or the kit.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    container:
+      image: mcr.microsoft.com/playwright:v1.15.2-focal@sha256:d6d6919fe9878ad080e8b525029c0dacf8dc000732de35a604875d5aa790f6ac
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+      - name: Install the C runtime library Node 26 links against
+        # The focal image predates Node 26, whose binary needs libatomic.so.1.
+        run: apt-get update && apt-get install -y --no-install-recommends libatomic1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: '26'
+          cache: npm
+      - name: Record exact source, image and Firefox build
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt="$RUNNER_TEMP/cpu-platform-firefox"
+          mkdir -p "$receipt"
+          {
+            echo "source=$GITHUB_SHA"
+            grep -E '^(NAME|VERSION)=' /etc/os-release
+            node --version
+            ls -d /ms-playwright/firefox-*
+            /ms-playwright/firefox-1295/firefox/firefox --version || true
+          } | tee "$receipt/identity.log"
+          [[ "$(node --version)" == v26.* ]]
+          test -d /ms-playwright/firefox-1295
+      - run: npm ci --ignore-scripts --bin-links=false
+      - name: Install the pinned Playwright client that drives Firefox 1295
+        shell: bash
+        run: |
+          set -euo pipefail
+          client="$RUNNER_TEMP/playwright"
+          mkdir -p "$client"
+          cp .github/firefox-floor/package.json .github/firefox-floor/package-lock.json "$client/"
+          # npm ci installs exactly the lockfile and rejects any tarball whose sha512 differs.
+          npm ci --prefix "$client" --ignore-scripts --omit=optional --no-audit --no-fund
+          test "$(node -p "require('$client/node_modules/playwright-core/package.json').version")" = 1.15.2
+      - name: Run the demo browser check on Firefox 92
+        shell: bash
+        run: |
+          set -uo pipefail
+          receipt="$RUNNER_TEMP/cpu-platform-firefox"
+          PLAYWRIGHT_BROWSERS_PATH=/ms-playwright node scripts/browser-check.mjs --browser firefox \
+            --playwright "$RUNNER_TEMP/playwright/node_modules/playwright-core" 2>&1 | tee "$receipt/browser.log"
+          browser_exit=${PIPESTATUS[0]}
+          echo "exit_code=$browser_exit" | tee -a "$receipt/browser.log"
+          test "$browser_exit" -eq 0 || exit "$browser_exit"
+          grep -F '"pass":true' "$receipt/browser.log"
+          grep -F '"product":"Firefox 92.' "$receipt/browser.log"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: cpu-firefox-floor-browser-${{ github.sha }}
+          path: ${{ runner.temp }}/cpu-platform-firefox/
           if-no-files-found: warn
