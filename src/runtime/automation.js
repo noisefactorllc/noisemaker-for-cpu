@@ -5,13 +5,8 @@
 // them per render in CpuRenderer.effectParams with renderOptions.time, which is the
 // same normalized time the canonical kernels receive as their `time` uniform.
 //
-// The DSL also compiles upstream's `midi(...)` and `audio(...)` value calls into Midi
-// and Audio automation values. The CPU port has no live MIDI or audio input, so they
-// take upstream's no-input branch: evaluateMidi and evaluateAudio return the resolved
-// `min` field, and an invalid Audio value returns its literal `min` (or 0). The math
-// below is a verbatim port of the upstream evaluation, including the noise2d
-// two-stage periodic noise introduced upstream at eabb537e/5e68552a (speed applied
-// once, after the first periodic wrap, matching the osc2d shader).
+// MIDI and audio input are unsupported in CPU ports. Their DSL calls warn and
+// leave parameter defaults in place; this evaluator handles only time-based osc().
 
 const TAU = Math.PI * 2
 
@@ -147,13 +142,7 @@ const INTEGRATION_RULES = [
 ]
 
 export function isAutomationValue(value) {
-  return !!value && typeof value === 'object' &&
-    (value.type === 'Oscillator' || value.type === 'Midi' || value.type === 'Audio')
-}
-
-function hasDynamicAutomationFields(config) {
-  const fields = config.type === 'Midi' ? ['min', 'max', 'sensitivity'] : ['min', 'max']
-  return fields.some((field) => isAutomationValue(config[field]))
+  return !!value && typeof value === 'object' && value.type === 'Oscillator'
 }
 
 function scaleAutomationValue(value, range) {
@@ -211,10 +200,6 @@ function integrateAutomation(config, normalizedTime, range, depth, stack) {
   let integral
   if (config.type === 'Oscillator' && canIntegrateOscillatorExactly(config)) {
     integral = integrateSimpleOscillator(config, normalizedTime)
-  } else if ((config.type === 'Midi' || config.type === 'Audio') && !hasDynamicAutomationFields(config)) {
-    // External inputs expose the current snapshot rather than a history.
-    // Treat that snapshot as constant across the requested interval.
-    integral = evaluateAutomation(config, normalizedTime, null, depth + 1, stack) * normalizedTime
   } else {
     // Decrease the quadrature order as rate modulators nest. This bounds an
     // eight-level graph to thousands, rather than millions, of evaluations
@@ -278,19 +263,7 @@ export function evaluateAutomation(config, normalizedTime, range, depth = 0, sta
   stack.add(config)
   let value
   try {
-    if (config.type === 'Oscillator') {
-      value = evaluateOscillator(config, normalizedTime, depth, stack)
-    } else if (config.type === 'Midi') {
-      // Upstream resolves min, max and sensitivity, then evaluateMidi returns min
-      // without MIDI state. Max and sensitivity do not change that result.
-      value = resolveAutomationField(config.min, normalizedTime, AUTOMATION_FIELD_RANGES.unit, depth, stack, 0)
-    } else if (config._invalid) {
-      value = Number.isFinite(config.min) ? config.min : 0
-    } else {
-      // Upstream resolves min and max, then evaluateAudio returns min without
-      // audio state.
-      value = resolveAutomationField(config.min, normalizedTime, AUTOMATION_FIELD_RANGES.unit, depth, stack, 0)
-    }
+    value = evaluateOscillator(config, normalizedTime, depth, stack)
   } finally {
     stack.delete(config)
   }

@@ -330,9 +330,8 @@ class Parser {
         this.consume(')')
         return { kind: 'vector', width: Number(name.at(-1)), values, loc: location(token) }
       }
-      // `osc(...)`, `midi(...)` and `audio(...)` are the automation value calls of
-      // upstream's parser; each parses as a regular call and the compiler turns it
-      // into an Oscillator, Midi or Audio automation value.
+      // Oscillators are offline values. Parse MIDI/audio calls only so the
+      // compiler can warn and ignore these unsupported real-time inputs.
       if ((name === 'osc' || name === 'midi' || name === 'audio') && this.peek().lexeme === '(') {
         this.current -= 1
         return this.parseCall()

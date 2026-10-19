@@ -159,6 +159,7 @@ export class EffectDefinition {
         const badName = suppliedName ?? `argument ${index + 1}`
         throw new TypeError(`Unknown parameter "${badName}" for ${this.id}; accepted: ${this.paramNames.join(', ')}`)
       }
+      if (args[index].value === undefined) continue
       values[name] = normalizeValue(this.params[name], args[index].value, name)
     }
     for (const name of this.paramNames) {

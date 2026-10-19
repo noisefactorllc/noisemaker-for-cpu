@@ -65,7 +65,7 @@ const PAIRS = [
   ],
   // A partial that holds an automation value.
   [
-    'search synth\nlet tuned = noise(seed: 1, scaleX: midi(channel: 1, min: 0.25, max: 0.75))\ntuned().write(o0)\nrender(o0)\n',
+    'search synth\nlet tuned = noise(seed: 1, scaleX: osc(type: oscKind.sine, min: 0.25, max: 0.75, speed: 0))\ntuned().write(o0)\nrender(o0)\n',
     'search synth\nnoise(seed: 1, scaleX: 25.75).write(o0)\nrender(o0)\n',
   ],
   // Chain arguments of a volume generator.

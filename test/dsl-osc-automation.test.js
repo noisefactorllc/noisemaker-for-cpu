@@ -52,8 +52,8 @@ test('evaluateAutomation keeps the 0..1 oscillator contract and depth guard', ()
   assert.equal(evaluateAutomation(sine, 0), 0)
   assert.ok(Math.abs(evaluateAutomation(sine, 1)) < 1e-12)
   assert.equal(isAutomationValue(sine), true)
-  assert.equal(isAutomationValue({ type: 'Midi' }), true)
-  assert.equal(isAutomationValue({ type: 'Audio' }), true)
+  assert.equal(isAutomationValue({ type: 'Midi' }), false)
+  assert.equal(isAutomationValue({ type: 'Audio' }), false)
   assert.equal(isAutomationValue({ type: 'Surface' }), false)
   // Depth > 8 collapses nested fields to the range-scaled zero, as upstream's
   // evaluator does; the top-level oscillator still evaluates deterministically.

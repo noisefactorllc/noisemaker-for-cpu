@@ -7,23 +7,7 @@ import { isAutomationValue } from '../runtime/automation.js'
 const OSC_KINDS = { sine: 0, tri: 1, saw: 2, sawInv: 3, square: 4, noise: 5, noise1d: 5, noise2d: 6 }
 const OSC_PARAM_ORDER = ['type', 'min', 'max', 'speed', 'offset', 'seed']
 const MAX_AUTOMATION_DEPTH = 8
-const AUTOMATION_CALLS = new Set(['osc', 'midi', 'audio'])
-
-// The upstream std_enums.js enums that automation descriptors resolve. A dotted
-// path or bare name outside these tables does not resolve, which upstream reports
-// as a warning (S002) and replaces with the field's fallback.
-const STD_ENUMS = {
-  oscKind: OSC_KINDS,
-  midiMode: {
-    noteChange: 0, gateNote: 1, gateVelocity: 2, triggerNote: 3, velocity: 4,
-    cc: 5, cc14: 6, nrpn: 7, pitchBend: 8, pressure: 9, polyPressure: 10,
-  },
-  midiZone: { lower: 0, upper: 1 },
-  audioBand: { low: 0, mid: 1, high: 2, vol: 3, raw: 4 },
-  oscType: { sine: 0, linear: 1, sawtooth: 2, sawtoothInv: 3, square: 4, noise1d: 5, noise2d: 6 },
-  channel: { r: 0, g: 1, b: 2, a: 3 },
-  color: { mono: 0, rgb: 1, hsv: 2 },
-}
+const VALUE_CALLS = new Set(['osc', 'midi', 'audio'])
 
 function isOscValue(value) {
   return isAutomationValue(value)
@@ -80,6 +64,7 @@ function compileOscillator(call, bindings, depth) {
   const numberField = (node, name, fallback, clamp) => {
     if (node === undefined) return fallback
     const value = evaluateValue(node, bindings, depth + 1)
+    if (value === undefined) return fallback
     if (isOscValue(value)) return value
     if (value === true) return 1
     if (value === false) return 0
@@ -100,229 +85,11 @@ function compileOscillator(call, bindings, depth) {
   }
 }
 
-// --- midi() and audio() -------------------------------------------------------
-//
-// A port of upstream's parser transformMidiInvocation/transformAudioInvocation and
-// the validator's compileAutomationDescriptor for Midi and Audio nodes. Errors that
-// upstream reports with severity "error" (its P003 parser errors, S001 and S003)
-// throw DslError. Upstream warnings (S002) keep the field's fallback value and mark
-// the descriptor `_invalid` where upstream does, so the program still compiles.
-// The errors use the port's existing message templates; the P003 errors name the
-// call.
-
-function unknownParameter(call, badName, valid) {
-  return new DslError(`Unknown parameter "${badName}" for ${call.name}(); accepted: ${valid.join(', ')}`, call.loc)
-}
-
-function missingParameter(call, name) {
-  return new DslError(`Missing required parameter "${name}" for ${call.name}()`, call.loc)
-}
-
-function unsupportedCall(call) {
-  return new DslError(`Unsupported DSL value ${call.kind} "${call.name}"`, call.loc)
-}
-
-const MIDI_POSITIONAL = ['channel', 'mode', 'min', 'max', 'sensitivity']
-const MIDI_KEYWORD_ONLY = ['name', 'id', 'cc', 'nrpn', 'zone', 'members']
-const AUDIO_POSITIONAL = ['band', 'min', 'max']
-const AUDIO_KEYWORD_ONLY = ['channel', 'name', 'id']
-
-// Replaces an identifier bound by `let` with the bound expression, as upstream's
-// validator substitutes symbols before it compiles an automation descriptor, and
-// folds arithmetic to a number, as upstream's parser does.
-function substituteField(node, bindings, seen = new Set()) {
-  if (node?.kind === 'unary' || node?.kind === 'binary') return evaluateValue(node, bindings)
-  if (!node || typeof node !== 'object' || node.kind !== 'identifier' || node.name.includes('.')) return node
-  const binding = bindings.get(node.name)
-  if (!binding || seen.has(node.name)) return node
-  seen.add(node.name)
-  if (binding.kind === 'value') return substituteField(binding.ast, bindings, seen)
-  if (binding.kind === 'alias') return { kind: 'identifier', name: binding.name, loc: node.loc }
-  // An effect partial is a call that is not an automation source.
-  return { kind: 'Call', name: binding.call.name, args: [], argMode: null, loc: node.loc }
-}
-
-function resolveStdEnum(path) {
-  const [head, ...rest] = path.split('.')
-  if (rest.length !== 1 || !Object.hasOwn(STD_ENUMS, head)) return undefined
-  return Object.hasOwn(STD_ENUMS[head], rest[0]) ? STD_ENUMS[head][rest[0]] : undefined
-}
-
-// Upstream resolveAutomationEnum: a number, an enum path, or a bare member name of
-// `enumName`. A string literal is an error; any other unresolved value is a warning
-// that keeps the fallback.
-function resolveAutomationEnum(node, enumName, fallback, validValues, call, field) {
-  let resolved
-  if (typeof node === 'number') resolved = node
-  else if (node?.kind === 'identifier') {
-    resolved = node.name.includes('.') ? resolveStdEnum(node.name) : resolveStdEnum(`${enumName}.${node.name}`)
-  }
-  if (typeof resolved === 'number' && validValues.has(resolved)) return resolved
-  if (typeof node === 'string') throw new DslError(`Parameter "${field}" must be an enum value`, call.loc)
-  return fallback
-}
-
-// Upstream resolveAutomationNumber. Returns { value, valid }; `valid` is false where
-// upstream reports a warning and calls the field's onInvalid callback.
-function resolveAutomationNumber(node, bindings, depth, call, field, fallback, options = {}) {
-  if (node === undefined) return { value: fallback, valid: true }
-  const invalid = { value: fallback, valid: false }
-  let value
-  if (typeof node === 'number') value = node
-  else if (typeof node === 'boolean' && options.allowBoolean) value = node ? 1 : 0
-  else if (node?.kind === 'identifier' && node.name.includes('.') && options.allowMember !== false) {
-    value = resolveStdEnum(node.name)
-  } else if (node?.kind === 'Call' && AUTOMATION_CALLS.has(node.name) && options.allowAutomation) {
-    const compiled = compileAutomationCall(node, bindings, depth + 1)
-    return { value: compiled, valid: compiled._invalid !== true }
-  } else if (typeof node === 'string' || (node?.kind === 'identifier' && !node.name.includes('.'))) {
-    // Upstream S001 (a string literal) and S003 (an undefined automation source).
-    throw new DslError(`Parameter "${field}" must be a finite number`, call.loc)
-  } else {
-    return invalid
-  }
-  if (typeof value !== 'number' || !Number.isFinite(value)) return invalid
-  if (options.integer && !Number.isInteger(value)) return invalid
-  if (options.min !== undefined && value < options.min) return invalid
-  if (options.max !== undefined && value > options.max) return invalid
-  return { value: options.clamp01 ? clamp01(value) : value, valid: true }
-}
-
-// Splits a midi()/audio() call into upstream's resolved fields: positional
-// arguments fill the positional order densely, keyword arguments take their own
-// slots (the last duplicate keyword wins), and omitted fields take defaults.
-function automationFields(call, bindings, positionalOrder, keywordOnly, defaults) {
-  const valid = [...positionalOrder, ...keywordOnly]
-  const positional = call.args.filter((arg) => arg.name === null)
-  const kwargs = new Map()
-  for (const arg of call.args) if (arg.name !== null) kwargs.set(arg.name, arg.value)
-  // Upstream: the keyword-only fields cannot take a positional argument.
-  const excess = (arg) => unknownParameter(call, `argument ${call.args.indexOf(arg) + 1}`, valid)
-  if (positional.length > positionalOrder.length) throw excess(positional[positionalOrder.length])
-  for (const key of kwargs.keys()) {
-    if (!valid.includes(key)) throw unknownParameter(call, key, valid)
-  }
-  const fields = {}
-  let cursor = 0
-  for (const field of positionalOrder) {
-    if (kwargs.has(field)) fields[field] = kwargs.get(field)
-    else if (cursor < positional.length) fields[field] = positional[cursor++].value
-    else if (field in defaults) fields[field] = defaults[field]
-  }
-  if (cursor < positional.length) throw excess(positional[cursor])
-  for (const field of keywordOnly) if (kwargs.has(field)) fields[field] = kwargs.get(field)
-  for (const field of Object.keys(fields)) {
-    if (field !== 'name' && field !== 'id') fields[field] = substituteField(fields[field], bindings)
-  }
-  return fields
-}
-
-// The selector strings must be non-empty string literals (upstream parser).
-function checkSelectorStrings(call, fields) {
-  for (const field of ['name', 'id']) {
-    if (!(field in fields)) continue
-    if (typeof fields[field] !== 'string' || fields[field].length === 0) throw unsupportedCall(call)
-  }
-}
-
-function compileMidi(call, bindings, depth) {
-  if (depth > MAX_AUTOMATION_DEPTH) {
-    throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
-  }
-  const fields = automationFields(call, bindings, MIDI_POSITIONAL, MIDI_KEYWORD_ONLY, { mode: 4, min: 0, max: 1, sensitivity: 1 })
-  const hasZone = 'zone' in fields
-  if (!('channel' in fields) && !hasZone) throw missingParameter(call, 'channel')
-  if ('channel' in fields && hasZone) throw unsupportedCall(call)
-  if ('members' in fields && !hasZone) throw missingParameter(call, 'zone')
-  if ('id' in fields && !('name' in fields)) throw missingParameter(call, 'name')
-  checkSelectorStrings(call, fields)
-
-  const mode = resolveAutomationEnum(fields.mode, 'midiMode', 4, new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), call, 'mode')
-  const zone = hasZone ? resolveAutomationEnum(fields.zone, 'midiZone', undefined, new Set([0, 1]), call, 'zone') : undefined
-  let validSelection = !hasZone || zone !== undefined
-  let members
-  if ('members' in fields) {
-    const result = resolveAutomationNumber(fields.members, bindings, depth, call, 'members', undefined, { integer: true, min: 1, max: 15, allowMember: false })
-    members = result.value
-    if (!result.valid) validSelection = false
-  }
-  let validChannel = true
-  let channel
-  if (!hasZone) {
-    const result = resolveAutomationNumber(fields.channel, bindings, depth, call, 'channel', 1, { integer: true, min: 1, max: 16, allowMember: false })
-    channel = result.value
-    validChannel = result.valid
-  }
-  let validCc = true
-  let cc
-  if ('cc' in fields || mode === 5 || mode === 6) {
-    const result = resolveAutomationNumber(fields.cc, bindings, depth, call, 'cc', 1, { integer: true, min: 0, max: mode === 6 ? 31 : 127, allowMember: false })
-    cc = result.value
-    validCc = result.valid
-  }
-  let nrpn
-  if ('nrpn' in fields || mode === 7) {
-    if (!('nrpn' in fields)) validSelection = false
-    const result = resolveAutomationNumber(fields.nrpn, bindings, depth, call, 'nrpn', undefined, { integer: true, min: 0, max: 16382, allowMember: false })
-    nrpn = result.value
-    if (!result.valid) validSelection = false
-  }
-  const numberOptions = { allowBoolean: true, allowAutomation: true }
-  const descriptor = {
-    type: 'Midi',
-    channel,
-    mode,
-    ...(cc !== undefined && { cc }),
-    ...(nrpn !== undefined && { nrpn }),
-    ...(hasZone && { zone }),
-    ...('members' in fields && { members }),
-    min: resolveAutomationNumber(fields.min, bindings, depth, call, 'min', 0, { ...numberOptions, clamp01: true }).value,
-    max: resolveAutomationNumber(fields.max, bindings, depth, call, 'max', 1, { ...numberOptions, clamp01: true }).value,
-    sensitivity: resolveAutomationNumber(fields.sensitivity, bindings, depth, call, 'sensitivity', 1, numberOptions).value,
-    name: fields.name,
-    id: fields.id,
-  }
-  if (!validCc || !validChannel || !validSelection) descriptor._invalid = true
-  return descriptor
-}
-
-function compileAudio(call, bindings, depth) {
-  if (depth > MAX_AUTOMATION_DEPTH) {
-    throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
-  }
-  const fields = automationFields(call, bindings, AUDIO_POSITIONAL, AUDIO_KEYWORD_ONLY, { min: 0, max: 1 })
-  if (!('band' in fields)) throw missingParameter(call, 'band')
-  if ('id' in fields && !('name' in fields)) throw missingParameter(call, 'name')
-  if ('name' in fields && !('channel' in fields)) throw missingParameter(call, 'channel')
-  checkSelectorStrings(call, fields)
-
-  const band = resolveAutomationEnum(fields.band, 'audioBand', undefined, new Set([0, 1, 2, 3, 4]), call, 'band')
-  const numberOptions = { allowAutomation: true, allowMember: false, clamp01: true }
-  const min = resolveAutomationNumber(fields.min, bindings, depth, call, 'min', 0, numberOptions)
-  const max = resolveAutomationNumber(fields.max, bindings, depth, call, 'max', 1, numberOptions)
-  let channel
-  let validChannel = true
-  if ('channel' in fields) {
-    const node = fields.channel
-    if (typeof node === 'number' && Number.isInteger(node) && node >= 1 && node <= 32) channel = node
-    else if (typeof node === 'string') throw new DslError('Parameter "channel" must be an integer', call.loc)
-    else validChannel = false
-  }
-  return {
-    type: 'Audio',
-    band,
-    min: min.value,
-    max: max.value,
-    channel,
-    name: fields.name,
-    id: fields.id,
-    _invalid: band === undefined || !min.valid || !max.valid || !validChannel,
-  }
-}
-
 function compileAutomationCall(call, bindings, depth) {
-  if (call.name === 'midi') return compileMidi(call, bindings, depth)
-  if (call.name === 'audio') return compileAudio(call, bindings, depth)
+  if (call.name !== 'osc') {
+    console.warn(`Warning: ${call.name}() is unsupported in CPU ports; real-time input is unavailable. Ignoring this unsupported input value.`)
+    return undefined
+  }
   return compileOscillator(call, bindings, depth)
 }
 
@@ -331,7 +98,7 @@ function evaluateValue(value, bindings, oscDepth = 0) {
   if (!value || typeof value !== 'object') return value
   if (value.kind === 'surface') return value
   if (value.kind === 'Call') {
-    if (AUTOMATION_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth)
+    if (VALUE_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth)
     throw new DslError(`Unsupported DSL value ${value.kind} "${value.name}"`, value.loc)
   }
   if (value.kind === 'identifier') {
@@ -550,8 +317,8 @@ function compileChain(chain, bindings, { inline = false } = {}) {
     } catch (error) {
       throw new DslError(error.message, call.loc)
     }
-    const explicitParams = Object.freeze(args.map((arg, argumentIndex) => {
-      return arg.name ?? definition.paramNames[argumentIndex]
+    const explicitParams = Object.freeze(args.flatMap((arg, argumentIndex) => {
+      return arg.value === undefined ? [] : [arg.name ?? definition.paramNames[argumentIndex]]
     }))
     const step = { kind: 'effect', definition, params, explicitParams, loc: call.loc }
     if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
@@ -580,7 +347,7 @@ export function compileDsl(source, registry, options = {}) {
   const bindings = new CompileScope(registry, ast.search)
   for (const binding of ast.bindings) {
     if (bindings.has(binding.name)) throw new DslError(`Duplicate binding "${binding.name}"`, binding.loc)
-    if (binding.value?.kind === 'Call' && !AUTOMATION_CALLS.has(binding.value.name)) {
+    if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name)) {
       // A partial keeps its call unresolved. Its arguments resolve where it is
       // called, as upstream's validator substitutes a symbol at each use.
       bindings.set(binding.name, { kind: 'partial', call: binding.value })
