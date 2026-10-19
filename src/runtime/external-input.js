@@ -295,6 +295,15 @@ export function packMeshDataForTextures(positions, normals, uvs, texWidth, texHe
 }
 
 /**
+ * The mesh a program samples before any OBJ upload. Upstream creates each
+ * mesh surface as zero-filled 256x256 rgba32f textures (pipeline.js
+ * createSurfaces), so every vertex has w = 0 and no triangle is drawn.
+ */
+export function emptyMeshData(texWidth = 256, texHeight = 256) {
+  return { ...packMeshDataForTextures([], [], [], texWidth, texHeight), texWidth, texHeight }
+}
+
+/**
  * Smooth vertex normals for un-normalized OBJ files: exact port of the upstream
  * obj-parser computeFaceNormals (face normals from reversed-winding triangles,
  * averaged per rounded position key, threshold 1e-4).

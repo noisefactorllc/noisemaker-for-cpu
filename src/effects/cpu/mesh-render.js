@@ -21,6 +21,8 @@
 // behavior is implementation-defined on real GPUs, which is why meshRender parity is
 // graded rather than byte-exact.
 
+import { emptyMeshData } from '../../runtime/external-input.js'
+
 const f32 = Math.fround
 const vec3 = (x, y, z) => [f32(x), f32(y), f32(z)]
 
@@ -137,8 +139,8 @@ function vec3Normalize(v) {
 registerMeshAdapter('render/meshRender:render', meshRenderTrianglesAdapter)
 
 export function meshRenderTrianglesAdapter({ pass, uniforms, bindings, inputs, destination, params, externalInputs }) {
-  const meshData = externalInputs?.meshData
-  if (!meshData) throw new Error('render/meshRender requires external mesh data (externalInputs.meshData)')
+  // With no meshData, draw the zero mesh upstream samples before an upload.
+  const meshData = externalInputs?.meshData ?? emptyMeshData()
   const positions = meshData.positions ?? meshData.positionData
   const normals = meshData.normalData
   const texWidth = meshData.texWidth

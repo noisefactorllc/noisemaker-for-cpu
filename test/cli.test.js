@@ -239,8 +239,8 @@ test('CLI --effect random pools exclude iterated, external-texture, and non-imag
   // reason: `random` binds no image, so picking one exits nonzero. Re-derive pickEffect's own pool
   // predicate against the real catalog and assert every candidate satisfies it.
   // External-input effects (reactive synth/roll|scope|spectrum, mesh render/meshLoader|
-  // meshRender) are excluded for the same reason: the CLI binds no MIDI/audio/mesh fixture,
-  // so picking one exits nonzero on its missing external inputs.
+  // meshRender) are excluded too: the CLI binds no MIDI, audio or mesh input, so a random
+  // pick would show only silent-input or empty-mesh output.
   for (const kind of ['generator', 'filter']) {
     const excluded = effectCatalog.filter((effect) => effect.kind === kind && effect.iterated === true)
     assert.ok(excluded.length > 0, `expected at least one iterated ${kind} effect to exclude (catalog drift?)`)
@@ -337,22 +337,43 @@ test('CLI animate defaults its output to animation.mp4', { skip: !hasFfmpeg() },
   }
 })
 
-// Every exported kit ships the kit README template. Its "cannot render" list
-// must name exactly the reactive and mesh effects the render command refuses.
-test('kit README names the reactive and mesh effects the render command refuses', async () => {
+// Every exported kit ships the kit README template. Its "cannot render" section
+// names each external-input effect, and the render command runs each of them.
+test('kit README names the external-input effects, and the render command runs each', async () => {
   const template = await readFile(resolve('export-kit/kit/README.template.md'), 'utf8')
   const section = template.split('## What this port cannot render')[1].split('\n## ')[0]
-  const refused = [...section.matchAll(/^- (.*)$/gm)].flatMap((line) => [...line[1].matchAll(/`([a-z0-9]+\/[A-Za-z0-9]+)`/g)].map((match) => match[1]))
-  const words = { one: 1, two: 2, three: 3, four: 4, five: 5 }
-  const count = section.match(/cannot render (\w+) effects/)
-  assert.ok(count, 'kit README states no refused-effect count')
-  assert.equal(words[count[1]], refused.length)
+  const named = [...section.matchAll(/^- (.*)$/gm)].flatMap((line) => [...line[1].matchAll(/`([a-z0-9]+\/[A-Za-z0-9]+)`/g)].map((match) => match[1]))
+  const external = ['synth/roll', 'synth/scope', 'synth/spectrum', 'render/meshLoader', 'render/meshRender']
+  assert.deepEqual([...named].sort(), [...external].sort())
+  assert.doesNotMatch(section, /cannot render \w+ effects/, 'the render command refuses no effect')
   const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
   try {
-    for (const id of ['synth/roll', 'synth/scope', 'synth/spectrum', 'render/meshLoader', 'render/meshRender']) {
+    for (const id of external) {
       const fixture = resolve(`parity/upstream-defaults/${id.replace('/', '__')}.dsl`)
       const result = run(['render', fixture, '--width', '8', '--height', '8', '--output', join(dir, 'out.png')])
-      assert.equal(result.status !== 0, refused.includes(id), `${id}: exit ${result.status} ${result.stderr}`)
+      assert.equal(result.status, 0, `${id}: exit ${result.status} ${result.stderr}`)
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+// The upstream pipeline creates mesh0 as zero-filled textures, so the pinned
+// authority renders these fixture programs with no mesh loaded and no error.
+// Authority readback (WebGL2, ANGLE Metal, 16x16, time 0.25): one RGBA value each.
+test('CLI renders the mesh fixture programs with no mesh loaded, as the authority does', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'noisemaker-cpu-'))
+  try {
+    for (const [fixture, rgba] of [['render__meshRender', [25, 25, 38, 255]], ['render__meshLoader', [128, 128, 128, 255]]]) {
+      const output = join(dir, `${fixture}.png`)
+      const result = run(['render', resolve(`parity/upstream-defaults/${fixture}.dsl`), '--width', '16', '--height', '16', '--output', output])
+      assert.equal(result.status, 0, `${fixture}: ${result.stderr}`)
+      const png = decodePng(await readFile(output))
+      assert.equal(png.width, 16)
+      assert.equal(png.height, 16)
+      const values = new Set()
+      for (let i = 0; i < png.data.length; i += 4) values.add(Array.from(png.data.subarray(i, i + 4)).join(','))
+      assert.deepEqual([...values], [rgba.join(',')], fixture)
     }
   } finally {
     await rm(dir, { recursive: true, force: true })

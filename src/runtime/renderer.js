@@ -12,6 +12,7 @@ import { renderCanonicalWormOverlay } from '../effects/cpu/worm-overlay.js'
 import { resolveScatterAdapter } from '../effects/cpu/scatter-registry.js'
 import { resolveMeshAdapter } from '../effects/cpu/mesh-render.js'
 import { externalDataSurface } from './external-textures.js'
+import { emptyMeshData } from './external-input.js'
 import { isAutomationValue, resolveAutomationUniform } from './automation.js'
 import { paletteData } from '../effects/generated/canonical-adapter-data.js'
 import { computeIterationGroups, isParticleStateName, isSurfaceIo, wrap01, ITERATION_DELTA_TIME } from './iteration.js'
@@ -302,10 +303,8 @@ function bindExternalInputs(definition, uniforms, textures, renderOptions) {
   }
   const meshNames = [...passInputNames].filter((name) => name.startsWith('global_mesh0_'))
   if (meshNames.length > 0) {
-    const meshData = externalInputs.meshData
-    if (!meshData) {
-      throw new Error(`${definition.id} requires external mesh data (renderOptions.externalInputs.meshData)`)
-    }
+    // With no meshData, bind the zero mesh upstream samples before an upload.
+    const meshData = externalInputs.meshData ?? emptyMeshData()
     const texWidth = meshData.texWidth ?? MESH_TEX_WIDTH
     const texHeight = meshData.texHeight ?? MESH_TEX_HEIGHT
     if (meshNames.includes('global_mesh0_positions')) {
