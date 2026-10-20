@@ -210,13 +210,23 @@ export class GlslCpuRuntime {
     return out
   }
 
+  // A sampler binding that the pass lists no input for reads transparent
+  // black, as upstream's backends bind their default texture for a declared
+  // sampler outside pass.inputs (upstream be8ed4cd). A non-Surface binding
+  // that does exist stays an error.
+  #transparentBlack() {
+    return this.alloc(4).fill(0)
+  }
+
   #texture(surface, coord) {
+    if (surface == null) return this.#transparentBlack()
     if (!surface?.data) throw new TypeError('GLSL texture sampler must be a Surface')
     if (surface.filter === 'linear') return sampleBilinear(surface, coord[0], 1 - coord[1], this.alloc(4))
     return sampleNearestTexelBottomLeft(surface, coord[0], coord[1], this.alloc(4))
   }
 
   #texelFetch(surface, coord) {
+    if (surface == null) return this.#transparentBlack()
     if (!surface?.data) throw new TypeError('GLSL texelFetch sampler must be a Surface')
     const x = Math.min(Math.max(coord[0] | 0, 0), surface.width - 1)
     const shaderY = Math.min(Math.max(coord[1] | 0, 0), surface.height - 1)

@@ -83,7 +83,9 @@ const REJECTED = [
   ['search synth\nnoise(seed: 1, scaleX: Math.E).write(o0)\nrender(o0)\n', /Parameter "scaleX" must be a finite number/],
   ['search synth\nnoise(seed: 1, scaleX: Math.PI()).write(o0)\nrender(o0)\n', /Expected "\)"/],
   ['search synth, filter\nsolid(color: #000).text(text: """open\n', /Unterminated string/],
-  ['search synth\nlet pattern = wobble\npattern().write(o0)\nrender(o0)\n', /Binding "pattern" is not callable/],
+  // Upstream's validator reports S003 for a bare identifier value that names
+  // nothing resolvable at declaration (no earlier binding, no effect).
+  ['search synth\nlet pattern = wobble\npattern().write(o0)\nrender(o0)\n', /Variable used before assignment: 'wobble'/],
   ['search synth\nlet pattern = noise\nnoise(seed: 1, scaleX: pattern).write(o0)\nrender(o0)\n', /Parameter "scaleX" must be a finite number/],
   ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(vol0)\nrender(o0)\n', /Expected ","/],
   ['search synth3d, render\nnoise3d(seed: 1, volumeSize: x16).write3d(tex3d: vol0, geo: geo0)\nrender(o0)\n', /Expected ","/],

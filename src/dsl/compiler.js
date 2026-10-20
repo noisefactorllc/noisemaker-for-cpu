@@ -26,7 +26,7 @@ function clamp01(value) {
 // are allowed, and the oscType resolves from an integer 0..6 or an oscKind name
 // (bare or oscKind-qualified). Invalid programs throw DslError, as everywhere
 // else in this compiler.
-function compileOscillator(call, bindings, depth) {
+function compileOscillator(call, bindings, depth, resolving = []) {
   if (depth > MAX_AUTOMATION_DEPTH) {
     throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
   }
@@ -44,7 +44,7 @@ function compileOscillator(call, bindings, depth) {
     })
   }
 
-  const rawType = fields.type === undefined ? 0 : evaluateValue(fields.type, bindings, depth + 1)
+  const rawType = fields.type === undefined ? 0 : evaluateValue(fields.type, bindings, depth + 1, resolving)
   let oscType
   if (typeof rawType === 'number') {
     if (!Number.isInteger(rawType) || rawType < 0 || rawType > 6) {
@@ -63,7 +63,7 @@ function compileOscillator(call, bindings, depth) {
 
   const numberField = (node, name, fallback, clamp) => {
     if (node === undefined) return fallback
-    const value = evaluateValue(node, bindings, depth + 1)
+    const value = evaluateValue(node, bindings, depth + 1, resolving)
     if (value === undefined) return fallback
     if (isOscValue(value)) return value
     if (value === true) return 1
@@ -85,20 +85,23 @@ function compileOscillator(call, bindings, depth) {
   }
 }
 
-function compileAutomationCall(call, bindings, depth) {
+function compileAutomationCall(call, bindings, depth, resolving = []) {
   if (call.name !== 'osc') {
     console.warn(`Warning: ${call.name}() is unsupported in CPU ports; real-time input is unavailable. Ignoring this unsupported input value.`)
     return undefined
   }
-  return compileOscillator(call, bindings, depth)
+  return compileOscillator(call, bindings, depth, resolving)
 }
 
-function evaluateValue(value, bindings, oscDepth = 0) {
-  if (Array.isArray(value)) return value.map((item) => evaluateValue(item, bindings, oscDepth))
+// `resolving` threads the chain of binding names currently being resolved so a
+// cyclic let set (`let a = b`, `let b = a`) fails instead of looping forever,
+// as upstream's validator substitution detects the same cycle.
+function evaluateValue(value, bindings, oscDepth = 0, resolving = []) {
+  if (Array.isArray(value)) return value.map((item) => evaluateValue(item, bindings, oscDepth, resolving))
   if (!value || typeof value !== 'object') return value
   if (value.kind === 'surface') return value
   if (value.kind === 'Call') {
-    if (VALUE_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth)
+    if (VALUE_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth, resolving)
     throw new DslError(`Unsupported DSL value ${value.kind} "${value.name}"`, value.loc)
   }
   if (value.kind === 'identifier') {
@@ -107,25 +110,38 @@ function evaluateValue(value, bindings, oscDepth = 0) {
       if (binding.kind === 'partial') throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
       // An effect alias used as a value stays the effect's bare name.
       if (binding.kind === 'alias') return binding.name
+      // A value binding resolves lazily at its first use. Statement order
+      // (upstream 9cc041d0) makes a chain see only lets declared at or before
+      // its own index, so a name declared by a later let is pending here and
+      // reading it reports S003, as upstream does.
+      if (binding.resolved) return binding.value
+      if (resolving.includes(value.name)) {
+        throw new DslError(`Automation cycle detected: ${[...resolving, value.name].join(' -> ')}`, value.loc)
+      }
+      binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, value.name])
+      binding.resolved = true
       return binding.value
+    }
+    if (bindings.pendingNames?.has(value.name)) {
+      throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
     }
     return value.name
   }
   if (value.kind === 'vector') {
-    const components = value.values.map((item) => evaluateValue(item, bindings))
+    const components = value.values.map((item) => evaluateValue(item, bindings, 0, resolving))
     if (components.length !== value.width || components.some((item) => typeof item !== 'number')) {
       throw new DslError(`vec${value.width} requires ${value.width} numeric values`, value.loc)
     }
     return components
   }
   if (value.kind === 'unary') {
-    const input = evaluateValue(value.argument, bindings)
+    const input = evaluateValue(value.argument, bindings, 0, resolving)
     if (typeof input !== 'number') throw new DslError('Unary arithmetic requires a number', value.loc)
     return value.operator === '-' ? -input : input
   }
   if (value.kind === 'binary') {
-    const left = evaluateValue(value.left, bindings)
-    const right = evaluateValue(value.right, bindings)
+    const left = evaluateValue(value.left, bindings, 0, resolving)
+    const right = evaluateValue(value.right, bindings, 0, resolving)
     if (typeof left !== 'number' || typeof right !== 'number') throw new DslError('Arithmetic requires numeric values', value.loc)
     if (value.operator === '+') return left + right
     if (value.operator === '-') return left - right
@@ -152,6 +168,9 @@ class CompileScope extends Map {
     this.search = search
     this.pending = null
     this.inlineCount = 0
+    // Names of the program's lets that a later statement declares. Reading one
+    // before its let reports S003, as upstream's validator does.
+    this.pendingNames = null
   }
 
   compileInlineChain(chain) {
@@ -340,25 +359,53 @@ function aliasBinding(value, bindings) {
   return bindings.registry.resolve(value.name, bindings.search) ? { kind: 'alias', name: value.name } : null
 }
 
+// Declares one let. Statement order (upstream 9cc041d0): a chain sees only the
+// lets declared at or before its own statement index; a later `let` of the same
+// name reassigns it for later statements; reading a pending name reports S003.
+// A bare identifier value must name something resolvable now (an earlier
+// binding, an alias, or an effect), as upstream's declareVar requires.
+function declareBinding(binding, bindings) {
+  if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name)) {
+    // A partial keeps its call unresolved. Its arguments resolve where it is
+    // called, as upstream's validator substitutes a symbol at each use.
+    bindings.set(binding.name, { kind: 'partial', call: binding.value })
+    return
+  }
+  if (aliasBinding(binding.value, bindings)) {
+    bindings.set(binding.name, aliasBinding(binding.value, bindings))
+    return
+  }
+  if (binding.value?.kind === 'identifier' && !binding.value.name.includes('.') &&
+      !bindings.has(binding.value.name) && !bindings.registry.resolve(binding.value.name, bindings.search)) {
+    throw new DslError(`Variable used before assignment: '${binding.value.name}'`, binding.value.loc)
+  }
+  bindings.set(binding.name, { kind: 'value', expr: binding.value, resolved: false, value: null })
+}
+
 export function compileDsl(source, registry, options = {}) {
   const ast = parseDsl(source, options)
   if (ast.search.length === 0) throw new DslError('Missing required search directive', ast.loc)
 
   const bindings = new CompileScope(registry, ast.search)
-  for (const binding of ast.bindings) {
-    if (bindings.has(binding.name)) throw new DslError(`Duplicate binding "${binding.name}"`, binding.loc)
-    if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name)) {
-      // A partial keeps its call unresolved. Its arguments resolve where it is
-      // called, as upstream's validator substitutes a symbol at each use.
-      bindings.set(binding.name, { kind: 'partial', call: binding.value })
-    } else if (aliasBinding(binding.value, bindings)) {
-      bindings.set(binding.name, aliasBinding(binding.value, bindings))
-    } else {
-      bindings.set(binding.name, { kind: 'value', value: evaluateValue(binding.value, bindings), ast: binding.value })
+  let nextBinding = 0
+  const declareThrough = (chainIndex) => {
+    while (nextBinding < ast.bindings.length && (ast.bindings[nextBinding].planIndex ?? 0) <= chainIndex) {
+      declareBinding(ast.bindings[nextBinding++], bindings)
     }
   }
 
-  const chains = ast.chains.map((chain) => compileChain(chain, bindings))
+  const chains = ast.chains.map((chain, chainIndex) => {
+    declareThrough(chainIndex)
+    // pendingNames covers the whole chain compile, including inline chains:
+    // every argument position reports a pending read, as upstream does.
+    bindings.pendingNames = new Set(ast.bindings.slice(nextBinding).map((binding) => binding.name))
+    try {
+      return compileChain(chain, bindings)
+    } finally {
+      bindings.pendingNames = null
+    }
+  })
+  declareThrough(Infinity)
 
   let lastWrittenSurface = null
   for (const chain of chains) {

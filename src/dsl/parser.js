@@ -67,7 +67,13 @@ class Parser {
     while (!this.atEnd()) {
       if (this.match(';')) continue
       if (this.match('let')) {
-        ast.bindings.push(this.parseBinding(this.previous()))
+        const binding = this.parseBinding(this.previous())
+        // Upstream 9cc041d0: statement order matters. A let's planIndex is the
+        // number of chain statements written before it; a chain sees only the
+        // lets declared at or before its own index. Non-enumerable so the AST
+        // shape (and its JSON form) stays unchanged.
+        Object.defineProperty(binding, 'planIndex', { value: ast.chains.length, enumerable: false, writable: true, configurable: true })
+        ast.bindings.push(binding)
       } else if (this.match('render')) {
         if (ast.render) throw new DslError('Program may only declare one render surface', location(this.previous()))
         const start = this.previous()
