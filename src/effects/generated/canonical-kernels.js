@@ -31120,6 +31120,8 @@ function canonicalFactory261($bindings, $runtime) {
   var imageTex = $bindings["imageTex"];
   var imageSize = $bindings["imageSize"];
   var resolution = $bindings["resolution"];
+  var tileOffset = $bindings["tileOffset"];
+  var fullResolution = $bindings["fullResolution"];
   var time = $bindings["time"];
   var position = $bindings["position"];
   var rotation = $bindings["rotation"];
@@ -31180,13 +31182,62 @@ function canonicalFactory261($bindings, $runtime) {
   function getImage (st) {
   	st = $runtime.copy(st);
   	var size = imageSize instanceof Float32Array ? $runtime.copy(imageSize) : imageSize;
+  	if ((tileOffset[0] == 0) && (tileOffset[1] == 0)) {
   	(st[0] = gl_FragCoord[0] / size[0], st[1] = gl_FragCoord[1] / size[1], st);
+  	} else {
+  	(st[0] = (gl_FragCoord[0] + tileOffset[0]) / size[0], st[1] = (gl_FragCoord[1] + tileOffset[1]) / size[1], st);
+  	};
   	st[1] = 1 - st[1];
   	var scale = $runtime.fdiv(100, scaleAmt);
   	if (scale == 0) {
   	scale = 1;
   	};
   	st = new $runtime.PooledFloat32Array([st[0] * scale, st[1] * scale]);
+  	if ((fullResolution[0] > 0) && ((fullResolution[0] != resolution[0]) || (fullResolution[1] != resolution[1]))) {
+  	if (position == 0) {
+  	st[1] += ((fullResolution[1] / size[1]) * scale) - (scale - ((1 / size[1]) * scale));
+  	} else {
+  	if (position == 1) {
+  	st[0] -= (((fullResolution[0] / size[0]) * scale) * 0.5) - (0.5 - ((1 / size[0]) * scale));
+  	st[1] += ((fullResolution[1] / size[1]) * scale) - (scale - ((1 / size[1]) * scale));
+  	} else {
+  	if (position == 2) {
+  	st[0] -= ((fullResolution[0] / size[0]) * scale) - (1 - ((1 / size[0]) * scale));
+  	st[1] += ((fullResolution[1] / size[1]) * scale) - (scale - ((1 / size[1]) * scale));
+  	} else {
+  	if (position == 3) {
+  	st[1] += (((fullResolution[1] / size[1]) * scale) * 0.5) + (0.5 - ((1 / size[1]) * scale)) - (scale);
+  	} else {
+  	if (position == 4) {
+  	st[0] -= (((fullResolution[0] / size[0]) * scale) * 0.5) - (0.5 - ((1 / size[0]) * scale));
+  	st[1] += (((fullResolution[1] / size[1]) * scale) * 0.5) + (0.5 - ((1 / size[1]) * scale)) - (scale);
+  	} else {
+  	if (position == 5) {
+  	st[0] -= ((fullResolution[0] / size[0]) * scale) - (1 - ((1 / size[0]) * scale));
+  	st[1] += (((fullResolution[1] / size[1]) * scale) * 0.5) + (0.5 - ((1 / size[1]) * scale)) - (scale);
+  	} else {
+  	if (position == 6) {
+  	st[1] += 1 - (scale - ((1 / size[1]) * scale));
+  	} else {
+  	if (position == 7) {
+  	st[0] -= (((fullResolution[0] / size[0]) * scale) * 0.5) - (0.5 - ((1 / size[0]) * scale));
+  	st[1] += 1 - (scale - ((1 / size[1]) * scale));
+  	} else {
+  	if (position == 8) {
+  	st[0] -= ((fullResolution[0] / size[0]) * scale) - (1 - ((1 / size[0]) * scale));
+  	st[1] += 1 - (scale - ((1 / size[1]) * scale));
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	};
+  	st[0] -= (map(offsetX, -100, 100, (-fullResolution[0] / size[0]) * scale, (fullResolution[0] / size[0]) * scale)) * 1.5;
+  	st[1] -= (map(offsetY, -100, 100, (-fullResolution[1] / size[1]) * scale, (fullResolution[1] / size[1]) * scale)) * 1.5;
+  	} else {
   	if (position == 0) {
   	st[1] += ((resolution[1] / size[1]) * scale) - (scale - ((1 / size[1]) * scale));
   	} else {
@@ -31230,6 +31281,7 @@ function canonicalFactory261($bindings, $runtime) {
   	};
   	st[0] -= (map(offsetX, -100, 100, (-resolution[0] / size[0]) * scale, (resolution[0] / size[0]) * scale)) * 1.5;
   	st[1] -= (map(offsetY, -100, 100, (-resolution[1] / size[1]) * scale, (resolution[1] / size[1]) * scale)) * 1.5;
+  	};
   	st[0] *= size[0] / size[1];
   	if (rotation != 0) {
   	rotate2D(st, rotation).reduce((res,el,i)=>(res[i] = el, res), st);
@@ -35827,10 +35879,10 @@ function canonicalFactory291($bindings, $runtime) {
   	return texelFetch(seedTex, atlasTexel(voxel, volSize), 0);
   };
   function packState (alive, age) {
-    if (colorMode == 1) {
-    return new $runtime.PooledFloat32Array([alive, age, 0, 1]);
-    };
-    return new $runtime.PooledFloat32Array([alive, alive, alive, 1]);
+  	if (colorMode == 1) {
+  	return new $runtime.PooledFloat32Array([alive, age, 0, 1]);
+  	};
+  	return new $runtime.PooledFloat32Array([alive, alive, alive, 1]);
   };
   function countMooreNeighbors (voxel, volSize) {
   	var count = 0;
@@ -35987,7 +36039,7 @@ function canonicalFactory291($bindings, $runtime) {
   	age = 0;
   	};
   	};
-    packState(alive, age).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	packState(alive, age).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	return;
   	};
   	var neighbors = 0;
@@ -36023,7 +36075,7 @@ function canonicalFactory291($bindings, $runtime) {
   	var seedLum = 0.29899999499320984 * seedVal[0] + 0.5870000123977661 * seedVal[1] + 0.11400000005960464 * seedVal[2];
   	finalAlive = mix(finalAlive, seedLum, weight * 0.009999999776482582);
   	};
-    packState(finalAlive, finalAge).reduce((res,el,i)=>(res[i] = el, res), fragColor);
+  	packState(finalAlive, finalAge).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)

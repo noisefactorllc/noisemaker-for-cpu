@@ -2715,10 +2715,10 @@ export const programCoverage = Object.freeze([
     "program": "mediaInput",
     "file": "mediaInput.glsl",
     "status": "generated",
-    "sourceSha256": "3f26aa8aa6d813e0825f7ccbe1c0ab6d9e91445283d27d6d87d72eeb0b7b0c9c",
-    "sourceBytes": 6598,
-    "normalizedBytes": 6774,
-    "generatedBytes": 6155
+    "sourceSha256": "b7905564ff42d2373ecc28ffc5184d072eb88b1f4b85026c08abb541accb2f63",
+    "sourceBytes": 9666,
+    "normalizedBytes": 9842,
+    "generatedBytes": 8414
   },
   {
     "effectId": "synth/mnca",

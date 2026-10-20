@@ -426,7 +426,13 @@ test('generated kernels for the 21 new stateful/points/render effects bind and e
     assert.ok(pass, `${key}: owning pass definition not found`)
 
     const params = definition.normalizeArguments([])
-    const bindings = renderer.buildBindings(definition, params, [], null, new Map(), { width: 2, height: 2, externalTextures: {} })
+    // The particle definitions' texture-source globals (points/dla's `fieldTex`,
+    // render/pointsEmit's `diffuseTex`, ...) are surface-typed parameters whose default is
+    // the chained input, so `buildBindings` resolves them from the chain's current surface.
+    // Supply the same mid-gray 2x2 dummy the per-pass textures below use.
+    const current = new Surface(2, 2)
+    current.clear([0.5, 0.5, 0.5, 1])
+    const bindings = renderer.buildBindings(definition, params, [], current, new Map(), { width: 2, height: 2, externalTextures: {} })
     const uniforms = renderer.passUniforms(pass, params, bindings.uniforms)
 
     // Dummy mid-gray 2x2 surfaces for every sampler2D uniform this specific pass declares
