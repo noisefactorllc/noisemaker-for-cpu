@@ -10,6 +10,10 @@ import { fileURLToPath } from 'node:url'
 const execFileAsync = promisify(execFile)
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
+function fixtureSha256(source) {
+  return createHash('sha256').update(source.toString().replace(/\r\n/g, '\n')).digest('hex')
+}
+
 function listGoldenPngs(directory) {
   return readdir(directory, { withFileTypes: true, recursive: true }).then((entries) =>
     entries.filter((entry) => entry.isFile() && entry.name.endsWith('.golden.png')).map((entry) => join(entry.parentPath ?? entry.path, entry.name)),
@@ -84,7 +88,7 @@ test('current NEAR authority validation preserves each original capture and bind
     assert.equal(validation.independentRenderers, 2)
     assert.equal(validation.readsPerRenderer, 2)
     const fixture = await readFile(join(projectRoot, `parity/upstream-defaults/${id.replace('/', '__')}.dsl`))
-    assert.equal(validation.fixtureSha256, createHash('sha256').update(fixture).digest('hex'))
+    assert.equal(validation.fixtureSha256, fixtureSha256(fixture))
     for (const readback of validation.readbacks) {
       const original = capture.readbacks.find(value => value.id === readback.surface)
       assert.equal(readback.sha256, original.sha256)
@@ -121,5 +125,18 @@ test('text capture records the measured unchanged pixels and its actual fixture'
   assert.equal(capture.pixelComparison?.previousPngSha256, '6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632')
   assert.equal(capture.pixelComparison.previousRawSha256, raw)
   assert.equal(capture.pixelComparison.identicalPixels, true)
-  assert.equal(capture.fixtureSha256, createHash('sha256').update(await readFile(join(projectRoot, 'parity/upstream-defaults/filter__text.dsl'))).digest('hex'))
+  assert.equal(capture.fixtureSha256, fixtureSha256(await readFile(join(projectRoot, 'parity/upstream-defaults/filter__text.dsl'))))
+})
+
+test('fixture provenance hashes ignore checkout newlines but retain source changes', async () => {
+  const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
+  for (const id of ['points/buddhabrot', 'synth/navierStokes', 'points/hydraulic', 'points/dla', 'points/flock', 'filter/text']) {
+    const name = id.replace('/', '__')
+    const capture = manifest.goldens[`defaults/${name}.golden.png`].captureRecord
+    const expected = (capture.authorityValidation ?? capture).fixtureSha256
+    const source = (await readFile(join(projectRoot, `parity/upstream-defaults/${name}.dsl`), 'utf8')).replace(/\r\n/g, '\n')
+    assert.equal(fixtureSha256(source), expected, `${id}: LF`)
+    assert.equal(fixtureSha256(Buffer.from(source.replace(/\n/g, '\r\n'))), expected, `${id}: CRLF`)
+    assert.notEqual(fixtureSha256(`${source} `), expected, `${id}: changed source`)
+  }
 })
