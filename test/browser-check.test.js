@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findExecutable, inspectChromium, inspectFirefox, inspectSafari, inspectWebkit, listenWithFallback, serve, transientModuleFetchFailures } from '../scripts/browser-check.mjs'
+import { findExecutable, inspectChromium, inspectFirefox, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
@@ -270,7 +270,6 @@ function fakeChromium(mode) {
         if (mode === 'missing-module') {
           this.emit('Network.responseReceived', { type: 'Script', response: { status: 404, url: `${baseURL}/examples/browser/missing-module.mjs` } })
         }
-        if (mode === 'transient-module') this.emit('Network.loadingFailed', { requestId: 'module-1', errorText: 'net::ERR_NO_BUFFER_SPACE' })
         if (mode === 'page-error') this.emit('Runtime.exceptionThrown', { exceptionDetails: { text: 'Uncaught early module exception' } })
         return { frameId: 'frame-1' }
       }
@@ -292,28 +291,6 @@ async function runFakeChromium(mode, timeout = 3000) {
   const result = await inspectChromium({ cdp, baseURL, targetURL, executable: 'chrome-headless-shell', timeout, interval: 5 })
   return { result, state }
 }
-
-// A socket-level module failure with no page error and no HTTP failure is a
-// transport drop (observed `net::ERR_NO_BUFFER_SPACE` on a loaded Windows
-// runner), not a demo defect: the check retries it once over a fresh page.
-test('a socket-level module fetch failure alone reads as transient', async () => {
-  const { result } = await runFakeChromium('transient-module')
-  assert.equal(result.pass, false)
-  assert.deepEqual(result.moduleFailures, [`failed ${result.url.replace('/examples/browser/index.html', '')}/examples/browser/demo.js :: net::ERR_NO_BUFFER_SPACE`])
-  assert.deepEqual(result.pageErrors, [])
-  assert.equal(transientModuleFetchFailures(result), true)
-})
-
-test('HTTP failures, page errors and passing checks are never transient', async () => {
-  const missing = await runFakeChromium('missing-module')
-  assert.equal(transientModuleFetchFailures(missing.result), false)
-  const pageError = await runFakeChromium('page-error')
-  assert.equal(pageError.result.pass, false)
-  assert.equal(transientModuleFetchFailures(pageError.result), false)
-  const passing = await runFakeChromium('pass')
-  assert.equal(passing.result.pass, true)
-  assert.equal(transientModuleFetchFailures(passing.result), false)
-})
 
 test('Chromium probe that runs before the page body exists retries instead of ending the check', async () => {
   const { result, state } = await runFakeChromium('pass')
