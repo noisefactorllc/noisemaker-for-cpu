@@ -108,10 +108,10 @@ function renderBytes(source) {
   return Buffer.from(renderer.render(source, { width: SIZE, height: SIZE, time: TIME, seed: 1 }).toRgba8())
 }
 
-test('the committed authority case programs are the 143 parity-case.json files of the pinned manifest', () => {
+test('the committed authority case programs are the 144 parity-case.json files of the pinned manifest', () => {
   assert.equal(fixture.revision, PINNED_UPSTREAM_REVISION)
   const expected = manifest.entries.filter((entry) => entry.path.endsWith('/parity-case.json'))
-  assert.equal(expected.length, 143)
+  assert.equal(expected.length, 144)
   assert.deepEqual(fixture.cases.map(({ path }) => path), expected.map(({ path }) => path))
   for (const [index, { content }] of fixture.cases.entries()) {
     const bytes = Buffer.from(content, 'utf8')
@@ -120,7 +120,7 @@ test('the committed authority case programs are the 143 parity-case.json files o
   }
 })
 
-test('all 143 authority case programs compile with compileDsl', () => {
+test('all 144 authority case programs compile with compileDsl', () => {
   const registry = createDefaultRegistry()
   const failures = []
   for (const { path, content } of fixture.cases) {

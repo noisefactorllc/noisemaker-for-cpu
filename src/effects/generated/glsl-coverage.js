@@ -3015,10 +3015,10 @@ export const programCoverage = Object.freeze([
     "program": "simulate",
     "file": "simulate.glsl",
     "status": "generated",
-    "sourceSha256": "e29a5b033304463b8610c86823f46c16751270a3cbaa37f1204df968c6c5394a",
-    "sourceBytes": 8843,
-    "normalizedBytes": 9335,
-    "generatedBytes": 6746
+    "sourceSha256": "0e2cf2bb49dffd6d5e1360772e750fde7328c0e29e2122bcb829ab00e006b881",
+    "sourceBytes": 9257,
+    "normalizedBytes": 9749,
+    "generatedBytes": 6895
   },
   {
     "effectId": "synth3d/flythrough3d",

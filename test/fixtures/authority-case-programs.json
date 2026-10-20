@@ -1,5 +1,5 @@
 {
- "revision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+ "revision": "f6b196dc42568576dfc40794040675fde42d2dc1",
  "cases": [
   {
    "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
@@ -299,7 +299,7 @@
   },
   {
    "path": "shaders/effects/filter/text/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/text\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).text(text: \\\"Retired\\\", matteColor: #ff0000, matteOpacity: 0.5).write(o0)\\nrender(o0)\",\n  \"textureInputs\": [\n    {\n      \"effect\": \"filter/text\",\n      \"uniform\": \"textTex\",\n      \"width\": 4,\n      \"height\": 4,\n      \"data\": [\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255\n      ]\n    }\n  ]\n}\n"
+   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/text\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).text(text: \\\"Retired\\\", matteOpacity: 0.5).write(o0)\\nrender(o0)\",\n  \"textureInputs\": [\n    {\n      \"effect\": \"filter/text\",\n      \"uniform\": \"textTex\",\n      \"width\": 4,\n      \"height\": 4,\n      \"data\": [\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255\n      ]\n    }\n  ]\n}\n"
   },
   {
    "path": "shaders/effects/filter/texture/parity-case.json",
@@ -552,6 +552,10 @@
   {
    "path": "shaders/effects/synth3d/cell3d/parity-case.json",
    "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/cell3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\ncell3d(volumeSize: x16).render3d().write(o0)\\nrender(o0)\"\n}\n"
+  },
+  {
+   "path": "shaders/effects/synth3d/cellularAutomata3d/parity-case.json",
+   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/cellularAutomata3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\ncellularAutomata3d(volumeSize: x16, ruleIndex: diamoeba, colorMode: age).render3d().write(o0)\\nrender(o0)\"\n}\n"
   },
   {
    "path": "shaders/effects/synth3d/flythrough3d/parity-case.json",

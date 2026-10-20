@@ -13,9 +13,10 @@ const fixture = JSON.parse(await readFile(new URL('capture.json', fixtures), 'ut
 
 test('odd-size authority fixtures are pinned to the authority source', async () => {
   const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
-  assert.equal(fixture.capture.authorityRevision, manifest.revision)
+  const authority = fixture.validation ?? fixture.capture
+  assert.equal(authority.authorityRevision, manifest.revision)
   const pinnedSources = new Map(manifest.entries.map((entry) => [entry.path, entry]))
-  for (const entry of fixture.capture.sources) {
+  for (const entry of authority.sources) {
     assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
   }
   assert.equal(fixture.capture.gpu, 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)')

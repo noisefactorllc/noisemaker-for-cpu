@@ -83,5 +83,63 @@
         "pngSha256": "a91a42adb78530a81d0bea9f2720b4ad6647fa99ae59b434d7ca584fa49f4e9e"
       }
     ]
+  },
+  "validation": {
+    "authorityRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+    "startedAt": "2026-10-20T16:15:48.850431Z",
+    "completedAt": "2026-10-20T16:16:15.025163Z",
+    "sources": [
+      {
+        "path": "shaders/effects/filter/posterize/definition.js",
+        "size": 1163,
+        "sha256": "619951122d033331fb525bb3ce4d3ebcead9a5b8c591cf0d0b0dcdf5583e0924"
+      },
+      {
+        "path": "shaders/effects/filter/posterize/glsl/posterize.glsl",
+        "size": 2630,
+        "sha256": "460910a8d1103eca5cc0b4df82f39fd91fbc447b9a815250ae7d34dfab8ee5b2"
+      },
+      {
+        "path": "shaders/effects/synth/media/definition.js",
+        "size": 4642,
+        "sha256": "9dd0c2bd5b7ace0fbb29cbfd02f56d4156b9da04a366ed5c6dfcbb45a4020f24"
+      },
+      {
+        "path": "shaders/effects/synth/media/glsl/mediaInput.glsl",
+        "size": 6598,
+        "sha256": "3f26aa8aa6d813e0825f7ccbe1c0ab6d9e91445283d27d6d87d72eeb0b7b0c9c"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 93851,
+        "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 82173,
+        "sha256": "b55d4d72d4d33bd172726a630f847e382aebb9997cf3b23d4813140bd28d4d35"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "verifiedRendererCount": 1,
+    "readsPerVerifiedRenderer": 3,
+    "programStateApplied": false,
+    "protocol": "Compile each recorded DSL with the current-source CanvasRenderer. Upload the recorded input or a transparent canvas. Render the recorded time. All retained first-renderer readbacks match the retained reference hash. The historical independent-renderer capture remains recorded separately.",
+    "readbacks": [
+      {
+        "name": "case-0",
+        "sha256": "8418628eebb1cc97efa76eecb6b3f8f260e6d0ca1879572c482db9db7bbf7a7b"
+      }
+    ],
+    "sourceDigest": "f9d1c063d4116f1b74a1d8f592885a5e97460630f62727be37d129a34367b8b7"
   }
 }

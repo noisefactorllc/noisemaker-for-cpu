@@ -18,7 +18,8 @@ test('external posterize at 97x43 matches the M4 authority through sync, async, 
   const fixture = JSON.parse(await readFile(new URL('capture.json', fixtures), 'utf8'))
   const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
   const pinnedSources = new Map(manifest.entries.map((entry) => [entry.path, entry]))
-  for (const entry of fixture.capture.sources) {
+  const authority = fixture.validation ?? fixture.capture
+  for (const entry of authority.sources) {
     assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
   }
   assert.equal(sha256(fixture.program), fixture.programSha256)

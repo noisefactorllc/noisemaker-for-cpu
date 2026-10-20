@@ -181,5 +181,110 @@
       "sweep.html": "6c23661ffcba7e59d031d6168929422177e7639f656bf724fab9f826507508f1"
     },
     "protocol": "One fresh page per case and two independent CanvasRenderer instances from the pinned upstream archive (headless Chromium, --use-angle=metal). loadManifest, loadEffects, compile the recorded DSL, apply the demo ProgramState step values, upload a transparent canvas to every media step, render one frame at the case time, and read global_o0_write twice as top-down RGBA8. Both reads of both instances are byte-identical for every case."
+  },
+  "validation": {
+    "authorityRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+    "startedAt": "2026-10-20T16:15:48.850431Z",
+    "completedAt": "2026-10-20T16:16:15.025163Z",
+    "sources": [
+      {
+        "path": "shaders/effects/render/render3d/definition.js",
+        "size": 3692,
+        "sha256": "cfef9f05340eaae9f19b097dab7a3db465268bc130626b19bd0e72ee9847ea7e"
+      },
+      {
+        "path": "shaders/effects/render/render3d/glsl/render3d.glsl",
+        "size": 14393,
+        "sha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30"
+      },
+      {
+        "path": "shaders/effects/synth/perlin/definition.js",
+        "size": 3072,
+        "sha256": "8ef8bdc3c5005dd5a30d02876a47cc8a036d14faa0f5cd7349c3743e3ef4c8e3"
+      },
+      {
+        "path": "shaders/effects/synth/perlin/glsl/perlin.glsl",
+        "size": 10882,
+        "sha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318"
+      },
+      {
+        "path": "shaders/effects/synth3d/reactionDiffusion3d/definition.js",
+        "size": 4730,
+        "sha256": "94a812290d2310b8af85859e322a9289b1b52b3959c92eb16a6e9a29d25cabd8"
+      },
+      {
+        "path": "shaders/effects/synth3d/reactionDiffusion3d/glsl/simulate.glsl",
+        "size": 6257,
+        "sha256": "23a23fcf7cfda986215efc76e21f79faf237bef0c362881d801b040407766b17"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 93851,
+        "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 82173,
+        "sha256": "b55d4d72d4d33bd172726a630f847e382aebb9997cf3b23d4813140bd28d4d35"
+      },
+      {
+        "path": "shaders/src/runtime/expander.js",
+        "size": 72401,
+        "sha256": "6aed03bb9fe2d2a13fe3466d9dd113cda627e22d0f15a4f746e4182dc0ec8343"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "verifiedRendererCount": 1,
+    "readsPerVerifiedRenderer": 3,
+    "programStateApplied": false,
+    "protocol": "Compile each recorded DSL with the current-source CanvasRenderer. Upload the recorded input or a transparent canvas. Render the recorded time. All retained first-renderer readbacks match the retained reference hash. The historical independent-renderer capture remains recorded separately.",
+    "readbacks": [
+      {
+        "name": "perlin3d-64x40-t0.75-s2",
+        "sha256": "662af324159362418bc18e6f28676f6156ea85c55a268b03e07f518ae1f88b01"
+      },
+      {
+        "name": "perlin3d-64x40-t0.75-s3",
+        "sha256": "ffd73c11afad6aff7b7cd02230d7b8e8e727a3f6b74c0995845fae8068547c15"
+      },
+      {
+        "name": "perlin3d-64x40-t0.75-s7",
+        "sha256": "87fff885a93b737adafed8c936907bb60985cdf0e046c454846ad46d8b3ec30b"
+      },
+      {
+        "name": "perlin3d-64x40-t0.75-s42",
+        "sha256": "f27c19570582e50b48268393a22b04001533ee0600ce9017c7feebfc9c8a96d9"
+      },
+      {
+        "name": "perlin3d-41x23-t0.25-s13",
+        "sha256": "14b1618abd0b0c1b501f20d5b8b56760962942d103ce65037c02a2d19359701c"
+      },
+      {
+        "name": "reactionDiffusion3d-64x40-t0.75-s1",
+        "sha256": "9221744224f27bbfac0042120096d763fb491c95471c68aeab39cba239b00999"
+      },
+      {
+        "name": "reactionDiffusion3d-64x40-t0.75-s7",
+        "sha256": "77d0be155aafd9e5684509d02212064e85397215f70e6e1a8305ebf1d33992e3"
+      },
+      {
+        "name": "reactionDiffusion3d-64x40-t0.75-s42",
+        "sha256": "714827d32911468fb0698b2f628cc79cead4989f5cd2a88292925b5270048d87"
+      },
+      {
+        "name": "reactionDiffusion3d-41x23-t0.75-s13",
+        "sha256": "97ea04ea3f2f45b120428a09d53543c0ae4cc26ba70ebd50402bf859c10fa3ed"
+      }
+    ],
+    "sourceDigest": "f9d1c063d4116f1b74a1d8f592885a5e97460630f62727be37d129a34367b8b7"
   }
 }

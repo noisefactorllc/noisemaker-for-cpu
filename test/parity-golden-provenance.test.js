@@ -69,3 +69,57 @@ test('parity report identifies reference-image provenance separately from the so
   assert.ok(summary.referenceProvenance, 'summary must aggregate reference provenance counts')
   assert.equal(summary.referenceProvenance.unknown + summary.referenceProvenance.recorded, summary.results.length)
 })
+
+test('current NEAR authority validation preserves each original capture and binds its exact pixels', async () => {
+  const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
+  const records = JSON.parse(await readFile(join(projectRoot, 'scripts/parity/capture-records.json'), 'utf8'))
+  const { UPSTREAM_REVISION } = await import('../src/effects/generated/upstream-snapshot.js')
+  for (const id of ['points/buddhabrot', 'synth/navierStokes', 'points/hydraulic', 'points/dla', 'points/flock']) {
+    const key = `defaults/${id.replace('/', '__')}.golden.png`
+    const capture = manifest.goldens[key].captureRecord
+    assert.equal(capture.sourceRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d')
+    const validation = capture.authorityValidation
+    assert.equal(validation?.sourceRevision, UPSTREAM_REVISION, id)
+    assert.deepEqual(records[key].captureRecord.authorityValidation, validation)
+    assert.equal(validation.independentRenderers, 2)
+    assert.equal(validation.readsPerRenderer, 2)
+    const fixture = await readFile(join(projectRoot, `parity/upstream-defaults/${id.replace('/', '__')}.dsl`))
+    assert.equal(validation.fixtureSha256, createHash('sha256').update(fixture).digest('hex'))
+    for (const readback of validation.readbacks) {
+      const original = capture.readbacks.find(value => value.id === readback.surface)
+      assert.equal(readback.sha256, original.sha256)
+      assert.deepEqual([readback.repeatSha256, readback.independentSha256, readback.independentRepeatSha256], [readback.sha256, readback.sha256, readback.sha256])
+    }
+  }
+})
+
+test('current source revalidation does not relabel historical renderer protocols or dates', async () => {
+  const { UPSTREAM_REVISION } = await import('../src/effects/generated/upstream-snapshot.js')
+  for (const directory of ['oddsize-m4', 'posterize-97x43', 'scatter-m4', 'seeded-hashes-m4', 'seeded-volumes-m4', 'snow-m4', 'spookyTicker-m4']) {
+    const fixture = JSON.parse(await readFile(join(projectRoot, `test/fixtures/authority/${directory}/capture.json`), 'utf8'))
+    assert.equal(fixture.capture.authorityRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d', directory)
+    assert.equal(fixture.validation?.authorityRevision, UPSTREAM_REVISION, directory)
+    assert.equal(fixture.validation.verifiedRendererCount, 1)
+    assert.equal(fixture.validation.readsPerVerifiedRenderer, directory === 'seeded-volumes-m4' ? 2 : 3)
+    assert.equal(fixture.validation.programStateApplied, false)
+    assert.ok(Date.parse(fixture.validation.startedAt) <= Date.parse(fixture.validation.completedAt))
+    assert.ok(Date.parse(fixture.validation.completedAt) <= Date.parse('2026-10-20T16:16:47.931806Z'))
+    const cases = directory === 'posterize-97x43' ? [fixture] : [...fixture.cases, ...(fixture.volumes ?? [])]
+    assert.equal(fixture.validation.readbacks.length, cases.length)
+    for (let index = 0; index < cases.length; index++) {
+      assert.equal(fixture.validation.readbacks[index].sha256, cases[index].reference?.rgbaSha256 ?? cases[index].rgbaSha256)
+    }
+  }
+})
+
+test('text capture records the measured unchanged pixels and its actual fixture', async () => {
+  const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
+  const capture = manifest.goldens['defaults/filter__text.golden.png'].captureRecord
+  const { decodePng } = await import('../src/node/png.js')
+  const image = decodePng(await readFile(join(projectRoot, 'parity/goldens/defaults/filter__text.golden.png')))
+  const raw = createHash('sha256').update(image.data).digest('hex')
+  assert.equal(capture.pixelComparison?.previousPngSha256, '6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632')
+  assert.equal(capture.pixelComparison.previousRawSha256, raw)
+  assert.equal(capture.pixelComparison.identicalPixels, true)
+  assert.equal(capture.fixtureSha256, createHash('sha256').update(await readFile(join(projectRoot, 'parity/upstream-defaults/filter__text.dsl'))).digest('hex'))
+})

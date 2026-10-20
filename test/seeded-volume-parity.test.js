@@ -22,8 +22,9 @@ async function loadFixture(directory = fixtures) {
   const fixture = JSON.parse(await readFile(new URL('capture.json', directory), 'utf8'))
   const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
   const pinnedSources = new Map(manifest.entries.map((entry) => [entry.path, entry]))
-  assert.equal(fixture.capture.authorityRevision, manifest.revision)
-  for (const entry of fixture.capture.sources) {
+  const authority = fixture.validation ?? fixture.capture
+  assert.equal(authority.authorityRevision, manifest.revision)
+  for (const entry of authority.sources) {
     assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
   }
   assert.equal(fixture.tolerance, 2)

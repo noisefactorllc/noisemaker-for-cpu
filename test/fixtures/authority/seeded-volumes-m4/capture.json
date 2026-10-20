@@ -263,5 +263,170 @@
       "sweep.html": "6c23661ffcba7e59d031d6168929422177e7639f656bf724fab9f826507508f1"
     },
     "protocol": "One fresh page per case and two independent CanvasRenderer instances from the pinned upstream archive (headless Chromium, --use-angle=metal). loadManifest, loadEffects, compile the recorded DSL, apply the demo ProgramState step values, upload a transparent canvas to every media step, render one frame at time 0.75, and read global_o0_write twice as top-down RGBA8. Both reads of both instances are byte-identical for every case. Volume cases chain write3d(vol0, geo0) before render3d and read global_vol0_write instead: the 16x256 rgba16f atlas, converted by readPixels to RGBA8 with round(value * 255)."
+  },
+  "validation": {
+    "authorityRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+    "startedAt": "2026-10-20T16:16:31.732534Z",
+    "completedAt": "2026-10-20T16:16:42.507495Z",
+    "sources": [
+      {
+        "path": "shaders/effects/filter3d/palette3d/definition.js",
+        "size": 2901,
+        "sha256": "070b16496ef076823d52268bb662e44b2a28529251d3bc47a0e8bb94712a58f9"
+      },
+      {
+        "path": "shaders/effects/filter3d/palette3d/glsl/palette3d.glsl",
+        "size": 15170,
+        "sha256": "6425d323befb35d590b818a2bdb269e7bd6fb11aebf148a0c040b3eff0655015"
+      },
+      {
+        "path": "shaders/effects/render/render3d/definition.js",
+        "size": 3692,
+        "sha256": "cfef9f05340eaae9f19b097dab7a3db465268bc130626b19bd0e72ee9847ea7e"
+      },
+      {
+        "path": "shaders/effects/render/render3d/glsl/render3d.glsl",
+        "size": 14393,
+        "sha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemap3d/definition.js",
+        "size": 3414,
+        "sha256": "95ad600e12511aa9ab019ed7beff35f1152a1ae510eb8e4716ec204be17ba483"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemap3d/glsl/renderCubemap3d.glsl",
+        "size": 14026,
+        "sha256": "bcebff481c2d945e140870b50ce3e32e12bc3f198f75a53dc6d2450d5777db26"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemapSurface/definition.js",
+        "size": 2805,
+        "sha256": "fc17c202527caf30cedf63347d1415adb4552d2a185bd82d93a1a0693d298c7c"
+      },
+      {
+        "path": "shaders/effects/render/renderCubemapSurface/glsl/renderCubemapSurface.glsl",
+        "size": 4410,
+        "sha256": "ce467e742120b8a2ec9c34898a2fd1e2f56a85cbe5d27774bcbb1b7f204511fc"
+      },
+      {
+        "path": "shaders/effects/render/renderLit3d/definition.js",
+        "size": 5977,
+        "sha256": "0ddd55e2fbd000590b980a3980480c57c459319e0b973dcfdd08f3445fe3054e"
+      },
+      {
+        "path": "shaders/effects/render/renderLit3d/glsl/renderLit3d.glsl",
+        "size": 12406,
+        "sha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627"
+      },
+      {
+        "path": "shaders/effects/synth3d/cell3d/definition.js",
+        "size": 2970,
+        "sha256": "05a2636b6a6fc3cd838a94ca46a805a8bcecada88059cddd784246941baf7788"
+      },
+      {
+        "path": "shaders/effects/synth3d/cell3d/glsl/precompute.glsl",
+        "size": 5081,
+        "sha256": "83ef13ab1e5997c76e64280d11e0bdb0eaedd6f41a504d2b1e79761cd1dd1755"
+      },
+      {
+        "path": "shaders/effects/synth3d/noise3d/definition.js",
+        "size": 3616,
+        "sha256": "669f0bcae5595251fe8679810a6b051af36b5790417ff2b9ebf3b4f9e750497f"
+      },
+      {
+        "path": "shaders/effects/synth3d/noise3d/glsl/precompute.glsl",
+        "size": 7667,
+        "sha256": "60ce97d188bf78bc84176c063943f29c25371e4325f13cedbb4eec889c905727"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 93851,
+        "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 82173,
+        "sha256": "b55d4d72d4d33bd172726a630f847e382aebb9997cf3b23d4813140bd28d4d35"
+      },
+      {
+        "path": "shaders/src/runtime/expander.js",
+        "size": 72401,
+        "sha256": "6aed03bb9fe2d2a13fe3466d9dd113cda627e22d0f15a4f746e4182dc0ec8343"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "verifiedRendererCount": 1,
+    "readsPerVerifiedRenderer": 2,
+    "programStateApplied": false,
+    "protocol": "Compile each recorded DSL with the current-source CanvasRenderer. Upload the recorded input or a transparent canvas. Render the recorded time. All retained first-renderer readbacks match the retained reference hash. The historical independent-renderer capture remains recorded separately. A second renderer executed, but its readback hashes are not retained in the command result and are not asserted by this validation.",
+    "readbacks": [
+      {
+        "name": "filter3d__palette3d__s7",
+        "sha256": "d0d6a162139dff7663aa746b4c90cb041bff456a11e768c1b870e23c3e796ac8"
+      },
+      {
+        "name": "synth3d__noise3d__s7",
+        "sha256": "2dc99f8f5634a347d88780ee4dce4f7065c9d670effd19fec16e4daa39c3c3ff"
+      },
+      {
+        "name": "render__renderCubemap3d__s7",
+        "sha256": "8d10f7e96f0dc4336f691aa83f40ddcf99d51562b61d9690fd3bba0e7aa6180d"
+      },
+      {
+        "name": "render__renderLit3d__s7",
+        "sha256": "84cd3b2e01bd82f21f0643ca7541ad9366d96de96867842e974aacf61cd3818a"
+      },
+      {
+        "name": "synth3d__cell3d__s7",
+        "sha256": "70960bc65c90c4f94db8f5d42642153d9716e490a2201b1c8e711ec747253728"
+      },
+      {
+        "name": "render__renderCubemapSurface__s7",
+        "sha256": "b49187109578ac3b350e29df7dd952a09962109a7c1fc1bc0fde371d5a2073cb"
+      },
+      {
+        "name": "synth3d__noise3d__s2",
+        "sha256": "04469829770df0d1606d518c02321165e3b2da83db9fd3a8ac8d077186165f40"
+      },
+      {
+        "name": "synth3d__noise3d__s3",
+        "sha256": "cf98cd2a4261b8abce3ed389b1e55e19dca989fcb89cf5cfaa01cdb9360de5af"
+      },
+      {
+        "name": "synth3d__cell3d__s2",
+        "sha256": "f8fad276d51ab3bc96832e272d3a1e77fc4d4bd1ba526ad0f4ac9f9401efa55b"
+      },
+      {
+        "name": "synth3d__cell3d__s3",
+        "sha256": "3f21ea5e5e2f57173bc7a300aa205d26a1519f1a0e5cdd7a8112c7e65c9306a6"
+      },
+      {
+        "name": "noise3d-volume-s4",
+        "sha256": "b2944143b0f8ad23c4ddc951af56dc6311d8d4d79a6ab14823a9be2c3d2debd9"
+      },
+      {
+        "name": "noise3d-volume-s13",
+        "sha256": "3830567bea0fc04a3f2fa77f29605074777f421891b0a10561ee0c319eb87871"
+      },
+      {
+        "name": "cell3d-volume-s4",
+        "sha256": "6543379cf708e6be4244de238a10ce2b56c641b39e4198ffbe4ebf863d7e40ce"
+      },
+      {
+        "name": "cell3d-volume-s13",
+        "sha256": "43239d1cfc45a239a9e9e389e9ab97fa155f446a74097779114fc303185b323a"
+      }
+    ],
+    "sourceDigest": "f9d1c063d4116f1b74a1d8f592885a5e97460630f62727be37d129a34367b8b7"
   }
 }

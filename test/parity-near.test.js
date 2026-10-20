@@ -12,7 +12,7 @@ import { evaluateReleaseGate } from '../scripts/parity/release-gate.js'
 
 const id = 'points/buddhabrot'
 const meta = { size: 8, time: 0.25, seed: 1, tolerance: 2 }
-const authorityRevision = '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d'
+const authorityRevision = 'f6b196dc42568576dfc40794040675fde42d2dc1'
 const fixture = await readFile(new URL('../parity/upstream-defaults/points__buddhabrot.dsl', import.meta.url), 'utf8')
 const goldenPath = new URL('../parity/goldens/defaults/points__buddhabrot.golden.png', import.meta.url)
 const golden = await readPng(goldenPath)
@@ -36,6 +36,18 @@ function candidate() {
   return bytes
 }
 const compare = (overrides = {}) => reviewedNearComparison({ id, actual: candidate(), source: fixture, meta, reference, authorityRevision, ...overrides })
+
+test('NEAR acceptance binds the current physical authority proof and rejects altered readbacks', async () => {
+  const review = await compare()
+  assert.equal(review.authorityCapture?.sourceRevision, authorityRevision)
+  assert.equal(review.authorityCapture.independentRenderers, 2)
+  assert.equal(review.authorityCapture.readsPerRenderer, 2)
+  const manifest = JSON.parse(await readFile(new URL('../parity/goldens/provenance.json', import.meta.url), 'utf8'))
+  assert.deepEqual(review.authorityCapture, manifest.goldens['defaults/points__buddhabrot.golden.png'].captureRecord.authorityValidation)
+  const changed = structuredClone(review)
+  changed.authorityCapture.readbacks[0].independentSha256 = '0'.repeat(64)
+  assert.equal(validateNearReview(id, changed, { ...meta, sourceRevision: authorityRevision }), false)
+})
 
 test('reviewed buddhabrot NEAR reports both surface bounds without converting it to a strict pass', async () => {
   const review = await compare()

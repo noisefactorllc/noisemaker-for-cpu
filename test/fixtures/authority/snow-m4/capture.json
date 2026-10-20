@@ -183,5 +183,92 @@
         "independentSha256": "3b66bee5c6a8e3adbe9ad96433b05ecd6210bd22cb0ca46232bcc035acbc8cd6"
       }
     }
-  ]
+  ],
+  "validation": {
+    "authorityRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+    "startedAt": "2026-10-20T16:15:48.850431Z",
+    "completedAt": "2026-10-20T16:16:15.025163Z",
+    "sources": [
+      {
+        "path": "shaders/effects/filter/snow/definition.js",
+        "size": 1068,
+        "sha256": "4008170b96868f4c2074a72ff665c964143cfe74850d6436e9e82c3172745fbc"
+      },
+      {
+        "path": "shaders/effects/filter/snow/glsl/snow.glsl",
+        "size": 2982,
+        "sha256": "ae057787cc101755743c17b4cdf46b51d70ed8b9896fed9535a058c8b252f48a"
+      },
+      {
+        "path": "shaders/effects/synth/noise/definition.js",
+        "size": 4657,
+        "sha256": "c1f3d5b83ee7fbf4fef2e00f2d943686fed39bffa90d495622df4b2766dc74b9"
+      },
+      {
+        "path": "shaders/effects/synth/noise/glsl/noise.glsl",
+        "size": 18131,
+        "sha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274"
+      },
+      {
+        "path": "shaders/effects/synth/solid/definition.js",
+        "size": 803,
+        "sha256": "8d4620efd3b1a10178827252eb6fe7dc6034ac65e20b685beb211089ecba525c"
+      },
+      {
+        "path": "shaders/effects/synth/solid/glsl/solid.glsl",
+        "size": 273,
+        "sha256": "82afae3ccf523d1938cd02eadc6bfae5e4440a9b22a4f5629688d1d05856287c"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 93851,
+        "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+      },
+      {
+        "path": "shaders/src/runtime/backends/webgl2.js",
+        "size": 82173,
+        "sha256": "b55d4d72d4d33bd172726a630f847e382aebb9997cf3b23d4813140bd28d4d35"
+      },
+      {
+        "path": "shaders/src/runtime/pipeline.js",
+        "size": 134155,
+        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+      }
+    ],
+    "verifiedRendererCount": 1,
+    "readsPerVerifiedRenderer": 3,
+    "programStateApplied": false,
+    "protocol": "Compile each recorded DSL with the current-source CanvasRenderer. Upload the recorded input or a transparent canvas. Render the recorded time. All retained first-renderer readbacks match the retained reference hash. The historical independent-renderer capture remains recorded separately.",
+    "readbacks": [
+      {
+        "name": "noise-snow-41x23",
+        "sha256": "8299b14a060c5c304a50e7b26559bb03796bee7b70c8a56150b767b09e00a44f"
+      },
+      {
+        "name": "noise-snow-64x64-fixture-seeds",
+        "sha256": "524c12777672a3a206b21c788c0a10fb9d3056b8acc7bc94e2c9353d022a01b6"
+      },
+      {
+        "name": "noise-snow-8x8-default",
+        "sha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81"
+      },
+      {
+        "name": "black-snow-64x64",
+        "sha256": "a904fa0e93c034d1577ed7741af6a34b295beafe08bc46156a117f6c333c5d66"
+      },
+      {
+        "name": "white-snow-64x64",
+        "sha256": "7ff10fef744627895e9f9493e99a27244cc9c44ee566de2cb597dfea81b3e108"
+      },
+      {
+        "name": "static-snow-41x23",
+        "sha256": "3b66bee5c6a8e3adbe9ad96433b05ecd6210bd22cb0ca46232bcc035acbc8cd6"
+      }
+    ]
+  }
 }

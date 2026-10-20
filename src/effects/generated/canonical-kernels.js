@@ -35804,6 +35804,7 @@ function canonicalFactory291($bindings, $runtime) {
   var speed = $bindings["speed"];
   var density = $bindings["density"];
   var weight = $bindings["weight"];
+  var colorMode = $bindings["colorMode"];
   var resetState = $bindings["resetState"];
   var stateTex = $bindings["stateTex"];
   var seedTex = $bindings["seedTex"];
@@ -35824,6 +35825,12 @@ function canonicalFactory291($bindings, $runtime) {
   };
   function sampleSeed (voxel, volSize) {
   	return texelFetch(seedTex, atlasTexel(voxel, volSize), 0);
+  };
+  function packState (alive, age) {
+    if (colorMode == 1) {
+    return new $runtime.PooledFloat32Array([alive, age, 0, 1]);
+    };
+    return new $runtime.PooledFloat32Array([alive, alive, alive, 1]);
   };
   function countMooreNeighbors (voxel, volSize) {
   	var count = 0;
@@ -35980,7 +35987,7 @@ function canonicalFactory291($bindings, $runtime) {
   	age = 0;
   	};
   	};
-  	(fragColor[0] = alive, fragColor[1] = alive, fragColor[2] = alive, fragColor[3] = 1, fragColor);
+    packState(alive, age).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	return;
   	};
   	var neighbors = 0;
@@ -36016,7 +36023,7 @@ function canonicalFactory291($bindings, $runtime) {
   	var seedLum = 0.29899999499320984 * seedVal[0] + 0.5870000123977661 * seedVal[1] + 0.11400000005960464 * seedVal[2];
   	finalAlive = mix(finalAlive, seedLum, weight * 0.009999999776482582);
   	};
-  	(fragColor[0] = finalAlive, fragColor[1] = finalAlive, fragColor[2] = finalAlive, fragColor[3] = 1, fragColor);
+    packState(finalAlive, finalAge).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)

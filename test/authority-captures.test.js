@@ -23,8 +23,9 @@ for (const directory of CAPTURE_DIRECTORIES) {
   const fixture = JSON.parse(await readFile(new URL('capture.json', root), 'utf8'))
 
   test(`${directory} records pinned sources and stable captures`, () => {
-    assert.equal(fixture.capture.authorityRevision, manifest.revision)
-    for (const entry of fixture.capture.sources) {
+    const authority = fixture.validation ?? fixture.capture
+    assert.equal(authority.authorityRevision, manifest.revision)
+    for (const entry of authority.sources) {
       assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
     }
     assert.equal(fixture.tolerance, 2)

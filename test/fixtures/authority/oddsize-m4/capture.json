@@ -433,5 +433,260 @@
         "rgbaSha256": "418d12077bbfaf93893d3c4d203a413520aef8c5b567000c4f51b068673fb9d5"
       }
     }
-  ]
+  ],
+  "validation": {
+    "authorityRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+    "startedAt": "2026-10-20T16:15:48.850431Z",
+    "completedAt": "2026-10-20T16:16:15.025163Z",
+    "sources": [
+      {
+        "path": "shaders/effects/filter/channel/definition.js",
+        "size": 986,
+        "sha256": "e5fcdbab9cd9eb4977ca2d3341449eabe71c3234c15c421d2acf7643b902ddfd"
+      },
+      {
+        "path": "shaders/effects/filter/channel/glsl/channel.glsl",
+        "size": 676,
+        "sha256": "b237868c688bcfe51deb56155b0fbfe66a3fcf0db5cba93177ec2198ae48e9e7"
+      },
+      {
+        "path": "shaders/effects/filter/extrude/definition.js",
+        "size": 2274,
+        "sha256": "2a3ead17127e6155101e03497625399d9fde5455bd2e9785823ce92a648eb4ca"
+      },
+      {
+        "path": "shaders/effects/filter/extrude/glsl/extrude.glsl",
+        "size": 16945,
+        "sha256": "3be128643867dc78184bd209306cbe524538fd8d6d53a21817fb87f746100e29"
+      },
+      {
+        "path": "shaders/effects/filter/glyphMap/definition.js",
+        "size": 1137,
+        "sha256": "e29c3f224e8f7683a03c4bfe7219ad6eb715a50ca743fcc8c3775bc410dcfb97"
+      },
+      {
+        "path": "shaders/effects/filter/glyphMap/glsl/glyphMap.glsl",
+        "size": 8145,
+        "sha256": "dc0af9a6a6fb4d0cd62ea25c4508a714a36a1dc66923f5578d91ac190d9f4dd6"
+      },
+      {
+        "path": "shaders/effects/filter/glyphMap/parity-attestation.json",
+        "size": 784,
+        "sha256": "be4771c4e17176cd261e26ce8b63ff375b29894108de1c4a27b94b7c03e781a7"
+      },
+      {
+        "path": "shaders/effects/filter/glyphMap/parity-case.json",
+        "size": 473,
+        "sha256": "015c8a0d829f9807ee01a52a51892a8b8ab3cdc2324e8efc239744d37a990b78"
+      },
+      {
+        "path": "shaders/effects/filter/halftone/definition.js",
+        "size": 3897,
+        "sha256": "1bee2cda7c64d7ac4537fee4e695ded431617378f20abaf6ad4ce362e3f445f2"
+      },
+      {
+        "path": "shaders/effects/filter/halftone/glsl/halftone.glsl",
+        "size": 8440,
+        "sha256": "063ddb13f5fffc6f957d4be0a60b0408ff706d6111fd4e3ba52582f7507c7ad7"
+      },
+      {
+        "path": "shaders/effects/filter/outline/definition.js",
+        "size": 1805,
+        "sha256": "62d5720c08345bc5d64668e5c7adeec9f20709d82d31019fa73bb536b78bfea6"
+      },
+      {
+        "path": "shaders/effects/filter/outline/glsl/outlineBlend.glsl",
+        "size": 1003,
+        "sha256": "5cf1613b00702bda4ccd5a03c1beee0aa779c1a947dc77d2adb78c854dad1a0d"
+      },
+      {
+        "path": "shaders/effects/filter/outline/glsl/outlineSobel.glsl",
+        "size": 2380,
+        "sha256": "cfe848d1605f1ad693fd3ce9e518a4adf4e0f34e3fff6c6ae1ebcaec49949f5d"
+      },
+      {
+        "path": "shaders/effects/filter/outline/glsl/outlineValueMap.glsl",
+        "size": 1770,
+        "sha256": "8d6504a8464a44cb4d1e86d2596c0d7a60d4924d18bd2114dc1f5ce5d49434cb"
+      },
+      {
+        "path": "shaders/effects/filter/outline/parity-attestation.json",
+        "size": 785,
+        "sha256": "790a043c4ca513e27dad3ce3892c110035346b5f348a3153881a28798a9700dd"
+      },
+      {
+        "path": "shaders/effects/filter/outline/parity-case.json",
+        "size": 332,
+        "sha256": "12467bd04678fd8eed378dd77329d668e4e43e110da0baca0b73a2835efacf5d"
+      },
+      {
+        "path": "shaders/effects/filter/pixels/definition.js",
+        "size": 727,
+        "sha256": "7ee6bc4db36f48d19fe273af19eb1109b2b97447271309ca72453b9cffc5ac6c"
+      },
+      {
+        "path": "shaders/effects/filter/pixels/glsl/pixels.glsl",
+        "size": 1094,
+        "sha256": "06919a5f0cb829fdae9c04ae878aa4d7a12072e176ce3c98fb1ccf2623661e6e"
+      },
+      {
+        "path": "shaders/effects/filter/reverb/definition.js",
+        "size": 1542,
+        "sha256": "41dee53267b9f4228fe5804e2230b8923023130acf77500aa3dea85d6f606179"
+      },
+      {
+        "path": "shaders/effects/filter/reverb/glsl/reverb.glsl",
+        "size": 1816,
+        "sha256": "4dde4b901aded65365d0d46145a7d50dcd2b8d279e32c3d1e7bf02cfc7f78bcb"
+      },
+      {
+        "path": "shaders/effects/filter/reverb/parity-attestation.json",
+        "size": 788,
+        "sha256": "f81aef6ad71b85fa66b054ae35818e107592d8f185e5c09d24d102d4a17a6703"
+      },
+      {
+        "path": "shaders/effects/filter/reverb/parity-case.json",
+        "size": 341,
+        "sha256": "423fe31218bc0d3b083334913bdeaec29c46c475ddcc0fa7427cf6d679c7b01e"
+      },
+      {
+        "path": "shaders/effects/filter/seamless/definition.js",
+        "size": 1140,
+        "sha256": "63cc1dc22cb584282f5f875fbb1f6fc4d3ca1e98e8ef18d09588cea51afab2a5"
+      },
+      {
+        "path": "shaders/effects/filter/seamless/glsl/seamless.glsl",
+        "size": 1513,
+        "sha256": "d54569f8e394430d771ecb51edc9258ecde17483674843fab8a9f6efb733dabf"
+      },
+      {
+        "path": "shaders/effects/filter/tunnel/definition.js",
+        "size": 1962,
+        "sha256": "1044726fa2969ceb1702d389877ada58c986cedaaa401663a2b414e718e39748"
+      },
+      {
+        "path": "shaders/effects/filter/tunnel/glsl/tunnel.glsl",
+        "size": 3062,
+        "sha256": "c0ebe43eead7a1c040dd4a37162d634fe4b1a93ea0b8704bac502fbc5a978193"
+      },
+      {
+        "path": "shaders/effects/filter/tunnel/parity-attestation.json",
+        "size": 788,
+        "sha256": "882391d67c98423fa5c24cf985a9ca22dc038f251f7bd73fb4f4b9e671edf192"
+      },
+      {
+        "path": "shaders/effects/filter/tunnel/parity-case.json",
+        "size": 435,
+        "sha256": "2767a8f80037ec5bbcf6e686bea336f9bba0fe22fd3401cbdc7ad085b4b69c13"
+      },
+      {
+        "path": "shaders/effects/synth/noise/definition.js",
+        "size": 4657,
+        "sha256": "c1f3d5b83ee7fbf4fef2e00f2d943686fed39bffa90d495622df4b2766dc74b9"
+      },
+      {
+        "path": "shaders/effects/synth/noise/glsl/noise.glsl",
+        "size": 18131,
+        "sha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274"
+      },
+      {
+        "path": "shaders/effects/synth/noise/parity-attestation.json",
+        "size": 786,
+        "sha256": "cb47835c9d73f9d6f5624ec8cc1f6bfa7851436e675a85ead9a8305ce43fe67b"
+      },
+      {
+        "path": "shaders/effects/synth/noise/parity-case.json",
+        "size": 232,
+        "sha256": "89ef1fca5c7430f18247cf0d4ffff29c917cd1eb43087c5cd0217593b87006ba"
+      },
+      {
+        "path": "shaders/src/index.js",
+        "size": 3678,
+        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+      },
+      {
+        "path": "shaders/src/renderer/canvas.js",
+        "size": 93851,
+        "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+      }
+    ],
+    "verifiedRendererCount": 1,
+    "readsPerVerifiedRenderer": 3,
+    "programStateApplied": false,
+    "protocol": "Compile each recorded DSL with the current-source CanvasRenderer. Upload the recorded input or a transparent canvas. Render the recorded time. All retained first-renderer readbacks match the retained reference hash. The historical independent-renderer capture remains recorded separately.",
+    "readbacks": [
+      {
+        "name": "filter/channel",
+        "sha256": "8edebb2c2eedf28299445827111264b36cb3a577e9f1adaf1edecfa250e8c5d2"
+      },
+      {
+        "name": "filter/extrude",
+        "sha256": "d63ff0e698b9cf37e3b78f0110c753644f05e44792be2a651079a712953cbe1f"
+      },
+      {
+        "name": "filter/glyphMap",
+        "sha256": "0d7249c680dd111172b97b7f35e3b6e0c1dcf16949c2bced219fee9541a95086"
+      },
+      {
+        "name": "filter/halftone",
+        "sha256": "8bbf6ba9f5b2b6ef6c5cea0729ff04b1ddbeef1ae9cc55d28df3755dfe043a1f"
+      },
+      {
+        "name": "filter/outline",
+        "sha256": "c54a2e0a0d9e0c290eac1482f8f06f47d8a594dc7d8921667c21c68a447dfe19"
+      },
+      {
+        "name": "filter/pixels",
+        "sha256": "ed08110198c7fd60e27f49d972a18cb222406cebe1c2578d1a2e797c3633fba7"
+      },
+      {
+        "name": "filter/reverb",
+        "sha256": "6da3197465b05a979f16d682147d059b819cccf47e3e414f0d83d53760421ab5"
+      },
+      {
+        "name": "filter/seamless",
+        "sha256": "49c84935e1b7b97320a62d1c60c4c83022625c34fadbb62aa2cb3f5477acbb54"
+      },
+      {
+        "name": "filter/tunnel",
+        "sha256": "08dccb519dd44fe057a776456e7d4662d9e1a2e30cbd4da6fe949471b5efbda3"
+      },
+      {
+        "name": "filter/channel",
+        "sha256": "e84f77aaa679a02cff32def2f46fc48d1859ed3bd7d8ba2bda6d8edd2365042e"
+      },
+      {
+        "name": "filter/extrude",
+        "sha256": "b04a52156c496f0a3507a4b1722aa61b08a81ad81f784c965c63c2ed499d14f0"
+      },
+      {
+        "name": "filter/glyphMap",
+        "sha256": "d6db60a9809604164981c40c55f906915eccd207ba6494a18b9f396b47f59eaa"
+      },
+      {
+        "name": "filter/halftone",
+        "sha256": "680874c58d31a0b43329063c24d98d3a471bbeeb28c6f4fbde1c5cce4a1a7a46"
+      },
+      {
+        "name": "filter/outline",
+        "sha256": "47ae624922dce42ef9083b2ba30c8b21ea9929b9402c36a2944eb010d8f915f7"
+      },
+      {
+        "name": "filter/pixels",
+        "sha256": "e4f4ab27922a67202f19c508788ec005e0cdb3b89de186e0a96c06207d8a5d00"
+      },
+      {
+        "name": "filter/reverb",
+        "sha256": "2301939a996f285502adf1498e2ebc2828294618f81db4e3b79f4a8f8d82c11f"
+      },
+      {
+        "name": "filter/seamless",
+        "sha256": "6fa376d4bd6085d3969645a5bf61c15296ff1273b67361df88f569b1831f8e0d"
+      },
+      {
+        "name": "filter/tunnel",
+        "sha256": "418d12077bbfaf93893d3c4d203a413520aef8c5b567000c4f51b068673fb9d5"
+      }
+    ]
+  }
 }

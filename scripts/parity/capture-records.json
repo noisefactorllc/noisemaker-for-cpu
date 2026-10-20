@@ -139,6 +139,25 @@
         "rgbaSha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
         "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
         "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+      },
+      "authorityValidation": {
+        "sourceRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+        "fixtureSha256": "c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a",
+        "startedAt": "2026-10-20T17:27:44.841Z",
+        "completedAt": "2026-10-20T17:27:46.053Z",
+        "sourceFilesVerified": 1597,
+        "independentRenderers": 2,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o0_read",
+            "sha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1",
+            "repeatSha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1",
+            "independentSha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1",
+            "independentRepeatSha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1"
+          }
+        ]
       }
     }
   },
@@ -184,6 +203,25 @@
         "rgbaSha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
         "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
         "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+      },
+      "authorityValidation": {
+        "sourceRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+        "fixtureSha256": "486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024",
+        "startedAt": "2026-10-20T17:27:48.105Z",
+        "completedAt": "2026-10-20T17:27:49.277Z",
+        "sourceFilesVerified": 1597,
+        "independentRenderers": 2,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o0_read",
+            "sha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d",
+            "repeatSha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d",
+            "independentSha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d",
+            "independentRepeatSha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d"
+          }
+        ]
       }
     }
   },
@@ -279,6 +317,25 @@
         "rgbaSha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
         "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
         "reason": "GAP-039: the replaced capture was a single authority frame, one uniform RGBA value, which cannot detect a wrong simulation. The CPU gate runs iterationCount 60, the schedule of 60 authority frames, and the authority output after 60 frames is not uniform."
+      },
+      "authorityValidation": {
+        "sourceRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+        "fixtureSha256": "829684dd36eba52f34a5eb023bf85e3a83b633ac416c900e8153a3fac8312590",
+        "startedAt": "2026-10-20T17:27:41.021Z",
+        "completedAt": "2026-10-20T17:27:42.341Z",
+        "sourceFilesVerified": 1597,
+        "independentRenderers": 2,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o0_read",
+            "sha256": "d538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634",
+            "repeatSha256": "d538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634",
+            "independentSha256": "d538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634",
+            "independentRepeatSha256": "d538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634"
+          }
+        ]
       }
     }
   },
@@ -777,7 +834,33 @@
           "sha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
           "repeatSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113"
         }
-      ]
+      ],
+      "authorityValidation": {
+        "sourceRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+        "fixtureSha256": "553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a",
+        "startedAt": "2026-10-20T17:27:38.069Z",
+        "completedAt": "2026-10-20T17:27:39.564Z",
+        "sourceFilesVerified": 1597,
+        "independentRenderers": 2,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o0_read",
+            "sha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65",
+            "repeatSha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65",
+            "independentSha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65",
+            "independentRepeatSha256": "d131524794c127ecedf8f5ae3dd4f88216c7a313db62fc56b3f5b336e61e1e65"
+          },
+          {
+            "surface": "global_o0_write",
+            "sha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
+            "repeatSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
+            "independentSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
+            "independentRepeatSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113"
+          }
+        ]
+      }
     }
   },
   "defaults/synth__navierStokes.golden.png": {
@@ -807,7 +890,26 @@
           "id": "global_o1_read",
           "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
         }
-      ]
+      ],
+      "authorityValidation": {
+        "sourceRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+        "fixtureSha256": "3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3",
+        "startedAt": "2026-10-20T17:27:39.668Z",
+        "completedAt": "2026-10-20T17:27:40.926Z",
+        "sourceFilesVerified": 1597,
+        "independentRenderers": 2,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o1_write",
+            "sha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3",
+            "repeatSha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3",
+            "independentSha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3",
+            "independentRepeatSha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3"
+          }
+        ]
+      }
     }
   },
   "defaults/filter__scatter.golden.png": {
@@ -889,6 +991,41 @@
           "tolerance": 2
         },
         "approval": "The operator approved replacing the retained golden with this M4 authority capture on 2026-10-17."
+      }
+    }
+  },
+  "defaults/filter__text.golden.png": {
+    "captureRevision": "2026-10-20-m4-metal-webgl2-pin-advance-text-default",
+    "captureRecord": {
+      "sourceRevision": "f6b196dc42568576dfc40794040675fde42d2dc1",
+      "fixtureSha256": "98537773d541033f76a748b2b33eff5264f31008b397d3ffc71076aecefbfb02",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "browser": "chrome-headless-shell 1243",
+      "size": 8,
+      "time": 0.25,
+      "frames": 1,
+      "surface": {
+        "read": "global_o0_read",
+        "write": "global_o0_write",
+        "presented": "global_o0_write"
+      },
+      "protocol": "Upstream CanvasRenderer from the exact source archive rendered the recorded default fixture once at time 0.25 through WebGL2 on Apple M4 Metal. Each text media step received a transparent 256x256 canvas. Three global_o0_write readbacks from each of two independent renderers have the recorded raw hash. The retained prior PNG and this PNG encode identical nonblack RGBA pixels.",
+      "readbacks": [
+        {
+          "id": "global_o0_write",
+          "sha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266",
+          "repeatSha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266",
+          "independentSha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266"
+        }
+      ],
+      "startedAt": "2026-10-20T16:16:45.443485Z",
+      "completedAt": "2026-10-20T16:16:47.931806Z",
+      "independentRenderers": 2,
+      "readsPerRenderer": 3,
+      "pixelComparison": {
+        "previousPngSha256": "6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632",
+        "previousRawSha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266",
+        "identicalPixels": true
       }
     }
   }
