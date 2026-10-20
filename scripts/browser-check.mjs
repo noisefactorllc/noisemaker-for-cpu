@@ -470,6 +470,18 @@ async function runPlaywright(args, server, baseURL, targetURL, requests) {
   }
 }
 
+// True when a failed check's only failures are same-origin module fetches that
+// died at the socket layer (`Network.loadingFailed` with a `net::ERR_*` text).
+// Those are transport failures, not application failures: no page error fired,
+// no response arrived, and no HTTP error status was seen. Retrying such a run
+// over a fresh page distinguishes a transient runner condition from a demo
+// that genuinely cannot load.
+export function transientModuleFetchFailures(result) {
+  return !!result && result.pass === false && result.pageErrors.length === 0 &&
+    result.moduleFailures.length > 0 &&
+    result.moduleFailures.every((failure) => /^failed \S+ :: net::ERR_/.test(failure))
+}
+
 // Reads one Chromium `Runtime.evaluate` result of the status probe. The probe
 // can run before the navigated document has a body: it then throws, and the
 // result carries `exceptionDetails` and no string value. That page is not
@@ -631,7 +643,18 @@ async function run() {
     })
     const cdp = new Cdp(ws)
 
-    const result = await inspectChromium({ cdp, baseURL, targetURL, executable, timeout: args.timeout })
+    // Windows runners under load can drop one parallel same-origin module
+    // fetch with a socket-level error (observed: `net::ERR_NO_BUFFER_SPACE` on
+    // Chrome 155 / Windows Server while every other platform job passed the
+    // same content). One bounded retry over a fresh page keeps the gate honest:
+    // a module that is genuinely broken or missing fails both attempts the
+    // same way, and any page error or HTTP failure is never retried.
+    let result = null
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      result = await inspectChromium({ cdp, baseURL, targetURL, executable, timeout: args.timeout })
+      if (attempt === 2 || !transientModuleFetchFailures(result)) break
+      console.log(`browser-check: attempt ${attempt} failed on transient module fetch errors ${JSON.stringify(result.moduleFailures)}; retrying once over a fresh page`)
+    }
     console.log(`BROWSER-CHECK ${JSON.stringify(result)}`)
     process.exitCode = result.pass ? 0 : 1
   } catch (error) {
