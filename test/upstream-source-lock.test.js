@@ -129,13 +129,36 @@ test('committed kernel records match the pinned-source manifest hashes', async (
   }
 })
 
-// The shipped README and docs/EFFECTS.md name the upstream revision the catalog
-// comes from. A pin move that leaves the old revision in either document fails here.
-test('README and docs/EFFECTS.md name the pinned upstream revision', async () => {
+function assertDocumentSourceReference(text, document, revision = sourceLock.PINNED_UPSTREAM_REVISION) {
+  const reference = text.match(/Noisemaker revision identified by `UPSTREAM_REVISION` in \[[^\]]+\]\(([^)]+)\)/)
+  assert.ok(reference, `${document} must identify the generated upstream revision`)
+  const snapshot = new URL('../src/effects/generated/upstream-snapshot.js', import.meta.url)
+  assert.equal(new URL(reference[1], new URL(document, import.meta.url)).href, snapshot.href,
+    `${document} must link to the shipped upstream snapshot`)
+  const named = [...text.matchAll(/Noisemaker revision `([0-9a-f]{7,40})`/g)].map((match) => match[1])
+  assert.ok(named.every(value => value === revision), `${document} names a stale Noisemaker revision`)
+}
+
+test('README and docs/EFFECTS.md resolve the pinned revision through the shipped snapshot', async () => {
+  const snapshot = await import('../src/effects/generated/upstream-snapshot.js')
+  assert.equal(snapshot.UPSTREAM_REVISION, sourceLock.PINNED_UPSTREAM_REVISION)
   for (const document of ['../README.md', '../docs/EFFECTS.md']) {
     const text = await readFile(new URL(document, import.meta.url), 'utf8')
-    const named = [...text.matchAll(/Noisemaker revision `([0-9a-f]{7,40})`/g)].map((match) => match[1])
-    assert.ok(named.length > 0, `${document} names no Noisemaker revision`)
-    assert.deepEqual([...new Set(named)], [sourceLock.PINNED_UPSTREAM_REVISION], document)
+    assertDocumentSourceReference(text, document)
   }
+})
+
+test('document source references survive a pin move and reject stale claims or broken relative links', () => {
+  const reference = path => `Noisemaker revision identified by \`UPSTREAM_REVISION\` in [the generated snapshot](${path})`
+  const nextRevision = 'b'.repeat(40)
+  const readme = reference('src/effects/generated/upstream-snapshot.js')
+  const effects = reference('../src/effects/generated/upstream-snapshot.js')
+  assert.doesNotThrow(() => assertDocumentSourceReference(readme, '../README.md', nextRevision))
+  assert.doesNotThrow(() => assertDocumentSourceReference(effects, '../docs/EFFECTS.md', nextRevision))
+  assert.throws(() => assertDocumentSourceReference(effects, '../README.md'), /shipped upstream snapshot/)
+  assert.throws(() => assertDocumentSourceReference(readme, '../docs/EFFECTS.md'), /shipped upstream snapshot/)
+  assert.throws(() => assertDocumentSourceReference(`${readme}; Noisemaker revision \`${sourceLock.PINNED_UPSTREAM_REVISION}\``,
+    '../README.md', nextRevision), /stale Noisemaker revision/)
+  assert.throws(() => assertDocumentSourceReference(reference('https://example.com/snapshot.js'), '../README.md'),
+    /shipped upstream snapshot/)
 })
