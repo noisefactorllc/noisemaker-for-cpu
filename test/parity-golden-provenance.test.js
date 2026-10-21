@@ -100,11 +100,11 @@ test('current NEAR authority validation preserves each original capture and bind
 test('NEAR authority validation records the actual current-source capture times and verified input count', async () => {
   const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
   const times = [
-    ['points/buddhabrot', '2026-10-21T00:20:44.822Z', '2026-10-21T00:20:45.798Z'],
-    ['synth/navierStokes', '2026-10-21T00:20:46.160Z', '2026-10-21T00:20:46.823Z'],
-    ['points/hydraulic', '2026-10-21T00:20:47.165Z', '2026-10-21T00:20:47.989Z'],
-    ['points/dla', '2026-10-21T00:20:49.824Z', '2026-10-21T00:20:50.581Z'],
-    ['points/flock', '2026-10-21T00:20:52.449Z', '2026-10-21T00:20:53.194Z'],
+    ['points/buddhabrot', '2026-10-21T23:25:28.431Z', '2026-10-21T23:25:28.803Z'],
+    ['synth/navierStokes', '2026-10-21T23:25:28.254Z', '2026-10-21T23:25:28.405Z'],
+    ['points/hydraulic', '2026-10-21T23:25:28.832Z', '2026-10-21T23:25:29.091Z'],
+    ['points/dla', '2026-10-21T23:25:29.117Z', '2026-10-21T23:25:29.335Z'],
+    ['points/flock', '2026-10-21T23:25:29.360Z', '2026-10-21T23:25:29.556Z'],
   ]
   for (const [id, startedAt, completedAt] of times) {
     const capture = manifest.goldens[`defaults/${id.replace('/', '__')}.golden.png`].captureRecord
@@ -112,7 +112,7 @@ test('NEAR authority validation records the actual current-source capture times 
     const validation = capture.authorityValidation
     assert.equal(validation.sourceRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8', id)
     assert.deepEqual([validation.startedAt, validation.completedAt], [startedAt, completedAt], id)
-    assert.equal(validation.sourceFilesVerified, 1384, id)
+    assert.equal(validation.sourceFilesVerified, 1600, id)
     assert.equal(validation.programStateApplied, true, id)
   }
 })

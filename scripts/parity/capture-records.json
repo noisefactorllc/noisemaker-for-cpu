@@ -1,7 +1,30 @@
 {
   "defaults/points__lenia.golden.png": {
-    "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap003-lenia-timed60",
-    "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 capture from an exact regular-file archive of authority source 6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d. The default points/lenia fixture rendered at 8x8 with perlin and pointsEmit seed 0 and 60 frame times from 0.1516666667 through 0.25 in steps of 1/600. The CPU comparison used renderer seed 1. Readback of global_o0_write was 256 white RGBA channels, raw SHA-256 3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546, encoded PNG SHA-256 f0e1c8ef3bdc28093427b22e79dbc84a53ff22d74eb0756bfccfb50d12282cda. Separate M4 captures returned the same raw hash. The CPU fixture is byte-exact after rounding every additive rgba16f Lenia deposit to half precision. The white final image does not distinguish one from 60 group ticks; the retained density 0.1 variant does."
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "97937dd58b9a815302f29489c16e7b6a11b0ae8e52e502799f802be1838853fd",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 60,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
+          "repeatSha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 209,
+      "frameTimes": "60 times from 0.15166666666666662 through 0.25 in steps of 1/600 (the retained reference protocol)"
+    }
   },
   "variants/points__lenia_density01.golden.png": {
     "captureRevision": "2026-10-18-m4-metal-webgl2-lenia-density01-timed60-read",
@@ -58,36 +81,212 @@
     "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 authority capture from source revision a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15. The source files for cellularAutomata3d, render3d, runtime pipeline, and shader demo match that revision byte-for-byte. The CPU fixture at 8x8 and time 0.25 has DSL effect seed 1. After resetting textures and ping-pong surfaces, the authority pipeline rendered 60 frames at fixed time 0.25. A second 60-frame capture with time advancing from 0.1516666667 to 0.25 in 1/600 steps produced identical RGBA bytes, confirming that these two time sequences have the same output for this fixture and its CPU default iterationCount 60. Two independent captures produced identical PNG bytes (SHA-256 36c4fc8d1152588a4db0335572117be0f87eb560ee93f015ffe9be0f2453f1d1). The CPU oneShot initial output, called with renderer seed 1, differs in three RGBA channels by at most 1 and passes the published tolerance of 2."
   },
   "defaults/synth3d__flythrough3d.golden.png": {
-    "captureRevision": "2026-10-14-m4-metal-webgl2-cpu-gap002-flythrough3d",
-    "captureRecord": "2026-10-14 Apple M4/Metal WebGL2 authority capture from source revision a1a3fa2a84223dfc1f5ec2c7a54a6f4269139c15. The source files for flythrough3d, render3d, runtime pipeline, and shader demo match that revision byte-for-byte. The Godot parity export-and-render harness captured the CPU fixture at 8x8, time 0.25, with DSL effect seed 0 and blank imageTex and textTex, after resetting textures and ping-pong surfaces and rendering 8 frames. Two separate captures produced identical PNG bytes (SHA-256 57ad324735faaccc20350b9dc4a7fd5a34fdbdffd995ef6326ce2a3cf7cfc044). The CPU oneShot initial output, called with renderer seed 1, matches all 256 RGBA channels."
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "031bc2a32831b81288d551df9d66a48ab373952d66f117d70f03cfe03ab57792",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "4c1ae7b1c7af2b45cbc591c741262ad7d8e0aa136949b171a4e4dd1916adf79b",
+          "repeatSha256": "4c1ae7b1c7af2b45cbc591c741262ad7d8e0aa136949b171a4e4dd1916adf79b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 80
+    }
   },
   "defaults/filter3d__palette3d.golden.png": {
-    "captureRevision": "2026-10-09-m4-metal-webgl2-automated-job-4907b00c-palette3d",
-    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Automated job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f470e4037963d1112288701d109dc406b930376cfbb6ec12d954da1f3e195c0b",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "b515b3f51c8e2e3d3380ac030804dc1d96dd7daba86dd90403c82d4316578893",
+          "repeatSha256": "b515b3f51c8e2e3d3380ac030804dc1d96dd7daba86dd90403c82d4316578893"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 77
+    }
   },
   "defaults/render__render3d.golden.png": {
-    "captureRevision": "2026-10-09-m4-metal-webgl2-automated-job-4907b00c-render3d",
-    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Automated job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "af260e26f9e914b400b284b65611f8e424f5ef2b1f64de16c62bd91eac0884d0",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e0615dac38d16b22f00eebc696b0d14c1ab0965fc5552b2023eb97bee91f3976",
+          "repeatSha256": "e0615dac38d16b22f00eebc696b0d14c1ab0965fc5552b2023eb97bee91f3976"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
   },
   "defaults/render__renderCubemap3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "abf45d568e6ad1c2f30e39eb034e6ee89d0657304a46591543f63315c4f8f7dd",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "f026624c36935a025b29a7ee1209daf9cb286d2eb7a86de232a2fece8dc6af6f",
+          "repeatSha256": "f026624c36935a025b29a7ee1209daf9cb286d2eb7a86de232a2fece8dc6af6f"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
   },
   "defaults/render__renderCubemapSurface.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "8c819cca37a739300bfc2533f37d41c677472f9ffad4edaff1ce84e8f7813449",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d6f38da743ad33ab77fed4bb1b38d4ed6520519cbade5564b933b7bd22860f9a",
+          "repeatSha256": "d6f38da743ad33ab77fed4bb1b38d4ed6520519cbade5564b933b7bd22860f9a"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
   },
   "defaults/synth3d__cell3d.golden.png": {
-    "captureRevision": "2026-10-09-m4-metal-webgl2-automated-job-4907b00c-cell3d",
-    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Automated job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "a26d65b9213d943c04debc64e3b365aae36294805a8376e2213a0df23afd5d67",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "8f7264a94c72e9e46c70128ae26535f524ca462509775e95258688ba39a38c55",
+          "repeatSha256": "8f7264a94c72e9e46c70128ae26535f524ca462509775e95258688ba39a38c55"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
   },
   "defaults/synth3d__noise3d.golden.png": {
-    "captureRevision": "2026-10-09-m4-metal-webgl2-automated-job-4907b00c-noise3d",
-    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Automated job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture; the port reproduces this capture byte-exact"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "7f8ec8834000c8b1166e3c5a0fbbb420fb0c291dcaf65262c7e6e666b9474e40",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e0615dac38d16b22f00eebc696b0d14c1ab0965fc5552b2023eb97bee91f3976",
+          "repeatSha256": "e0615dac38d16b22f00eebc696b0d14c1ab0965fc5552b2023eb97bee91f3976"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 84
+    }
   },
   "classic/classicNoisedeck__noise3d.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "7efdf11d75b34642f849e820d7f23b66e7544a70d0a5d8b44af87f499b9c9ae9",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "9b8052ef8b45b9e1d508d23d64746595989acada4168fe0958ea03651c3a76e2",
+          "repeatSha256": "9b8052ef8b45b9e1d508d23d64746595989acada4168fe0958ea03651c3a76e2"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
   },
   "defaults/filter__feedback.golden.png": {
     "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
@@ -143,9 +342,6 @@
       "authorityValidation": {
         "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a",
-        "startedAt": "2026-10-21T00:20:49.824Z",
-        "completedAt": "2026-10-21T00:20:50.581Z",
-        "sourceFilesVerified": 1384,
         "independentRenderers": 2,
         "readsPerRenderer": 2,
         "programStateApplied": true,
@@ -157,7 +353,10 @@
             "independentSha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1",
             "independentRepeatSha256": "77b4078d8211c349eb44435f6376b72aa06725c4944745c1edf5e91404a5eaf1"
           }
-        ]
+        ],
+        "startedAt": "2026-10-21T23:25:29.117Z",
+        "completedAt": "2026-10-21T23:25:29.335Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -207,9 +406,6 @@
       "authorityValidation": {
         "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024",
-        "startedAt": "2026-10-21T00:20:52.449Z",
-        "completedAt": "2026-10-21T00:20:53.194Z",
-        "sourceFilesVerified": 1384,
         "independentRenderers": 2,
         "readsPerRenderer": 2,
         "programStateApplied": true,
@@ -221,7 +417,10 @@
             "independentSha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d",
             "independentRepeatSha256": "d2b3d755a1f4a5ded5beb2f7d7a39c72fed54c6a4d954f9c4181d2bc4d80b84d"
           }
-        ]
+        ],
+        "startedAt": "2026-10-21T23:25:29.360Z",
+        "completedAt": "2026-10-21T23:25:29.556Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -271,8 +470,31 @@
     }
   },
   "defaults/points__heightGrid.golden.png": {
-    "captureRevision": "2026-10-01-m4-metal-webgl2-automated-job-3be6cc6a",
-    "captureRecord": "2026-10-01 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_o0_write') twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "68845b00d4ea1cfe2d55f313399cfcbf018ece44d8b935f1c8b5746e36914d09",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 60,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "4cae390b9391dd1022f76ab499973835a0ae48a8e3164168fa8d6ee1a7df794e",
+          "repeatSha256": "4cae390b9391dd1022f76ab499973835a0ae48a8e3164168fa8d6ee1a7df794e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 174,
+      "frameTimes": "60 times from 0.15166666666666662 through 0.25 in steps of 1/600 (the retained reference protocol)"
+    }
   },
   "defaults/points__hydraulic.golden.png": {
     "captureRevision": "2026-10-18-m4-metal-webgl2-gap039-hydraulic-timed60",
@@ -321,9 +543,6 @@
       "authorityValidation": {
         "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "829684dd36eba52f34a5eb023bf85e3a83b633ac416c900e8153a3fac8312590",
-        "startedAt": "2026-10-21T00:20:47.165Z",
-        "completedAt": "2026-10-21T00:20:47.989Z",
-        "sourceFilesVerified": 1384,
         "independentRenderers": 2,
         "readsPerRenderer": 2,
         "programStateApplied": true,
@@ -335,7 +554,10 @@
             "independentSha256": "d538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634",
             "independentRepeatSha256": "d538fe87a0e1a3c77da39a6b4cdb58f0d1d9ed85c055cec880f52169ba301634"
           }
-        ]
+        ],
+        "startedAt": "2026-10-21T23:25:28.832Z",
+        "completedAt": "2026-10-21T23:25:29.091Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -565,12 +787,56 @@
     }
   },
   "defaults/render__renderLandscape3d.golden.png": {
-    "captureRevision": "2026-10-07-m4-metal-webgl2-1.0.265",
-    "captureRecord": "2026-10-07 M4/Metal authority capture: published engine 1.0.265 (source revision 8e5835932a7297d360b943200b42953224eea0a4, the pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, HeadlessChrome 155), 8x8 gate fixture, time 0.25, readPixels('global_o0_write') twice with identical bytes. The same capture method reproduces the previous 1.0.206 capture of this fixture byte for byte; the new image follows upstream 8fa067f6, which stores heightmap3d's top image row at z = 0."
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "46bf5746f65d4076e84aad4fa7bc8c0e0a4c4a004ec25964139bd7de5d804459",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "5ff07d9994395eeab65b9748fa27919183db8b817b7fadee60789b8aa5fde7cf",
+          "repeatSha256": "5ff07d9994395eeab65b9748fa27919183db8b817b7fadee60789b8aa5fde7cf"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 77
+    }
   },
   "defaults/synth3d__heightmap3d.golden.png": {
-    "captureRevision": "2026-10-07-m4-metal-webgl2-1.0.265",
-    "captureRecord": "2026-10-07 M4/Metal authority capture: published engine 1.0.265 (source revision 8e5835932a7297d360b943200b42953224eea0a4, the pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, HeadlessChrome 155), 8x8 gate fixture, time 0.25, readPixels('global_o0_write') twice with identical bytes. The same capture method reproduces the previous 1.0.206 capture of this fixture byte for byte; the new image follows upstream 8fa067f6, which stores heightmap3d's top image row at z = 0."
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "46bf5746f65d4076e84aad4fa7bc8c0e0a4c4a004ec25964139bd7de5d804459",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "5ff07d9994395eeab65b9748fa27919183db8b817b7fadee60789b8aa5fde7cf",
+          "repeatSha256": "5ff07d9994395eeab65b9748fa27919183db8b817b7fadee60789b8aa5fde7cf"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
   },
   "defaults/synth__roll.golden.png": {
     "captureRevision": "2026-10-02-m4-metal-webgl2-automated-job-3be6cc6a-reactive-mesh",
@@ -722,6 +988,28 @@
         "rgbaSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
         "captureRevision": "2026-10-02-m4-metal-webgl2-automated-job-3be6cc6a-skip-graduate5",
         "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
+      },
+      "authorityValidation": {
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+        "fixtureSha256": "a4af1eef27fa4c0c050d98299533c2a056075b64646519505d451cc7240fa9d3",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "independentRenderers": 1,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o1_write",
+            "sha256": "2ba5441bb4196c0aea1e43feaa1d3d5649cb6b9c92ec3262bb2910109004fd96",
+            "repeatSha256": "2ba5441bb4196c0aea1e43feaa1d3d5649cb6b9c92ec3262bb2910109004fd96"
+          }
+        ],
+        "startedAt": "2026-10-21T23:23:05.089Z",
+        "completedAt": "2026-10-21T23:23:21.530Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -791,22 +1079,108 @@
     "captureRecord": "2026-10-02 M4/Metal authority capture (60-frame protocol): authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, 60 render(0.25) calls before the readback (the settled-state span the CPU iterates per render; protocol validated by reproducing the committed filter/temporalAberration golden exactly), readPixels('global_{output}_write') twice with identical bytes, {output} parsed from the fixture DSL; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive gap003 (skips-recapture-60f.json, skips-compare-60f.txt)"
   },
   "classic/classicNoisedeck__shapes3d.golden.png": {
-    "captureRevision": "2026-10-02-m4-metal-webgl2-automated-job-3be6cc6a-skip-graduate5",
-    "captureRecord": "2026-10-02 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4), 8x8 gate fixture, time 0.25, blank imageTex/textTex, readPixels('global_{output}_write') twice with identical bytes, where {output} is the fixture's own final render target (parsed from the fixture DSL, not always o0); the CPU port reproduces these bytes after aligning iterated-group pass-repeat semantics with upstream pipeline.js render()/resolveRepeatCount; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1, evidence archive gap003 (skips-recapture-reply3.json, skips-compare-repeatfix.txt)"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "9d6d0720583fa96305bc766575fd13bf1a8a0cfee02397c69b58f0e8c8202368",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "2f3a19dc693eba6c025b5aaeda4fbd4b320b4fa6ef27f9f67a5ccd6a7259837d",
+          "repeatSha256": "2f3a19dc693eba6c025b5aaeda4fbd4b320b4fa6ef27f9f67a5ccd6a7259837d"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
   },
   "defaults/synth3d__fractal3d.golden.png": {
-    "captureRevision": "2026-10-09-m4-metal-webgl2-automated-job-4907b00c-fractal3d",
-    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Automated job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture (synth3d/fractal3d is frame-static, so the single-frame capture equals the prior capture's 60 render(0.25) settled-state span; the port reproduces this capture byte-exact)"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c41dff18f2f3a74d4853ba3caa9194e02f9da21af51e2896c26d6cb32e2649fc",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "1df47df455bf033c196e1cb8dfba3dd74abac6034886a0ed1af9763ee9fda64e",
+          "repeatSha256": "1df47df455bf033c196e1cb8dfba3dd74abac6034886a0ed1af9763ee9fda64e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
   },
   "defaults/synth3d__shape3d.golden.png": {
-    "sha256": "439777d3b5a406385660f37b7e36e7a68110afba8b0f7be6fe7efa6b41e67375",
-    "bytes": 191,
-    "captureRevision": "2026-10-03-m4-metal-webgl2-automated-job-3be6cc6a-intdiv-shape3d",
-    "captureRecord": "2026-10-03 M4/Metal authority capture: authority CanvasRenderer at source revision e24c844f8dada85551ab084f41db8944fbc176c8 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) frame (synth3d/shape3d is frame-static and non-iterated, so this equals its settled state) read back twice with identical bytes; Automated job 3be6cc6a-a9cf-4c7c-9b47-26adef52c9f1"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "43a470da19e4908f0c998df9050e358e54ba04ebb2ec7fbec027e091b6dbb89a",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "01fb221fa5614f2bb7aa0ea504c334d3fb8e0c5ee464113b1d711b0f8c2ccd6a",
+          "repeatSha256": "01fb221fa5614f2bb7aa0ea504c334d3fb8e0c5ee464113b1d711b0f8c2ccd6a"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
   },
   "defaults/filter__flipMirror.golden.png": {
-    "captureRevision": "2026-10-09-m4-metal-webgl2-automated-job-4907b00c-flipmirror",
-    "captureRecord": "2026-10-09 M4/Metal authority re-capture: authority CanvasRenderer at source revision 700ac32e8b4f80a221754e62302e63ac76f5ecc5 (pinned upstream), rendered by upstream CanvasRenderer on WebGL2 (ANGLE Metal Renderer: Apple M4, Chromium headless-shell 1243), 8x8 gate fixture, time 0.25, blank imageTex/textTex, single render(0.25) then readPixels('global_o0_write') twice with identical bytes; Automated job 4907b00c-b544-482e-880d-f20f5dcaee70, evidence archive cpu-sync-700ac32-capture (parity/upstream-defaults/filter__flipMirror.dsl; flipMirror mode semantics changed upstream in 16d97cdf..700ac32e, so this golden's first capture is this re-capture; the port reproduces it byte-exact)"
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "a1c1c3dafb210a3641a7459c7621b687443b52dd6ba6247ed729655a1d5201f2",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "9efec1a148510fbdf138258f71396a135b42970d914d0f6363ed0176ce93ed4c",
+          "repeatSha256": "9efec1a148510fbdf138258f71396a135b42970d914d0f6363ed0176ce93ed4c"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
   },
   "defaults/points__buddhabrot.golden.png": {
     "captureRevision": "2026-10-16-m4-metal-webgl2-gap035-buddhabrot",
@@ -838,9 +1212,6 @@
       "authorityValidation": {
         "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a",
-        "startedAt": "2026-10-21T00:20:44.822Z",
-        "completedAt": "2026-10-21T00:20:45.798Z",
-        "sourceFilesVerified": 1384,
         "independentRenderers": 2,
         "readsPerRenderer": 2,
         "programStateApplied": true,
@@ -859,7 +1230,10 @@
             "independentSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113",
             "independentRepeatSha256": "e87f9dda33599762c275be1f49eb12b7cf6555d5e6e46bf32d24cb8b0e3f2113"
           }
-        ]
+        ],
+        "startedAt": "2026-10-21T23:25:28.431Z",
+        "completedAt": "2026-10-21T23:25:28.803Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -894,12 +1268,9 @@
       "authorityValidation": {
         "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3",
-        "startedAt": "2026-10-21T00:20:46.160Z",
-        "completedAt": "2026-10-21T00:20:46.823Z",
-        "sourceFilesVerified": 1384,
+        "programStateApplied": true,
         "independentRenderers": 2,
         "readsPerRenderer": 2,
-        "programStateApplied": true,
         "readbacks": [
           {
             "surface": "global_o1_write",
@@ -908,7 +1279,10 @@
             "independentSha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3",
             "independentRepeatSha256": "ef420c48ef1c6c7470c97cb6819c002e2baa18230cc6b75d8e214ae9d305ffa3"
           }
-        ]
+        ],
+        "startedAt": "2026-10-21T23:25:28.254Z",
+        "completedAt": "2026-10-21T23:25:28.405Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -950,6 +1324,28 @@
           "tolerance": 2
         },
         "approval": "The operator approved replacing the retained golden with this M4 authority capture on 2026-10-17."
+      },
+      "authorityValidation": {
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+        "fixtureSha256": "b3df29e42e3e35500e465abc4ec745f5abb4fa0aec65a587632471e0c9786670",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "independentRenderers": 1,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o0_write",
+            "sha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c",
+            "repeatSha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c"
+          }
+        ],
+        "startedAt": "2026-10-21T23:23:05.089Z",
+        "completedAt": "2026-10-21T23:23:21.530Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -991,6 +1387,28 @@
           "tolerance": 2
         },
         "approval": "The operator approved replacing the retained golden with this M4 authority capture on 2026-10-17."
+      },
+      "authorityValidation": {
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+        "fixtureSha256": "bc7cda94cc581966687bfd20feca2f8bc7d66fbb61b554ed794cafc50a57c251",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "independentRenderers": 1,
+        "readsPerRenderer": 2,
+        "programStateApplied": true,
+        "readbacks": [
+          {
+            "surface": "global_o0_write",
+            "sha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81",
+            "repeatSha256": "9545c9709d9e745cfc832b5d1c2f8175ed7b2a3ad634809be4467b36a078cb81"
+          }
+        ],
+        "startedAt": "2026-10-21T23:23:05.089Z",
+        "completedAt": "2026-10-21T23:23:21.530Z",
+        "sourceFilesVerified": 1600
       }
     }
   },
@@ -1026,7 +1444,3721 @@
         "previousPngSha256": "6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632",
         "previousRawSha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266",
         "identicalPixels": true
+      },
+      "authorityValidation": {
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+        "fixtureSha256": "98537773d541033f76a748b2b33eff5264f31008b397d3ffc71076aecefbfb02",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "programStateApplied": true,
+        "independentRenderers": 1,
+        "readsPerRenderer": 2,
+        "readbacks": [
+          {
+            "surface": "global_o0_write",
+            "sha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266",
+            "repeatSha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266"
+          }
+        ],
+        "startedAt": "2026-10-21T23:23:05.089Z",
+        "completedAt": "2026-10-21T23:23:21.530Z",
+        "sourceFilesVerified": 1600
       }
+    }
+  },
+  "classic/classicNoisedeck__bitEffects.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "faf665ece790ad05a6b6ea2cbb5e0f5207856d16e223260076242294ee9c3ae3",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3ea0d7deec0dfabd8cf6d1182cac8443f7a37e7cfb2e156738c201e002fa5b5e",
+          "repeatSha256": "3ea0d7deec0dfabd8cf6d1182cac8443f7a37e7cfb2e156738c201e002fa5b5e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 273
+    }
+  },
+  "classic/classicNoisedeck__caustic.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "8af43fb99074c7396fcb28cd44d701aa4ba84307118e40dd66666a949ca3ddbd",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "b030a54fb6ef5c7d36926ca12f9f957b9e9c14323e4502ec7a6ebb40132b47bf",
+          "repeatSha256": "b030a54fb6ef5c7d36926ca12f9f957b9e9c14323e4502ec7a6ebb40132b47bf"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 66
+    }
+  },
+  "classic/classicNoisedeck__cellNoise.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "3f0bd44823fcec5aaa003a801c9914b0c16d4a84742082227794e5fe3d6d980b",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "d434a88bccb6258319c54e020c165b43704c06b1c88d4db6fbd887c2423f5c8b",
+          "repeatSha256": "d434a88bccb6258319c54e020c165b43704c06b1c88d4db6fbd887c2423f5c8b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "classic/classicNoisedeck__cellRefract.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b3b40f4195abb733039c286990e2f73c64b2811d9d6bd8185c0a089500452db1",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1",
+          "repeatSha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "classic/classicNoisedeck__coalesce.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e83611aafa49fd79a2b6462b69e637ccd6749347e2a920e861d08bc400b07e50",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "d92808f87e5cadda0afc6d12b8ec85c7e63656d14b7d490fb4bdb4ff6c527a11",
+          "repeatSha256": "d92808f87e5cadda0afc6d12b8ec85c7e63656d14b7d490fb4bdb4ff6c527a11"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 76
+    }
+  },
+  "classic/classicNoisedeck__colorLab.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "dfab0a1232bab51fd74052be0529ad1c0ed8c07f6819e4e181b450f417b133aa",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3f9b8864f305969bdd25e5063ee90083b7e3a5f8f2d831b57fa5b32cd5017392",
+          "repeatSha256": "3f9b8864f305969bdd25e5063ee90083b7e3a5f8f2d831b57fa5b32cd5017392"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "classic/classicNoisedeck__composite.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b34613165b378bba95416f970d47ae05778a32b73ee871ef9741157d9ca9ca52",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "ff4b21396dd1df336ba5b285d23bed84675d58168e8be1984f4ced3d6faa5d82",
+          "repeatSha256": "ff4b21396dd1df336ba5b285d23bed84675d58168e8be1984f4ced3d6faa5d82"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "classic/classicNoisedeck__effects.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "442b74605b9b43dbf8fd78ee7a9bb6b4d61441ba2e65add046fa040ac5a81a35",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1",
+          "repeatSha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "classic/classicNoisedeck__fractal.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "7c31202f2cafcaed66aa155d3cf7d6ae3b4275a22f6f069e4d96f2c5ffa492b8",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "cf9f2435f21d80a60e97f3ea1f7c8cc80329099a715e67816c52c1dc18f42abe",
+          "repeatSha256": "cf9f2435f21d80a60e97f3ea1f7c8cc80329099a715e67816c52c1dc18f42abe"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "classic/classicNoisedeck__glitch.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c4e2312d5d2f6a3d218a29760ed8353ce3786d8d2d5fd2918c24f93e2c272e0d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1",
+          "repeatSha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "classic/classicNoisedeck__kaleido.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "618a3bf80cf5f492fce228022eebab3dab2276fbece60ed4f9b8988b4632b47c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "21de70c612c49cccc530c2d8f776636f19f626ef5df2d5afe1187673e49f67c4",
+          "repeatSha256": "21de70c612c49cccc530c2d8f776636f19f626ef5df2d5afe1187673e49f67c4"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "classic/classicNoisedeck__lensDistortion.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "3dcff44cdd9682a7dc58d8d9460c67a4b4419133fa3d68f904728c1c2b1c2781",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1",
+          "repeatSha256": "717f4b7cc8e034fb36baecca5bfa87493c9d7a5b90a9f6813f17ee4205567da1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "classic/classicNoisedeck__moodscape.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b8d298b5cd984bdacaafa1d81e3a333ed7fab56baad7cbf8c9266959fab303f2",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "57d6a24ab6a59f7a3d347aba14fe58c786f27603c0b30d0b3036d39e73d713a8",
+          "repeatSha256": "57d6a24ab6a59f7a3d347aba14fe58c786f27603c0b30d0b3036d39e73d713a8"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "classic/classicNoisedeck__noise.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "7a45e218829d548c8d7971cdd4c5640af3d36106db55b1394a2961ae89877b33",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "cd6c5ae890862d750b07a967a0372d2bc0d1cebccaa232cdb767fd1b64caeb21",
+          "repeatSha256": "cd6c5ae890862d750b07a967a0372d2bc0d1cebccaa232cdb767fd1b64caeb21"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 66
+    }
+  },
+  "classic/classicNoisedeck__refract.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d7275b3742757fb5d8a5fc997b7ad448c4c8dd6f689d210bf99eedc9ecc0f82f",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "a5cc0800270fae1dd2d7ddf88abe84baabde2d0acef84ae279acb0fe4681af4b",
+          "repeatSha256": "a5cc0800270fae1dd2d7ddf88abe84baabde2d0acef84ae279acb0fe4681af4b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "classic/classicNoisedeck__shapeMixer.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "dc26ba0e811ef74f3b82447a97f7143eea15f294c261bf1f050acf0849f5a536",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "567240c31d26dd013bab24d4f150b8c3afc8a956d435af1a4348bbbd6333904e",
+          "repeatSha256": "567240c31d26dd013bab24d4f150b8c3afc8a956d435af1a4348bbbd6333904e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 77
+    }
+  },
+  "classic/classicNoisedeck__shapes.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d6f56a7a4247bb522a4d06342acfda6dbefb9db247e785a1558c095badecf6bc",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "c623ebc0ff70a67ac65a43d0fd69bb63ef8a9759f3bdd01d59462d02081318b0",
+          "repeatSha256": "c623ebc0ff70a67ac65a43d0fd69bb63ef8a9759f3bdd01d59462d02081318b0"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "classic/classicNoisedeck__splat.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "31c434a55745ec4fbe861fd0c06432b87ec1a548e5b46bd346c640129501736c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "ebd06955d844bfda9358892ed646b8c85c87458fa5ed7a3deb92ccd889dc5629",
+          "repeatSha256": "ebd06955d844bfda9358892ed646b8c85c87458fa5ed7a3deb92ccd889dc5629"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__adjust.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "0d79d6fbd9ff3454c979f7af73e7f5393f9011c5bb9b10dedc873b8aec1b265c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0c07f2755e82d9eab09d7b301b8b212af029133c39f3ff7408ece4bf3240e2db",
+          "repeatSha256": "0c07f2755e82d9eab09d7b301b8b212af029133c39f3ff7408ece4bf3240e2db"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__blur.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f7eb0e4b140035238cced2dfece60639a0a8d3b2571fd195cf8fac02008d8977",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "87eea3ef43e14c49fe8d2f1e799a946b22956c546b70f96e801ec7842b8855bf",
+          "repeatSha256": "87eea3ef43e14c49fe8d2f1e799a946b22956c546b70f96e801ec7842b8855bf"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/filter__bulge.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "aaeb6393a9036557c97aa3304d7bed5a51847d5f1dd507b67a26ee242ebb77e3",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "c97878c459d951371b055efec789c28918e388d269677df10a4a0a115a3d7e14",
+          "repeatSha256": "c97878c459d951371b055efec789c28918e388d269677df10a4a0a115a3d7e14"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__celShading.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "23cb7a460ea2644c3abfdb3a57fcda02dfd6ab9a5b31422b9a83bc40a7aa086e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "17c8cb8b841d697248722a82a51019134be21a4392aa873a3061e9950aa27292",
+          "repeatSha256": "17c8cb8b841d697248722a82a51019134be21a4392aa873a3061e9950aa27292"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__channel.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "0686b45299e1b8ca05244eed7b025a47a9b535ef2c2a9446991790e5282769b7",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "fe8ad06a9bb9e9fab733459c334a379c26c38f02aa91748789f321e7c5079ef8",
+          "repeatSha256": "fe8ad06a9bb9e9fab733459c334a379c26c38f02aa91748789f321e7c5079ef8"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
+  },
+  "defaults/filter__chroma.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e33750a2e091da5132a7e6f753d00c5db899c767a1f3fe83f1ed9d156ddc1aa7",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "91c77bbc9058a7b20f0607e74ee8776eb644fd88dc6186f124d7a778b55791a6",
+          "repeatSha256": "91c77bbc9058a7b20f0607e74ee8776eb644fd88dc6186f124d7a778b55791a6"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__chromaticAberration.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6c1a93def76e0134ba549a50aa3cf7c06dd94ddedfe1561a7d09cedd0ebec283",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0855b6f4182be589aa5cd0fd1da567d57b2afa410d988fe464458830d8e016e1",
+          "repeatSha256": "0855b6f4182be589aa5cd0fd1da567d57b2afa410d988fe464458830d8e016e1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__clouds.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "a290cedf60fb221aa3ba9e7b58ec7f9d010ac9f8ef0cd3b316d6dc4bddaa6b36",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "946c8a9b7d7aa4daee765702ed4da34876b8bbbbba4f9a4321e2d9e6bca5ac40",
+          "repeatSha256": "946c8a9b7d7aa4daee765702ed4da34876b8bbbbba4f9a4321e2d9e6bca5ac40"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
+  },
+  "defaults/filter__colorReplace.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "03dd1bf4d48a4b30e7a797ee0090fd3799435f3c03b0d35f896c1d821d18f1d4",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "7163c15a18ed3f4c70ee1330c378aeb09a3cb99868ea0e55b4d60ab6a4315f42",
+          "repeatSha256": "7163c15a18ed3f4c70ee1330c378aeb09a3cb99868ea0e55b4d60ab6a4315f42"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__corrupt.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "ef360a0406206f6547f431e9a38933e01ded79a4d04ecd3ed39cf196ef911b7c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__craquelure.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "352bb90b60e78d4929c04b59ed057df3cf5fbd271a8386b49296c70136741068",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__deriv.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d409e63ca43070a0365a83b2e6e5771a742dd399ab486315c9a423f6ad810253",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "815a897a4e18999ec42577b33cf87b70226dbec5c0088541f6a571a2e67c1236",
+          "repeatSha256": "815a897a4e18999ec42577b33cf87b70226dbec5c0088541f6a571a2e67c1236"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__directionalBlur.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "da018c6acdf0f8d9ba1f4896a10010b76b81a4ef95c6268d5e601a85cba3c3e5",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "66e56ffb28cdbf49ba58e589354ddda5aab974af168c89bc3bd62932ca1bdbf2",
+          "repeatSha256": "66e56ffb28cdbf49ba58e589354ddda5aab974af168c89bc3bd62932ca1bdbf2"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__dither.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "4bab6dbc673ad9f6a9f439e269c821762d393fc8a405b4a7b56071bac066bd36",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "8ea8a474e39bdb798c6f77bfc0673a9709468cd1ec87107304665a34ff8b4c2b",
+          "repeatSha256": "8ea8a474e39bdb798c6f77bfc0673a9709468cd1ec87107304665a34ff8b4c2b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__extrude.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "4f6dbb27a7bbeb9e2935f6e549180ddf9bca07d0a852c9cf4aa0545cb0c4e0c6",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d77f67c5b3ffe1ccef3038c4790c49affe983809a5383894213c5fa2062b93d4",
+          "repeatSha256": "d77f67c5b3ffe1ccef3038c4790c49affe983809a5383894213c5fa2062b93d4"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__fibers.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "be0008fe2c0c3c431439dc6b7e4704c8f86ad312bac235472ac0b46155a5d008",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
+          "repeatSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/filter__fxaa.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2075a9e72efbc5552c7bb5a18f3428e4f68dc1fb61b925c076e9dbd3ac654f7e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "c848347378b64579b9911523fb2506f51139ef07252e2120c4a36e903610516d",
+          "repeatSha256": "c848347378b64579b9911523fb2506f51139ef07252e2120c4a36e903610516d"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__glowingEdge.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "33a82ef9e04059896b7b6d29d9ffcf3cdcaa9bdea5bbacd71cebdbaddf8de41b",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d73e1f865d366386880e1cb72af044657b90adce01e939e873f82d00c7413b19",
+          "repeatSha256": "d73e1f865d366386880e1cb72af044657b90adce01e939e873f82d00c7413b19"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__glyphMap.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f52b5516200936881ba6f3a749d17e2a17207754b6be03ef47c367e89b0acd18",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "9d26508a96cdfa32b31618fd22538aeb33f1f45847ef9d06c92295a7f160bf66",
+          "repeatSha256": "9d26508a96cdfa32b31618fd22538aeb33f1f45847ef9d06c92295a7f160bf66"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__grain.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d6ba7bd367304391a7b1bb259868efc0cc3080c004c04e9135f8e7b0c93ff5bd",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3f855c9e491b2d2b3ffaa7700794d1febaf7906d035b2c3cb24defd8e4a0d374",
+          "repeatSha256": "3f855c9e491b2d2b3ffaa7700794d1febaf7906d035b2c3cb24defd8e4a0d374"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__grime.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "336f1a6860f382365289e6ed5e66075e39f81e29188b3577ad7eb979e71b2506",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "7909a05fa724dd996f15110de6588df06a9512c36fd3a707d7d228c359710cea",
+          "repeatSha256": "7909a05fa724dd996f15110de6588df06a9512c36fd3a707d7d228c359710cea"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__halftone.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "57022b6ae2e1b55184ddb4340c2f5ba5e8af02352385fe5897aae0921d52de06",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "4c180b63669ea7ca5e8352631252b3d79ee462375731c6110e481543da1d7f68",
+          "repeatSha256": "4c180b63669ea7ca5e8352631252b3d79ee462375731c6110e481543da1d7f68"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__hatch.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "edd9361c77c35b1d352300c359add4b057c284b846f447a925a3ca0c8772fa81",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "faf8df39045a10bf2a5698a5d88a5e0cd266a7358c84f8bca7630c287d64415f",
+          "repeatSha256": "faf8df39045a10bf2a5698a5d88a5e0cd266a7358c84f8bca7630c287d64415f"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/filter__highPass.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "dc58f1c9860d18030539f05a373fe43523349f942d44742ffa063015e362c464",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "72fff6e44e09714203f8c2511ff72e7473be37b74dffcf134ab04f4a4d0a088c",
+          "repeatSha256": "72fff6e44e09714203f8c2511ff72e7473be37b74dffcf134ab04f4a4d0a088c"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__historicPalette.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "04589e4db41b5698df5a2d85691adecb04ac96a1d7c13374c7b2b4384ce24376",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d396ef59bcef66223d78f9e945538d8747c688a7993ba8236daf9efcb4c085f5",
+          "repeatSha256": "d396ef59bcef66223d78f9e945538d8747c688a7993ba8236daf9efcb4c085f5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__invert.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "767ae0c5e7e6626c27c9ffef0c674d2a0823a171b4f9ea26e1c8b05b1965ca97",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0796f6f3b736d762627dd7a2861b2e86f9fd74cc41ec6d6756abfd32af3429f7",
+          "repeatSha256": "0796f6f3b736d762627dd7a2861b2e86f9fd74cc41ec6d6756abfd32af3429f7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__lens.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "3a28ac67b9744bdadda00e49837331906faf2ba9c1f8eaa1abb2f85725c4222d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3143f0ec20f79a39cd5370dcf02f8a342c8ce97bbc2e260ab4a71abb4be2cf88",
+          "repeatSha256": "3143f0ec20f79a39cd5370dcf02f8a342c8ce97bbc2e260ab4a71abb4be2cf88"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__lensWarp.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "fc27ebd6435d7fe32673ab448cacaadecec44dca5e7f9f07ed69354af05df46b",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__lightLeak.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "0d14c6a2c8dd962c795c561ba44b1110d21d36059d5ed89f70211908c115b27c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "9c99d4af2ebf7239b6fcb672fb3b12d93afed1775c7264881d44016e68c6fb10",
+          "repeatSha256": "9c99d4af2ebf7239b6fcb672fb3b12d93afed1775c7264881d44016e68c6fb10"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__lighting.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c56b17fae2e3d96a65a3dee7c981a787f414da3b2ac2bf4e25f01130d4f4d901",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "65fd67f89e92f20f88b2dc6f2291f80367ac74defe7eb3d4edce36fbb374bd84",
+          "repeatSha256": "65fd67f89e92f20f88b2dc6f2291f80367ac74defe7eb3d4edce36fbb374bd84"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__median.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6ad1dc783aba36a2b05a02f7d093338e05314920e81cf97e428fe8352df073d7",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "da16b8086bf2d20d6b7cec62b85069468bc5536fc6e71807672fdcbb503dd401",
+          "repeatSha256": "da16b8086bf2d20d6b7cec62b85069468bc5536fc6e71807672fdcbb503dd401"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__morphology.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b521d70bd4ec2c6ad218a686239e03f25a1350bb5bef288a14299075303ff65c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "451ad683414d91030dd361e399b256b649cf739be1c56d2def84cd1b1d6d5bde",
+          "repeatSha256": "451ad683414d91030dd361e399b256b649cf739be1c56d2def84cd1b1d6d5bde"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/filter__mosaicTiles.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2f085d73966b31876ef8a14d380a2e5f33702d4be4165dd0b2a4e33a6dc68da6",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3cf6cf8bdae0b1965e687ffe02eda022c7a43eff11118a0494677d3c0b18b4f0",
+          "repeatSha256": "3cf6cf8bdae0b1965e687ffe02eda022c7a43eff11118a0494677d3c0b18b4f0"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__normalMap.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f208519c7866fdc73432dd866b866745cbdf87153ad62cedd0e6e81ad8156d59",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e757ea5cbd319e604e0349b2cb9f15c487b31332837475443346e2a3e9aca9a8",
+          "repeatSha256": "e757ea5cbd319e604e0349b2cb9f15c487b31332837475443346e2a3e9aca9a8"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__octaveWarp.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6684fbc3ee595f982f1edb57711b09aa388d233b1df80c7c8c8b38319df13100",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__oilPaint.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "1bd4f7843c7e8e98cf70f30b3f9b21cc444d256555180088114ea36103d0c965",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "175961645f0f27e5c056851a5426d7a26adda45a792c160551bf3dec137536fa",
+          "repeatSha256": "175961645f0f27e5c056851a5426d7a26adda45a792c160551bf3dec137536fa"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "defaults/filter__outline.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "0c12d5a8b67197d8dae40a148b257cbcf47913e19669bc6a5b1366f2f64f9865",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "67cfbd86b770011b937838882eed2463fe214aa6eb1349224633f295bb39e01d",
+          "repeatSha256": "67cfbd86b770011b937838882eed2463fe214aa6eb1349224633f295bb39e01d"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "defaults/filter__palette.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "40ce492a6b72235a281a45c39b411b2dd1d1332433591dcd756913eb85f39793",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "7ce8846a2e12ea71373108ec046a48a9e4050ec838272b4a6e99e6bd101e49dd",
+          "repeatSha256": "7ce8846a2e12ea71373108ec046a48a9e4050ec838272b4a6e99e6bd101e49dd"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/filter__parallax.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d74a7a2b705723163e22aa0012d3d844a258d44ffb1e75ba2e5a883346f1c2d1",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__patchwork.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2cf6cb62746483e87480785183044518844494ea8007c83a203e7b36b0cf9f5d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "160d84518679e313e1503fda1fd6f90a25d057a1b8ad11a02795c9b92813e1eb",
+          "repeatSha256": "160d84518679e313e1503fda1fd6f90a25d057a1b8ad11a02795c9b92813e1eb"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__photocopy.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2fbe586a207f7a2a704b89098858c4bbbd5f124ce8adcd217ab0d740d4453c93",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "9c76899fb3f37515108d954de5a6eec1eed4cd7e5c5850b965fefb99a9ea4db1",
+          "repeatSha256": "9c76899fb3f37515108d954de5a6eec1eed4cd7e5c5850b965fefb99a9ea4db1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/filter__pinch.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "67d7df8a0576d92fe407fa2e77c925b3b919aefe2289a9ee4d9c629cb92e888e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "a33a3f65cf98d3286847dbeb830f0a2fa36941d4766ce2c1bbb42592f05a430b",
+          "repeatSha256": "a33a3f65cf98d3286847dbeb830f0a2fa36941d4766ce2c1bbb42592f05a430b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__pixelSort.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "3aeaaec65de56ab05dd9833f3baffaee1a1f19167cba439790592895d5f734dd",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "462587e72fd774f66bf2745925c3b5197f2c3a28c45ec0272529b4721c7c9369",
+          "repeatSha256": "462587e72fd774f66bf2745925c3b5197f2c3a28c45ec0272529b4721c7c9369"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 79
+    }
+  },
+  "defaults/filter__pixels.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2412a7de089cded5ee608afc80dc96e821802a23a3ee3a68ffbb81601490148e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "fa7b0e5845d1a29c7805d87b291a7b7e71531a73214748eff73618bdb5b912fb",
+          "repeatSha256": "fa7b0e5845d1a29c7805d87b291a7b7e71531a73214748eff73618bdb5b912fb"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__plasticWrap.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "52db4ba68f2a338d3f5d0376621a8fd1807c74b89c46699c18e7b2fcf17a1c64",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "eae40c4e9d6a3bf1e0fabc73f8274f79c5c4610061c400c537bba16fd276bf58",
+          "repeatSha256": "eae40c4e9d6a3bf1e0fabc73f8274f79c5c4610061c400c537bba16fd276bf58"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/filter__polar.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "44c6e0f8a88df4ff972ced0e9919ed9cd60be63b301594c121d9ee724f85e399",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "293f8b3465f3b9ce5aff9b496af687e058554a5c1087a18588a763b1b3a562a5",
+          "repeatSha256": "293f8b3465f3b9ce5aff9b496af687e058554a5c1087a18588a763b1b3a562a5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__pondRipples.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d5cfb3e63fd6812bdc371d091005fea5b2247e5fed714f6bc2f98587bf2c5062",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__posterize.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f625bb49a3beeedd242d88b17a150186089adea4dace111e1ea8d52cc04ebd69",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "994a1c38d40db4e6a1df67ec79ad402a78fed21ee1a95d543e4dfc3edac378eb",
+          "repeatSha256": "994a1c38d40db4e6a1df67ec79ad402a78fed21ee1a95d543e4dfc3edac378eb"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__prismaticAberration.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "22604cf30be7470fc6f46eb7d04b8375ec24aec2e7ebe69e16eb126a2a8ff48d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0855b6f4182be589aa5cd0fd1da567d57b2afa410d988fe464458830d8e016e1",
+          "repeatSha256": "0855b6f4182be589aa5cd0fd1da567d57b2afa410d988fe464458830d8e016e1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__reindex.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "df27d1491597673620dfccdcb7c3cdcb49106ace5a966fe335c341760354cb31",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "b1895f0696d398e66ccf74e8b6c91ae1f7d16164012a69fb0c88742912ac1613",
+          "repeatSha256": "b1895f0696d398e66ccf74e8b6c91ae1f7d16164012a69fb0c88742912ac1613"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__relief.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "bb761b68f729e4b457a401945e8001a28e879e7b86a5958f081404cf170e25aa",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "be4884c4c45055198f240c47d2b2d504da31985d0cd0132391ae0c20d45a3685",
+          "repeatSha256": "be4884c4c45055198f240c47d2b2d504da31985d0cd0132391ae0c20d45a3685"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "defaults/filter__repeat.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "67dd58f7ac8edfd4457ad8672387c1f53605b9cd0a82b7e63bd8eb71ceeaddf2",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "64328c9227bbfd04286552c680ac7e5d9578420edbbecba68ed0bb37f1d201e0",
+          "repeatSha256": "64328c9227bbfd04286552c680ac7e5d9578420edbbecba68ed0bb37f1d201e0"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__reverb.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "1e64b04c1caaf2b203fe110c261711c46bdd6dce2354a094dbddd3044410ec4d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "edc494f5abc8c86d1db539957819c9115719416bb0b77a9e51aa7ec9a48ffd95",
+          "repeatSha256": "edc494f5abc8c86d1db539957819c9115719416bb0b77a9e51aa7ec9a48ffd95"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__ridge.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "29e042be2d1a7183bf3a72c5fbdd8e89c71e499297e6b59e974c0b2de53afa07",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "f48eeec65dc488fe062394481d12f41516061e626106dfe8272daa2ad4b1ef42",
+          "repeatSha256": "f48eeec65dc488fe062394481d12f41516061e626106dfe8272daa2ad4b1ef42"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__scale.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2ea540583a27f67e238ed93832f8b35872ffb60c2b913569d6d5e9a17d0e9bf6",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "681d7bbad830c19eb750ebdcc7a24d7f83357170936b569d64cc1864b3119f74",
+          "repeatSha256": "681d7bbad830c19eb750ebdcc7a24d7f83357170936b569d64cc1864b3119f74"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__scratches.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "df0e3bfebe08289f9d7a8579e4a76bbff87e47b064beed954db251ad305c7bb9",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "f90a65351234e4eead5c3ed0bc807ae2d2303ce30c5128cb96eb5877175ca062",
+          "repeatSha256": "f90a65351234e4eead5c3ed0bc807ae2d2303ce30c5128cb96eb5877175ca062"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__scroll.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "608deed86dc2cd6fa71386228aacd07f0b00ccc36fe52dc256a0902ec9ecf707",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d5975cfc9b8bdc3a771b69632496e5ec000fec52e425a03930c0fc0309b85342",
+          "repeatSha256": "d5975cfc9b8bdc3a771b69632496e5ec000fec52e425a03930c0fc0309b85342"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__seamless.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6c23a0f672af548da326bebd8da0b7a0b7767d7e863e1cd31da76d8a702cb32c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "250107ddda33a20e9393233b4fc8d9e1bb7ee77f38a247a4ec94dc35a48d25d5",
+          "repeatSha256": "250107ddda33a20e9393233b4fc8d9e1bb7ee77f38a247a4ec94dc35a48d25d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__sharpen.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6151bae38f62a5f10cbdf08e21c949219d54e3163a9c4e393e255f4e887ee569",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
+          "repeatSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__simpleAberration.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e1591e6bcd42d52784fbbd52983b903cf6f23f9fdc153008a92838502b0ffc91",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0855b6f4182be589aa5cd0fd1da567d57b2afa410d988fe464458830d8e016e1",
+          "repeatSha256": "0855b6f4182be589aa5cd0fd1da567d57b2afa410d988fe464458830d8e016e1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__sine.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c978c49cc0f50f213ac00ee9bc8d17754c7ef6b16fbaeef233f3ba12a9254d76",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "1ef691608199522ae293e9f5857b0228720d08ca50a7f2b49d703a2f9e1ec510",
+          "repeatSha256": "1ef691608199522ae293e9f5857b0228720d08ca50a7f2b49d703a2f9e1ec510"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__skew.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6837531bcf35a05e344cdaeb6521518f9512b64a6a2e4957ddd277c0150d0fbf",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "fb5f7f66d6c56cdb3d1841628d69053f90b4135238317400506f1d66ce3a45a5",
+          "repeatSha256": "fb5f7f66d6c56cdb3d1841628d69053f90b4135238317400506f1d66ce3a45a5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__smooth.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f8727f8f2287ba14a85d4f68097fab3ca2ba36e3f60c0bf09228ff2576977728",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e337e169bbe97b74fe524dd4f9578dbbceb8756f452e94b95f835792f26e42f3",
+          "repeatSha256": "e337e169bbe97b74fe524dd4f9578dbbceb8756f452e94b95f835792f26e42f3"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "defaults/filter__smoothstep.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c30aa9aa5f7d420c8d262f3ec4ce74c55fa358955c367103729aa8a74177e78b",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "f2a5967c165b8732d733b7fd7c12fa86ed30124589e9bcc02d9ad7819fbe0efd",
+          "repeatSha256": "f2a5967c165b8732d733b7fd7c12fa86ed30124589e9bcc02d9ad7819fbe0efd"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__sobel.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "103ee2609ab7f6473316bedfe9a6ffba0e8692b2eb98c49f18724a8dec97d6ea",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "527bb82a844017b99178095c1706204bbb2a66b0110396532c9799744d07ffd2",
+          "repeatSha256": "527bb82a844017b99178095c1706204bbb2a66b0110396532c9799744d07ffd2"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__spatter.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "d278fbd47ad528b91ea15c864e82b76783c17f67791133f0502d5444f50a689e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "8f54df5526846e698034f0300ee7deb0dbff7528d1d9654fbea6a1839b9e45c4",
+          "repeatSha256": "8f54df5526846e698034f0300ee7deb0dbff7528d1d9654fbea6a1839b9e45c4"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__spinBlur.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "ea5e8ed78fbadb230f95be36033fad7817d6508c70fa4149c85e5d6d94f39cf2",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__spiral.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b3cb7adbba7793b1aafd8911abaede66b9ae8989717b8c36811a160b987dc995",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "13724aeca9e2317c41af90dd0e04e4647e3a6b4d9f9c3d1a191a7e70380140b7",
+          "repeatSha256": "13724aeca9e2317c41af90dd0e04e4647e3a6b4d9f9c3d1a191a7e70380140b7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__spookyTicker.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f98b7c65202fbacb78944d742ec82d1e73d523b236f91da4ca76dd85882f6933",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "b14b742e1cbfa926a13ef7190f4cd3760e47711b0e36f9c2ae907a08106672d3",
+          "repeatSha256": "b14b742e1cbfa926a13ef7190f4cd3760e47711b0e36f9c2ae907a08106672d3"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__stamp.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "01acaf702d057c584e6f0d608a40af56eccc04026f8c1b1a7bce928e0ac4b120",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "08df4a87411b0257e916b070a6701a362e8b938de1a5159fca207042305bcda9",
+          "repeatSha256": "08df4a87411b0257e916b070a6701a362e8b938de1a5159fca207042305bcda9"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/filter__step.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "df8278de5708f9b4ad164e598b20f0bd44d7d5c4cf0fcc72598a4160a907942d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "1d6c97a3ec19277a4e7db85bacdba7866cb7e7ae572f51291d6e04d5dbfa70a9",
+          "repeatSha256": "1d6c97a3ec19277a4e7db85bacdba7866cb7e7ae572f51291d6e04d5dbfa70a9"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__strayHair.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6b1de04259711544247894b6a9a5f4e49abc917642727ace15f72d8d01d5e65c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266",
+          "repeatSha256": "98e9749791496c87f4445e8f162ca83a265331bbbaf6d3885d634444ee1ac266"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__strokes.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e24b5f7a2b5e3f21f1b0567414c3e4f3674cb6b281400ce1f61a114311e376a0",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "521652baec0c026b1b7b989d57d758a3c76c32804a4ffba0fd8af205928fca1f",
+          "repeatSha256": "521652baec0c026b1b7b989d57d758a3c76c32804a4ffba0fd8af205928fca1f"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/filter__tetraColorArray.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e1765b24e0c6e56c8d2966a290afad151e5133a840ead5286a2f49c8149dc349",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "ba1e8359dd814e45fd7566f80ec9ed789257d1cea0cb7d7f162649b2caa38018",
+          "repeatSha256": "ba1e8359dd814e45fd7566f80ec9ed789257d1cea0cb7d7f162649b2caa38018"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/filter__tetraCosine.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "17b4d9ab11b97f3619d0b758c0b5549fef362a04c3449ae5a1a5fcedfac19558",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "7e9e6a0bbe7a09a0e5886be13556833286a131be4cbb59ae0840a8482a9bc52e",
+          "repeatSha256": "7e9e6a0bbe7a09a0e5886be13556833286a131be4cbb59ae0840a8482a9bc52e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__texture.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "8153fecb4d970446533d526449a756ee8fee774518bdf83decdd47b137de5eaa",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "672b97d8d3e830c872a0060bd41dec483788caf3da7f7da55df9746b0bfe3a50",
+          "repeatSha256": "672b97d8d3e830c872a0060bd41dec483788caf3da7f7da55df9746b0bfe3a50"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__threshold.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "5525973ce87c5890843086ef03c38f0254fc68d47806810eed49e77bffe2e2b6",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "2b8a274b7d6e2d6195db2e87c2e99a558e1bbe47b47ede0ef0c6b9a2c56bb247",
+          "repeatSha256": "2b8a274b7d6e2d6195db2e87c2e99a558e1bbe47b47ede0ef0c6b9a2c56bb247"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__tile.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "ccde09766eb50989b204e46a10cadfc1c78602acc4f9b4aa3cc106cb73ceba99",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "8f0b3504f7b5e1006b77bdcd72eff40a69373d6ed8891aaa104e4294b1c7abd6",
+          "repeatSha256": "8f0b3504f7b5e1006b77bdcd72eff40a69373d6ed8891aaa104e4294b1c7abd6"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__tint.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "def86ab3779b9f9991b92ace9fc9f3ca03e470af00957befd9223e32cc72f745",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "1a21409b186d8450acd85290f0e8cb19272ec1d2a99c0d856354bc845c4b262c",
+          "repeatSha256": "1a21409b186d8450acd85290f0e8cb19272ec1d2a99c0d856354bc845c4b262c"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__translate.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "cf5b237890a0aed2a376590e778503f1a8803b8a331aff3cb5da0cc582813cb3",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d5975cfc9b8bdc3a771b69632496e5ec000fec52e425a03930c0fc0309b85342",
+          "repeatSha256": "d5975cfc9b8bdc3a771b69632496e5ec000fec52e425a03930c0fc0309b85342"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__tunnel.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e118bf23f15d1fcacf4437ce669306295b6b8801246e3dee5178f2692954134e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "6f25b13554f9757daace6ddb8f4744f55d1a8b30dafa75d90037608e9650e11b",
+          "repeatSha256": "6f25b13554f9757daace6ddb8f4744f55d1a8b30dafa75d90037608e9650e11b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__vaseline.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "5f59f83308909d59e45e14abc775e9fb44f1cbe777327a08b9da1c8eace1b1e0",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0d35f2d8f4687618f2e6681c777326d6532bcfb6d54f6cc9c197ef26af1308ac",
+          "repeatSha256": "0d35f2d8f4687618f2e6681c777326d6532bcfb6d54f6cc9c197ef26af1308ac"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/filter__vignette.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "386f2230075149d216a8efa7ce410f335f93333f7034b07b2fe916618fa6babb",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "3d73b1f1d6ce25a0f0aa5e2c7a734c13819e0239ee857177882d7d4fcd1f541e",
+          "repeatSha256": "3d73b1f1d6ce25a0f0aa5e2c7a734c13819e0239ee857177882d7d4fcd1f541e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__warp.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "9f49e2ba5957dbe281be24e95062bb12a3bf717a29c82317516eb1280672325d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "74b46764af384d2e18c564666129cc5f64dfe58b151107d12a14daf5457af878",
+          "repeatSha256": "74b46764af384d2e18c564666129cc5f64dfe58b151107d12a14daf5457af878"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 71
+    }
+  },
+  "defaults/filter__watercolor.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "37d1bdd76e3b3cb6715173eff2a7712ee1d3f9527609f338c4b716299f379ff3",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "77105b0eb5b3e679027e1c857e32baec153b2fdb8cab20ebaaeb0cc53c1b00ac",
+          "repeatSha256": "77105b0eb5b3e679027e1c857e32baec153b2fdb8cab20ebaaeb0cc53c1b00ac"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/filter__waves.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e99488460db75bcce8430fe3cae883a732d38e1a570ef1515d266d11b8dacb7f",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "afd2911e0cf1a586db348dc6a83cf27bec2415ec7c5fdf99896f978231a74130",
+          "repeatSha256": "afd2911e0cf1a586db348dc6a83cf27bec2415ec7c5fdf99896f978231a74130"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__wind.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "5677ec7506ebba9ef6dceb199e4fc44d3df69d3fb2d538c028e2ec6e79cf67ab",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "0dead81f20c6f0cbe77c0eefd32b8f3e4f50c49d8ee7485e22ac4c01dab574f7",
+          "repeatSha256": "0dead81f20c6f0cbe77c0eefd32b8f3e4f50c49d8ee7485e22ac4c01dab574f7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/filter__wobble.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "a63e30084478ee7b061ab0522ff4c5477caef7a84ea0c61ed1c1dc28e17478fc",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 70
+    }
+  },
+  "defaults/filter__wormhole.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "5fe0a085aeb1e34a943f198286ebe495681d7bfb0973fc81afebf9390df1b10e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "468c12944ba0826b13e14827e7b69a37a121b7340e727dc04cf199c45b0dd4c6",
+          "repeatSha256": "468c12944ba0826b13e14827e7b69a37a121b7340e727dc04cf199c45b0dd4c6"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/filter__zoomBlur.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "08f85da962d58ba36f6e3e5363efaba402ef5cec7b3104f14e73a501d1783a7d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "6055e0b18f44addf25d79569e09856fd7b5fda8def7bb225a54878da6718031e",
+          "repeatSha256": "6055e0b18f44addf25d79569e09856fd7b5fda8def7bb225a54878da6718031e"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/mixer__alphaMask.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "cb5c34195d4c8d7b2fcbc397f1085c2feabd1610b08ae0334c13dd8c50829b99",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "c33035802ed3f76e12cda95279726bc4a6edb0a1a818ee44e422218e5eaa3151",
+          "repeatSha256": "c33035802ed3f76e12cda95279726bc4a6edb0a1a818ee44e422218e5eaa3151"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/mixer__applyMode.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c4972611fa7b430cb69434d5d2eec695e1c0b9d09e3efc936e10654503dd0b32",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "c0bb7b4dbeb71032433a1d5aec22f31b37f4090bf9962c7064bfa31530562663",
+          "repeatSha256": "c0bb7b4dbeb71032433a1d5aec22f31b37f4090bf9962c7064bfa31530562663"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "defaults/mixer__blendMode.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "9c88c1734f80b50e0c7c5049a154caa678ceafeeef16b83727a311386fce9505",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "86fba5ea8a94ab82ea87de8dbe0e0f3264108dbf4aefdc63717df07d4e96c6f4",
+          "repeatSha256": "86fba5ea8a94ab82ea87de8dbe0e0f3264108dbf4aefdc63717df07d4e96c6f4"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/mixer__cellSplit.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "1a7674231854df3bcfbed63d6ba6c9e0ffbae3fd07cf7cabe2de6f0f60673bfa",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "9469d92f7c5dee58bfd0fb10e56510f1d1ecea2e50518105380dc9776ddaad66",
+          "repeatSha256": "9469d92f7c5dee58bfd0fb10e56510f1d1ecea2e50518105380dc9776ddaad66"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/mixer__distortion.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e6228c75cc030a7419dcab286216f2afea4687d159ce31805729260e75064576",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "474c79d8f7836df78d6e46a4f5c5e1bb263d9a528204fbeb3cd3e3a52eb774b7",
+          "repeatSha256": "474c79d8f7836df78d6e46a4f5c5e1bb263d9a528204fbeb3cd3e3a52eb774b7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 75
+    }
+  },
+  "defaults/mixer__focusBlur.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "f849a522cecae8b58e68f2a13d26442b41702611a343bb00de3627ad4201b74d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "244b22fb1ea92d5c1caf97cd8655930bfca6fef8f43fa08f0658d57542e58c6b",
+          "repeatSha256": "244b22fb1ea92d5c1caf97cd8655930bfca6fef8f43fa08f0658d57542e58c6b"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 83
+    }
+  },
+  "defaults/mixer__mashup.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "972883051327635a8ea1d3943a1f91deb453098b693f83cdc34486a55e3506e7",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o4_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o4_write",
+          "sha256": "bf4da06fe7e265305c4a3af6970e2e0fde1eafe2cb971e3bbf04af2acc017a19",
+          "repeatSha256": "bf4da06fe7e265305c4a3af6970e2e0fde1eafe2cb971e3bbf04af2acc017a19"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 78
+    }
+  },
+  "defaults/mixer__patternMix.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "02e6342b999c3bb65b2574f87c62bba069ea9a5d76f55b90dbc24e9acd1c3c40",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "4b2eb4ba57c1cc5773f485f8c63b3a6a123489a55b04bd74501eb64fa6439738",
+          "repeatSha256": "4b2eb4ba57c1cc5773f485f8c63b3a6a123489a55b04bd74501eb64fa6439738"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/mixer__shadow.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "353a229fba900f0724b65c3458f28ff0ec815fd925667b11eb2a521d43a88f2d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "d5f4c8ee839a628ba68e9c81e08cbe333cfab3404dbfc579defe35de7b188808",
+          "repeatSha256": "d5f4c8ee839a628ba68e9c81e08cbe333cfab3404dbfc579defe35de7b188808"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/mixer__shapeMask.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "2896e9fa42feba8e80cb62bf3a8eccd4f7d58a9d453a6f041a8e8786b95bcddc",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "7951f3a520f4bb778df0ab3734dcd5f45a9aa40bd3599de15fbad3965ce6e8f2",
+          "repeatSha256": "7951f3a520f4bb778df0ab3734dcd5f45a9aa40bd3599de15fbad3965ce6e8f2"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 73
+    }
+  },
+  "defaults/mixer__split.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "0782da2e0257144ddc5cdc20732635107f2981d9095a4c5827cf3cf329c60be1",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "143f583e203d8d841eee3a7672e151e84d986bf2b6474cbfaeb3a8ca382dc07f",
+          "repeatSha256": "143f583e203d8d841eee3a7672e151e84d986bf2b6474cbfaeb3a8ca382dc07f"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/mixer__thresholdMix.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b6c9afb95a212e641f7bb1b6050d21725f3d4738419dafbe1d7549aeb76a769a",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "89b284177825baf9726cbd9b163925123cdaa1cf1e7d3bb64838315f4193cf47",
+          "repeatSha256": "89b284177825baf9726cbd9b163925123cdaa1cf1e7d3bb64838315f4193cf47"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/mixer__uvRemap.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "912892000ff5428d16ce4f0207f94cf78c70a070ddfe19107643b848960b0571",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+          "repeatSha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/render__renderLit3d.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "8f6ad03e618e5acb40946decc8fd5af121bbae330b0b25776fc7cb5e09dfa9ff",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e91ce5ba0918bda69322be67e129c7239c6c589092b4d49f259675901096e0a3",
+          "repeatSha256": "e91ce5ba0918bda69322be67e129c7239c6c589092b4d49f259675901096e0a3"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 74
+    }
+  },
+  "defaults/synth__bitwise.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "7b60f5daf111d9949601dbcb837fccd955e4a50cac9e3e11980b4a6a0cdeb682",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "f593f4e2c481f753dfeeefe604229359e13800fb01a7eff7226b740ae39e54f9",
+          "repeatSha256": "f593f4e2c481f753dfeeefe604229359e13800fb01a7eff7226b740ae39e54f9"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 66
+    }
+  },
+  "defaults/synth__cell.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "b549c1740ada4bcf42b4949254ae60908403cff9ae50e63347f35bb68b1e6c0e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "dad730b0d1ba6ff174092a5839782c5275854dcbe73875a746d4bb83a1b851f0",
+          "repeatSha256": "dad730b0d1ba6ff174092a5839782c5275854dcbe73875a746d4bb83a1b851f0"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 65
+    }
+  },
+  "defaults/synth__curl.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "ed8820e8ba4b1eada8ae44790f3dba3a89f5182098c2f80f8cd0e67f4baf800e",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "db2315137236358bea5a59443473f21b36d41180fc24b44ab9ec1ec54d6611a7",
+          "repeatSha256": "db2315137236358bea5a59443473f21b36d41180fc24b44ab9ec1ec54d6611a7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/synth__gabor.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "30bf77e67a7d89798d1422e51682b8cc4337966389b072e0c2856d7cd3b7abd0",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "cf05e710ab16a3845130bc3a9df97bdf99ab05ad1c74fc2c13251ef8a5b82b19",
+          "repeatSha256": "cf05e710ab16a3845130bc3a9df97bdf99ab05ad1c74fc2c13251ef8a5b82b19"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 66
+    }
+  },
+  "defaults/synth__julia.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "add6b2efe295a3cb733deb1a884da02d330adaf505e3b9851a8c7888dc539136",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "55cf6cd77ec6aa0c1ffed61c7f57477e92c9ea2b7425fee5ee4c9671a94ace90",
+          "repeatSha256": "55cf6cd77ec6aa0c1ffed61c7f57477e92c9ea2b7425fee5ee4c9671a94ace90"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/synth__mandala.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "3c0d47fda867ba78ecce41b99f9a3c1244130e4fa2037807e4faa60abc0e30e0",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "8e813cd7250118fc2b2b7c5d7ea7ad713f97a2b85985faa131b31b5274365ce7",
+          "repeatSha256": "8e813cd7250118fc2b2b7c5d7ea7ad713f97a2b85985faa131b31b5274365ce7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
+  },
+  "defaults/synth__mandelbrot.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "bd6c2563b31526dae193504b72b569e633928010739669ddd1f47bde1f3c9fa1",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e177195ba045bb481908b96415107db3ce3830e85b16bb24e57be58b23b04b87",
+          "repeatSha256": "e177195ba045bb481908b96415107db3ce3830e85b16bb24e57be58b23b04b87"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/synth__media.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e983a8160fe59e73d91700ffb48b564d3a4e5cb72a1fa6b77501ac3f0a439a65",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+          "repeatSha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 69
+    }
+  },
+  "defaults/synth__modPattern.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "89358415bc5d7f3a24dde5cd71ade6e54cf8ecb5f6c6e92cb3627b92ed55c64b",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e6badfe2c4732bf61026a499477610ccb98f63a2972fa1c44bcc66f15e5487e9",
+          "repeatSha256": "e6badfe2c4732bf61026a499477610ccb98f63a2972fa1c44bcc66f15e5487e9"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 65
+    }
+  },
+  "defaults/synth__newton.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "55a5be96c75234d96c9504d95b10b90953e11f71e9ca09418cc06bea8edec0eb",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "efdcfdad8da0ca36477aaa3414baaa20d0004191e5938e5f4085be04351e83fa",
+          "repeatSha256": "efdcfdad8da0ca36477aaa3414baaa20d0004191e5938e5f4085be04351e83fa"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
+  },
+  "defaults/synth__noise.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "562c31669d2ed01cd909f31c1901db84ad7b903a7729f2dd7d11b120c8c26c34",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "e8fc34774294395a0aeb84e7955a9492c0b7292facd52ee13c01b0cb008302a2",
+          "repeatSha256": "e8fc34774294395a0aeb84e7955a9492c0b7292facd52ee13c01b0cb008302a2"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 65
+    }
+  },
+  "defaults/synth__osc2d.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e5a619d100161809c94afa5f0effe3b0cf68751239cea2bf17fdb8f415e0a31c",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "80a8b7dfe416e8a1e78aa01338f9db427a6ab23c2fe466737160eabe11fb42ea",
+          "repeatSha256": "80a8b7dfe416e8a1e78aa01338f9db427a6ab23c2fe466737160eabe11fb42ea"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 65
+    }
+  },
+  "defaults/synth__pattern.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "73461d9f69b4339048277bd32f5e595c937aed162a97db415b749e385e0514f4",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+          "repeatSha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 67
+    }
+  },
+  "defaults/synth__perlin.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "8fce6ea06c162fa26f6fa812ce6a93697b6e8f6b2d99ce93f907b2f739de6c5d",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "b14b742e1cbfa926a13ef7190f4cd3760e47711b0e36f9c2ae907a08106672d3",
+          "repeatSha256": "b14b742e1cbfa926a13ef7190f4cd3760e47711b0e36f9c2ae907a08106672d3"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 66
+    }
+  },
+  "defaults/synth__polygon.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "e05497b073ec61ee748adafe9ae8f5bd05ec382ce897f01dc2b12ba52d89383f",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "4dadfea607d2300a9d6bf379c9079fbc1419b555f67a94d18d002f3ac583d4a0",
+          "repeatSha256": "4dadfea607d2300a9d6bf379c9079fbc1419b555f67a94d18d002f3ac583d4a0"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 65
+    }
+  },
+  "defaults/synth__remap.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "c9efef54155834bef2d37b793953bb7c81ef58528bec20d96edeb757b059f5ab",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "ef356de2eb50ecf32fe80d9e864d65bb083acf6fa0396eaddb2041956760891d",
+          "repeatSha256": "ef356de2eb50ecf32fe80d9e864d65bb083acf6fa0396eaddb2041956760891d"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/synth__sacredGeometry.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "6dd4398e1d361f6cc7fdbec0111ae28b0ebd19372323184cfa0935f58317d691",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "f86f5c0858d0f4d77f06ab3e23b4d00d645171a9fe5482e6996c49a0e392cadb",
+          "repeatSha256": "f86f5c0858d0f4d77f06ab3e23b4d00d645171a9fe5482e6996c49a0e392cadb"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 68
+    }
+  },
+  "defaults/synth__solid.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "1f5185b27165b204309205acec7013028dafbb3f529f30b62d4fc9803418e402",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+          "repeatSha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 65
+    }
+  },
+  "defaults/synth__subdivide.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "81421b2a68151f0fc3ff690d5c19a4889d900ea62b743d28c878de487ef74e7f",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o1_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o1_write",
+          "sha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6",
+          "repeatSha256": "2c893cd47b6757133987906e00c55e6dcce3c567b9df9e7f91ffecd3604cc6a6"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 72
+    }
+  },
+  "defaults/synth__testPattern.golden.png": {
+    "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+    "captureRecord": {
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+      "fixtureSha256": "ca587aa75775b00632ce508092ed7608d83bb1d2a247f0ae2aae7bdff0463f56",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "size": 8,
+      "time": 0.25,
+      "seed": 1,
+      "frames": 1,
+      "programStateApplied": true,
+      "surface": {
+        "write": "global_o0_write"
+      },
+      "readbacks": [
+        {
+          "surface": "global_o0_write",
+          "sha256": "d5975cfc9b8bdc3a771b69632496e5ec000fec52e425a03930c0fc0309b85342",
+          "repeatSha256": "d5975cfc9b8bdc3a771b69632496e5ec000fec52e425a03930c0fc0309b85342"
+        }
+      ],
+      "startedAt": "2026-10-21T23:23:05.089Z",
+      "completedAt": "2026-10-21T23:23:21.530Z",
+      "durationMs": 66
     }
   }
 }
