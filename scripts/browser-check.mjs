@@ -591,37 +591,55 @@ async function run() {
     return
   }
 
-  const userDataDir = mkdtempSync(join(tmpdir(), 'noisemaker-browser-check-'))
-  const browser = spawn(executable, [
-    '--headless=new',
-    '--remote-debugging-port=0',
-    `--user-data-dir=${userDataDir}`,
-    '--no-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    'about:blank',
-  ], { stdio: ['ignore', 'ignore', 'pipe'] })
-
+  // A cold runner can delay the first browser start past the port wait, for
+  // example antivirus scanning a fresh download. Retry the launch before
+  // reporting the browser as failed; the rendered-canvas assertions below
+  // stay unchanged.
+  const launchAttempts = 3
+  let browser = null
   const cleanup = () => {
-    try { browser.kill('SIGKILL') } catch {}
+    try { browser?.kill('SIGKILL') } catch {}
     try { if (server) server.close() } catch {}
   }
   process.on('exit', cleanup)
 
   try {
-    const port = await new Promise((resolvePort, rejectPort) => {
-      let buffer = ''
-      const timer = setTimeout(() => rejectPort(new Error('browser produced no DevTools port')), 30000)
-      browser.stderr.on('data', (chunk) => {
-        buffer += String(chunk)
-        const match = buffer.match(/DevTools listening on ws:\/\/127\.0\.0\.1:(\d+)/)
-        if (match) {
-          clearTimeout(timer)
-          resolvePort(Number(match[1]))
+    const port = await (async () => {
+      let lastError = null
+      for (let attempt = 1; attempt <= launchAttempts; attempt++) {
+        const userDataDir = mkdtempSync(join(tmpdir(), 'noisemaker-browser-check-'))
+        if (browser) {
+          try { browser.kill('SIGKILL') } catch {}
         }
-      })
-      browser.on('exit', (code) => { clearTimeout(timer); rejectPort(new Error(`browser exited early (code ${code})`)) })
-    })
+        browser = spawn(executable, [
+          '--headless=new',
+          '--remote-debugging-port=0',
+          `--user-data-dir=${userDataDir}`,
+          '--no-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          'about:blank',
+        ], { stdio: ['ignore', 'ignore', 'pipe'] })
+        try {
+          return await new Promise((resolvePort, rejectPort) => {
+            let buffer = ''
+            const timer = setTimeout(() => rejectPort(new Error('browser produced no DevTools port')), 30000)
+            browser.stderr.on('data', (chunk) => {
+              buffer += String(chunk)
+              const match = buffer.match(/DevTools listening on ws:\/\/127\.0\.0\.1:(\d+)/)
+              if (match) {
+                clearTimeout(timer)
+                resolvePort(Number(match[1]))
+              }
+            })
+            browser.on('exit', (code) => { clearTimeout(timer); rejectPort(new Error(`browser exited early (code ${code})`)) })
+          })
+        } catch (error) {
+          lastError = error
+        }
+      }
+      throw lastError
+    })()
 
     const version = await fetchJson(`http://127.0.0.1:${port}/json/version`, 20)
     const ws = new WebSocket(version.webSocketDebuggerUrl)
