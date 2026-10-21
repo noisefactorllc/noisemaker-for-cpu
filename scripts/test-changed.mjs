@@ -6,12 +6,13 @@
 import { spawn } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const projectRoot = new URL('..', import.meta.url).pathname
+const projectRoot = fileURLToPath(new URL('..', import.meta.url))
 const changed = (process.env.NM_CHANGED_FILES ?? '')
   .split('\n').map((line) => line.trim()).filter((line) => line.length > 0)
 
-const fullSuite = () => spawn('node', ['--test', '--test-concurrency=2'], {
+const fullSuite = () => spawn(process.execPath, ['--test', '--test-concurrency=2'], {
   cwd: projectRoot, stdio: 'inherit',
 })
 
@@ -40,6 +41,6 @@ if (changed.length === 0) {
     process.exit(0)
   }
   console.error(`NM_CHANGED_FILES: running ${selected.length} test file(s)`)
-  const child = spawn('node', ['--test', '--test-concurrency=2', ...selected], { cwd: projectRoot, stdio: 'inherit' })
+  const child = spawn(process.execPath, ['--test', '--test-concurrency=2', ...selected], { cwd: projectRoot, stdio: 'inherit' })
   child.on('close', (code) => process.exit(code ?? 1))
 }
