@@ -110,7 +110,7 @@ test('NEAR authority validation records the actual current-source capture times 
     const capture = manifest.goldens[`defaults/${id.replace('/', '__')}.golden.png`].captureRecord
     assert.equal(capture.sourceRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d')
     const validation = capture.authorityValidation
-    assert.equal(validation.sourceRevision, 'b71a896a4dbdbc01e682b277f6d9a41fe786485e', id)
+    assert.equal(validation.sourceRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8', id)
     assert.deepEqual([validation.startedAt, validation.completedAt], [startedAt, completedAt], id)
     assert.equal(validation.sourceFilesVerified, 1384, id)
     assert.equal(validation.programStateApplied, true, id)

@@ -12,7 +12,7 @@ import { evaluateReleaseGate } from '../scripts/parity/release-gate.js'
 
 const id = 'points/buddhabrot'
 const meta = { size: 8, time: 0.25, seed: 1, tolerance: 2 }
-const authorityRevision = 'b71a896a4dbdbc01e682b277f6d9a41fe786485e'
+const authorityRevision = 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8'
 const fixture = await readFile(new URL('../parity/upstream-defaults/points__buddhabrot.dsl', import.meta.url), 'utf8')
 const goldenPath = new URL('../parity/goldens/defaults/points__buddhabrot.golden.png', import.meta.url)
 const golden = await readPng(goldenPath)

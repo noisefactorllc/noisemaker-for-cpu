@@ -8,7 +8,7 @@ import { readPng } from '../../src/node/png.js'
 import { compareRgba8 } from './lib.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
-const authorityRevision = 'b71a896a4dbdbc01e682b277f6d9a41fe786485e'
+const authorityRevision = 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8'
 const renderer = 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)'
 
 // Particle simulations are chaotic, so a reviewed visual match passes for them
@@ -26,7 +26,7 @@ const PARTICLE_VISUAL_MATCH = 'particle visual match (operator 2026-10-17: passa
 const POLICIES = new Map([
   ['points/buddhabrot', {
     authorityCapture: {
-      "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
       "fixtureSha256": "553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a",
       "startedAt": "2026-10-21T00:20:44.822Z",
       "completedAt": "2026-10-21T00:20:45.798Z",
@@ -85,7 +85,7 @@ const POLICIES = new Map([
   // M4 sine values substituted, the CPU frame is byte-exact.
   ['synth/navierStokes', {
     authorityCapture: {
-      "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
       "fixtureSha256": "3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3",
       "startedAt": "2026-10-21T00:20:46.160Z",
       "completedAt": "2026-10-21T00:20:46.823Z",
@@ -125,7 +125,7 @@ const POLICIES = new Map([
   // which changes 6 of 64 pixels after 60 frames. A one-iteration run still fails.
   ['points/hydraulic', {
     authorityCapture: {
-      "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
       "fixtureSha256": "829684dd36eba52f34a5eb023bf85e3a83b633ac416c900e8153a3fac8312590",
       "startedAt": "2026-10-21T00:20:47.165Z",
       "completedAt": "2026-10-21T00:20:47.989Z",
@@ -155,7 +155,7 @@ const POLICIES = new Map([
     mechanism: PARTICLE_VISUAL_MATCH,
     review: {
       authorityCapture: {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "829684dd36eba52f34a5eb023bf85e3a83b633ac416c900e8153a3fac8312590",
         "startedAt": "2026-10-21T00:20:48.338Z",
         "completedAt": "2026-10-21T00:20:49.281Z",
@@ -220,7 +220,7 @@ const POLICIES = new Map([
   // Particle visual match: at 8x8 two pixels differ (max 40) after 60 frames.
   ['points/dla', {
     authorityCapture: {
-      "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
       "fixtureSha256": "c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a",
       "startedAt": "2026-10-21T00:20:49.824Z",
       "completedAt": "2026-10-21T00:20:50.581Z",
@@ -250,7 +250,7 @@ const POLICIES = new Map([
     mechanism: PARTICLE_VISUAL_MATCH,
     review: {
       authorityCapture: {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a",
         "startedAt": "2026-10-21T00:20:50.935Z",
         "completedAt": "2026-10-21T00:20:51.899Z",
@@ -290,7 +290,7 @@ const POLICIES = new Map([
   // 64 pixels differ at 8x8 while the 128x128 review frames have the same character.
   ['points/flock', {
     authorityCapture: {
-      "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+      "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
       "fixtureSha256": "486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024",
       "startedAt": "2026-10-21T00:20:52.449Z",
       "completedAt": "2026-10-21T00:20:53.194Z",
@@ -320,7 +320,7 @@ const POLICIES = new Map([
     mechanism: PARTICLE_VISUAL_MATCH,
     review: {
       authorityCapture: {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024",
         "startedAt": "2026-10-21T00:20:53.543Z",
         "completedAt": "2026-10-21T00:20:54.491Z",

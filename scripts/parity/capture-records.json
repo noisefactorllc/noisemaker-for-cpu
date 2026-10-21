@@ -141,7 +141,7 @@
         "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
       },
       "authorityValidation": {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "c220c71e3750e8122cbcc20322a901ff3eb54f8a258f06bdb807fa7ab2a8558a",
         "startedAt": "2026-10-21T00:20:49.824Z",
         "completedAt": "2026-10-21T00:20:50.581Z",
@@ -205,7 +205,7 @@
         "reason": "GAP-039: the replaced capture was one uniform RGBA value, which cannot detect a wrong simulation. The fixture now uses parameters whose authority output is not uniform."
       },
       "authorityValidation": {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "486d9d82c79a7872778bdb13d5e89cf92a48405f8c0d952643fd683eab2fd024",
         "startedAt": "2026-10-21T00:20:52.449Z",
         "completedAt": "2026-10-21T00:20:53.194Z",
@@ -319,7 +319,7 @@
         "reason": "GAP-039: the replaced capture was a single authority frame, one uniform RGBA value, which cannot detect a wrong simulation. The CPU gate runs iterationCount 60, the schedule of 60 authority frames, and the authority output after 60 frames is not uniform."
       },
       "authorityValidation": {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "829684dd36eba52f34a5eb023bf85e3a83b633ac416c900e8153a3fac8312590",
         "startedAt": "2026-10-21T00:20:47.165Z",
         "completedAt": "2026-10-21T00:20:47.989Z",
@@ -836,7 +836,7 @@
         }
       ],
       "authorityValidation": {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "553b7e2cee432e4743404d6b4471b35f503952bd637521210db92158dd3fe61a",
         "startedAt": "2026-10-21T00:20:44.822Z",
         "completedAt": "2026-10-21T00:20:45.798Z",
@@ -892,7 +892,7 @@
         }
       ],
       "authorityValidation": {
-        "sourceRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
         "fixtureSha256": "3a6794f151d5257c9d3ee7223bb63b42c35c4a615f325ba69dddb9beb84db6d3",
         "startedAt": "2026-10-21T00:20:46.160Z",
         "completedAt": "2026-10-21T00:20:46.823Z",

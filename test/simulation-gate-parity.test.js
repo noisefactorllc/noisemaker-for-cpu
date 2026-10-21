@@ -115,7 +115,7 @@ for (const id of ['points/dla', 'points/flock']) {
     const one = renderer.render(stepped, options).toRgba8()
     assert.equal(compareRgba8(one, golden.data, 2).pass, false)
     const reference = { ...result.rendered[0].reference }
-    assert.equal(await reviewedNearComparison({ id, actual: one, source: stepped, meta: { size: 8, time: 0.25, seed: 1, tolerance: 2 }, reference, authorityRevision: 'b71a896a4dbdbc01e682b277f6d9a41fe786485e' }), null)
+    assert.equal(await reviewedNearComparison({ id, actual: one, source: stepped, meta: { size: 8, time: 0.25, seed: 1, tolerance: 2 }, reference, authorityRevision: 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8' }), null)
 
     // The reviewed 128x128 candidate is reproducible from this source.
     const reviewBlank = new Surface(128, 128)

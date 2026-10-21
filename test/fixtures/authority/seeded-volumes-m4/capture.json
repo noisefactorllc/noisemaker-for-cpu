@@ -265,7 +265,7 @@
     "protocol": "One fresh page per case and two independent CanvasRenderer instances from the pinned upstream archive (headless Chromium, --use-angle=metal). loadManifest, loadEffects, compile the recorded DSL, apply the demo ProgramState step values, upload a transparent canvas to every media step, render one frame at time 0.75, and read global_o0_write twice as top-down RGBA8. Both reads of both instances are byte-identical for every case. Volume cases chain write3d(vol0, geo0) before render3d and read global_vol0_write instead: the 16x256 rgba16f atlas, converted by readPixels to RGBA8 with round(value * 255)."
   },
   "validation": {
-    "authorityRevision": "b71a896a4dbdbc01e682b277f6d9a41fe786485e",
+    "authorityRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
     "startedAt": "2026-10-20T16:16:31.732534Z",
     "completedAt": "2026-10-20T16:16:42.507495Z",
     "sources": [
