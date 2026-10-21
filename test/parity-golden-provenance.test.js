@@ -97,6 +97,26 @@ test('current NEAR authority validation preserves each original capture and bind
   }
 })
 
+test('NEAR authority validation records the actual current-source capture times and verified input count', async () => {
+  const manifest = JSON.parse(await readFile(join(projectRoot, 'parity/goldens/provenance.json'), 'utf8'))
+  const times = [
+    ['points/buddhabrot', '2026-10-21T00:20:44.822Z', '2026-10-21T00:20:45.798Z'],
+    ['synth/navierStokes', '2026-10-21T00:20:46.160Z', '2026-10-21T00:20:46.823Z'],
+    ['points/hydraulic', '2026-10-21T00:20:47.165Z', '2026-10-21T00:20:47.989Z'],
+    ['points/dla', '2026-10-21T00:20:49.824Z', '2026-10-21T00:20:50.581Z'],
+    ['points/flock', '2026-10-21T00:20:52.449Z', '2026-10-21T00:20:53.194Z'],
+  ]
+  for (const [id, startedAt, completedAt] of times) {
+    const capture = manifest.goldens[`defaults/${id.replace('/', '__')}.golden.png`].captureRecord
+    assert.equal(capture.sourceRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d')
+    const validation = capture.authorityValidation
+    assert.equal(validation.sourceRevision, 'b71a896a4dbdbc01e682b277f6d9a41fe786485e', id)
+    assert.deepEqual([validation.startedAt, validation.completedAt], [startedAt, completedAt], id)
+    assert.equal(validation.sourceFilesVerified, 1384, id)
+    assert.equal(validation.programStateApplied, true, id)
+  }
+})
+
 test('current source revalidation does not relabel historical renderer protocols or dates', async () => {
   const { UPSTREAM_REVISION } = await import('../src/effects/generated/upstream-snapshot.js')
   for (const directory of ['oddsize-m4', 'posterize-97x43', 'scatter-m4', 'seeded-hashes-m4', 'seeded-volumes-m4', 'snow-m4', 'spookyTicker-m4']) {
