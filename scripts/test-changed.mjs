@@ -16,22 +16,36 @@ const fullSuite = () => spawn(process.execPath, ['--test', '--test-concurrency=2
   cwd: projectRoot, stdio: 'inherit',
 })
 
+// Every *.test.* file under test/, including nested directories, so a changed
+// path referenced only from a nested test file still selects its tests.
+function collectTestFiles() {
+  const found = []
+  const walk = (relative) => {
+    for (const entry of readdirSync(join(projectRoot, relative), { withFileTypes: true })) {
+      const child = `${relative}/${entry.name}`
+      if (entry.isDirectory()) walk(child)
+      else if (/\.test\.[cm]?js$/.test(entry.name)) found.push(child)
+    }
+  }
+  walk('test')
+  return found
+}
+
 if (changed.length === 0) {
   const child = fullSuite()
   child.on('close', (code) => process.exit(code ?? 1))
 } else {
   const needles = new Set()
   for (const path of changed) {
-    needles.add(path)
-    needles.add(path.replace(/\.[cm]?js$/, ''))
-    needles.add(path.split('/').pop())
-    if (path.startsWith('src/')) needles.add(path.slice('src/'.length))
+    const normalized = path.replaceAll('\\', '/')
+    needles.add(normalized)
+    needles.add(normalized.replace(/\.[cm]?js$/, ''))
+    needles.add(normalized.split('/').pop())
+    if (normalized.startsWith('src/')) needles.add(normalized.slice('src/'.length))
   }
   const selected = []
-  for (const entry of readdirSync(join(projectRoot, 'test'), { withFileTypes: true })) {
-    if (!entry.isFile() || !/\.test\.[cm]?js$/.test(entry.name)) continue
-    const path = `test/${entry.name}`
-    if (changed.includes(path) || needles.has(entry.name) ||
+  for (const path of collectTestFiles()) {
+    if (needles.has(path) || needles.has(path.replace(/\.[cm]?js$/, '')) || needles.has(path.split('/').pop()) ||
         [...needles].some((needle) => readFileSync(join(projectRoot, path), 'utf8').includes(needle))) {
       selected.push(path)
     }
