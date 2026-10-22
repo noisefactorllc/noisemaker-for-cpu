@@ -11,7 +11,7 @@
 // open group. A texture that is merely `global_`-prefixed by convention (e.g.
 // `synth/reactionDiffusion`'s private `global_rd_state`) does NOT match this pattern — it stays
 // ordinary per-step scratch, never shared across steps.
-export const PARTICLE_STATE_PATTERN = /^global_(xyz|vel|rgba|life_data)$|^global_.*_trail$/
+export const PARTICLE_STATE_PATTERN = /^global_(xyz|vel|rgba|life_data)$|^global_.*_trail$|^global_[a-z]+_base_color$/
 
 export function isParticleStateName(name) {
   return typeof name === 'string' && PARTICLE_STATE_PATTERN.test(name)

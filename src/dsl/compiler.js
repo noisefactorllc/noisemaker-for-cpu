@@ -336,9 +336,13 @@ function compileChain(chain, bindings, { inline = false } = {}) {
     } catch (error) {
       throw new DslError(error.message, call.loc)
     }
-    const explicitParams = Object.freeze(args.flatMap((arg, argumentIndex) => {
-      return arg.value === undefined ? [] : [arg.name ?? definition.paramNames[argumentIndex]]
-    }))
+    const explicitParams = Object.freeze([...new Set(args.flatMap((arg, argumentIndex) => {
+      if (arg.value === undefined) return []
+      // A deprecated alias records its canonical name, as upstream's
+      // post-resolution `seen` set does.
+      const name = arg.name ?? definition.paramNames[argumentIndex]
+      return [definition.paramAliases?.[name] ?? name]
+    }))])
     const step = { kind: 'effect', definition, params, explicitParams, loc: call.loc }
     if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
     steps.push(step)

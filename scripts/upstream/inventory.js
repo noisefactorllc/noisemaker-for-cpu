@@ -207,6 +207,7 @@ async function inventory() {
         passes: (definition.passes ?? []).map(projectPass),
         textures: projectTextures(definition.textures),
         externalTexture: definition.externalTexture ?? null,
+        ...(definition.paramAliases ? { paramAliases: { ...definition.paramAliases } } : {}),
       }
       for (const key of OUTPUT_KEYS) {
         if (definition[key] !== undefined) record[key] = definition[key]

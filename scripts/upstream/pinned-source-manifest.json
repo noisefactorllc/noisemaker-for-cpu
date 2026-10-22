@@ -1,5 +1,5 @@
 {
- "revision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+ "revision": "12751c78103ec352bd359a9944bbeac5ad239a4b",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -4557,13 +4557,13 @@
   },
   {
    "path": "shaders/effects/points/attractor/definition.js",
-   "size": 3566,
-   "sha256": "fbcd3833744b79b07e028de562aab19a70dd7e0564c3f7ad76afb1893fc4cae6"
+   "size": 3923,
+   "sha256": "4637676f8bfe0310648fa999283f415032018adbf0c9f1e047c0afe39e59939a"
   },
   {
    "path": "shaders/effects/points/attractor/glsl/agent.glsl",
-   "size": 5340,
-   "sha256": "ca2b022c4716108bf00c7e60093ca48310e806ebea3892dd3773b209a82cbe60"
+   "size": 6045,
+   "sha256": "cfe98602348063ab7cb3aa0c642f70de000c2352a40368e8fc9eddcf47447e82"
   },
   {
    "path": "shaders/effects/points/attractor/glsl/passthrough.glsl",
@@ -4578,7 +4578,7 @@
   {
    "path": "shaders/effects/points/attractor/parity-attestation.json",
    "size": 791,
-   "sha256": "487047f88aab3dafba3a7e819d3d317dc81c6df73cfbc19bbc1922961944752e"
+   "sha256": "fef2b023d4fe13681a53bfa6b0784033359f744dff397295d5679a2e0fd994f8"
   },
   {
    "path": "shaders/effects/points/attractor/parity-case.json",
@@ -4587,8 +4587,8 @@
   },
   {
    "path": "shaders/effects/points/attractor/wgsl/agent.wgsl",
-   "size": 5792,
-   "sha256": "3e146d383bcf008d7c22a54fd3c2f35e6e997b8b74a63e2fd920cf9af639ac4b"
+   "size": 6454,
+   "sha256": "0b9d9663e58fdd3d940c47e6263c7053819163c8bf9b0515b19b83c8cec55952"
   },
   {
    "path": "shaders/effects/points/attractor/wgsl/passthrough.wgsl",
@@ -4597,13 +4597,13 @@
   },
   {
    "path": "shaders/effects/points/buddhabrot/definition.js",
-   "size": 4056,
-   "sha256": "51959ab0261796017999c7ec2dc610cdb9cf3cc4f03ac85068392e87be560ad0"
+   "size": 4334,
+   "sha256": "36eea77fec3cb378ae48eb9e7e9b9e8e16faed7b7c02e6eb3293c7913034daf3"
   },
   {
    "path": "shaders/effects/points/buddhabrot/glsl/agent.glsl",
-   "size": 5260,
-   "sha256": "1355eeaf5badb5b5d7f7000228858995cc1a2c231ddc558182a96c9cc2b5c996"
+   "size": 6121,
+   "sha256": "efecb24d045790bee064e160a1b09a7f411589e76fee87591261bba0cc44870f"
   },
   {
    "path": "shaders/effects/points/buddhabrot/glsl/passthrough.glsl",
@@ -4623,7 +4623,7 @@
   {
    "path": "shaders/effects/points/buddhabrot/parity-attestation.json",
    "size": 792,
-   "sha256": "f526b93ed3beb4e62962846c36e22d62349dad272e16ee14ee580dd74f2ebcc5"
+   "sha256": "d1d3d43e79fc1dc6becb1d47078b7b332a56b1de6c5cec2c6bb2172b14ad94c0"
   },
   {
    "path": "shaders/effects/points/buddhabrot/parity-case.json",
@@ -4632,8 +4632,8 @@
   },
   {
    "path": "shaders/effects/points/buddhabrot/wgsl/agent.wgsl",
-   "size": 5274,
-   "sha256": "e13c3d3fa9c7f738ebee9bfdfbd7b98897cdb445d79d005c409e733193c09118"
+   "size": 6067,
+   "sha256": "b8d9db07a7e4c1982c50350e486425dbc981dfd1d8b9a0f4bce329da58e7ea39"
   },
   {
    "path": "shaders/effects/points/buddhabrot/wgsl/passthrough.wgsl",
@@ -4647,13 +4647,13 @@
   },
   {
    "path": "shaders/effects/points/dla/definition.js",
-   "size": 6015,
-   "sha256": "c5ae09c40d6414f8cc69034227deb33061f49793cfe596000fd09a43faf5367f"
+   "size": 6320,
+   "sha256": "eb3f47406d599e120ff3cc1a94925b4247b241b34d979f9e078a63959edbb0cf"
   },
   {
    "path": "shaders/effects/points/dla/glsl/agent.glsl",
-   "size": 6529,
-   "sha256": "c895d5ac734ae8b96a1309ae4cd068137619629efd8afa2ce47bea72c263f5fb"
+   "size": 7791,
+   "sha256": "cae55bc611428b4e6938a79814898c8bda2a3af19b303502ec5b77f5479b88f9"
   },
   {
    "path": "shaders/effects/points/dla/glsl/copyGrid.glsl",
@@ -4682,13 +4682,13 @@
   },
   {
    "path": "shaders/effects/points/dla/help.md",
-   "size": 890,
-   "sha256": "c7dd5f333d50d5a14ceb1ad7bb22a1051e78a4356d162c5340b5cc66cc7ef7d8"
+   "size": 889,
+   "sha256": "f31387bc63aa895207bdc6aeb3632d96b85d89c659960edd85b1cf979f9622db"
   },
   {
    "path": "shaders/effects/points/dla/parity-attestation.json",
    "size": 785,
-   "sha256": "05b78e5ded3206a12641cb6354094e58d5890764867f513895811cbef1ff00c3"
+   "sha256": "c829de30f2b7d0749f71bd95635dc9db0f3f66147f6559c1a62f1d8b76875982"
   },
   {
    "path": "shaders/effects/points/dla/parity-case.json",
@@ -4697,8 +4697,8 @@
   },
   {
    "path": "shaders/effects/points/dla/wgsl/agent.wgsl",
-   "size": 6743,
-   "sha256": "af1294e7d4539b4c045c4285f8d7dd049b4aa52c1ef9b4374d62d92331766dc7"
+   "size": 7996,
+   "sha256": "cca95622ccdcfafaf2bb9b38c2ff4fd91b944a2eb474150f4852f0afad714295"
   },
   {
    "path": "shaders/effects/points/dla/wgsl/copyGrid.wgsl",
@@ -4722,13 +4722,13 @@
   },
   {
    "path": "shaders/effects/points/flock/definition.js",
-   "size": 4830,
-   "sha256": "60a6b8d6986108bdc338cccaafee9fa56ccd56050e28118d655901c1c193172a"
+   "size": 5197,
+   "sha256": "e4f387014aaf2a5ba3012e4c479f3f66e544da9c0ef2dbd3d9ddbae7123784b0"
   },
   {
    "path": "shaders/effects/points/flock/glsl/agent.glsl",
-   "size": 10065,
-   "sha256": "53b97cf51884b718823bc185be50e881320df6ee58ede9f612fd3743adda84a2"
+   "size": 11303,
+   "sha256": "3be70196fe1ffee473c7352e5a13d600f507a1bb6f6005622d1c1d03f8b6c156"
   },
   {
    "path": "shaders/effects/points/flock/glsl/passthrough.glsl",
@@ -4743,7 +4743,7 @@
   {
    "path": "shaders/effects/points/flock/parity-attestation.json",
    "size": 787,
-   "sha256": "172c93452b6688c80abcbfd6e6035108c07b50d291c0fa96fac795f84d62ba13"
+   "sha256": "89738eda156cbefde3a98fac3489271a1aef8b4334eda7c2b6b352676c2c467c"
   },
   {
    "path": "shaders/effects/points/flock/parity-case.json",
@@ -4752,8 +4752,8 @@
   },
   {
    "path": "shaders/effects/points/flock/wgsl/agent.wgsl",
-   "size": 10185,
-   "sha256": "5e90c1139484018184989534c89b317dd5e420c349557ea8d7c6ffc53b5e664f"
+   "size": 11402,
+   "sha256": "7c1f0f9241ecac2de96c5423f60cfa74c54384c58a9e091703fb10656976e35f"
   },
   {
    "path": "shaders/effects/points/flock/wgsl/passthrough.wgsl",
@@ -4762,13 +4762,13 @@
   },
   {
    "path": "shaders/effects/points/flow/definition.js",
-   "size": 4533,
-   "sha256": "51f7af89d3d9a1789e5375522ef54025924ebd4934b6e8add3be71b1df5a56d2"
+   "size": 4885,
+   "sha256": "ab5fdc0a67268a7b9ddffaa24deb8ec43cf782151f1abe376569e8517adb5eb2"
   },
   {
    "path": "shaders/effects/points/flow/glsl/agent.glsl",
-   "size": 6345,
-   "sha256": "8421346ff3cfa8c9677a70e04efe303ac42f52d61842bbeb7a0dd7fc846cf44c"
+   "size": 7515,
+   "sha256": "f8149c037daa3172ccafdb0ffcadbebad3a5fd7d3b9fa1112861518cddfede06"
   },
   {
    "path": "shaders/effects/points/flow/glsl/passthrough.glsl",
@@ -4777,13 +4777,13 @@
   },
   {
    "path": "shaders/effects/points/flow/help.md",
-   "size": 859,
-   "sha256": "699f1d4d8be5b469b8494431d4c5a16e6f92a1a227ece0cc167e0b281bdba913"
+   "size": 862,
+   "sha256": "bb443e844c8568a4bf9868ed19db5a0697a560bdeb566954706c320eb037f3f1"
   },
   {
    "path": "shaders/effects/points/flow/parity-attestation.json",
    "size": 786,
-   "sha256": "1002d21e2724c8fd34e6737652acb30200c10de154c3a00a8021c5ef8158cfb6"
+   "sha256": "52b40f9a36e94eaea462a72027a3b58687d665f77e978dd658bd42d1dc71e4ef"
   },
   {
    "path": "shaders/effects/points/flow/parity-case.json",
@@ -4792,8 +4792,8 @@
   },
   {
    "path": "shaders/effects/points/flow/wgsl/agent.wgsl",
-   "size": 6437,
-   "sha256": "55b46b2860e75b2f6b19cbe43ea1936a3bc4c0273199aec4cf7ab12e4c1ef2cd"
+   "size": 7604,
+   "sha256": "d9fec678d773ae43f01e96ee6e44ba081a07060d3b34a9485be9a712ca466cee"
   },
   {
    "path": "shaders/effects/points/flow/wgsl/passthrough.wgsl",
@@ -4842,13 +4842,13 @@
   },
   {
    "path": "shaders/effects/points/hydraulic/definition.js",
-   "size": 3388,
-   "sha256": "d2d0f7c7a65f39ca7c7d1ab12118e7e8650e2678a7844212aad466356655feec"
+   "size": 3741,
+   "sha256": "5cf4d3ca312aee820ab1a833b92d2ca15cfc2ccd590668f101f2fe56b6eab04e"
   },
   {
    "path": "shaders/effects/points/hydraulic/glsl/agent.glsl",
-   "size": 6800,
-   "sha256": "a2b19e1088060aca2292773df1e8d48d41e7ccb6398928db0d1da6922bf9d040"
+   "size": 7967,
+   "sha256": "02bff511e46a3e32cfd7d2aa0c8d49d24a9590441c8900379241ba210a06a0fc"
   },
   {
    "path": "shaders/effects/points/hydraulic/glsl/passthrough.glsl",
@@ -4858,12 +4858,12 @@
   {
    "path": "shaders/effects/points/hydraulic/help.md",
    "size": 751,
-   "sha256": "041deec036767b856bb26e81a0c446b36ff1aa673c7c311348c626d2bf6e979b"
+   "sha256": "50dc9bbaa125d9a23f54931351b90bbf88b3d1cf720e78881f8e0deb4b1e8dec"
   },
   {
    "path": "shaders/effects/points/hydraulic/parity-attestation.json",
    "size": 791,
-   "sha256": "cf6414f49def02db5fa5ab9a1fbfd8daa782bd43f0b3b1f520f9e87b3bd4bbb3"
+   "sha256": "f6132ac294bd4deab47421edb70eea7b355bd797ac9c2cc02ad92cee6b163a95"
   },
   {
    "path": "shaders/effects/points/hydraulic/parity-case.json",
@@ -4872,8 +4872,8 @@
   },
   {
    "path": "shaders/effects/points/hydraulic/wgsl/agent.wgsl",
-   "size": 7081,
-   "sha256": "19b35e9d91f02f8f92b22a1223ce5072fcf71b373dd170c8605516146e4d3e8e"
+   "size": 8245,
+   "sha256": "3c144ae05daa7488eda48e41d42c464491326ab839d0f0de16fba8c0eb7251f2"
   },
   {
    "path": "shaders/effects/points/hydraulic/wgsl/passthrough.wgsl",
@@ -4882,13 +4882,13 @@
   },
   {
    "path": "shaders/effects/points/lenia/definition.js",
-   "size": 6049,
-   "sha256": "7d277fb8da01d22e32d67226c4b4f42a4357578c74f7ade12a95e863d19cfb69"
+   "size": 6342,
+   "sha256": "86a13c3ab2ad38003587cbbf77155f29e2fc465727295a42a80c7816eb4cac08"
   },
   {
    "path": "shaders/effects/points/lenia/glsl/agentField.glsl",
-   "size": 3861,
-   "sha256": "4d8f14b0a55147beee5d92f6aaeb306de41f04c7b2aea3f02e5837733d7c1cb4"
+   "size": 5099,
+   "sha256": "b5f996e1d84485c4726801aed539690cd242529a81d2101f98cb8ef2ccc56d87"
   },
   {
    "path": "shaders/effects/points/lenia/glsl/clear.glsl",
@@ -4923,7 +4923,7 @@
   {
    "path": "shaders/effects/points/lenia/parity-attestation.json",
    "size": 787,
-   "sha256": "ea44de20cc9f3f678cebfaf8344e622970560f587d7c8f1ec6283501a2d4dac3"
+   "sha256": "2104f65799d6c3caba52c564dd8fe7aebcbdc710df65f3e1702da961ecc352e8"
   },
   {
    "path": "shaders/effects/points/lenia/parity-case.json",
@@ -4932,8 +4932,8 @@
   },
   {
    "path": "shaders/effects/points/lenia/wgsl/agentField.wgsl",
-   "size": 4115,
-   "sha256": "86af3173956a33ae76377c2d956890530d0102dec86d05b5fa5361f222a71677"
+   "size": 5381,
+   "sha256": "061b88bba0b08bc05fe3f5495a4500a53a7b41c3c1b066efbfa901e7a216fa91"
   },
   {
    "path": "shaders/effects/points/lenia/wgsl/clear.wgsl",
@@ -5007,13 +5007,13 @@
   },
   {
    "path": "shaders/effects/points/physarum/definition.js",
-   "size": 5747,
-   "sha256": "9b95cbe504f42dce4acbfc686d32011b2304661e1f8761851c1ce74c9e545011"
+   "size": 6067,
+   "sha256": "1c124ba85cf6579f0ebe2b6d298b819006319c889dab248e9dae240efe401811"
   },
   {
    "path": "shaders/effects/points/physarum/glsl/agent.glsl",
-   "size": 5340,
-   "sha256": "b47e240d3ff72c7852a21c2581310c3eb3ee7244c8a69974d451279e35088575"
+   "size": 6510,
+   "sha256": "a9b21cee808cf70e7d29d05f27bdf9bd598ef1f5ac8dae492e6541cf21456e2f"
   },
   {
    "path": "shaders/effects/points/physarum/glsl/deposit.frag",
@@ -5037,13 +5037,13 @@
   },
   {
    "path": "shaders/effects/points/physarum/help.md",
-   "size": 1018,
-   "sha256": "b6b27df3be86a4f3033486ff1b502fac003e8ad5bf77c46478de7ed4bf05a405"
+   "size": 1017,
+   "sha256": "fbb44d66f7117c46221cbd33bff1bfa6479c5dd9c400b86c37177f7215ca2099"
   },
   {
    "path": "shaders/effects/points/physarum/parity-attestation.json",
    "size": 790,
-   "sha256": "9006968b8f69fb17ceced8c19ff9a3672369ae72b1b92e63fe54087072c8aa2d"
+   "sha256": "02886649dee2f336ce89f48d3c734a05bbe51417f418763902b5536886d64c9b"
   },
   {
    "path": "shaders/effects/points/physarum/parity-case.json",
@@ -5052,8 +5052,8 @@
   },
   {
    "path": "shaders/effects/points/physarum/wgsl/agent.wgsl",
-   "size": 5656,
-   "sha256": "a8474224121eb7042e030b9cc5465b7028d50e3251f1e9cb3b83dfbca6412a4e"
+   "size": 6839,
+   "sha256": "5d30f7036b9df12b3be931cb8280b61f1f9e13b8bfcec7e2bfff20c4548e1d76"
   },
   {
    "path": "shaders/effects/points/physarum/wgsl/deposit.wgsl",
@@ -5072,13 +5072,13 @@
   },
   {
    "path": "shaders/effects/points/physical/definition.js",
-   "size": 4255,
-   "sha256": "ceee9df390fe225f39bc0fb4529d70014966d4daff5546ca46a06bd3387c3f3c"
+   "size": 4561,
+   "sha256": "8a99bab1a73acf3e9477457d862befb9ab5e33acb3a0d1632cce3f6846ff71bf"
   },
   {
    "path": "shaders/effects/points/physical/glsl/agent.glsl",
-   "size": 4475,
-   "sha256": "a372ae5cc6ce92bfde34890d89471e6d617c0619adcac7cf05c0ed12120995ea"
+   "size": 5690,
+   "sha256": "06f3afef8efeaba67f1babf129ee107b06e860ec8458e270ce404fc770b46615"
   },
   {
    "path": "shaders/effects/points/physical/glsl/passthrough.glsl",
@@ -5093,7 +5093,7 @@
   {
    "path": "shaders/effects/points/physical/parity-attestation.json",
    "size": 790,
-   "sha256": "e5ccaa327e90bc809f17b245e137687d80db150b18087fd3288bca15ae92fecd"
+   "sha256": "6ac17508c49d392787349461cc51343904e8465165bf9dd8227611a23ce2d5fb"
   },
   {
    "path": "shaders/effects/points/physical/parity-case.json",
@@ -5102,8 +5102,8 @@
   },
   {
    "path": "shaders/effects/points/physical/wgsl/agent.wgsl",
-   "size": 4382,
-   "sha256": "c32962da5e27e0cd90813d551301be1f7f183241e94087e7e97b7be6611f86c5"
+   "size": 5636,
+   "sha256": "092c4afc6a37f07a0f2eb34b59472eed79fd7124796abd57fb6fcdfcbd58f37f"
   },
   {
    "path": "shaders/effects/points/physical/wgsl/passthrough.wgsl",
@@ -5567,38 +5567,38 @@
   },
   {
    "path": "shaders/effects/strings.de.json",
-   "size": 190647,
-   "sha256": "cfe4c1018dd67cb0f21cd2c8132227d755bc6998debc398650ff67702d780c23"
+   "size": 190656,
+   "sha256": "fc45bed1e9ef3af59649f82bb612a52644266a998a0c5e6f4b2a67f3a655ed80"
   },
   {
    "path": "shaders/effects/strings.en.json",
-   "size": 184234,
-   "sha256": "ce0823a6a71670063acdca6cf235202ae4acd4a0d78a71ab800689adfacc5b96"
+   "size": 184240,
+   "sha256": "410dfedab464e52701d49206543e71ab71d810ab76e1acf925ba39f31613ddc6"
   },
   {
    "path": "shaders/effects/strings.es.json",
-   "size": 193081,
-   "sha256": "0b5d224a3a19f7585ccd43b191bdde0abde217e967cbf30bd9de7483627df3df"
+   "size": 193090,
+   "sha256": "93085b5974df9bddc9e20c52b81c5ab931dfca95984a7e8ef85f81de829f99b0"
   },
   {
    "path": "shaders/effects/strings.fr.json",
-   "size": 194234,
-   "sha256": "c3efe283d9d52db5e985fcec8009dc9732b676f763a97fd318403713b1593a02"
+   "size": 194243,
+   "sha256": "e7e6f24306609a1e52685c5a04e129f103cd4144276099b80f47cfbcfc2bb1f4"
   },
   {
    "path": "shaders/effects/strings.it.json",
-   "size": 192370,
-   "sha256": "8e807028cad0f31ad61c03f17127ecaa969daa44e66868c1b2d2b4a34bf686cd"
+   "size": 192388,
+   "sha256": "631881a4d90d2fad453f16c5988e702e0cb82a9d9a66ef46cfb36d1c02606d01"
   },
   {
    "path": "shaders/effects/strings.ja.json",
-   "size": 200843,
-   "sha256": "d1a5affcc7c56728d77759f1710b873cc945f7987b725dc92048d12cb744e608"
+   "size": 200819,
+   "sha256": "3eba15b6e4763f09a95813b5f7f6be84d94c38a53a975af533beac1ce94adc1b"
   },
   {
    "path": "shaders/effects/strings.pt.json",
-   "size": 193274,
-   "sha256": "c87b3f295e9adf9dfd9e80f706031ccc4ea12416ac93bb58682594cac1ed4d20"
+   "size": 193283,
+   "sha256": "701af5ba4de2a6d0e0d3296c34c942732d4d04e150b5d14d644371f74a5d5653"
   },
   {
    "path": "shaders/effects/synth/bitwise/definition.js",
@@ -6737,8 +6737,8 @@
   },
   {
    "path": "shaders/src/lang/diagnostics.js",
-   "size": 2103,
-   "sha256": "a58ef848a2f7ad848ae5949a4dcbb51bc4ccaee9a969f22c2bf076b0f3d4183a"
+   "size": 2194,
+   "sha256": "48d9e6881589c7360aca20a353f047e1edc5163e63088427f9769ddebaad6d64"
   },
   {
    "path": "shaders/src/lang/effectAliases.js",
@@ -6776,6 +6776,11 @@
    "sha256": "d83888f732cabc719dd112a97b3db53a849e2c50e734068357c22804accc7f9c"
   },
   {
+   "path": "shaders/src/lang/paramAliases.js",
+   "size": 2452,
+   "sha256": "426cc1764557ad66fefa0292a543ec7d7697030967e265215d97411f45db20cc"
+  },
+  {
    "path": "shaders/src/lang/parser.js",
    "size": 59055,
    "sha256": "b9d3905ed65c8dd0654e311277ab6604813257de1c091135490272fba20dcce5"
@@ -6792,8 +6797,8 @@
   },
   {
    "path": "shaders/src/lang/transform.js",
-   "size": 25969,
-   "sha256": "c275efa67e4591348452de99bf38f14b2dfaf0713b6f30509c949701680b407a"
+   "size": 26650,
+   "sha256": "dfbca9cb76652dd18fa73228c69f8bd0b66895d58c1131f370f44b8f78547931"
   },
   {
    "path": "shaders/src/lang/unparser.js",
@@ -6802,8 +6807,8 @@
   },
   {
    "path": "shaders/src/lang/validator.js",
-   "size": 82354,
-   "sha256": "dafb85f5f3fee4aa07ab15ae387fcf734c2a55d4e4c86b27eddda8de8b4b23ba"
+   "size": 82705,
+   "sha256": "6a7b98baf0bc19abce3fa3deb7b068d57d28ebb64b30d21ae7e748b7d33b0a2a"
   },
   {
    "path": "shaders/src/palettes.js",
@@ -6812,8 +6817,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 93851,
-   "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+   "size": 94063,
+   "sha256": "188c51fbf37b548d23f246da77b090f5c5101f33d5572316c274ebf2bb0ad07e"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",
@@ -6867,18 +6872,18 @@
   },
   {
    "path": "shaders/src/runtime/effect-validator.js",
-   "size": 48779,
-   "sha256": "9a3ac6d929f774292ed82fab528009a890d9daae98edbb9fab3c33af7a7ea4e4"
+   "size": 49636,
+   "sha256": "493906f9ad2213ef2912e51daa16f422720bae26329b518b25cd72b03a903c91"
   },
   {
    "path": "shaders/src/runtime/effect.js",
-   "size": 8678,
-   "sha256": "a0e2dcb3f396893b2c2983635f7bba634fe784e3a6e0e92a3dda4bf448cbdb59"
+   "size": 8751,
+   "sha256": "91bee78cc58952666b136003701ec8a464338fecb113fc1cc15a0ee9b5126bfc"
   },
   {
    "path": "shaders/src/runtime/expander.js",
-   "size": 72401,
-   "sha256": "6aed03bb9fe2d2a13fe3466d9dd113cda627e22d0f15a4f746e4182dc0ec8343"
+   "size": 72724,
+   "sha256": "73570c2cd2430aa1cc7568932bb0c7267ee4b08b1b8de5ebd4c1c026145a40e7"
   },
   {
    "path": "shaders/src/runtime/external-input.js",

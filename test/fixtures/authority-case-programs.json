@@ -1,581 +1,581 @@
 {
- "revision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
- "cases": [
-  {
-   "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/bitEffects\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nbitEffects(seed: 3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/caustic/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/caustic\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\ncaustic().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/cellNoise/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/cellNoise\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\ncellNoise(colorMode: palette).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        256,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            128,\n            128\n        ],\n        \"renderScale\": 3\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/cellRefract/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/cellRefract\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).cellRefract().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/coalesce/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/coalesce\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, speed: 0).write(o1)\\nnoise(seed: 7, speed: 0).write(o2)\\nread(o1).coalesce(tex: read(o2), blendMode: cloak, mix: 60, refractAAmt: 40, refractBAmt: 40).coalesce(tex: read(o2), mix: 0, refractAAmt: 40, refractADir: 30, refractBAmt: 20, refractBDir: -45).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/composite/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/gradient\",\n        \"classicNoisedeck/composite\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).composite(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/effects/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/noise\",\n        \"classicNoisedeck/effects\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nnoise(seed: 1).effects(effect: shadow, scaleAmt: 150, rotation: 30, offsetX: 20, offsetY: -15, flip: upToDown).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 3\n    },\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/fractal/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/fractal\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nfractal(rotation: 30, iterations: 10).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/glitch/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [160, 144],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/noise\",\n    \"classicNoisedeck/glitch\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\nnoise(seed: 1).glitch(glitchiness: 40, scanlinesAmt: 50, snowAmt: 30, vignetteAmt: 75).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/kaleido/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/kaleido\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).kaleido(loopOffset: noiseConstant, seed: 2).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/lensDistortion/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/lensDistortion\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).lensDistortion(vignetteAmt: 100).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/moodscape/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/moodscape\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\nmoodscape().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/noise/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [160, 144],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/noise\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\nnoise(seed: 1, refractAmt: 35, type: catmullRom3x3).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/noise3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/noise3d\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nnoise3d(scale: 60).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/refract/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/refract\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).refract().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/shapeMixer/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/gradient\",\n        \"classicNoisedeck/shapeMixer\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).shapeMixer(tex: o0, palette: ghostly, blendMode: refract, loopOffset: 300, seed: 3).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/shapes/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/shapes\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nshapes(loopAOffset: noiseBSpline3x3, loopBOffset: noiseSine).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/shapes3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/shapes3d\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nshapes3d(colorMode: depth, spin: 30, flip: 20).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/classicNoisedeck/splat/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/noise\",\n        \"classicNoisedeck/splat\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\nnoise(seed: 1, scaleX: 50, scaleY: 50).splat().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/adjust/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/adjust\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).adjust(brightness: 1.2, contrast: 0.35, saturation: 0.8).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/bloom/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/bloom\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).bloom().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/blur/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/blur\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).blur().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/bulge/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/bulge\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).bulge(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/celShading/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/celShading\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).celShading().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/chromaticAberration/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/chromaticAberration\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).chromaticAberration(aberration: 25).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/chrome/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/chrome\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars)\\n  .chrome(detail: 55, smoothness: 35, distortion: 65)\\n  .write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/convolutionFeedback/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/convolutionFeedback\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).convolutionFeedback().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/corrupt/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/corrupt\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).corrupt().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/crt/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/crt\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).crt().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/degauss/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/degauss\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).degauss().write(o0)\\nrender(o0)\"\n}"
-  },
-  {
-   "path": "shaders/effects/filter/deriv/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/deriv\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).deriv().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/dither/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/dither\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).dither().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/feedback/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/feedback\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).feedback(refractAAmt: 30, refractADir: 45, mix: 30, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/fibers/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/fibers\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).fibers(density: 1, alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/flipMirror/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/flipMirror\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).flipMirror().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/fxaa/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/fxaa\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: stripes, scale: 10, rotation: 30, smoothness: 0.001, bgColor: #666666).fxaa().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/glowingEdge/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/glowingEdge\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).glowingEdge().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/glyphMap/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/glyphMap\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).glyphMap(cellSize: 32).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 3\n    },\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/grade/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/grade\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).grade(exposure: 0.2, contrast: 0.15, fadedFilm: 0.15, preset: warmFilm, alpha: 0.6, vignetteAmount: 0.4).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/grime/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/grime\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, speed: 0).grime().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/historicPalette/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/historicPalette\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).historicPalette().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/invert/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/invert\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).invert(mode: full).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/lensWarp/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/lensWarp\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).lensWarp().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/lighting/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/lighting\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(ridges: true)\\n.lighting(normalStrength: 2)\\n.write(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/lowPoly/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/lowPoly\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).lowPoly().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/normalize/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/normalize\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: dots, smoothness: 0.2, fgColor: #c08060, bgColor: #304050).normalize().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/normalMap/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/normalMap\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(seed: 1).normalMap().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/octaveWarp/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    48\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/octaveWarp\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, ridges: true).octaveWarp(octaves: 1, antialias: false, displacement: 0.05, freq: 2).write(o0)\\nrender(o0)\",\n  \"tiles\": {\n    \"size\": [\n      32,\n      24\n    ],\n    \"renderScale\": 2\n  }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/osd/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/osd\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).osd().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        160,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/outline/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/outline\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).outline().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/palette/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/palette\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).palette().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/pinch/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/pinch\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).pinch(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/pixelSort/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth/perlin\",\n    \"filter/pixelSort\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\nperlin(scale: 75, octaves: 2)\\n  .pixelSort(angled: -180, darkest: true)\\n  .write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    192\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/polar/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/polar\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).polar().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/pondRipples/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/pondRipples\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).pondRipples().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/prismaticAberration/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/prismaticAberration\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(ridges: true).prismaticAberration(modulate: true).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/reindex/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/reindex\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).reindex().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/repeat/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/repeat\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).repeat().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/reverb/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/reverb\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).reverb(wrap: clamp).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/rotate/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/rotate\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).rotate(wrap: repeat).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}"
-  },
-  {
-   "path": "shaders/effects/filter/scale/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        80,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/scale\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: uvMap).scale(x: 2, y: 1.5, centerX: 0.25, centerY: 0.7, wrap: clamp).write(o0)\\nrender(o0)\",\n    \"tiles\": {\n        \"size\": [\n            40,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/scanlineError/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/scanlineError\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(seed: 1).scanlineError(noise: 1.5, mode: vhs).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        96,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/scratches/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/scratches\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).scratches(alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/scroll/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/scroll\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).scroll(speedX: 1, speedY: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/sharpen/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/sharpen\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: dots, smoothness: 0.04, rotation: 15).sharpen(amount: 5).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/simpleAberration/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/simpleAberration\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(ridges: true, colorMode: mono)\\n.simpleAberration()\\n.write(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        128,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            64,\n            64\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/skew/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/skew\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).skew(rotate: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/smooth/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/smooth\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: stripes, scale: 5, rotation: 88, smoothness: 0.001, bgColor: #808080).smooth(type: blur, radius: 4).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/snow/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/snow\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).snow(pause: true).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/sobel/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/sobel\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).sobel().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/spinBlur/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/spinBlur\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).spinBlur(amount: 40, centerX: 0.3, centerY: 0.7).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/spiral/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/spiral\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).spiral(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/spookyTicker/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/solid\",\n        \"filter/spookyTicker\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nsolid(color: #101820).spookyTicker().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/strayHair/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/strayHair\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).strayHair(alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/text/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/text\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).text(text: \\\"Retired\\\", matteOpacity: 0.5).write(o0)\\nrender(o0)\",\n  \"textureInputs\": [\n    {\n      \"effect\": \"filter/text\",\n      \"uniform\": \"textTex\",\n      \"width\": 4,\n      \"height\": 4,\n      \"data\": [\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255\n      ]\n    }\n  ]\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/texture/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/texture\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, speed: 0).texture().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/tile/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/tile\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).tile().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/tint/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/tint\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).tint(color: #804020, alpha: 0.5, mode: overlay).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/translate/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/translate\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).translate(x: 0.05, y: -0.05).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/tunnel/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/tunnel\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).tunnel().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/unsharpMask/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/unsharpMask\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(scaleX: 20, scaleY: 20, octaves: 4).unsharpMask().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/vaseline/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/vaseline\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).vaseline().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/vignette/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/vignette\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).vignette().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/warp/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/warp\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).warp().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/waves/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/waves\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).waves(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/wobble/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/wobble\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, speed: 0).wobble(range: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter/zoomBlur/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/zoomBlur\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).zoomBlur().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter3d/flow3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"filter3d/flow3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, filter3d, render\\n\\nnoise3d(seed: 1).flow3d().render3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/filter3d/palette3d/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/noise3d\",\n    \"filter3d/palette3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, filter3d, render\\nnoise3d(volumeSize: x16).palette3d().render3d().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/alphaMask/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\"\n  ],\n  \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).write(o1)\\nread(o1).alphaMask(tex: solid(color: #808080), baseTex: solid(color: #0000ff, alpha: 0.25), maskMode: true).write(o2)\\nsolid(color: #804020, alpha: 0.5).alphaMask(tex: read(o2), mix: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/applyMode/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/applyMode\"\n  ],\n  \"dsl\": \"search synth, mixer\\ntestPattern(pattern: colorBars).applyMode(tex: solid(color: #804020)).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/blendMode/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/blendMode\"\n  ],\n  \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).write(o1)\\nsolid(color: #804020, alpha: 0.5).write(o2)\\nread(o1).blendMode(tex: read(o2), mode: multiply, mix: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/centerMask/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"mixer/centerMask\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search mixer, synth\\n\\nnoise(ridges: true, colorMode: mono)\\n.write(o0)\\n\\nnoise(ridges: true)\\n.centerMask(tex: read(o0), mix: -75)\\n.write(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/focusBlur/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"mixer/focusBlur\",\n        \"synth/gradient\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, mixer\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).focusBlur(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/patternMix/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"mixer/patternMix\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\nnoise(seed: 1, ridges: true, colorMode: mono).write(o0)\\nnoise(seed: 2, ridges: true).patternMix(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/shadow/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"mixer/shadow\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\nnoise(seed: 1, scaleX: 100, scaleY: 100).write(o0)\\nnoise(seed: 2, ridges: true, colorMode: mono).shadow(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/shapeMask/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"mixer/shapeMask\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).write(o1)\\ntestPattern(pattern: gradient).write(o2)\\nread(o1).shapeMask(tex: read(o2), shape: triangle, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/mixer/uvRemap/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/gradient\",\n        \"mixer/uvRemap\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).uvRemap(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/attractor/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/attractor\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).attractor().pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/buddhabrot/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/buddhabrot\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).buddhabrot().pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/dla/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/dla\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).dla().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/flock/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/flock\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).flock().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/flow/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/flow\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).flow().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/heightGrid/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"render/pointsEmit\",\n    \"points/heightGrid\",\n    \"render/pointsBillboardRender\"\n  ],\n  \"dsl\": \"search synth, points, render\\ntestPattern(pattern: gradient).write(o1)\\ntestPattern(pattern: colorBars).write(o2)\\nsolid().pointsEmit(stateSize: x64).heightGrid(heightTex: read(o1), diffuseTex: read(o2), gridScale: 80, heightScale: 25).pointsBillboardRender(viewMode: perspective, rotateX: 0.55, posY: -12, posZ: 10, pointSize: 2, density: 100, intensity: 0, inputIntensity: 0, sizeDistance: 160, brightnessDistance: 200, aperture: 0.5, focalDistance: 80).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/hydraulic/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/hydraulic\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).hydraulic().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/lenia/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/lenia\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).lenia().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/life/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/life\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).life().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/physarum/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/physarum\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).physarum().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/points/physical/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/physical\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).physical().pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/meshRender/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"render/meshLoader\",\n        \"render/meshRender\"\n    ],\n    \"dsl\": \"search render\\n\\nmeshLoader().meshRender(offsetX: 0.4, offsetY: -0.3, offsetZ: 0.5, rotateX: 40, rotateY: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"meshInputs\": [\n        {\n            \"mesh\": \"mesh0\",\n            \"path\": \"share/meshes/cube.obj\"\n        }\n    ]\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/pointsBillboardRender/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"render/pointsEmit\",\n    \"points/heightGrid\",\n    \"render/pointsBillboardRender\"\n  ],\n  \"dsl\": \"search synth, points, render\\ntestPattern(pattern: gradient).write(o1)\\ntestPattern(pattern: colorBars).write(o2)\\nsolid().pointsEmit(stateSize: x64).heightGrid(heightTex: read(o1), diffuseTex: read(o2), gridScale: 80, heightScale: 25).pointsBillboardRender(blendMode: alpha, depositOpacity: 100, viewMode: ortho, shapeMode: star, rotateX: 0.55, posY: -12, posZ: 10, pointSize: 2, density: 100, intensity: 0, inputIntensity: 0, sizeDistance: 160, brightnessDistance: 200, aperture: 0.5, focalDistance: 80).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/pointsEmit/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/pointsRender/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [160, 144],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"render/pointsEmit\",\n    \"points/heightGrid\",\n    \"render/pointsRender\"\n  ],\n  \"dsl\": \"search synth, points, render\\ntestPattern(pattern: gradient).write(o1)\\ntestPattern(pattern: colorBars).write(o2)\\nsolid().pointsEmit(stateSize: x64).heightGrid(heightTex: read(o1), diffuseTex: read(o2), gridScale: 64, heightScale: 18).pointsRender(viewMode: perspective, rotateX: 0.55, posY: -10, posZ: 12, fieldOfView: 75, density: 100, intensity: 0, inputIntensity: 0, matteOpacity: 0).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/render3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x32).render3d(filtering: voxel).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/renderLandscape3d/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth3d/heightmap3d\",\n    \"render/renderLandscape3d\"\n  ],\n  \"dsl\": \"search synth, synth3d, render\\nheightmap3d(heightTex: testPattern(pattern: gradient), tex: testPattern(pattern: colorBars), volumeSize: x32, heightScale: 0.6, baseHeight: 0.1).renderLandscape3d(filtering: isosurface, viewMode: perspective, rotateX: 0.62, rotateY: 0.5, posY: 12).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/render/renderLit3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/renderLit3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x32).renderLit3d(specularIntensity: 2, shininess: 64).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/cell/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/cell\"\n  ],\n  \"dsl\": \"search synth\\ncell().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/cellularAutomata/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/cellularAutomata\"\n    ],\n    \"dsl\": \"search synth\\n\\ncellularAutomata(smoothing: catmullRom3x3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        128,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            64,\n            64\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/curl/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/curl\"\n    ],\n    \"dsl\": \"search synth\\n\\ncurl().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/julia/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/julia\"\n    ],\n    \"dsl\": \"search synth\\n\\njulia(iterations: 50, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/mandelbrot/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/mandelbrot\"\n    ],\n    \"dsl\": \"search synth\\n\\nmandelbrot(iterations: 50).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/media/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/media\"\n  ],\n  \"dsl\": \"search synth\\n\\nmedia(imageSize: [64,64], bgAlpha: 0).write(o0)\\nrender(o0)\",\n  \"textureInputs\": [\n    {\n      \"effect\": \"synth/media\",\n      \"uniform\": \"imageTex\",\n      \"width\": 4,\n      \"height\": 4,\n      \"data\": [\n        255,\n        0,\n        0,\n        255,\n        128,\n        64,\n        32,\n        128,\n        0,\n        128,\n        255,\n        64,\n        0,\n        0,\n        255,\n        0,\n        128,\n        64,\n        32,\n        128,\n        0,\n        128,\n        255,\n        64,\n        0,\n        0,\n        255,\n        0,\n        255,\n        0,\n        0,\n        255,\n        0,\n        128,\n        255,\n        64,\n        0,\n        0,\n        255,\n        0,\n        255,\n        0,\n        0,\n        255,\n        128,\n        64,\n        32,\n        128,\n        0,\n        0,\n        255,\n        0,\n        255,\n        0,\n        0,\n        255,\n        128,\n        64,\n        32,\n        128,\n        0,\n        128,\n        255,\n        64\n      ]\n    }\n  ]\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/mnca/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/mnca\"\n    ],\n    \"dsl\": \"search synth\\n\\nmnca(smoothing: catmullRom3x3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/modPattern/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/modPattern\"\n    ],\n    \"dsl\": \"search synth\\nmodPattern().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/navierStokes/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/navierStokes\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth\\n\\nnoise(\\n  type: hermite,\\n  ridges: true,\\n  speed: 30,\\n  colorMode: mono\\n)\\n  .write(o0)\\n\\nnavierStokes(\\n  tex: read(o0),\\n  dyeDecay: 98,\\n  inputForce: 0.5,\\n  inputIntensity: 10\\n)\\n  .write(o1)\\n\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/newton/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/newton\"\n    ],\n    \"dsl\": \"search synth\\n\\nnewton(iterations: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/noise/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\"\n  ],\n  \"dsl\": \"search synth\\nnoise(seed: 1).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/osc2d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/osc2d\"\n    ],\n    \"dsl\": \"search synth\\n\\nosc2d(freq: 8, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/pattern/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\"\n    ],\n    \"dsl\": \"search synth\\n\\npattern().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/polygon/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/polygon\"\n    ],\n    \"dsl\": \"search synth\\npolygon().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/reactionDiffusion/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/reactionDiffusion\"\n    ],\n    \"dsl\": \"search synth\\nnoise(seed: 3, scaleX: 30, scaleY: 30).write(o1)\\nreactionDiffusion(tex: read(o1)).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/remap/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth/solid\",\n    \"synth/remap\"\n  ],\n  \"dsl\": \"search synth\\n\\nsolid(color: #ff8040, alpha: 0.6).write(o1)\\nsolid(color: #4080ff).write(o2)\\n\\nremap(\\n  bgColor: #101820, bgAlpha: 0.25, zoneCount: 8, smoothEdge: 0.3,\\n  zone0_tex: read(o1), zone0_alpha: 0.5, zone0_count: 6,\\n  zone0_v0: [0.100000000001, 0.125000000003, 0.55, 0.125],\\n  zone0_v1: [0.55, 0.375, 0.4, 0.375],\\n  zone0_v2: [0.4, 0.85, 0.1, 0.85],\\n  zone1_tex: read(o2), zone1_alpha: 0.75, zone1_count: 4,\\n  zone1_v0: [0.3, 0.45, 0.7, 0.5],\\n  zone1_v1: [0.65, 0.95, 0.25, 0.9],\\n  zone2_tex: read(o2), zone2_count: 4, zone2_bounds: [0.45, 0.15, 0.95, 0.6],\\n  zone2_v0: [0.45, 0.15, 0.95, 0.15], zone2_v1: [0.95, 0.6, 0.45, 0.6],\\n  zone7_tex: read(o1), zone7_alpha: 0.5, zone7_count: 64,\\n  zone7_bounds: [0.62, 0.13000000000000003, 0.9400000000000001, 0.43000000000000005],\\n  zone7_v0: [0.9400000000000001, 0.28, 0.9392295562675516, 0.2947025710494341],\\n  zone7_v1: [0.9369256448645169, 0.30926354830241926, 0.9331104537171535, 0.3235427015881694],\\n  zone7_v2: [0.9278207252018059, 0.33740251485476347, 0.9211074022957368, 0.35070951052389965],\\n  zone7_v3: [0.9130351379684073, 0.36333553495294035, 0.903681672538038, 0.3751589926245468],\\n  zone7_v4: [0.8931370849898477, 0.38606601717798217, 0.8815029254661833, 0.39595156800441056],\\n  zone7_v5: [0.8688912372831364, 0.4047204418453818, 0.8554234778921597, 0.4122881896522532],\\n  zone7_v6: [0.8412293491784144, 0.41858192987669307, 0.826445548360714, 0.42354105035983136],\\n  zone7_v7: [0.8112144515225805, 0.4271177920604846, 0.7956827424527297, 0.4292777090008295],\\n  zone7_v8: [0.78, 0.43000000000000005, 0.7643172575472703, 0.42927770900082957],\\n  zone7_v9: [0.7487855484774195, 0.4271177920604846, 0.7335544516392861, 0.42354105035983136],\\n  zone7_v10: [0.7187706508215856, 0.41858192987669307, 0.7045765221078404, 0.4122881896522533],\\n  zone7_v11: [0.6911087627168637, 0.4047204418453818, 0.6784970745338168, 0.39595156800441056],\\n  zone7_v12: [0.6668629150101524, 0.38606601717798217, 0.6563183274619621, 0.3751589926245468],\\n  zone7_v13: [0.6469648620315928, 0.36333553495294035, 0.6388925977042632, 0.3507095105238997],\\n  zone7_v14: [0.6321792747981941, 0.3374025148547635, 0.6268895462828465, 0.3235427015881694],\\n  zone7_v15: [0.6230743551354831, 0.3092635483024193, 0.6207704437324485, 0.29470257104943415],\\n  zone7_v16: [0.62, 0.28, 0.6207704437324485, 0.26529742895056596],\\n  zone7_v17: [0.6230743551354831, 0.2507364516975808, 0.6268895462828465, 0.23645729841183072],\\n  zone7_v18: [0.6321792747981941, 0.22259748514523658, 0.6388925977042632, 0.20929048947610038],\\n  zone7_v19: [0.6469648620315928, 0.19666446504705976, 0.6563183274619621, 0.18484100737545323],\\n  zone7_v20: [0.6668629150101524, 0.1739339828220179, 0.6784970745338167, 0.16404843199558955],\\n  zone7_v21: [0.6911087627168637, 0.15527955815461825, 0.7045765221078404, 0.1477118103477468],\\n  zone7_v22: [0.7187706508215855, 0.14141807012330707, 0.733554451639286, 0.13645894964016872],\\n  zone7_v23: [0.7487855484774194, 0.1328822079395155, 0.7643172575472703, 0.1307222909991705],\\n  zone7_v24: [0.78, 0.13000000000000003, 0.7956827424527296, 0.1307222909991705],\\n  zone7_v25: [0.8112144515225805, 0.13288220793951547, 0.8264455483607139, 0.1364589496401687],\\n  zone7_v26: [0.8412293491784144, 0.14141807012330704, 0.8554234778921597, 0.14771181034774677],\\n  zone7_v27: [0.8688912372831363, 0.15527955815461822, 0.8815029254661834, 0.1640484319955895],\\n  zone7_v28: [0.8931370849898476, 0.17393398282201789, 0.9036816725380379, 0.18484100737545314],\\n  zone7_v29: [0.9130351379684073, 0.1966644650470597, 0.9211074022957368, 0.20929048947610035],\\n  zone7_v30: [0.9278207252018058, 0.22259748514523647, 0.9331104537171535, 0.23645729841183066],\\n  zone7_v31: [0.9369256448645169, 0.25073645169758074, 0.9392295562675516, 0.26529742895056596]\\n).write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/scope/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/scope\"\n    ],\n    \"dsl\": \"search synth\\n\\nscope(thickness: 3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/shape/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/shape\"\n    ],\n    \"dsl\": \"search synth\\n\\nshape(loopAOffset: noiseBSpline3x3, loopBOffset: noiseSine, loopAScale: 3, loopBScale: 2).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/spectrum/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/spectrum\"\n    ],\n    \"dsl\": \"search synth\\n\\nspectrum(thickness: 3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/subdivide/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/subdivide\"\n    ],\n    \"dsl\": \"search synth\\n\\nsubdivide().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        128,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            64,\n            64\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth/testPattern/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\"\n    ],\n    \"dsl\": \"search synth\\n\\ntestPattern(pattern: gridLines).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/cell3d/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/cell3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\ncell3d(volumeSize: x16).render3d().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/cellularAutomata3d/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/cellularAutomata3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\ncellularAutomata3d(volumeSize: x16, ruleIndex: diamoeba, colorMode: age).render3d().write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/flythrough3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/flythrough3d\",\n        \"render/renderLit3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nflythrough3d(volumeSize: x32).renderLit3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/fractal3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/fractal3d\",\n        \"render/renderLit3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nfractal3d(volumeSize: x32).renderLit3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/heightmap3d/parity-case.json",
-   "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth3d/heightmap3d\",\n    \"render/renderLandscape3d\"\n  ],\n  \"dsl\": \"search synth, synth3d, render\\nheightmap3d(heightTex: testPattern(pattern: gradient), tex: testPattern(pattern: colorBars), volumeSize: x32, heightScale: 0.6, baseHeight: 0.1).renderLandscape3d(panY: -0.1, zoom: 1.1).write(o0)\\nrender(o0)\"\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/noise3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x128).render3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  },
-  {
-   "path": "shaders/effects/synth3d/shape3d/parity-case.json",
-   "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/shape3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nshape3d(volumeSize: x32).render3d(threshold: 0.75).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
-  }
- ]
+  "revision": "12751c78103ec352bd359a9944bbeac5ad239a4b",
+  "cases": [
+    {
+      "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/bitEffects\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nbitEffects(seed: 3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/caustic/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/caustic\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\ncaustic().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/cellNoise/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/cellNoise\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\ncellNoise(colorMode: palette).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        256,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            128,\n            128\n        ],\n        \"renderScale\": 3\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/cellRefract/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/cellRefract\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).cellRefract().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/coalesce/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/coalesce\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, speed: 0).write(o1)\\nnoise(seed: 7, speed: 0).write(o2)\\nread(o1).coalesce(tex: read(o2), blendMode: cloak, mix: 60, refractAAmt: 40, refractBAmt: 40).coalesce(tex: read(o2), mix: 0, refractAAmt: 40, refractADir: 30, refractBAmt: 20, refractBDir: -45).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/composite/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/gradient\",\n        \"classicNoisedeck/composite\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).composite(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/effects/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/noise\",\n        \"classicNoisedeck/effects\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nnoise(seed: 1).effects(effect: shadow, scaleAmt: 150, rotation: 30, offsetX: 20, offsetY: -15, flip: upToDown).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 3\n    },\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/fractal/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/fractal\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nfractal(rotation: 30, iterations: 10).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/glitch/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [160, 144],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/noise\",\n    \"classicNoisedeck/glitch\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\nnoise(seed: 1).glitch(glitchiness: 40, scanlinesAmt: 50, snowAmt: 30, vignetteAmt: 75).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/kaleido/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/kaleido\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).kaleido(loopOffset: noiseConstant, seed: 2).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/lensDistortion/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/lensDistortion\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).lensDistortion(vignetteAmt: 100).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/moodscape/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/moodscape\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\nmoodscape().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/noise/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [160, 144],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"classicNoisedeck/noise\"\n  ],\n  \"dsl\": \"search classicNoisedeck\\nnoise(seed: 1, refractAmt: 35, type: catmullRom3x3).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/noise3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/noise3d\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nnoise3d(scale: 60).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/refract/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/refract\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).refract().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/shapeMixer/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/gradient\",\n        \"classicNoisedeck/shapeMixer\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).shapeMixer(tex: o0, palette: ghostly, blendMode: refract, loopOffset: 300, seed: 3).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/shapes/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/shapes\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nshapes(loopAOffset: noiseBSpline3x3, loopBOffset: noiseSine).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/shapes3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/shapes3d\"\n    ],\n    \"dsl\": \"search classicNoisedeck\\n\\nshapes3d(colorMode: depth, spin: 30, flip: 20).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/splat/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"classicNoisedeck/noise\",\n        \"classicNoisedeck/splat\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\nnoise(seed: 1, scaleX: 50, scaleY: 50).splat().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/adjust/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/adjust\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).adjust(brightness: 1.2, contrast: 0.35, saturation: 0.8).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/bloom/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/bloom\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).bloom().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/blur/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/blur\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).blur().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/bulge/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/bulge\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).bulge(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/celShading/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/celShading\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).celShading().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/chromaticAberration/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/chromaticAberration\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).chromaticAberration(aberration: 25).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/chrome/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/chrome\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars)\\n  .chrome(detail: 55, smoothness: 35, distortion: 65)\\n  .write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/convolutionFeedback/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/convolutionFeedback\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).convolutionFeedback().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/corrupt/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/corrupt\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).corrupt().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/crt/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/crt\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).crt().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/degauss/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/degauss\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).degauss().write(o0)\\nrender(o0)\"\n}"
+    },
+    {
+      "path": "shaders/effects/filter/deriv/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/deriv\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).deriv().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/dither/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/dither\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).dither().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/feedback/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/feedback\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).feedback(refractAAmt: 30, refractADir: 45, mix: 30, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/fibers/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/fibers\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).fibers(density: 1, alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/flipMirror/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/flipMirror\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).flipMirror().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/fxaa/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/fxaa\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: stripes, scale: 10, rotation: 30, smoothness: 0.001, bgColor: #666666).fxaa().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/glowingEdge/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/glowingEdge\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).glowingEdge().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/glyphMap/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/glyphMap\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).glyphMap(cellSize: 32).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 3\n    },\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/grade/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/grade\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).grade(exposure: 0.2, contrast: 0.15, fadedFilm: 0.15, preset: warmFilm, alpha: 0.6, vignetteAmount: 0.4).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/grime/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/grime\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, speed: 0).grime().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/historicPalette/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/historicPalette\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).historicPalette().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/invert/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/invert\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).invert(mode: full).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/lensWarp/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/lensWarp\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).lensWarp().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/lighting/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/lighting\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(ridges: true)\\n.lighting(normalStrength: 2)\\n.write(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/lowPoly/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/lowPoly\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).lowPoly().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/normalize/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/normalize\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: dots, smoothness: 0.2, fgColor: #c08060, bgColor: #304050).normalize().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/normalMap/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/normalMap\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(seed: 1).normalMap().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/octaveWarp/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    48\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/octaveWarp\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, ridges: true).octaveWarp(octaves: 1, antialias: false, displacement: 0.05, freq: 2).write(o0)\\nrender(o0)\",\n  \"tiles\": {\n    \"size\": [\n      32,\n      24\n    ],\n    \"renderScale\": 2\n  }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/osd/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/osd\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).osd().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        160,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/outline/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/outline\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).outline().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/palette/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/palette\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).palette().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/pinch/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/pinch\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).pinch(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/pixelSort/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth/perlin\",\n    \"filter/pixelSort\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\nperlin(scale: 75, octaves: 2)\\n  .pixelSort(angled: -180, darkest: true)\\n  .write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    192\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/polar/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/polar\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).polar().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/pondRipples/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/pondRipples\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).pondRipples().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/prismaticAberration/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/prismaticAberration\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(ridges: true).prismaticAberration(modulate: true).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/reindex/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/reindex\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).reindex().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/repeat/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/repeat\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).repeat().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/reverb/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/reverb\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).reverb(wrap: clamp).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/rotate/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/rotate\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).rotate(wrap: repeat).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}"
+    },
+    {
+      "path": "shaders/effects/filter/scale/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        80,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/scale\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: uvMap).scale(x: 2, y: 1.5, centerX: 0.25, centerY: 0.7, wrap: clamp).write(o0)\\nrender(o0)\",\n    \"tiles\": {\n        \"size\": [\n            40,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/scanlineError/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/scanlineError\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(seed: 1).scanlineError(noise: 1.5, mode: vhs).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        96,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/scratches/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/scratches\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).scratches(alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/scroll/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/scroll\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).scroll(speedX: 1, speedY: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/sharpen/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/sharpen\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: dots, smoothness: 0.04, rotation: 15).sharpen(amount: 5).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/simpleAberration/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/simpleAberration\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(ridges: true, colorMode: mono)\\n.simpleAberration()\\n.write(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        128,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            64,\n            64\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/skew/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/skew\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).skew(rotate: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/smooth/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\",\n        \"filter/smooth\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\npattern(type: stripes, scale: 5, rotation: 88, smoothness: 0.001, bgColor: #808080).smooth(type: blur, radius: 4).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/snow/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/snow\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).snow(pause: true).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/sobel/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/sobel\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).sobel().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/spinBlur/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/spinBlur\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).spinBlur(amount: 40, centerX: 0.3, centerY: 0.7).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/spiral/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/spiral\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).spiral(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/spookyTicker/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/solid\",\n        \"filter/spookyTicker\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nsolid(color: #101820).spookyTicker().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/strayHair/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/strayHair\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).strayHair(alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/text/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\",\n    \"filter/text\"\n  ],\n  \"dsl\": \"search synth, filter\\nnoise(seed: 1).text(text: \\\"Retired\\\", matteOpacity: 0.5).write(o0)\\nrender(o0)\",\n  \"textureInputs\": [\n    {\n      \"effect\": \"filter/text\",\n      \"uniform\": \"textTex\",\n      \"width\": 4,\n      \"height\": 4,\n      \"data\": [\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        0,\n        255,\n        255,\n        255,\n        255\n      ]\n    }\n  ]\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/texture/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/texture\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, speed: 0).texture().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/tile/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/tile\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).tile().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/tint/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\",\n    \"filter/tint\"\n  ],\n  \"dsl\": \"search synth, mixer, filter\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).tint(color: #804020, alpha: 0.5, mode: overlay).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/translate/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/translate\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).translate(x: 0.05, y: -0.05).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/tunnel/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/tunnel\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).tunnel().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/unsharpMask/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/unsharpMask\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(scaleX: 20, scaleY: 20, octaves: 4).unsharpMask().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/vaseline/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/vaseline\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).vaseline().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/vignette/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/vignette\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).vignette().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/warp/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/warp\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).warp().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/waves/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/waves\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).waves(rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/wobble/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/wobble\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, speed: 0).wobble(range: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/zoomBlur/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/zoomBlur\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).zoomBlur().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter3d/flow3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"filter3d/flow3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, filter3d, render\\n\\nnoise3d(seed: 1).flow3d().render3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter3d/palette3d/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/noise3d\",\n    \"filter3d/palette3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, filter3d, render\\nnoise3d(volumeSize: x16).palette3d().render3d().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/alphaMask/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/alphaMask\"\n  ],\n  \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).alphaMask(tex: solid(color: #808080), maskMode: true).write(o1)\\nread(o1).alphaMask(tex: solid(color: #808080), baseTex: solid(color: #0000ff, alpha: 0.25), maskMode: true).write(o2)\\nsolid(color: #804020, alpha: 0.5).alphaMask(tex: read(o2), mix: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/applyMode/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/applyMode\"\n  ],\n  \"dsl\": \"search synth, mixer\\ntestPattern(pattern: colorBars).applyMode(tex: solid(color: #804020)).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/blendMode/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/blendMode\"\n  ],\n  \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).write(o1)\\nsolid(color: #804020, alpha: 0.5).write(o2)\\nread(o1).blendMode(tex: read(o2), mode: multiply, mix: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/centerMask/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"mixer/centerMask\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search mixer, synth\\n\\nnoise(ridges: true, colorMode: mono)\\n.write(o0)\\n\\nnoise(ridges: true)\\n.centerMask(tex: read(o0), mix: -75)\\n.write(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/focusBlur/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"mixer/focusBlur\",\n        \"synth/gradient\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, mixer\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).focusBlur(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/patternMix/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"mixer/patternMix\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\nnoise(seed: 1, ridges: true, colorMode: mono).write(o0)\\nnoise(seed: 2, ridges: true).patternMix(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/shadow/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"mixer/shadow\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\nnoise(seed: 1, scaleX: 100, scaleY: 100).write(o0)\\nnoise(seed: 2, ridges: true, colorMode: mono).shadow(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/shapeMask/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"mixer/shapeMask\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).write(o1)\\ntestPattern(pattern: gradient).write(o2)\\nread(o1).shapeMask(tex: read(o2), shape: triangle, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/mixer/uvRemap/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/gradient\",\n        \"mixer/uvRemap\"\n    ],\n    \"dsl\": \"search synth, mixer\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).write(o0)\\ngradient(seed: 1).uvRemap(tex: o0).write(o1)\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/attractor/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/attractor\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).attractor().pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/buddhabrot/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/buddhabrot\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).buddhabrot().pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/dla/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/dla\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).dla().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/flock/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/flock\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).flock().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/flow/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/flow\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).flow().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/heightGrid/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"render/pointsEmit\",\n    \"points/heightGrid\",\n    \"render/pointsBillboardRender\"\n  ],\n  \"dsl\": \"search synth, points, render\\ntestPattern(pattern: gradient).write(o1)\\ntestPattern(pattern: colorBars).write(o2)\\nsolid().pointsEmit(stateSize: x64).heightGrid(heightTex: read(o1), diffuseTex: read(o2), gridScale: 80, heightScale: 25).pointsBillboardRender(viewMode: perspective, rotateX: 0.55, posY: -12, posZ: 10, pointSize: 2, density: 100, intensity: 0, inputIntensity: 0, sizeDistance: 160, brightnessDistance: 200, aperture: 0.5, focalDistance: 80).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/hydraulic/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/hydraulic\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).hydraulic().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/lenia/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/lenia\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).lenia().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/life/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/life\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).life().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/physarum/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/physarum\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1).pointsEmit(stateSize: x64).physarum().pointsRender().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/points/physical/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"points/physical\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, points, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).physical().pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/meshRender/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"render/meshLoader\",\n        \"render/meshRender\"\n    ],\n    \"dsl\": \"search render\\n\\nmeshLoader().meshRender(offsetX: 0.4, offsetY: -0.3, offsetZ: 0.5, rotateX: 40, rotateY: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"meshInputs\": [\n        {\n            \"mesh\": \"mesh0\",\n            \"path\": \"share/meshes/cube.obj\"\n        }\n    ]\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/pointsBillboardRender/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"render/pointsEmit\",\n    \"points/heightGrid\",\n    \"render/pointsBillboardRender\"\n  ],\n  \"dsl\": \"search synth, points, render\\ntestPattern(pattern: gradient).write(o1)\\ntestPattern(pattern: colorBars).write(o2)\\nsolid().pointsEmit(stateSize: x64).heightGrid(heightTex: read(o1), diffuseTex: read(o2), gridScale: 80, heightScale: 25).pointsBillboardRender(blendMode: alpha, depositOpacity: 100, viewMode: ortho, shapeMode: star, rotateX: 0.55, posY: -12, posZ: 10, pointSize: 2, density: 100, intensity: 0, inputIntensity: 0, sizeDistance: 160, brightnessDistance: 200, aperture: 0.5, focalDistance: 80).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/pointsEmit/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"effects\": [\n        \"synth/noise\",\n        \"render/pointsEmit\",\n        \"render/pointsRender\"\n    ],\n    \"dsl\": \"search synth, render\\n\\nnoise(seed: 1, speed: 0).pointsEmit(stateSize: x64).pointsRender(density: 0, inputIntensity: 100, intensity: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/pointsRender/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [160, 144],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"render/pointsEmit\",\n    \"points/heightGrid\",\n    \"render/pointsRender\"\n  ],\n  \"dsl\": \"search synth, points, render\\ntestPattern(pattern: gradient).write(o1)\\ntestPattern(pattern: colorBars).write(o2)\\nsolid().pointsEmit(stateSize: x64).heightGrid(heightTex: read(o1), diffuseTex: read(o2), gridScale: 64, heightScale: 18).pointsRender(viewMode: perspective, rotateX: 0.55, posY: -10, posZ: 12, fieldOfView: 75, density: 100, intensity: 0, inputIntensity: 0, matteOpacity: 0).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/render3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x32).render3d(filtering: voxel).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/renderLandscape3d/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth3d/heightmap3d\",\n    \"render/renderLandscape3d\"\n  ],\n  \"dsl\": \"search synth, synth3d, render\\nheightmap3d(heightTex: testPattern(pattern: gradient), tex: testPattern(pattern: colorBars), volumeSize: x32, heightScale: 0.6, baseHeight: 0.1).renderLandscape3d(filtering: isosurface, viewMode: perspective, rotateX: 0.62, rotateY: 0.5, posY: 12).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/renderLit3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/renderLit3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x32).renderLit3d(specularIntensity: 2, shininess: 64).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/cell/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/cell\"\n  ],\n  \"dsl\": \"search synth\\ncell().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/cellularAutomata/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/cellularAutomata\"\n    ],\n    \"dsl\": \"search synth\\n\\ncellularAutomata(smoothing: catmullRom3x3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        128,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            64,\n            64\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/curl/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/curl\"\n    ],\n    \"dsl\": \"search synth\\n\\ncurl().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/julia/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/julia\"\n    ],\n    \"dsl\": \"search synth\\n\\njulia(iterations: 50, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/mandelbrot/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/mandelbrot\"\n    ],\n    \"dsl\": \"search synth\\n\\nmandelbrot(iterations: 50).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/media/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/media\"\n  ],\n  \"dsl\": \"search synth\\n\\nmedia(imageSize: [64,64], bgAlpha: 0).write(o0)\\nrender(o0)\",\n  \"textureInputs\": [\n    {\n      \"effect\": \"synth/media\",\n      \"uniform\": \"imageTex\",\n      \"width\": 4,\n      \"height\": 4,\n      \"data\": [\n        255,\n        0,\n        0,\n        255,\n        128,\n        64,\n        32,\n        128,\n        0,\n        128,\n        255,\n        64,\n        0,\n        0,\n        255,\n        0,\n        128,\n        64,\n        32,\n        128,\n        0,\n        128,\n        255,\n        64,\n        0,\n        0,\n        255,\n        0,\n        255,\n        0,\n        0,\n        255,\n        0,\n        128,\n        255,\n        64,\n        0,\n        0,\n        255,\n        0,\n        255,\n        0,\n        0,\n        255,\n        128,\n        64,\n        32,\n        128,\n        0,\n        0,\n        255,\n        0,\n        255,\n        0,\n        0,\n        255,\n        128,\n        64,\n        32,\n        128,\n        0,\n        128,\n        255,\n        64\n      ]\n    }\n  ]\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/mnca/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/mnca\"\n    ],\n    \"dsl\": \"search synth\\n\\nmnca(smoothing: catmullRom3x3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/modPattern/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/modPattern\"\n    ],\n    \"dsl\": \"search synth\\nmodPattern().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/navierStokes/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/navierStokes\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth\\n\\nnoise(\\n  type: hermite,\\n  ridges: true,\\n  speed: 30,\\n  colorMode: mono\\n)\\n  .write(o0)\\n\\nnavierStokes(\\n  tex: read(o0),\\n  dyeDecay: 98,\\n  inputForce: 0.5,\\n  inputIntensity: 10\\n)\\n  .write(o1)\\n\\nrender(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/newton/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/newton\"\n    ],\n    \"dsl\": \"search synth\\n\\nnewton(iterations: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/noise/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/noise\"\n  ],\n  \"dsl\": \"search synth\\nnoise(seed: 1).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/osc2d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/osc2d\"\n    ],\n    \"dsl\": \"search synth\\n\\nosc2d(freq: 8, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/pattern/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\"\n    ],\n    \"dsl\": \"search synth\\n\\npattern().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/polygon/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/polygon\"\n    ],\n    \"dsl\": \"search synth\\npolygon().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/reactionDiffusion/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"synth/reactionDiffusion\"\n    ],\n    \"dsl\": \"search synth\\nnoise(seed: 3, scaleX: 30, scaleY: 30).write(o1)\\nreactionDiffusion(tex: read(o1)).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/remap/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth/solid\",\n    \"synth/remap\"\n  ],\n  \"dsl\": \"search synth\\n\\nsolid(color: #ff8040, alpha: 0.6).write(o1)\\nsolid(color: #4080ff).write(o2)\\n\\nremap(\\n  bgColor: #101820, bgAlpha: 0.25, zoneCount: 8, smoothEdge: 0.3,\\n  zone0_tex: read(o1), zone0_alpha: 0.5, zone0_count: 6,\\n  zone0_v0: [0.100000000001, 0.125000000003, 0.55, 0.125],\\n  zone0_v1: [0.55, 0.375, 0.4, 0.375],\\n  zone0_v2: [0.4, 0.85, 0.1, 0.85],\\n  zone1_tex: read(o2), zone1_alpha: 0.75, zone1_count: 4,\\n  zone1_v0: [0.3, 0.45, 0.7, 0.5],\\n  zone1_v1: [0.65, 0.95, 0.25, 0.9],\\n  zone2_tex: read(o2), zone2_count: 4, zone2_bounds: [0.45, 0.15, 0.95, 0.6],\\n  zone2_v0: [0.45, 0.15, 0.95, 0.15], zone2_v1: [0.95, 0.6, 0.45, 0.6],\\n  zone7_tex: read(o1), zone7_alpha: 0.5, zone7_count: 64,\\n  zone7_bounds: [0.62, 0.13000000000000003, 0.9400000000000001, 0.43000000000000005],\\n  zone7_v0: [0.9400000000000001, 0.28, 0.9392295562675516, 0.2947025710494341],\\n  zone7_v1: [0.9369256448645169, 0.30926354830241926, 0.9331104537171535, 0.3235427015881694],\\n  zone7_v2: [0.9278207252018059, 0.33740251485476347, 0.9211074022957368, 0.35070951052389965],\\n  zone7_v3: [0.9130351379684073, 0.36333553495294035, 0.903681672538038, 0.3751589926245468],\\n  zone7_v4: [0.8931370849898477, 0.38606601717798217, 0.8815029254661833, 0.39595156800441056],\\n  zone7_v5: [0.8688912372831364, 0.4047204418453818, 0.8554234778921597, 0.4122881896522532],\\n  zone7_v6: [0.8412293491784144, 0.41858192987669307, 0.826445548360714, 0.42354105035983136],\\n  zone7_v7: [0.8112144515225805, 0.4271177920604846, 0.7956827424527297, 0.4292777090008295],\\n  zone7_v8: [0.78, 0.43000000000000005, 0.7643172575472703, 0.42927770900082957],\\n  zone7_v9: [0.7487855484774195, 0.4271177920604846, 0.7335544516392861, 0.42354105035983136],\\n  zone7_v10: [0.7187706508215856, 0.41858192987669307, 0.7045765221078404, 0.4122881896522533],\\n  zone7_v11: [0.6911087627168637, 0.4047204418453818, 0.6784970745338168, 0.39595156800441056],\\n  zone7_v12: [0.6668629150101524, 0.38606601717798217, 0.6563183274619621, 0.3751589926245468],\\n  zone7_v13: [0.6469648620315928, 0.36333553495294035, 0.6388925977042632, 0.3507095105238997],\\n  zone7_v14: [0.6321792747981941, 0.3374025148547635, 0.6268895462828465, 0.3235427015881694],\\n  zone7_v15: [0.6230743551354831, 0.3092635483024193, 0.6207704437324485, 0.29470257104943415],\\n  zone7_v16: [0.62, 0.28, 0.6207704437324485, 0.26529742895056596],\\n  zone7_v17: [0.6230743551354831, 0.2507364516975808, 0.6268895462828465, 0.23645729841183072],\\n  zone7_v18: [0.6321792747981941, 0.22259748514523658, 0.6388925977042632, 0.20929048947610038],\\n  zone7_v19: [0.6469648620315928, 0.19666446504705976, 0.6563183274619621, 0.18484100737545323],\\n  zone7_v20: [0.6668629150101524, 0.1739339828220179, 0.6784970745338167, 0.16404843199558955],\\n  zone7_v21: [0.6911087627168637, 0.15527955815461825, 0.7045765221078404, 0.1477118103477468],\\n  zone7_v22: [0.7187706508215855, 0.14141807012330707, 0.733554451639286, 0.13645894964016872],\\n  zone7_v23: [0.7487855484774194, 0.1328822079395155, 0.7643172575472703, 0.1307222909991705],\\n  zone7_v24: [0.78, 0.13000000000000003, 0.7956827424527296, 0.1307222909991705],\\n  zone7_v25: [0.8112144515225805, 0.13288220793951547, 0.8264455483607139, 0.1364589496401687],\\n  zone7_v26: [0.8412293491784144, 0.14141807012330704, 0.8554234778921597, 0.14771181034774677],\\n  zone7_v27: [0.8688912372831363, 0.15527955815461822, 0.8815029254661834, 0.1640484319955895],\\n  zone7_v28: [0.8931370849898476, 0.17393398282201789, 0.9036816725380379, 0.18484100737545314],\\n  zone7_v29: [0.9130351379684073, 0.1966644650470597, 0.9211074022957368, 0.20929048947610035],\\n  zone7_v30: [0.9278207252018058, 0.22259748514523647, 0.9331104537171535, 0.23645729841183066],\\n  zone7_v31: [0.9369256448645169, 0.25073645169758074, 0.9392295562675516, 0.26529742895056596]\\n).write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/scope/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/scope\"\n    ],\n    \"dsl\": \"search synth\\n\\nscope(thickness: 3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/shape/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/shape\"\n    ],\n    \"dsl\": \"search synth\\n\\nshape(loopAOffset: noiseBSpline3x3, loopBOffset: noiseSine, loopAScale: 3, loopBScale: 2).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/spectrum/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/spectrum\"\n    ],\n    \"dsl\": \"search synth\\n\\nspectrum(thickness: 3).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/subdivide/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/subdivide\"\n    ],\n    \"dsl\": \"search synth\\n\\nsubdivide().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        128,\n        128\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            64,\n            64\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/testPattern/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\"\n    ],\n    \"dsl\": \"search synth\\n\\ntestPattern(pattern: gridLines).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/cell3d/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/cell3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\ncell3d(volumeSize: x16).render3d().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/cellularAutomata3d/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth3d/cellularAutomata3d\",\n    \"render/render3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\ncellularAutomata3d(volumeSize: x16, ruleIndex: diamoeba, colorMode: age).render3d().write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/flythrough3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/flythrough3d\",\n        \"render/renderLit3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nflythrough3d(volumeSize: x32).renderLit3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/fractal3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/fractal3d\",\n        \"render/renderLit3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nfractal3d(volumeSize: x32).renderLit3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/heightmap3d/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    96,\n    80\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth3d/heightmap3d\",\n    \"render/renderLandscape3d\"\n  ],\n  \"dsl\": \"search synth, synth3d, render\\nheightmap3d(heightTex: testPattern(pattern: gradient), tex: testPattern(pattern: colorBars), volumeSize: x32, heightScale: 0.6, baseHeight: 0.1).renderLandscape3d(panY: -0.1, zoom: 1.1).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/noise3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x128).render3d().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth3d/shape3d/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/shape3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nshape3d(volumeSize: x32).render3d(threshold: 0.75).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    }
+  ]
 }

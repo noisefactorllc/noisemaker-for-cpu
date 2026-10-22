@@ -8,7 +8,11 @@ import { readPng } from '../../src/node/png.js'
 import { compareRgba8 } from './lib.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
-const authorityRevision = 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8'
+// The reviewed NEAR evidence stays bound to the authority revision it was captured
+// at. It remains valid until a real validation at a later pin replaces it; the
+// candidate pin may move independently.
+export const NEAR_AUTHORITY_REVISION = 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8'
+const authorityRevision = NEAR_AUTHORITY_REVISION
 const renderer = 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)'
 
 // Particle simulations are chaotic, so a reviewed visual match passes for them

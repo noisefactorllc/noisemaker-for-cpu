@@ -25169,7 +25169,7 @@ function canonicalFactory199($bindings, $runtime) {
 }
 
 function canonicalFactory200($bindings, $runtime) {
-  const { float, vec2, ivec2, sin, fract, isnan, clamp, length, any, multiply, textureSize, texelFetch } = $runtime.stdlib
+  const { float, vec2, ivec2, sin, fract, isnan, max, clamp, length, any, multiply, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -25196,6 +25196,17 @@ function canonicalFactory200($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function baseColor (coord, col) {
+  	col = $runtime.copy(col);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	return kept[3] == 0 ? col : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
@@ -25298,12 +25309,14 @@ function canonicalFactory200($bindings, $runtime) {
   	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = pos[2], outXYZ[3] = 1, outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	diffuseActive > 0.5 ? selectedDiffuse(fract(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]]))) : col.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(col).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	if (pos[3] < 0.5) {
   	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = pos[2], outXYZ[3] = pos[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  	keptBaseColor(baseColor(coord, col)).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var dt = speed * 0.009999999776482582;
@@ -25314,9 +25327,11 @@ function canonicalFactory200($bindings, $runtime) {
   	newPos[1] = (hash(respawnSeed + 1) - 0.5) * 20;
   	newPos[2] = (hash(respawnSeed + 2)) * 30 + 10;
   	};
+  	var base = baseColor(coord, col);
   	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = newPos[2], outXYZ[3] = 1, outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(fract(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]]))) : col.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(fract(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]]))) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -25333,9 +25348,13 @@ function canonicalFactory200($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory200.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory200.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory201($bindings, $runtime) {
   const { texture } = $runtime.stdlib
@@ -25356,7 +25375,7 @@ function canonicalFactory201($bindings, $runtime) {
 }
 
 function canonicalFactory202($bindings, $runtime) {
-  const { float, vec2, ivec2, min, clamp, dot, multiply, textureSize, texelFetch } = $runtime.stdlib
+  const { float, vec2, ivec2, min, max, clamp, dot, multiply, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -25387,6 +25406,17 @@ function canonicalFactory202($bindings, $runtime) {
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
   };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function baseColor (coord, col) {
+  	col = $runtime.copy(col);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	return kept[3] == 0 ? col : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  };
   function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (s) {
   	return cpu_float(hash_uint(s)) / 4294967296;
@@ -25415,6 +25445,7 @@ function canonicalFactory202($bindings, $runtime) {
   	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = pos[2], outXYZ[3] = pos[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = col[0], outRGBA[1] = col[1], outRGBA[2] = col[2], outRGBA[3] = col[3], outRGBA);
+  	keptBaseColor(baseColor(coord, col)).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var agentSeed = (hash_uint(coord[0] + coord[1] * stateSize|0)) ^ (time * 65536|0) ^ (vel[2] * 137|0);
@@ -25426,6 +25457,7 @@ function canonicalFactory202($bindings, $runtime) {
   	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = 0, outRGBA[1] = 0, outRGBA[2] = 0, outRGBA[3] = 0, outRGBA);
+  	(outBaseColor[0] = 0, outBaseColor[1] = 0, outBaseColor[2] = 0, outBaseColor[3] = 0, outBaseColor);
   	return;
   	};
   	var z = new $runtime.PooledFloat32Array([0, 0]);
@@ -25461,12 +25493,14 @@ function canonicalFactory202($bindings, $runtime) {
   	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = 0, outRGBA[1] = 0, outRGBA[2] = 0, outRGBA[3] = 0, outRGBA);
+  	(outBaseColor[0] = 0, outBaseColor[1] = 0, outBaseColor[2] = 0, outBaseColor[3] = 0, outBaseColor);
   	return;
   	};
   	var screen = complexToScreen(new $runtime.PooledFloat32Array([cRe, cIm]));
   	(outXYZ[0] = screen[0], outXYZ[1] = screen[1], outXYZ[2] = 0.5, outXYZ[3] = 1, outXYZ);
   	(outVel[0] = cRe, outVel[1] = cIm, outVel[2] = 1, outVel[3] = escapeStep, outVel);
   	diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, selectedDiffuse(screen))).map(function (_) {return _ * brightness;}), 1]) : new $runtime.PooledFloat32Array([brightness, brightness, brightness, 1]).reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(new $runtime.PooledFloat32Array([brightness, brightness, brightness, 1])).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var cRe = vel[0];
@@ -25489,6 +25523,7 @@ function canonicalFactory202($bindings, $runtime) {
   	(outXYZ[0] = pos[0], outXYZ[1] = pos[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
   	(outVel[0] = 0, outVel[1] = 0, outVel[2] = step, outVel[3] = 0, outVel);
   	(outRGBA[0] = 0, outRGBA[1] = 0, outRGBA[2] = 0, outRGBA[3] = 0, outRGBA);
+  	(outBaseColor[0] = 0, outBaseColor[1] = 0, outBaseColor[2] = 0, outBaseColor[3] = 0, outBaseColor);
   	return;
   	};
   	var zr = z[0] * z[0] - z[1] * z[1] + cRe;
@@ -25498,7 +25533,9 @@ function canonicalFactory202($bindings, $runtime) {
   	var screen = complexToScreen(z);
   	(outXYZ[0] = screen[0], outXYZ[1] = screen[1], outXYZ[2] = 0.5, outXYZ[3] = 1, outXYZ);
   	(outVel[0] = cRe, outVel[1] = cIm, outVel[2] = step, outVel[3] = escapeStep, outVel);
-  	diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, selectedDiffuse(screen))).map(function (_) {return _ * 0.029999999329447746;}), 1]) : col.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	var base = baseColor(coord, col);
+  	diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, selectedDiffuse(screen))).map(function (_) {return _ * 0.029999999329447746;}), 1]) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -25515,9 +25552,13 @@ function canonicalFactory202($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory202.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory202.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory203($bindings, $runtime) {
   const { texture } = $runtime.stdlib
@@ -25581,7 +25622,7 @@ function canonicalFactory204($bindings, $runtime) {
 }
 
 function canonicalFactory205($bindings, $runtime) {
-  const { float, vec2, ivec2, sin, cos, fract, max, clamp, mix, smoothstep, length, normalize, multiply, textureSize, texelFetch, floatBitsToUint, uintBitsToFloat } = $runtime.stdlib
+  const { float, vec2, vec4, ivec2, sin, cos, abs, round, fract, max, clamp, mix, smoothstep, length, normalize, lessThanEqual, all, subtract, multiply, textureSize, texelFetch, floatBitsToUint, uintBitsToFloat } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -25604,7 +25645,7 @@ function canonicalFactory205($bindings, $runtime) {
   var velTex = $bindings["velTex"];
   var rgbaTex = $bindings["rgbaTex"];
   var gridTex = $bindings["gridTex"];
-  var fieldTex = $bindings["fieldTex"];
+  var heightTex = $bindings["heightTex"];
   var inputTex = $bindings["inputTex"];
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
@@ -25616,6 +25657,28 @@ function canonicalFactory205($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
@@ -25665,6 +25728,7 @@ function canonicalFactory205($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var pos = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
   	var alive = xyz[3];
   	var seed = vel[0];
@@ -25679,6 +25743,7 @@ function canonicalFactory205($bindings, $runtime) {
   	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
   	(outVel[0] = seed, outVel[1] = 0, outVel[2] = 0, outVel[3] = agentRand, outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var gridDims = textureSize(gridTex, 0);
@@ -25689,9 +25754,9 @@ function canonicalFactory205($bindings, $runtime) {
   	var inputW = inputWeight / 100;
   	var stepDir = randomDir instanceof Float32Array ? $runtime.copy(randomDir) : randomDir;
   	if (inputW > 0) {
-  	var inputDims = fieldActive > 0.5 ? textureSize(fieldTex, 0) : textureSize(inputTex, 0);
+  	var inputDims = fieldActive > 0.5 ? textureSize(heightTex, 0) : textureSize(inputTex, 0);
   	var inputCoord = cpu_ivec2_vec2(vec2.multiply([], wrap01(pos), inputDims));
-  	var inputVal = fieldActive > 0.5 ? texelFetch(fieldTex, inputCoord, 0) : texelFetch(inputTex, inputCoord, 0);
+  	var inputVal = fieldActive > 0.5 ? texelFetch(heightTex, inputCoord, 0) : texelFetch(inputTex, inputCoord, 0);
   	var inputDir = new $runtime.PooledFloat32Array([inputVal[0] * 2 - 1, inputVal[1] * 2 - 1]);
   	if (length(inputDir) > 0.009999999776482582) {
   	normalize(inputDir).reduce((res,el,i)=>(res[i] = el, res), inputDir);
@@ -25715,16 +25780,19 @@ function canonicalFactory205($bindings, $runtime) {
   	if (stuck) {
   	(outXYZ[0] = candidate[0], outXYZ[1] = candidate[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
   	(outVel[0] = seed, outVel[1] = 1, outVel[2] = 0, outVel[3] = agentRand, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(candidate) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(candidate) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	} else {
   	if (needsRespawn) {
   	(outXYZ[0] = candidate[0], outXYZ[1] = candidate[1], outXYZ[2] = 0, outXYZ[3] = 0, outXYZ);
   	(outVel[0] = seed, outVel[1] = 0, outVel[2] = 0, outVel[3] = agentRand, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(candidate) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(candidate) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	} else {
   	(outXYZ[0] = candidate[0], outXYZ[1] = candidate[1], outXYZ[2] = 0, outXYZ[3] = 1, outXYZ);
   	(outVel[0] = seed, outVel[1] = 0, outVel[2] = 0, outVel[3] = agentRand, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(candidate) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(candidate) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	};
   	};
   };
@@ -25743,9 +25811,13 @@ function canonicalFactory205($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory205.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory205.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory206($bindings, $runtime) {
   const { texture } = $runtime.stdlib
@@ -25843,7 +25915,7 @@ function canonicalFactory208($bindings, $runtime) {
 }
 
 function canonicalFactory209($bindings, $runtime) {
-  const { float, vec2, ivec2, sin, cos, sqrt, floor, fract, mod, clamp, mix, length, dot, add, multiply, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
+  const { float, vec2, vec4, ivec2, sin, cos, sqrt, abs, floor, round, fract, mod, max, clamp, mix, length, dot, lessThanEqual, all, add, subtract, multiply, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -25868,6 +25940,7 @@ function canonicalFactory209($bindings, $runtime) {
   var xyzTex = $bindings["xyzTex"];
   var velTex = $bindings["velTex"];
   var rgbaTex = $bindings["rgbaTex"];
+  var inputTex = $bindings["inputTex"];
   var outXYZ = new Float32Array([0, 0, 0, 0]);
   var outVel = new Float32Array([0, 0, 0, 0]);
   var outRGBA = new Float32Array([0, 0, 0, 0]);
@@ -25878,6 +25951,28 @@ function canonicalFactory209($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
@@ -25931,6 +26026,7 @@ function canonicalFactory209($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var px = xyz[0];
   	var py = xyz[1];
   	var alive = xyz[3];
@@ -25945,6 +26041,7 @@ function canonicalFactory209($bindings, $runtime) {
   	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	if ((length(velocity) == 0) && (seed == 0)) {
@@ -26086,7 +26183,8 @@ function canonicalFactory209($bindings, $runtime) {
   	var newPy = $runtime.fdiv(pos[1], resolution[1]);
   	(outXYZ[0] = newPx, outXYZ[1] = newPy, outXYZ[2] = xyz[2], outXYZ[3] = 1, outXYZ);
   	(outVel[0] = velocity[0], outVel[1] = velocity[1], outVel[2] = age, outVel[3] = seed, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -26103,9 +26201,13 @@ function canonicalFactory209($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory209.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory209.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory210($bindings, $runtime) {
   const { texture } = $runtime.stdlib
@@ -26126,7 +26228,7 @@ function canonicalFactory210($bindings, $runtime) {
 }
 
 function canonicalFactory211($bindings, $runtime) {
-  const { float, vec2, ivec2, sin, cos, pow, abs, floor, round, fract, max, clamp, mix, multiply, textureSize, texelFetch } = $runtime.stdlib
+  const { float, vec2, vec4, ivec2, sin, cos, pow, abs, floor, round, fract, max, clamp, mix, lessThanEqual, all, subtract, multiply, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -26145,7 +26247,7 @@ function canonicalFactory211($bindings, $runtime) {
   var inputWeight = $bindings["inputWeight"];
   var fieldActive = $bindings["fieldActive"];
   var behavior = $bindings["behavior"];
-  var fieldTex = $bindings["fieldTex"];
+  var heightTex = $bindings["heightTex"];
   var inputTex = $bindings["inputTex"];
   var xyzTex = $bindings["xyzTex"];
   var velTex = $bindings["velTex"];
@@ -26160,6 +26262,28 @@ function canonicalFactory211($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   var TAU = 6.2831854820251465;
   var RIGHT_ANGLE = 1.5707963705062866;
@@ -26244,6 +26368,7 @@ function canonicalFactory211($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var px = xyz[0];
   	var py = xyz[1];
   	var pz = xyz[2];
@@ -26254,12 +26379,13 @@ function canonicalFactory211($bindings, $runtime) {
   	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
-  	var texSize = fieldActive > 0.5 ? textureSize(fieldTex, 0) : textureSize(inputTex, 0);
+  	var texSize = fieldActive > 0.5 ? textureSize(heightTex, 0) : textureSize(inputTex, 0);
   	var texCoord = cpu_ivec2_float_float(px * (texSize[0]), py * (texSize[1]));
   	clamp(texCoord, cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1])).reduce((res,el,i)=>(res[i] = el, res), texCoord);
-  	var texel = fieldActive > 0.5 ? texelFetch(fieldTex, texCoord, 0) : texelFetch(inputTex, texCoord, 0);
+  	var texel = fieldActive > 0.5 ? texelFetch(heightTex, texCoord, 0) : texelFetch(inputTex, texCoord, 0);
   	var inputLuma = oklab_l(new $runtime.PooledFloat32Array([texel[0], texel[1], texel[2]]));
   	var weightBlend = clamp(inputWeight * 0.009999999776482582, 0, 1);
   	var indexValue = mix(0.5, inputLuma, weightBlend);
@@ -26281,7 +26407,8 @@ function canonicalFactory211($bindings, $runtime) {
   	newY = fract(newY);
   	(outXYZ[0] = newX, outXYZ[1] = newY, outXYZ[2] = pz, outXYZ[3] = 1, outXYZ);
   	(outVel[0] = 0, outVel[1] = 0, outVel[2] = rotRand, outVel[3] = strideRand, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -26298,9 +26425,13 @@ function canonicalFactory211($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory211.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory211.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory212($bindings, $runtime) {
   const { texture } = $runtime.stdlib
@@ -26387,7 +26518,7 @@ function canonicalFactory214($bindings, $runtime) {
 }
 
 function canonicalFactory215($bindings, $runtime) {
-  const { vec2, ivec2, pow, abs, floor, clamp, mix, length, multiply, textureSize, texelFetch } = $runtime.stdlib
+  const { vec2, vec4, ivec2, pow, abs, floor, round, max, clamp, mix, length, lessThanEqual, all, subtract, multiply, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
@@ -26418,6 +26549,28 @@ function canonicalFactory215($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   function hash2 (seed) {
   	var state = (cpu_umul(seed, 747796405) + 2891336453) >>> 0;
@@ -26487,6 +26640,7 @@ function canonicalFactory215($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var px = xyz[0];
   	var py = xyz[1];
   	var alive = xyz[3];
@@ -26503,6 +26657,7 @@ function canonicalFactory215($bindings, $runtime) {
   	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	if (seed_f == 0) {
@@ -26549,7 +26704,8 @@ function canonicalFactory215($bindings, $runtime) {
   	var normVy = $runtime.fdiv(vy, resolution[1]);
   	(outXYZ[0] = newPx, outXYZ[1] = newPy, outXYZ[2] = xyz[2], outXYZ[3] = alive, outXYZ);
   	(outVel[0] = normVx, outVel[1] = normVy, outVel[2] = vz, outVel[3] = seed_f, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -26566,9 +26722,13 @@ function canonicalFactory215($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory215.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory215.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory216($bindings, $runtime) {
   const { texture } = $runtime.stdlib
@@ -26589,7 +26749,7 @@ function canonicalFactory216($bindings, $runtime) {
 }
 
 function canonicalFactory217($bindings, $runtime) {
-  const { vec2, ivec2, exp, fract, min, clamp, length, multiply, texture, textureSize, texelFetch } = $runtime.stdlib
+  const { vec2, vec4, ivec2, exp, abs, round, fract, min, max, clamp, length, lessThanEqual, all, subtract, multiply, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_texture_r (samplerValue, coordValue) {
@@ -26604,6 +26764,7 @@ function canonicalFactory217($bindings, $runtime) {
   var xyzTex = $bindings["xyzTex"];
   var velTex = $bindings["velTex"];
   var rgbaTex = $bindings["rgbaTex"];
+  var inputTex = $bindings["inputTex"];
   var fieldTex = $bindings["fieldTex"];
   var resolution = $bindings["resolution"];
   var muG = $bindings["muG"];
@@ -26621,6 +26782,28 @@ function canonicalFactory217($bindings, $runtime) {
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
   };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
+  };
   var EPSILON = 0.00009999999747378752;
   function growth (u, mu, sigma) {
   	var x = (u - mu) / sigma;
@@ -26636,11 +26819,13 @@ function canonicalFactory217($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var alive = xyz[3];
   	if (alive < 0.5) {
   	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var uv = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
@@ -26668,7 +26853,8 @@ function canonicalFactory217($bindings, $runtime) {
   	var age = vel[2] + 0.01600000075995922;
   	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = xyz[2], outXYZ[3] = 1, outXYZ);
   	(outVel[0] = velocity[0], outVel[1] = velocity[1], outVel[2] = age, outVel[3] = vel[3], outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -26685,9 +26871,13 @@ function canonicalFactory217($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory217.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory217.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory218($bindings, $runtime) {
   const gl_FragCoord = $runtime.fragCoord
@@ -27117,7 +27307,7 @@ function canonicalFactory223($bindings, $runtime) {
 }
 
 function canonicalFactory224($bindings, $runtime) {
-  const { float, vec2, ivec2, sin, cos, fract, clamp, mix, dot, multiply, texture, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
+  const { float, vec2, vec4, ivec2, sin, cos, abs, round, fract, max, clamp, mix, dot, lessThanEqual, all, subtract, multiply, texture, textureSize, texelFetch, floatBitsToUint } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -27130,7 +27320,7 @@ function canonicalFactory224($bindings, $runtime) {
   var velTex = $bindings["velTex"];
   var rgbaTex = $bindings["rgbaTex"];
   var trailTex = $bindings["trailTex"];
-  var fieldTex = $bindings["fieldTex"];
+  var heightTex = $bindings["heightTex"];
   var inputTex = $bindings["inputTex"];
   var resolution = $bindings["resolution"];
   var time = $bindings["time"];
@@ -27150,6 +27340,28 @@ function canonicalFactory224($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   var TAU = 6.2831854820251465;
   function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
@@ -27177,7 +27389,7 @@ function canonicalFactory224($bindings, $runtime) {
   	return 0;
   	};
   	var blend = clamp(weight * 0.009999999776482582, 0, 1);
-  	var field = fieldActive > 0.5 ? new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(fieldTex, uv))) : new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv)));
+  	var field = fieldActive > 0.5 ? new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(heightTex, uv))) : new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv)));
   	return (luminance(field) * blend) * 0.05000000074505806;
   };
   function main () {
@@ -27186,6 +27398,7 @@ function canonicalFactory224($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var pos = new $runtime.PooledFloat32Array([xyz[0], xyz[1]]);
   	var heading = xyz[2];
   	var alive = xyz[3];
@@ -27195,6 +27408,7 @@ function canonicalFactory224($bindings, $runtime) {
   	new $runtime.PooledFloat32Array([...pos, ...new $runtime.PooledFloat32Array([(hash(seed * 1000|0)) * TAU, 0])]).reduce((res,el,i)=>(res[i] = el, res), outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var forwardDir = new $runtime.PooledFloat32Array([cos(heading), sin(heading)]);
@@ -27226,7 +27440,7 @@ function canonicalFactory224($bindings, $runtime) {
   	var speedScale = 1;
   	var blend = clamp(inputWeight * 0.009999999776482582, 0, 1);
   	if (blend > 0) {
-  	var field = fieldActive > 0.5 ? new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(fieldTex, pos))) : new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, pos)));
+  	var field = fieldActive > 0.5 ? new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(heightTex, pos))) : new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, pos)));
   	var localInput = luminance(field);
   	speedScale = mix(1, mix(1.7999999523162842, 0.3499999940395355, localInput), blend);
   	};
@@ -27235,7 +27449,8 @@ function canonicalFactory224($bindings, $runtime) {
   	var newAge = age + 0.01600000075995922;
   	(outXYZ[0] = newPos[0], outXYZ[1] = newPos[1], outXYZ[2] = newHeading, outXYZ[3] = 1, outXYZ);
   	(outVel[0] = 0, outVel[1] = 0, outVel[2] = newAge, outVel[3] = seed, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)
@@ -27252,9 +27467,13 @@ function canonicalFactory224($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory224.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory224.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory225($bindings, $runtime) {
   const { clamp, texture } = $runtime.stdlib
@@ -27304,7 +27523,7 @@ function canonicalFactory226($bindings, $runtime) {
 }
 
 function canonicalFactory227($bindings, $runtime) {
-  const { float, vec2, ivec2, sin, cos, floor, fract, clamp, mix, multiply, textureSize, texelFetch } = $runtime.stdlib
+  const { float, vec2, vec4, ivec2, sin, cos, abs, floor, round, fract, max, clamp, mix, lessThanEqual, all, subtract, multiply, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -27336,6 +27555,28 @@ function canonicalFactory227($bindings, $runtime) {
   	var size = textureSize(diffuseTex, 0);
   	var pixel = clamp(cpu_ivec2_vec2(vec2.multiply([], clamp(uv, new $runtime.PooledFloat32Array([0, 0]), new $runtime.PooledFloat32Array([0.9999989867210388, 0.9999989867210388])), size)), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   	return texelFetch(diffuseTex, pixel, 0);
+  };
+  var baseColorTex = $bindings["baseColorTex"];
+  var outBaseColor = new Float32Array([0, 0, 0, 0]);
+  function spawnColor (pos) {
+  	pos = $runtime.copy(pos);
+  	var dims = textureSize(inputTex, 0);
+  	var sampled = texelFetch(inputTex, cpu_ivec2_vec2(new $runtime.PooledFloat32Array([pos[0] * dims[0], pos[1] * dims[1]])), 0);
+  	return sampled[3] > 0 ? sampled : new $runtime.PooledFloat32Array([1, 1, 1, 1]);
+  };
+  function baseColor (coord, rgba, pos) {
+  	rgba = $runtime.copy(rgba);
+  	pos = $runtime.copy(pos);
+  	var kept = texelFetch(baseColorTex, coord, 0);
+  	if (kept[3] == 0) {
+  	return rgba;
+  	};
+  	var spawnDelta = abs(vec4.subtract([], round(new $runtime.PooledFloat32Array([rgba[0] * 255, rgba[1] * 255, rgba[2] * 255, rgba[3] * 255])), round(clamp(spawnColor(pos), 0, 1).map(function (_) {return _ * 255;}))));
+  	return all(lessThanEqual(spawnDelta, new $runtime.PooledFloat32Array([1, 1, 1, 1]))) ? rgba : kept;
+  };
+  function keptBaseColor (base) {
+  	base = $runtime.copy(base);
+  	return diffuseActive > 0.5 ? new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([base[0], base[1], base[2]]), max(base[3], 0.003921568859368563)]) : new $runtime.PooledFloat32Array([0, 0, 0, 0]);
   };
   function hash_uint (value) { return $runtime.stdlib.hashUintLcg(value); };
   function hash (seed) {
@@ -27370,6 +27611,7 @@ function canonicalFactory227($bindings, $runtime) {
   	var xyz = texelFetch(xyzTex, coord, 0);
   	var vel = texelFetch(velTex, coord, 0);
   	var rgba = texelFetch(rgbaTex, coord, 0);
+  	var base = baseColor(coord, rgba, new $runtime.PooledFloat32Array([xyz[0], xyz[1]]));
   	var px = xyz[0];
   	var py = xyz[1];
   	var pz = xyz[2];
@@ -27382,6 +27624,7 @@ function canonicalFactory227($bindings, $runtime) {
   	(outXYZ[0] = xyz[0], outXYZ[1] = xyz[1], outXYZ[2] = xyz[2], outXYZ[3] = xyz[3], outXYZ);
   	(outVel[0] = vel[0], outVel[1] = vel[1], outVel[2] = vel[2], outVel[3] = vel[3], outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	return;
   	};
   	var deviationMultiplier = 1 + ((seed_f - 0.5) * deviation) * 2;
@@ -27407,10 +27650,12 @@ function canonicalFactory227($bindings, $runtime) {
   	(outXYZ[0] = px, outXYZ[1] = py, outXYZ[2] = pz, outXYZ[3] = 0, outXYZ);
   	(outVel[0] = vx, outVel[1] = vy, outVel[2] = vz, outVel[3] = seed_f, outVel);
   	(outRGBA[0] = rgba[0], outRGBA[1] = rgba[1], outRGBA[2] = rgba[2], outRGBA[3] = rgba[3], outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	} else {
   	(outXYZ[0] = px, outXYZ[1] = py, outXYZ[2] = pz, outXYZ[3] = 1, outXYZ);
   	(outVel[0] = vx, outVel[1] = vy, outVel[2] = vz, outVel[3] = seed_f, outVel);
-  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : rgba.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	diffuseActive > 0.5 ? selectedDiffuse(new $runtime.PooledFloat32Array([outXYZ[0], outXYZ[1]])) : base.reduce((res,el,i)=>(res[i] = el, res), outRGBA);
+  	keptBaseColor(base).reduce((res,el,i)=>(res[i] = el, res), outBaseColor);
   	};
   };
   return function canonicalKernel(context, out) {
@@ -27428,9 +27673,13 @@ function canonicalFactory227($bindings, $runtime) {
     out[9] = outRGBA[1]
     out[10] = outRGBA[2]
     out[11] = outRGBA[3]
+    out[12] = outBaseColor[0]
+    out[13] = outBaseColor[1]
+    out[14] = outBaseColor[2]
+    out[15] = outBaseColor[3]
   }
 }
-canonicalFactory227.outputNames = ["outXYZ","outVel","outRGBA"]
+canonicalFactory227.outputNames = ["outXYZ","outVel","outRGBA","outBaseColor"]
 
 function canonicalFactory228($bindings, $runtime) {
   const { texture } = $runtime.stdlib

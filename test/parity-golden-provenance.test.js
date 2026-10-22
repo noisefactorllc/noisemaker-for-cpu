@@ -83,7 +83,7 @@ test('current NEAR authority validation preserves each original capture and bind
     const capture = manifest.goldens[key].captureRecord
     assert.equal(capture.sourceRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d')
     const validation = capture.authorityValidation
-    assert.equal(validation?.sourceRevision, UPSTREAM_REVISION, id)
+    assert.equal(validation?.sourceRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8', id)
     assert.deepEqual(records[key].captureRecord.authorityValidation, validation)
     assert.equal(validation.independentRenderers, 2)
     assert.equal(validation.readsPerRenderer, 2)
@@ -122,7 +122,7 @@ test('current source revalidation does not relabel historical renderer protocols
   for (const directory of ['oddsize-m4', 'posterize-97x43', 'scatter-m4', 'seeded-hashes-m4', 'seeded-volumes-m4', 'snow-m4', 'spookyTicker-m4']) {
     const fixture = JSON.parse(await readFile(join(projectRoot, `test/fixtures/authority/${directory}/capture.json`), 'utf8'))
     assert.equal(fixture.capture.authorityRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d', directory)
-    assert.equal(fixture.validation?.authorityRevision, UPSTREAM_REVISION, directory)
+    assert.equal(fixture.validation?.authorityRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8', directory)
     assert.equal(fixture.validation.verifiedRendererCount, 1)
     assert.equal(fixture.validation.readsPerVerifiedRenderer, directory === 'seeded-volumes-m4' ? 2 : 3)
     assert.equal(fixture.validation.programStateApplied, false)

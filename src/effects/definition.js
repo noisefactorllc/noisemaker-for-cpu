@@ -1,5 +1,9 @@
 import { isAutomationValue } from '../runtime/automation.js'
 
+// Hard removal date for every deprecated parameter alias, mirroring upstream's
+// ALIAS_EOL_DATE (shaders/src/lang/paramAliases.js).
+const ALIAS_EOL_DATE = '2027-06-01'
+
 function cloneValue(value) {
   if (Array.isArray(value)) return Object.freeze(value.map(cloneValue))
   if (value && typeof value === 'object') {
@@ -142,6 +146,10 @@ export class EffectDefinition {
     this.outputTex3d = spec.outputTex3d ?? null
     this.outputGeo = spec.outputGeo ?? null
     this.loopRole = spec.loopRole ?? null
+    // Deprecated parameter names, mirroring upstream's `paramAliases`
+    // (shaders/src/lang/paramAliases.js): named arguments using an old name
+    // resolve to the new name, and a directly supplied new-name value wins.
+    this.paramAliases = spec.paramAliases ? { ...spec.paramAliases } : null
     Object.freeze(this)
   }
 
@@ -152,12 +160,41 @@ export class EffectDefinition {
       if ('default' in param) values[name] = normalizeValue(param, param.default, name)
     }
     const named = args.length > 0 && args[0].name !== null
+    // Deprecated aliases resolve exactly as upstream's resolveParamAliases: an
+    // alias present without its canonical name migrates the value; with both
+    // present the canonical name wins; the alias is always consumed. Only
+    // named arguments participate, matching upstream's kwarg-only resolution.
+    const canonicalSupplied = new Set()
+    const aliasWarned = new Set()
+    if (named) {
+      for (const arg of args) {
+        if (arg.value !== undefined && arg.name !== null) canonicalSupplied.add(arg.name)
+      }
+    }
     for (let index = 0; index < args.length; index += 1) {
       const suppliedName = named ? args[index].name : this.paramNames[index]
-      const name = suppliedName
+      const name = named ? (this.paramAliases?.[suppliedName] ?? suppliedName) : suppliedName
       if (!name || !(name in this.params)) {
         const badName = suppliedName ?? `argument ${index + 1}`
         throw new TypeError(`Unknown parameter "${badName}" for ${this.id}; accepted: ${this.paramNames.join(', ')}`)
+      }
+      if (named) {
+        // An alias argument migrates its value to the canonical name unless
+        // that name was also supplied directly; the canonical name wins.
+        // Every alias hit warns, as upstream's S007 diagnostic does.
+        if (suppliedName !== name) {
+          if (args[index].value !== undefined && !aliasWarned.has(suppliedName)) {
+            aliasWarned.add(suppliedName)
+            console.warn(`param '${suppliedName}' is deprecated, use '${name}' instead. Aliases will be removed on ${ALIAS_EOL_DATE}.`)
+            if (!canonicalSupplied.has(name)) {
+              values[name] = normalizeValue(this.params[name], args[index].value, name)
+            }
+          }
+          continue
+        }
+        if (args[index].value === undefined) continue
+        values[name] = normalizeValue(this.params[name], args[index].value, name)
+        continue
       }
       if (args[index].value === undefined) continue
       values[name] = normalizeValue(this.params[name], args[index].value, name)

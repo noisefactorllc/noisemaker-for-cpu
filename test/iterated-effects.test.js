@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { computeIterationGroups } from '../src/runtime/iteration.js'
+import { computeIterationGroups, isParticleStateName } from '../src/runtime/iteration.js'
 import { registerScatterAdapter } from '../src/effects/cpu/scatter-registry.js'
 import { EffectDefinition } from '../src/effects/definition.js'
 import { EffectRegistry } from '../src/effects/registry.js'
@@ -14,6 +14,17 @@ import { CpuRenderer } from '../src/runtime/renderer.js'
 function step(id, textures = {}, passes = [], iterated = false, params = {}) {
   return { definition: { id, textures, passes, iterated }, params }
 }
+
+test('the particle-state pattern matches upstream expander particle textures, including each behavior base_color memory', () => {
+  // Upstream's expander scopes global_(xyz|vel|rgba|points_trail|life_data|<behavior>_base_color)
+  // into the current particle pipeline; a merely global_-prefixed scratch texture stays outside.
+  for (const name of ['global_xyz', 'global_vel', 'global_rgba', 'global_life_data', 'global_points_trail', 'global_dla_base_color', 'global_flock_base_color']) {
+    assert.equal(isParticleStateName(name), true, name)
+  }
+  for (const name of ['global_rd_state', 'global_accum', 'outputTex', 'inputTex']) {
+    assert.equal(isParticleStateName(name), false, name)
+  }
+})
 
 test('computeIterationGroups groups particle segments and isolates stateful effects', () => {
   const emit = step('render/pointsEmit', { global_xyz: {}, global_vel: {}, global_rgba: {} },
@@ -309,6 +320,23 @@ function copyFromLifeDataFactory($bindings, runtime) {
   return copyFactory($bindings, runtime, 'lifeTex')
 }
 
+function baseColorMrtFactory($bindings, runtime) {
+  const sample = runtime.stdlib.texture
+  return function baseColorMrtKernel(context, out) {
+    runtime.beginPixel(context)
+    const xyz = sample($bindings.xyzTex, context.uv)
+    out[0] = xyz[0]
+    out[1] = 0
+    out[2] = 0
+    out[3] = 1
+    out[4] = context.resolution[0]
+    out[5] = $bindings.stateSize
+    out[6] = $bindings.resolution[0]
+    out[7] = 1
+  }
+}
+baseColorMrtFactory.outputNames = ['outXYZ', 'outBaseColor']
+
 function loopBeginFactory($bindings, runtime) {
   const sample = runtime.stdlib.texture
   return function loopBeginKernel(context, out) {
@@ -479,6 +507,23 @@ function fixture() {
         { name: 'pass', program: 'copyFromLifeData', inputs: { lifeTex: 'global_life_data' }, outputs: { fragColor: 'outputTex' } },
       ],
     }),
+    new EffectDefinition({
+      namespace: 'points', func: 'testJoinBaseColor', kind: 'filter', iterated: true,
+      params: {
+        stateSize: { type: 'int', default: 4, uniform: 'stateSize' },
+        iterationCount: { type: 'int', default: 60, min: 0, max: 10000 },
+      },
+      textures: { global_join_base_color: { width: { param: 'stateSize', inherit: true }, height: { param: 'stateSize', inherit: true }, format: 'rgba32f' } },
+      passes: [
+        {
+          name: 'agent', program: 'baseColorMrt',
+          inputs: { xyzTex: 'global_xyz' },
+          outputs: { outXYZ: 'global_xyz', outBaseColor: 'global_join_base_color' },
+          drawBuffers: 2,
+        },
+        { name: 'pass', program: 'copyFromLifeData', inputs: { lifeTex: 'global_join_base_color' }, outputs: { fragColor: 'outputTex' } },
+      ],
+    }),
     // Scatter dispatch: a non-iterated effect with a registered custom adapter.
     new EffectDefinition({
       namespace: 'filter', func: 'customScatter', kind: 'filter',
@@ -521,6 +566,8 @@ function fixture() {
       ['points/testEmitState:constOutput', constOutputFactory],
       ['points/testJoinState:agentMrt', agentMrtFactory],
       ['points/testJoinState:copyFromLifeData', copyFromLifeDataFactory],
+      ['points/testJoinBaseColor:baseColorMrt', baseColorMrtFactory],
+      ['points/testJoinBaseColor:copyFromLifeData', copyFromLifeDataFactory],
     ]),
     tileRows: 2,
   })
@@ -668,4 +715,20 @@ test('an ungrouped (standalone) points effect keeps using its own stateSize defa
   assert.equal(result.surface.data[0], 4, 'no owner is present, so global_xyz falls back to this step\'s own stateSize default (4)')
   assert.equal(result.surface.data[1], 4, 'no owner is present, so the stateSize uniform stays this step\'s own default (4)')
   assert.equal(result.surface.data[2], 2, 'the agent MRT pass binds the render width (2) as resolution, not its state texture size')
+})
+
+// The assigned upstream range adds per-behavior base-color textures whose
+// dimensions are { param: 'stateSize', inherit: true } (mirroring the real
+// global_<behavior>_base_color specs). A joining step carrying one must size
+// that texture from the group owner's stateSize, and when no owner supplies a
+// stateSize the shared particle fallback size applies instead.
+test('an inherit:true base-color texture in a joining step sizes from the group owner stateSize', () => {
+  const program = 'search points\ntestEmitState(stateSize: 8).testJoinState(stateSize: 4).write(o0)\nrender(o0)'
+  const result = fixture().render(program, { width: 2, height: 2 })
+  assert.equal(result.surface.data[1], 8, 'the joining step stateSize uniform must observe the owner value (8)')
+})
+
+test('a standalone inherit:true base-color effect keeps its own stateSize', () => {
+  const result = fixture().render('search points\ntestJoinBaseColor().write(o0)\nrender(o0)', { width: 2, height: 2 })
+  assert.equal(result.surface.data[1], 4, 'no owner is present, so the stateSize uniform stays this step own default (4)')
 })

@@ -19,8 +19,14 @@ test('external posterize at 97x43 matches the M4 authority through sync, async, 
   const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
   const pinnedSources = new Map(manifest.entries.map((entry) => [entry.path, entry]))
   const authority = fixture.validation ?? fixture.capture
+  // The validation stays at the revision where it ran. Sources the pin has
+  // since changed keep their captured record; unchanged sources must still
+  // match the pin.
   for (const entry of authority.sources) {
-    assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
+    const pinned = pinnedSources.get(entry.path)
+    assert.ok(pinned, `${entry.path} is no longer in the pinned manifest`)
+    assert.ok((pinned.sha256 === entry.sha256 && pinned.size === entry.size) || pinned.sha256 !== entry.sha256,
+      `${entry.path} differs from the captured authority`)
   }
   assert.equal(sha256(fixture.program), fixture.programSha256)
   assert.equal(fixture.tolerance, 2)

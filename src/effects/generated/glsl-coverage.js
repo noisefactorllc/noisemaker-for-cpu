@@ -2045,10 +2045,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "ca2b022c4716108bf00c7e60093ca48310e806ebea3892dd3773b209a82cbe60",
-    "sourceBytes": 5340,
-    "normalizedBytes": 5448,
-    "generatedBytes": 5713
+    "sourceSha256": "cfe98602348063ab7cb3aa0c642f70de000c2352a40368e8fc9eddcf47447e82",
+    "sourceBytes": 6045,
+    "normalizedBytes": 6128,
+    "generatedBytes": 6454
   },
   {
     "effectId": "points/attractor",
@@ -2065,10 +2065,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "1355eeaf5badb5b5d7f7000228858995cc1a2c231ddc558182a96c9cc2b5c996",
-    "sourceBytes": 5260,
-    "normalizedBytes": 5364,
-    "generatedBytes": 5659
+    "sourceSha256": "efecb24d045790bee064e160a1b09a7f411589e76fee87591261bba0cc44870f",
+    "sourceBytes": 6121,
+    "normalizedBytes": 6200,
+    "generatedBytes": 6757
   },
   {
     "effectId": "points/buddhabrot",
@@ -2095,10 +2095,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "c895d5ac734ae8b96a1309ae4cd068137619629efd8afa2ce47bea72c263f5fb",
-    "sourceBytes": 6529,
-    "normalizedBytes": 6714,
-    "generatedBytes": 6588
+    "sourceSha256": "cae55bc611428b4e6938a79814898c8bda2a3af19b303502ec5b77f5479b88f9",
+    "sourceBytes": 7791,
+    "normalizedBytes": 7955,
+    "generatedBytes": 8032
   },
   {
     "effectId": "points/dla",
@@ -2145,10 +2145,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "53b97cf51884b718823bc185be50e881320df6ee58ede9f612fd3743adda84a2",
-    "sourceBytes": 10065,
-    "normalizedBytes": 10250,
-    "generatedBytes": 10588
+    "sourceSha256": "3be70196fe1ffee473c7352e5a13d600f507a1bb6f6005622d1c1d03f8b6c156",
+    "sourceBytes": 11303,
+    "normalizedBytes": 11467,
+    "generatedBytes": 11916
   },
   {
     "effectId": "points/flock",
@@ -2165,10 +2165,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "8421346ff3cfa8c9677a70e04efe303ac42f52d61842bbeb7a0dd7fc846cf44c",
-    "sourceBytes": 6345,
-    "normalizedBytes": 6547,
-    "generatedBytes": 6022
+    "sourceSha256": "f8149c037daa3172ccafdb0ffcadbebad3a5fd7d3b9fa1112861518cddfede06",
+    "sourceBytes": 7515,
+    "normalizedBytes": 7696,
+    "generatedBytes": 7316
   },
   {
     "effectId": "points/flow",
@@ -2205,10 +2205,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "a2b19e1088060aca2292773df1e8d48d41e7ccb6398928db0d1da6922bf9d040",
-    "sourceBytes": 6800,
-    "normalizedBytes": 6934,
-    "generatedBytes": 5893
+    "sourceSha256": "02bff511e46a3e32cfd7d2aa0c8d49d24a9590441c8900379241ba210a06a0fc",
+    "sourceBytes": 7967,
+    "normalizedBytes": 8080,
+    "generatedBytes": 7183
   },
   {
     "effectId": "points/hydraulic",
@@ -2225,10 +2225,10 @@ export const programCoverage = Object.freeze([
     "program": "agentField",
     "file": "agentField.glsl",
     "status": "generated",
-    "sourceSha256": "4d8f14b0a55147beee5d92f6aaeb306de41f04c7b2aea3f02e5837733d7c1cb4",
-    "sourceBytes": 3861,
-    "normalizedBytes": 4098,
-    "generatedBytes": 4134
+    "sourceSha256": "b5f996e1d84485c4726801aed539690cd242529a81d2101f98cb8ef2ccc56d87",
+    "sourceBytes": 5099,
+    "normalizedBytes": 5315,
+    "generatedBytes": 5462
   },
   {
     "effectId": "points/lenia",
@@ -2305,10 +2305,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "b47e240d3ff72c7852a21c2581310c3eb3ee7244c8a69974d451279e35088575",
-    "sourceBytes": 5340,
-    "normalizedBytes": 5462,
-    "generatedBytes": 5563
+    "sourceSha256": "a9b21cee808cf70e7d29d05f27bdf9bd598ef1f5ac8dae492e6541cf21456e2f",
+    "sourceBytes": 6510,
+    "normalizedBytes": 6611,
+    "generatedBytes": 6857
   },
   {
     "effectId": "points/physarum",
@@ -2345,10 +2345,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "a372ae5cc6ce92bfde34890d89471e6d617c0619adcac7cf05c0ed12120995ea",
-    "sourceBytes": 4475,
-    "normalizedBytes": 4655,
-    "generatedBytes": 4144
+    "sourceSha256": "06f3afef8efeaba67f1babf129ee107b06e860ec8458e270ce404fc770b46615",
+    "sourceBytes": 5690,
+    "normalizedBytes": 5849,
+    "generatedBytes": 5509
   },
   {
     "effectId": "points/physical",

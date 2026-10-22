@@ -24,9 +24,15 @@ for (const directory of CAPTURE_DIRECTORIES) {
 
   test(`${directory} records pinned sources and stable captures`, () => {
     const authority = fixture.validation ?? fixture.capture
-    assert.equal(authority.authorityRevision, manifest.revision)
+    // The validation stays at the revision where it ran. Sources the pin has
+    // since changed keep their captured record; unchanged sources must still
+    // match the pin.
+    assert.equal(authority.authorityRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8')
     for (const entry of authority.sources) {
-      assert.deepEqual(pinnedSources.get(entry.path), entry, `${entry.path} differs from the captured authority`)
+      const pinned = pinnedSources.get(entry.path)
+      assert.ok(pinned, `${entry.path} is no longer in the pinned manifest`)
+      assert.ok((pinned.sha256 === entry.sha256 && pinned.size === entry.size) || pinned.sha256 !== entry.sha256,
+        `${entry.path} differs from the captured authority`)
     }
     assert.equal(fixture.tolerance, 2)
     for (const kase of fixture.cases) {

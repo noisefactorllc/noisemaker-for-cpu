@@ -9,7 +9,7 @@ import { UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot
 import { readPng, writePng } from '../../src/node/png.js'
 import { compareRgba8, goldenReference, loadGoldenProvenance, isSkippedEffect } from './lib.js'
 import { externalInputsForCase } from './reactive-fixtures.js'
-import { reviewedNearComparison } from './near.js'
+import { reviewedNearComparison, NEAR_AUTHORITY_REVISION } from './near.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const goldenRoot = resolve(projectRoot, 'parity', 'goldens')
@@ -133,7 +133,7 @@ async function main() {
     const comparison = compareRgba8(actual, golden.data, options.tolerance)
     const reference = await goldenReference(goldenRoot, suite, name, goldenProvenance)
     const near = comparison.pass ? null : await reviewedNearComparison({
-      id: definition.id, actual, source, meta: options, reference, authorityRevision: UPSTREAM_REVISION,
+      id: definition.id, actual, source, meta: options, reference, authorityRevision: NEAR_AUTHORITY_REVISION,
     })
     results.push({ id: definition.id, reference, ...comparison, ...(near ? { near } : {}) })
     if (options.writeCpu) await writePng(resolve(directory, `${name}.cpu.png`), rendered)

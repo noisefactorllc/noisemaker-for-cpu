@@ -49,6 +49,20 @@ function groupOwnerStateSize(group) {
   return Object.hasOwn(owner.params, 'stateSize') ? owner.params.stateSize : undefined
 }
 
+// A texture dimension spec reading the group's shared `stateSize` through the `inherit: true`
+// flag (upstream's inherited texture dimension): it resolves against the scope's stateSize —
+// `pointsEmit`'s value — and never the behavior's own default over it. Every particle behavior's
+// `global_<behavior>_base_color` memory is sized this way, and several behaviors (flock,
+// hydraulic, lenia, physarum) declare no `stateSize` global of their own.
+function declaresInheritedStateSizeTextures(definition) {
+  for (const texture of Object.values(definition.textures ?? {})) {
+    for (const spec of [texture?.width, texture?.height]) {
+      if (spec && typeof spec === 'object' && spec.inherit === true && spec.param === 'stateSize') return true
+    }
+  }
+  return false
+}
+
 // Shared by `canonicalMrtDestinations` (non-iterated fast path) and `groupMrtDestinations`
 // (iterated groups): every destination an MRT pass writes in one shared pixel loop must resolve
 // to identical dimensions, or whichever destination is smaller would silently get scrambled by
@@ -763,7 +777,8 @@ export class CpuRenderer {
   // (same as the non-iterated path) and, for a step that JOINED a group owner (`ownerStateSize`
   // passed by the caller, `undefined` for the owner itself and for ungrouped/single-step groups),
   // its own `stateSize` forcibly overridden to the owner's normalized value whenever this step
-  // declares a `stateSize` param at all.
+  // declares a `stateSize` param at all — or when its own textures read the scope's stateSize
+  // through an `inherit: true` dimension (a joining behavior's base-color memory).
   //
   // This mirrors upstream exactly: a joining points effect's own `stateSize` control is marked
   // `control:false` there (hidden — only the emitter's is a real, user-facing control), so
@@ -785,8 +800,18 @@ export class CpuRenderer {
   // iteration that also reads selfTex can never observe a pool-recycled buffer.
   initializeGroupStepState(step, ownerStateSize, inputBundle, renderOptions, owned) {
     const definition = step.definition
-    const inheritsStateSize = ownerStateSize !== undefined && Object.hasOwn(step.params, 'stateSize')
-    const sourceStep = inheritsStateSize ? { params: { ...step.params, stateSize: ownerStateSize }, explicitParams: step.explicitParams } : step
+    const declaresStateSize = Object.hasOwn(step.params, 'stateSize')
+    // A behavior whose own texture memory reads the scope's stateSize (its `inherit: true`
+    // base-color dimension) sizes from the group's shared stateSize even when it declares no
+    // `stateSize` global of its own (e.g. points/flock): the owner's value in a group, the same
+    // synthetic fallback the un-declared particle-state textures use when none exists.
+    const inheritsStateSize = ownerStateSize !== undefined && (declaresStateSize || declaresInheritedStateSizeTextures(definition))
+    const inheritedStateSize = inheritsStateSize
+      ? ownerStateSize
+      : (!declaresStateSize && declaresInheritedStateSizeTextures(definition) ? PARTICLE_STATE_FALLBACK_SIZE : undefined)
+    const sourceStep = inheritsStateSize || inheritedStateSize !== undefined
+      ? { params: { ...step.params, ...(inheritedStateSize !== undefined ? { stateSize: inheritedStateSize } : {}) }, explicitParams: step.explicitParams }
+      : step
     const params = inheritVolumeSize(definition, this.effectParams(sourceStep, renderOptions), inputBundle)
     const usesSelfTex = (definition.passes ?? []).some((pass) =>
       Object.values(pass.inputs ?? {}).some((value) => value === 'selfTex' || value === 'feedback'))
