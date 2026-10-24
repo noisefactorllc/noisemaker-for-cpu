@@ -1,5 +1,5 @@
 {
-  "revision": "32d8d3e6a6dbb3dee2dfbcc8d31bd1c52342eca3",
+  "revision": "d0ed94ae19cca7328bc7d6b28902712a0838e1a9",
   "cases": [
     {
       "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
@@ -370,6 +370,10 @@
       "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"synth/solid\",\n    \"mixer/blendMode\"\n  ],\n  \"dsl\": \"search synth, mixer\\n\\ntestPattern(pattern: colorBars).write(o1)\\nsolid(color: #804020, alpha: 0.5).write(o2)\\nread(o1).blendMode(tex: read(o2), mode: multiply, mix: 0).write(o0)\\nrender(o0)\"\n}\n"
     },
     {
+      "path": "shaders/effects/mixer/cellSplit/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/gradient\",\n    \"synth/noise\",\n    \"mixer/cellSplit\"\n  ],\n  \"dsl\": \"search synth, mixer\\ngradient(seed: 2).write(o1)\\nnoise(seed: 1).cellSplit(tex: read(o1), seed: 4).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
       "path": "shaders/effects/mixer/centerMask/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"mixer/centerMask\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search mixer, synth\\n\\nnoise(ridges: true, colorMode: mono)\\n.write(o0)\\n\\nnoise(ridges: true)\\n.centerMask(tex: read(o0), mix: -75)\\n.write(o1)\",\n    \"surface\": \"o1\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
     },
@@ -478,6 +482,14 @@
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/curl\"\n    ],\n    \"dsl\": \"search synth\\n\\ncurl().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
     },
     {
+      "path": "shaders/effects/synth/gabor/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/gabor\"\n  ],\n  \"dsl\": \"search synth\\ngabor(seed: 3).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/gradient/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/gradient\"\n  ],\n  \"dsl\": \"search synth\\ngradient(seed: 3).write(o0)\\nrender(o0)\"\n}\n"
+    },
+    {
       "path": "shaders/effects/synth/julia/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/julia\"\n    ],\n    \"dsl\": \"search synth\\n\\njulia(iterations: 50, rotation: 30).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
     },
@@ -516,6 +528,10 @@
     {
       "path": "shaders/effects/synth/pattern/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/pattern\"\n    ],\n    \"dsl\": \"search synth\\n\\npattern().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/synth/perlin/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    64,\n    64\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/perlin\"\n  ],\n  \"dsl\": \"search synth\\nperlin(seed: 3).write(o0)\\nrender(o0)\"\n}\n"
     },
     {
       "path": "shaders/effects/synth/polygon/parity-case.json",

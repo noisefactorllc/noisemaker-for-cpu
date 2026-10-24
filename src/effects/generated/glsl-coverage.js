@@ -15,20 +15,20 @@ export const programCoverage = Object.freeze([
     "program": "caustic",
     "file": "caustic.glsl",
     "status": "generated",
-    "sourceSha256": "161cb6114f312a223d88a5c60a3ecb694a4c8766fca91b3fc47ae92078f2a00d",
-    "sourceBytes": 15645,
-    "normalizedBytes": 16018,
-    "generatedBytes": 17840
+    "sourceSha256": "9ff29d7f4b4baacb800295540ab1c939f9482dbb1f2f48173819c947334c4fd7",
+    "sourceBytes": 15714,
+    "normalizedBytes": 16087,
+    "generatedBytes": 17909
   },
   {
     "effectId": "classicNoisedeck/cellNoise",
     "program": "cellNoise",
     "file": "cellNoise.glsl",
     "status": "generated",
-    "sourceSha256": "9fd76306b377ef501a5dd340263179f04e3e890cc05d5e82f524f7bdf793d3b8",
-    "sourceBytes": 9643,
-    "normalizedBytes": 9886,
-    "generatedBytes": 12031
+    "sourceSha256": "f9ef70baecd0e068f873792219b33f5a0391904ebbd480182d2233bb39227ce2",
+    "sourceBytes": 9712,
+    "normalizedBytes": 9955,
+    "generatedBytes": 12100
   },
   {
     "effectId": "classicNoisedeck/cellRefract",
@@ -125,30 +125,30 @@ export const programCoverage = Object.freeze([
     "program": "moodscape",
     "file": "moodscape.glsl",
     "status": "generated",
-    "sourceSha256": "a2580a36096208dd7a63965d2b277be9356f29a8d3af634d1736df9142db1a44",
-    "sourceBytes": 19559,
-    "normalizedBytes": 19953,
-    "generatedBytes": 22080
+    "sourceSha256": "2b020887bfb1a4dd366b1583e4ff68fd47193bd4993ba1052170de0981aabfa1",
+    "sourceBytes": 19628,
+    "normalizedBytes": 20022,
+    "generatedBytes": 22149
   },
   {
     "effectId": "classicNoisedeck/noise",
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
-    "sourceSha256": "d86306e285a2f80dae86fe79cde92ceb89ec898ef78e6a15d140bfdf0e030bb2",
-    "sourceBytes": 32527,
-    "normalizedBytes": 33447,
-    "generatedBytes": 31723
+    "sourceSha256": "513f8278e29564b7f2b0735b539b5990b53dc920d487fffb87d54a0c92fc5f0b",
+    "sourceBytes": 32596,
+    "normalizedBytes": 33516,
+    "generatedBytes": 31792
   },
   {
     "effectId": "classicNoisedeck/noise3d",
     "program": "noise3d",
     "file": "noise3d.glsl",
     "status": "generated",
-    "sourceSha256": "f359a11d4a3799686a554ee4dbaca725235ef38781a7b91e37628537cebb220f",
-    "sourceBytes": 19654,
-    "normalizedBytes": 20394,
-    "generatedBytes": 29736
+    "sourceSha256": "e7762ec990058d51d2c07febd5a4dba9fa90d650cc21cf68c9a5a511d27485b2",
+    "sourceBytes": 19723,
+    "normalizedBytes": 20463,
+    "generatedBytes": 29805
   },
   {
     "effectId": "classicNoisedeck/refract",
@@ -195,10 +195,10 @@ export const programCoverage = Object.freeze([
     "program": "splat",
     "file": "splat.glsl",
     "status": "generated",
-    "sourceSha256": "cfdcc4edcc5097043ad72602feb62a40622c14ba1bee66fb1ac2e414d1b3cced",
-    "sourceBytes": 5069,
-    "normalizedBytes": 5189,
-    "generatedBytes": 7382
+    "sourceSha256": "5e334703ddad3c16700adf20d2f1515303a5bef92a5b87bed92ff1a9928cfbf7",
+    "sourceBytes": 5138,
+    "normalizedBytes": 5258,
+    "generatedBytes": 7451
   },
   {
     "effectId": "filter/adjust",
@@ -415,10 +415,10 @@ export const programCoverage = Object.freeze([
     "program": "corrupt",
     "file": "corrupt.glsl",
     "status": "generated",
-    "sourceSha256": "b81642d2e63294f9f51656eb2441cdaf479c495c5e4acb0d3a4907a13b070d02",
-    "sourceBytes": 7421,
-    "normalizedBytes": 7818,
-    "generatedBytes": 7833
+    "sourceSha256": "f5bfb791671606227e8ecb2641c4a28e345c1c951a5405bc9fb3f631354df086",
+    "sourceBytes": 7490,
+    "normalizedBytes": 7887,
+    "generatedBytes": 7902
   },
   {
     "effectId": "filter/craquelure",
@@ -755,10 +755,10 @@ export const programCoverage = Object.freeze([
     "program": "lensWarp",
     "file": "lensWarp.glsl",
     "status": "generated",
-    "sourceSha256": "543b53a26b14dfdcf979e2601eaad32d6ec683c41427301b851173334a670480",
-    "sourceBytes": 4033,
-    "normalizedBytes": 4154,
-    "generatedBytes": 5536
+    "sourceSha256": "88a3238756968229b41c0cb38266194a601bab9e6eef345ca79bbb271aba88c0",
+    "sourceBytes": 4102,
+    "normalizedBytes": 4223,
+    "generatedBytes": 5605
   },
   {
     "effectId": "filter/lightLeak",
@@ -1725,10 +1725,10 @@ export const programCoverage = Object.freeze([
     "program": "warp",
     "file": "warp.glsl",
     "status": "generated",
-    "sourceSha256": "f3034ac02a2926b819ff874d2d1d0d3dacebf2b7a409c983237d6a71865942ee",
-    "sourceBytes": 3095,
-    "normalizedBytes": 3200,
-    "generatedBytes": 4531
+    "sourceSha256": "9f12ebb2a1b93f3e957db6f2ad5494f06975f9f711ffd6c2392fb3f2c18fcc83",
+    "sourceBytes": 3164,
+    "normalizedBytes": 3269,
+    "generatedBytes": 4600
   },
   {
     "effectId": "filter/watercolor",
@@ -1925,10 +1925,10 @@ export const programCoverage = Object.freeze([
     "program": "cellSplit",
     "file": "cellSplit.glsl",
     "status": "generated",
-    "sourceSha256": "c6de84cdf428b367ac95d345cf6d72f3438ddeeb728136ea34e8937af72ceff9",
-    "sourceBytes": 4058,
-    "normalizedBytes": 4201,
-    "generatedBytes": 4842
+    "sourceSha256": "e11288bff92d1c26ea32d23ef1710cb5237d5666f7cabf846b80e21b9884a6b2",
+    "sourceBytes": 4127,
+    "normalizedBytes": 4270,
+    "generatedBytes": 4911
   },
   {
     "effectId": "mixer/centerMask",
@@ -2625,10 +2625,10 @@ export const programCoverage = Object.freeze([
     "program": "cell",
     "file": "cell.glsl",
     "status": "generated",
-    "sourceSha256": "b2cae5ecdfd315194d4b3b04d2c5b39d1b48c56a9bd1a10396827e3b8d413a18",
-    "sourceBytes": 3813,
-    "normalizedBytes": 3903,
-    "generatedBytes": 4770
+    "sourceSha256": "b16831bd6f84c798e6129f47ea81e0a8ab7041acd531c946fd75f353b0340d82",
+    "sourceBytes": 3882,
+    "normalizedBytes": 3972,
+    "generatedBytes": 4839
   },
   {
     "effectId": "synth/cellularAutomata",
@@ -2665,20 +2665,20 @@ export const programCoverage = Object.freeze([
     "program": "gabor",
     "file": "gabor.glsl",
     "status": "generated",
-    "sourceSha256": "91665da2d584d6d88b38e8ba314dfc0b546dd49d29aa161f5d66aecf6bf67bf5",
-    "sourceBytes": 3870,
-    "normalizedBytes": 3999,
-    "generatedBytes": 3943
+    "sourceSha256": "52dbe8d5ef5ae2bebf89096f029d9f9074499bd025cbbff6e9085da95cec5da8",
+    "sourceBytes": 3939,
+    "normalizedBytes": 4068,
+    "generatedBytes": 4012
   },
   {
     "effectId": "synth/gradient",
     "program": "gradient",
     "file": "gradient.glsl",
     "status": "generated",
-    "sourceSha256": "308537be8f376750a2239be89a07e558e54ee1661a0ea360c6a3e48b8c6e7a75",
-    "sourceBytes": 5439,
-    "normalizedBytes": 5592,
-    "generatedBytes": 5889
+    "sourceSha256": "05ad693f0c2d3cb590139c3cbd7cb5430843f36b09b9c2478d571a5aa0ec19a6",
+    "sourceBytes": 5508,
+    "normalizedBytes": 5661,
+    "generatedBytes": 5958
   },
   {
     "effectId": "synth/julia",
@@ -2835,10 +2835,10 @@ export const programCoverage = Object.freeze([
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
-    "sourceSha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274",
-    "sourceBytes": 18131,
-    "normalizedBytes": 18748,
-    "generatedBytes": 21369
+    "sourceSha256": "607378cb929b309b826bca05580769c18e93000faa7afdc69d9b7d57dff6fb7e",
+    "sourceBytes": 18200,
+    "normalizedBytes": 18817,
+    "generatedBytes": 21438
   },
   {
     "effectId": "synth/osc2d",
@@ -2865,10 +2865,10 @@ export const programCoverage = Object.freeze([
     "program": "perlin",
     "file": "perlin.glsl",
     "status": "generated",
-    "sourceSha256": "9580baa0f637b8b4f2488e6e26288d885fe748973a121f52281b63c16d530318",
-    "sourceBytes": 10882,
-    "normalizedBytes": 11221,
-    "generatedBytes": 10040
+    "sourceSha256": "d36fe934e6f0833ba01862b14c11697cc1db9e6a1eaafc690ac9c70438b5ea05",
+    "sourceBytes": 10951,
+    "normalizedBytes": 11290,
+    "generatedBytes": 10109
   },
   {
     "effectId": "synth/polygon",
