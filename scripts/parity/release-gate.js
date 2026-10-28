@@ -17,7 +17,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
-import { sourceEffectIds } from '../../src/effects/generated/upstream-snapshot.js'
+import { sourceEffectIds, UPSTREAM_REVISION } from '../../src/effects/generated/upstream-snapshot.js'
 import { validateNearReview } from './near.js'
 
 const VERDICT = /^(EXACT|STRICT|FAIL|SKIP|MISSING|NEAR|DEFER) (\S+)/
@@ -135,6 +135,9 @@ export function evaluateReleaseGate(text, { declaredSkips, acceptedFailures, aut
       if (summary[key] !== value) errors.push(`PARITY-SUMMARY ${key}=${summary[key]}, expected ${value}`)
     }
     if (summary.tolerance !== 2) errors.push(`PARITY-SUMMARY tolerance=${summary.tolerance}, the contract is 2`)
+    if (summary.sourceRevision !== UPSTREAM_REVISION) {
+      errors.push(`PARITY-SUMMARY sourceRevision=${summary.sourceRevision}, expected the candidate pin ${UPSTREAM_REVISION}`)
+    }
     if (summary.expected !== summary.executed + summary.skip + summary.missing) {
       errors.push('PARITY-SUMMARY expected does not equal executed + skip + missing')
     }

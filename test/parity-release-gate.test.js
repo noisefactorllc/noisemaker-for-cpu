@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 
-import { sourceEffectIds } from '../src/effects/generated/upstream-snapshot.js'
+import { sourceEffectIds, UPSTREAM_REVISION } from '../src/effects/generated/upstream-snapshot.js'
 import { evaluateReleaseGate, parseArgs } from '../scripts/parity/release-gate.js'
 
 const DECLARED_SKIPS = []
@@ -32,7 +32,7 @@ function summaryOutput({ verdicts = {}, counts = {}, drop = [], extra = [] } = {
       : `${verdict} ${id} (synthetic)`)
   }
   lines.push(...extra)
-  const summary = { sourceRevision: 'synthetic', size: 8, time: 0.25, seed: 1, tolerance: 2, ...tally, ...counts }
+  const summary = { sourceRevision: UPSTREAM_REVISION, size: 8, time: 0.25, seed: 1, tolerance: 2, ...tally, ...counts }
   lines.push(`PARITY-SUMMARY ${JSON.stringify(summary)}`)
   return `${lines.join('\n')}\n`
 }

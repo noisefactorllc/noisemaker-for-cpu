@@ -7,7 +7,7 @@ import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories } from '..
 import { readPng } from '../src/node/png.js'
 import { reviewedNearComparison, validateNearReview } from '../scripts/parity/near.js'
 import { runSummary } from '../scripts/parity/summary.js'
-import { sourceEffectIds } from '../src/effects/generated/upstream-snapshot.js'
+import { sourceEffectIds, UPSTREAM_REVISION } from '../src/effects/generated/upstream-snapshot.js'
 import { evaluateReleaseGate } from '../scripts/parity/release-gate.js'
 
 const id = 'points/buddhabrot'
@@ -129,13 +129,16 @@ test('release gate accepts the reviewed NEAR evidence and rejects altered or abs
     return `EXACT ${caseId}`
   })
   lines.push(`PARITY-SUMMARY ${JSON.stringify({
-    sourceRevision: authorityRevision, ...meta,
+    sourceRevision: UPSTREAM_REVISION, ...meta,
     expected: 210, executed: 210, exact: 208, strict: 0, near: 2,
     defer: 0, skip: 0, fail: 0, missing: 0,
   })}`)
   const output = `${lines.join('\n')}\n`
   const policy = { declaredSkips: [], acceptedFailures: [] }
   assert.deepEqual(evaluateReleaseGate(output, policy).errors, [])
+  assert.equal(evaluateReleaseGate(output.replace(`"sourceRevision":"${UPSTREAM_REVISION}"`, '"sourceRevision":"c4f7cdd7656eb3e3ca8ced6624f19d6474607de8"'), policy).ok, false)
+  // A review bound to another authority than the pinned one never qualifies.
+  assert.equal(evaluateReleaseGate(output.replace(`"authorityRevision":"${authorityRevision}"`, '"authorityRevision":"d0ed94ae19cca7328bc7d6b28902712a0838e1a9"'), policy).ok, false)
   assert.equal(evaluateReleaseGate(output.replace('"maxError":25', '"maxError":26'), policy).ok, false)
   assert.equal(evaluateReleaseGate(output.replace('"maxError":6', '"maxError":5'), policy).ok, false)
   assert.equal(evaluateReleaseGate(output.replace(/^NEAR points.*$/m, `NEAR ${id}`), policy).ok, false)

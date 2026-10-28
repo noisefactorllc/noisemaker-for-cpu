@@ -9,7 +9,21 @@
 // PARITY-SUMMARY JSON with the gap-closure counts. See scripts/parity/summary.js for
 // the classification contract. The exit code reports audit completion, not the parity
 // verdict — the verdict is the counts in the PARITY-SUMMARY line.
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+
 import { runSummary } from './parity/summary.js'
+
+// Bind the run to its exact source. CI provides GITHUB_SHA; a direct run in a
+// checkout reports its own HEAD. Without either there is nothing to report.
+function candidateRevision() {
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA
+  const head = spawnSync('git', ['rev-parse', 'HEAD'], {
+    cwd: fileURLToPath(new URL('../', import.meta.url)),
+    encoding: 'utf8',
+  })
+  return head.status === 0 ? head.stdout.trim() : null
+}
 
 function parseArgs(argv) {
   const options = { size: 8, time: 0.25, seed: 1, tolerance: 2, requested: [] }
@@ -31,6 +45,8 @@ function parseArgs(argv) {
 
 try {
   const { lines } = await runSummary(parseArgs(process.argv.slice(2)))
+  const revision = candidateRevision()
+  if (revision) process.stdout.write(`candidate ${revision}\n`)
   for (const line of lines) process.stdout.write(`${line}\n`)
 } catch (error) {
   process.stderr.write(`${error.stack ?? error.message}\n`)

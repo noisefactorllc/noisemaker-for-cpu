@@ -131,8 +131,9 @@ test('entrypoint rejects a widened tolerance instead of counting passes', () => 
 test('emitted comparisons carry reference provenance and the summary aggregates it', () => {
   const stdout = execFileSync(process.execPath, [ENTRYPOINT, 'filter/adjust'], { encoding: 'utf8' })
   const lines = stdout.trimEnd().split('\n')
-  assert.match(lines[0], /^Reference provenance: 1 recorded, 0 unknown/)
-  assert.match(lines[1], /reference=parity\/goldens\/defaults\/filter__adjust\.golden\.png sha256=[0-9a-f]{64} provenance=recorded/)
+  assert.match(lines[0], /^candidate [0-9a-f]{40}$/)
+  assert.match(lines[1], /^Reference provenance: 1 recorded, 0 unknown/)
+  assert.match(lines[2], /reference=parity\/goldens\/defaults\/filter__adjust\.golden\.png sha256=[0-9a-f]{64} provenance=recorded/)
   const summary = JSON.parse(lines[lines.length - 1].replace(/^PARITY-SUMMARY /, ''))
   assert.deepEqual(summary.referenceProvenance, { recorded: 1, unknown: 0 })
 })

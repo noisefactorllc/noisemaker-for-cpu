@@ -404,13 +404,16 @@ function matchesProtocol(policy, meta) {
 }
 
 // Only these reviewed bytes qualify. Any changed candidate or capture needs a new
-// review. The evidence binds to its recorded authority revision through its own
-// JSON, so it stays valid while the candidate pin moves past that revision: the
-// summary still re-measures each case's rendered bytes against the pinned
-// candidate capture before it attaches a review.
+// review. Each review binds to the pinned authority itself: the evidence records the
+// authority revision it was reviewed at, and its authority capture must come from
+// that same source. A review bound to any other revision fails before the byte
+// comparison. The summary's sourceRevision is the candidate pin, which moves with
+// the port and is never the reviewed authority.
 export function validateNearReview(caseId, review, meta) {
   const policy = POLICIES.get(caseId)
   return policy !== undefined && matchesProtocol(policy, meta) &&
+    review?.authorityRevision === authorityRevision &&
+    review.authorityCapture?.sourceRevision === review.authorityRevision &&
     isDeepStrictEqual(review, expectedReview(policy))
 }
 
