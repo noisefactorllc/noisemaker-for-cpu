@@ -111,6 +111,14 @@ test('NEAR evidence must retain both complete surface measurements and their bou
   assert.equal(validateNearReview(id, review, { ...meta, time: 0.5, sourceRevision: authorityRevision }), false)
 })
 
+test('reviewed NEAR evidence stays valid when the candidate pin moves past its recorded authority', async () => {
+  const review = await compare()
+  assert.ok(validateNearReview(id, review, { ...meta, sourceRevision: 'd0ed94ae19cca7328bc7d6b28902712a0838e1a9' }))
+  const changed = structuredClone(review)
+  changed.authorityCapture.sourceRevision = 'd0ed94ae19cca7328bc7d6b28902712a0838e1a9'
+  assert.equal(validateNearReview(id, changed, { ...meta, sourceRevision: 'd0ed94ae19cca7328bc7d6b28902712a0838e1a9' }), false)
+})
+
 test('release gate accepts the reviewed NEAR evidence and rejects altered or absent evidence', async () => {
   const review = await compare()
   const navier = (await runSummary({ requested: ['synth/navierStokes'] })).rendered[0].near

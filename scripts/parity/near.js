@@ -403,10 +403,14 @@ function matchesProtocol(policy, meta) {
     (meta.oneShot ?? 'initial') === protocol.oneShot
 }
 
-// Only these reviewed bytes qualify. Any changed candidate or capture needs a new review.
+// Only these reviewed bytes qualify. Any changed candidate or capture needs a new
+// review. The evidence binds to its recorded authority revision through its own
+// JSON, so it stays valid while the candidate pin moves past that revision: the
+// summary still re-measures each case's rendered bytes against the pinned
+// candidate capture before it attaches a review.
 export function validateNearReview(caseId, review, meta) {
   const policy = POLICIES.get(caseId)
-  return policy !== undefined && matchesProtocol(policy, meta) && meta.sourceRevision === authorityRevision &&
+  return policy !== undefined && matchesProtocol(policy, meta) &&
     isDeepStrictEqual(review, expectedReview(policy))
 }
 
