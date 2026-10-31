@@ -1,5 +1,5 @@
 {
- "revision": "d0ed94ae19cca7328bc7d6b28902712a0838e1a9",
+ "revision": "06070900e506b6c8ff6eb7b12d33e6c1bf285108",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -113,7 +113,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/cellRefract/parity-attestation.json",
    "size": 803,
-   "sha256": "4edd0b72e7a81070d6bba29bef109fb71465001d390c76519b237c6b6ea6ce8c"
+   "sha256": "5705311f019def32ded75707df0035946614cb1a16907f0243d6576b06693bab"
   },
   {
    "path": "shaders/effects/classicNoisedeck/cellRefract/parity-case.json",
@@ -122,8 +122,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/cellRefract/wgsl/cellRefract.wgsl",
-   "size": 11011,
-   "sha256": "d36a3461d73c3679825901bd71b20eea31921b34f9dfb338ed9015b1927da9ed"
+   "size": 11316,
+   "sha256": "44cbe00d1d08ec5f6bfef6cde083efefe669d587fb11f8439c31942e610ff382"
   },
   {
    "path": "shaders/effects/classicNoisedeck/coalesce/definition.js",
@@ -143,7 +143,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/coalesce/parity-attestation.json",
    "size": 800,
-   "sha256": "16996d8e03561fb214d074c7527a8424744c3f45526de55928d8d8353dafc490"
+   "sha256": "2e288c58f1b0492be987a908ba44f4b39bcc78048572c7b88fee9729cde66bc0"
   },
   {
    "path": "shaders/effects/classicNoisedeck/coalesce/parity-case.json",
@@ -152,8 +152,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/coalesce/wgsl/coalesce.wgsl",
-   "size": 10536,
-   "sha256": "504922be2d13ce11b41b32449c41af3da5bcc1ab0f4721f60168199fd86c6c56"
+   "size": 10839,
+   "sha256": "16fbd1ead66f926cf49cb3dc78de48a93c47af4bcc4ea63e4df3aec9cb86e44e"
   },
   {
    "path": "shaders/effects/classicNoisedeck/colorLab/definition.js",
@@ -171,9 +171,19 @@
    "sha256": "015668a00218f31f6dbcb3ee0816dae975d767e384934767e1e61c41c552ccd6"
   },
   {
+   "path": "shaders/effects/classicNoisedeck/colorLab/parity-attestation.json",
+   "size": 800,
+   "sha256": "62fcc6b6ba50567ef41403f18df16075f69cb639b0f58b912a7c8e17aefddb39"
+  },
+  {
+   "path": "shaders/effects/classicNoisedeck/colorLab/parity-case.json",
+   "size": 406,
+   "sha256": "d4f9c005bcb2824c11bd86c39fe5fb6011d21289feba1ef41e2b38e1cd361786"
+  },
+  {
    "path": "shaders/effects/classicNoisedeck/colorLab/wgsl/colorLab.wgsl",
-   "size": 9185,
-   "sha256": "64bf52ad3ecd36250cdfe88b7843063fd5385387ffa537c6447142e0a79b5b8c"
+   "size": 9456,
+   "sha256": "5afb2559ead8886bdedc56713cbf0e6f245a892b283187d4d56fe49044454448"
   },
   {
    "path": "shaders/effects/classicNoisedeck/composite/definition.js",
@@ -343,7 +353,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/lensDistortion/parity-attestation.json",
    "size": 806,
-   "sha256": "4a4a0bb345bca091f56e93a539497f60c2246858d8e1e39bfd6a94eeff6dfd57"
+   "sha256": "8d077bf38eefc4926e636a33a6aa8bd738d7ac9158772958d8089c656100e334"
   },
   {
    "path": "shaders/effects/classicNoisedeck/lensDistortion/parity-case.json",
@@ -352,8 +362,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/lensDistortion/wgsl/lensDistortion.wgsl",
-   "size": 8130,
-   "sha256": "2220379469e4e00de5ca4f96361722afafc1fd175fad6c80ee81afe6f33485dc"
+   "size": 8401,
+   "sha256": "fd324d6d6a76f0822b98c7a711ca437bc3f71322c7bbd32cd0109b140c1f8f59"
   },
   {
    "path": "shaders/effects/classicNoisedeck/moodscape/definition.js",
@@ -493,7 +503,7 @@
   {
    "path": "shaders/effects/classicNoisedeck/shapeMixer/parity-attestation.json",
    "size": 800,
-   "sha256": "afa1625ad716d207be5f3c48b365c6a835288b2813aa00e30ab5159a4308218a"
+   "sha256": "91259f9d681a9f79197b531264a01bc48b29150b933228236bbdd61dcc741d28"
   },
   {
    "path": "shaders/effects/classicNoisedeck/shapeMixer/parity-case.json",
@@ -502,8 +512,8 @@
   },
   {
    "path": "shaders/effects/classicNoisedeck/shapeMixer/wgsl/shapeMixer.wgsl",
-   "size": 17173,
-   "sha256": "d54ea2ebc98abb3d96851a7234784b165da63b3769bca6549530aabdc17a4b9e"
+   "size": 17478,
+   "sha256": "236bd015d2e8979ca0e1e332925b62784fac61302b666486b4808ca2fd582a98"
   },
   {
    "path": "shaders/effects/classicNoisedeck/shapes/definition.js",
@@ -3491,9 +3501,19 @@
    "sha256": "daf07a67ad5678b4352f3657d674b3d00cba189c9a4371b2294ac73dc6d58914"
   },
   {
+   "path": "shaders/effects/filter/tetraColorArray/parity-attestation.json",
+   "size": 797,
+   "sha256": "5af51a01d097951a09ea6177325316705b9043e4f65c3626207c13342aaea26f"
+  },
+  {
+   "path": "shaders/effects/filter/tetraColorArray/parity-case.json",
+   "size": 396,
+   "sha256": "48a396d4c821841602389d9d5a7590cab818fcf8c6c922242d2717c2e9d41285"
+  },
+  {
    "path": "shaders/effects/filter/tetraColorArray/wgsl/tetraColorArray.wgsl",
-   "size": 11374,
-   "sha256": "8ebc6b11fd6a20cff45dad744890c830f8041b80ea784c3d341c5be12daa66eb"
+   "size": 11657,
+   "sha256": "b569543ad90fcf238b78b51a1bc364bb7247c0ff2836fc07bfe2829c76d6f804"
   },
   {
    "path": "shaders/effects/filter/tetraCosine/definition.js",
@@ -6397,8 +6417,8 @@
   },
   {
    "path": "shaders/effects/synth/shape/glsl/shape.glsl",
-   "size": 15986,
-   "sha256": "d917d2027c873f05bc4183277a2b1dffe158c13cfd1281461580a31e0cd7d67f"
+   "size": 15979,
+   "sha256": "3e573dc301f56d326519ab42d6fa5b4edf50e98dda55c8d540425f61d8ce5ad7"
   },
   {
    "path": "shaders/effects/synth/shape/help.md",
@@ -6408,7 +6428,7 @@
   {
    "path": "shaders/effects/synth/shape/parity-attestation.json",
    "size": 784,
-   "sha256": "8883e8e3a494bc1899e5807363345cb5cc5795099e676072ab1f1c1481d2cda3"
+   "sha256": "6679410371d4bc3596ee86df4ea9f76df5232a77a1d876e64510dc1f39444c65"
   },
   {
    "path": "shaders/effects/synth/shape/parity-case.json",
@@ -6837,8 +6857,8 @@
   },
   {
    "path": "shaders/src/lang/transform.js",
-   "size": 26650,
-   "sha256": "dfbca9cb76652dd18fa73228c69f8bd0b66895d58c1131f370f44b8f78547931"
+   "size": 26959,
+   "sha256": "5563675e97686642560a1863c90a84284a7291b849f0a4c2b5e25f70f3474345"
   },
   {
    "path": "shaders/src/lang/unparser.js",
@@ -6857,8 +6877,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 97137,
-   "sha256": "c95ba14793b721106ef3cb62b67aebee3f7d3d6aec3bd9e9a7262abcbd462a46"
+   "size": 103482,
+   "sha256": "793f30d2fe817e184db7c5ab8f62c8ef25a45b7a7a5002c5f06303400f696e0e"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",

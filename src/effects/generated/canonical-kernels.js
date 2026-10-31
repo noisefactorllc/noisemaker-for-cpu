@@ -35090,7 +35090,7 @@ function canonicalFactory284($bindings, $runtime) {
 }
 
 function canonicalFactory285($bindings, $runtime) {
-  const { float, vec2, vec3, ivec2, sin, cos, atan, abs, floor, fract, max, mix, smoothstep, length, dot, add, subtract } = $runtime.stdlib
+  const { float, vec2, vec3, ivec2, sin, cos, atan, abs, floor, fract, max, mix, smoothstep, length, dot, greaterThanEqual, add, subtract } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   function cpu_float (value) { return $runtime.stdlib.float(value); };
   
@@ -35133,21 +35133,7 @@ function canonicalFactory285($bindings, $runtime) {
   function pcg (value) { return $runtime.stdlib.pcg3d(value); };
   function prng (p) {
   	p = $runtime.copy(p);
-  	if (p[0] >= 0) {
-  	p[0] *= 2;
-  	} else {
-  	p[0] = -p[0] * 2 + 1;
-  	};
-  	if (p[1] >= 0) {
-  	p[1] *= 2;
-  	} else {
-  	p[1] = -p[1] * 2 + 1;
-  	};
-  	if (p[2] >= 0) {
-  	p[2] *= 2;
-  	} else {
-  	p[2] = -p[2] * 2 + 1;
-  	};
+  	mix(new $runtime.PooledFloat32Array([-p[0] * 2 + 1, -p[1] * 2 + 1, -p[2] * 2 + 1]), new $runtime.PooledFloat32Array([p[0] * 2, p[1] * 2, p[2] * 2]), greaterThanEqual(p, new $runtime.PooledFloat32Array([0, 0, 0]))).reduce((res,el,i)=>(res[i] = el, res), p);
   	var u = pcg(cpu_uvec3_vec3(p));
   	return new $runtime.PooledFloat32Array([u[0] / 4294967296, u[1] / 4294967296, u[2] / 4294967296]);
   };

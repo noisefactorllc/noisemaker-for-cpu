@@ -1,5 +1,5 @@
 {
-  "revision": "d0ed94ae19cca7328bc7d6b28902712a0838e1a9",
+  "revision": "06070900e506b6c8ff6eb7b12d33e6c1bf285108",
   "cases": [
     {
       "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
@@ -20,6 +20,10 @@
     {
       "path": "shaders/effects/classicNoisedeck/coalesce/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/coalesce\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, speed: 0).write(o1)\\nnoise(seed: 7, speed: 0).write(o2)\\nread(o1).coalesce(tex: read(o2), blendMode: cloak, mix: 60, refractAAmt: 40, refractBAmt: 40).coalesce(tex: read(o2), mix: 0, refractAAmt: 40, refractADir: 30, refractBAmt: 20, refractBDir: -45).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/classicNoisedeck/colorLab/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"classicNoisedeck/colorLab\"\n    ],\n    \"dsl\": \"search synth, classicNoisedeck\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).colorLab(colorMode: linearRgb, hueRotation: 40, hueRange: 150).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
     },
     {
       "path": "shaders/effects/classicNoisedeck/composite/parity-case.json",
@@ -296,6 +300,10 @@
     {
       "path": "shaders/effects/filter/strayHair/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/testPattern\",\n        \"filter/strayHair\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: colorBars).strayHair(alpha: 1, seed: 1).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 8000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/tetraColorArray/parity-case.json",
+      "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/tetraColorArray\"\n    ],\n    \"dsl\": \"search synth, filter\\n\\nnoise(seed: 1, scaleX: 50, scaleY: 50).tetraColorArray(colorMode: hsv, color0: #ff0080, color1: #ff4060).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
     },
     {
       "path": "shaders/effects/filter/text/parity-case.json",

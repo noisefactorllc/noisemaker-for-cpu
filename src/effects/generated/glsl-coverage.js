@@ -2955,10 +2955,10 @@ export const programCoverage = Object.freeze([
     "program": "shape",
     "file": "shape.glsl",
     "status": "generated",
-    "sourceSha256": "d917d2027c873f05bc4183277a2b1dffe158c13cfd1281461580a31e0cd7d67f",
-    "sourceBytes": 15986,
-    "normalizedBytes": 16286,
-    "generatedBytes": 18115
+    "sourceSha256": "3e573dc301f56d326519ab42d6fa5b4edf50e98dda55c8d540425f61d8ce5ad7",
+    "sourceBytes": 15979,
+    "normalizedBytes": 16279,
+    "generatedBytes": 18121
   },
   {
     "effectId": "synth/solid",
