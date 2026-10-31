@@ -3,9 +3,14 @@
   "private": true,
   "description": "CI-only client for the Firefox 92 browser floor check. Never installed by the package or the export kit.",
   "dependencies": {
-    "playwright-core": "1.15.2"
+    "playwright-core": "1.15.2",
+    "minimatch": "file:compat/minimatch-compat"
   },
   "overrides": {
-    "extract-zip": "npm:@electron-internal/extract-zip@1.0.8"
+    "extract-zip": "npm:@electron-internal/extract-zip@1.0.8",
+    "minimatch": "$minimatch"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.cjs"
   }
 }

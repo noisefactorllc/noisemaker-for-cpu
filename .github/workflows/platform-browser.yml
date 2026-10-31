@@ -221,7 +221,8 @@ jobs:
           set -euo pipefail
           client="$RUNNER_TEMP/playwright"
           mkdir -p "$client"
-          cp .github/firefox-floor/package.json .github/firefox-floor/package-lock.json "$client/"
+          cp .github/firefox-floor/package.json .github/firefox-floor/package-lock.json .github/firefox-floor/.npmrc "$client/"
+          cp -R .github/firefox-floor/compat "$client/"
           # npm ci installs exactly the lockfile and rejects any tarball whose sha512 differs.
           npm ci --prefix "$client" --ignore-scripts --omit=optional --no-audit --no-fund
           test "$(node -p "require('$client/node_modules/playwright-core/package.json').version")" = 1.15.2

@@ -42,7 +42,7 @@ test('the CI-only Firefox floor client is pinned and never reaches the package o
 
   const floor = await read('.github/firefox-floor/package.json')
   assert.equal(floor.private, true)
-  assert.deepEqual(floor.dependencies, { 'playwright-core': '1.15.2' })
+  assert.deepEqual(floor.dependencies, { 'playwright-core': '1.15.2', minimatch: 'file:compat/minimatch-compat' })
   const lock = await read('.github/firefox-floor/package-lock.json')
   assert.deepEqual(lock.packages[''].dependencies, floor.dependencies)
   const client = lock.packages['node_modules/playwright-core']
@@ -50,6 +50,15 @@ test('the CI-only Firefox floor client is pinned and never reaches the package o
   assert.equal(client.integrity, 'sha512-bY3eZu27QL62Y/iVsZUTm+RtPZ+0Zj34GoKQ6VtdjhzqoUWj40IoLy0q/GhMpXUNqKZMntHmtxvLYlREFauf8Q==')
   for (const [path, entry] of Object.entries(lock.packages)) {
     if (path === '') continue
+    if (path === 'node_modules/minimatch') {
+      assert.equal(entry.name, 'minimatch-compat')
+      assert.equal(entry.resolved, floor.dependencies.minimatch)
+      assert.notEqual(entry.link, true, 'the local adapter must be installed as regular files')
+      const adapter = await read('.github/firefox-floor/compat/minimatch-compat/package.json')
+      assert.equal(adapter.private, true)
+      assert.deepEqual(adapter.dependencies, { 'minimatch-modern': 'npm:minimatch@11.0.2' })
+      continue
+    }
     assert.match(entry.resolved, /^https:\/\/registry\.npmjs\.org\//, path)
     assert.match(entry.integrity, /^sha512-/, path)
   }
