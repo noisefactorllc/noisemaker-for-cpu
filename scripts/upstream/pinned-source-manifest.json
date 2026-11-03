@@ -1,5 +1,5 @@
 {
- "revision": "67d6e44c750e4f9bebb34f88645b934e3b933a84",
+ "revision": "7153bec4360709f41c1a9132ba78e30af633126e",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -6877,8 +6877,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 104217,
-   "sha256": "7a964348badf3c534d595993ff6ad627a5df7e914a0f11cd12b3656d99f44c0a"
+   "size": 105323,
+   "sha256": "737ac9a90ceeeab782834e1b400bdf4934fef24743926ee67aa30128e09ab599"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",
