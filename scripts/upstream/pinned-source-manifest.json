@@ -1,5 +1,5 @@
 {
- "revision": "7153bec4360709f41c1a9132ba78e30af633126e",
+ "revision": "babf6b2dbb3d3bc991bfd095bcf6783c13cd9f07",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -6237,8 +6237,8 @@
   },
   {
    "path": "shaders/effects/synth/polygon/glsl/shape.glsl",
-   "size": 1707,
-   "sha256": "e43087ee8ade2e59ff1a2098c1e6ceb4357a3eb9ee63755a3f8a3879824115e6"
+   "size": 1866,
+   "sha256": "5bc4b55c00b2341b8b1bb8234fcf4b9afeb47214da470339c6d4d578a09a1996"
   },
   {
    "path": "shaders/effects/synth/polygon/help.md",
@@ -6248,7 +6248,7 @@
   {
    "path": "shaders/effects/synth/polygon/parity-attestation.json",
    "size": 780,
-   "sha256": "49546a96712330a3b33105e9e36320f42b3340ced9275380dd00795c1412a04c"
+   "sha256": "7c5151440c66c088341070f013443c1b1dba168a00729a760d82cfc5ceab34f9"
   },
   {
    "path": "shaders/effects/synth/polygon/parity-case.json",
@@ -6257,8 +6257,8 @@
   },
   {
    "path": "shaders/effects/synth/polygon/wgsl/shape.wgsl",
-   "size": 2172,
-   "sha256": "ce95447bc7437b6cf5e6f51213d16fcd00af00c287c4bf138d00634e250c7977"
+   "size": 2335,
+   "sha256": "90be8e9503691352a9b89c1e97c751d72e765e9fe63a7c119b61813654b4730d"
   },
   {
    "path": "shaders/effects/synth/reactionDiffusion/definition.js",

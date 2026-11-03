@@ -34075,7 +34075,7 @@ function canonicalFactory277($bindings, $runtime) {
   	(st[0] = cpu_vector_assignment_1[0], st[1] = cpu_vector_assignment_1[1], st);
   	};
   	var d = $runtime.fdiv(polygon(st, sidesF), cos($runtime.fdiv(3.1415927410125732, sidesF)));
-  	var m = smoothing == 0 ? (d <= radius ? 1 : 0) : smoothstep(radius, radius - smoothing, d);
+  	var m = smoothing > 0 ? smoothstep(radius, radius - smoothing, d) : cpu_float(d < radius);
   	var fgMask = m * fgAlpha;
   	var bgMask = (1 - m) * bgAlpha;
   	var totalAlpha = fgMask + bgMask;

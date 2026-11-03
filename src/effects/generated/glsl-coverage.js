@@ -2875,10 +2875,10 @@ export const programCoverage = Object.freeze([
     "program": "shape",
     "file": "shape.glsl",
     "status": "generated",
-    "sourceSha256": "e43087ee8ade2e59ff1a2098c1e6ceb4357a3eb9ee63755a3f8a3879824115e6",
-    "sourceBytes": 1707,
-    "normalizedBytes": 1915,
-    "generatedBytes": 2305
+    "sourceSha256": "5bc4b55c00b2341b8b1bb8234fcf4b9afeb47214da470339c6d4d578a09a1996",
+    "sourceBytes": 1866,
+    "normalizedBytes": 2031,
+    "generatedBytes": 2300
   },
   {
     "effectId": "synth/reactionDiffusion",
