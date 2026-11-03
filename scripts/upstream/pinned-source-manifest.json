@@ -1,5 +1,5 @@
 {
- "revision": "babf6b2dbb3d3bc991bfd095bcf6783c13cd9f07",
+ "revision": "71771987158d6a2583b50d68ea4ded90dd461548",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -6242,8 +6242,8 @@
   },
   {
    "path": "shaders/effects/synth/polygon/help.md",
-   "size": 700,
-   "sha256": "9c56dfc274e9167a02b5f0962fe659489fa9993414b3d08aa7085175900b12aa"
+   "size": 725,
+   "sha256": "c929f45d8e09112abaabcd85a8bd65726482e3efa567f82d77d83889d1d5f407"
   },
   {
    "path": "shaders/effects/synth/polygon/parity-attestation.json",
@@ -6877,8 +6877,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 105323,
-   "sha256": "737ac9a90ceeeab782834e1b400bdf4934fef24743926ee67aa30128e09ab599"
+   "size": 105660,
+   "sha256": "0e3a3e461d90899b3a4788935e1bbe982b5ab1c270e28ee24bd5d4e69cd984f8"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",
@@ -6922,8 +6922,8 @@
   },
   {
    "path": "shaders/src/runtime/backends/webgpu.js",
-   "size": 176841,
-   "sha256": "c1860ebf52eb32c7b01b8312318f09acf2c880c091b4a4d632048a51d75a2061"
+   "size": 177837,
+   "sha256": "4eba9ecca020406997520eb87d93154a787decfb5108dd210cf5fed508dcd159"
   },
   {
    "path": "shaders/src/runtime/compiler.js",
@@ -6972,8 +6972,8 @@
   },
   {
    "path": "shaders/src/runtime/pipeline.js",
-   "size": 134155,
-   "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+   "size": 134469,
+   "sha256": "44792b0b87a2341dfd7fb1e1b7c04aabdee71c791fa5538b2c29af639a5d773f"
   },
   {
    "path": "shaders/src/runtime/preflight.js",
