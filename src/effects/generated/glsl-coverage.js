@@ -1305,10 +1305,10 @@ export const programCoverage = Object.freeze([
     "program": "scatterJitter",
     "file": "scatterJitter.glsl",
     "status": "generated",
-    "sourceSha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71",
-    "sourceBytes": 4475,
-    "normalizedBytes": 4531,
-    "generatedBytes": 3975
+    "sourceSha256": "bf22d2fba241ce0ce0c05bd96c11ebb515e8ed458cf03e050aa5d1493dcf53e6",
+    "sourceBytes": 5665,
+    "normalizedBytes": 6182,
+    "generatedBytes": 4951
   },
   {
     "effectId": "filter/scatter",

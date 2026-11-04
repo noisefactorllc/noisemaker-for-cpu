@@ -119,7 +119,7 @@ test('NEAR authority validation records the actual current-source capture times 
 
 test('current source revalidation does not relabel historical renderer protocols or dates', async () => {
   const { UPSTREAM_REVISION } = await import('../src/effects/generated/upstream-snapshot.js')
-  for (const directory of ['oddsize-m4', 'posterize-97x43', 'scatter-m4', 'seeded-hashes-m4', 'seeded-volumes-m4', 'snow-m4', 'spookyTicker-m4']) {
+  for (const directory of ['oddsize-m4', 'posterize-97x43', 'seeded-hashes-m4', 'seeded-volumes-m4', 'snow-m4', 'spookyTicker-m4']) {
     const fixture = JSON.parse(await readFile(join(projectRoot, `test/fixtures/authority/${directory}/capture.json`), 'utf8'))
     assert.equal(fixture.capture.authorityRevision, '6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d', directory)
     assert.equal(fixture.validation?.authorityRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8', directory)
@@ -133,6 +133,20 @@ test('current source revalidation does not relabel historical renderer protocols
     for (let index = 0; index < cases.length; index++) {
       assert.equal(fixture.validation.readbacks[index].sha256, cases[index].reference?.rgbaSha256 ?? cases[index].rgbaSha256)
     }
+  }
+})
+
+test('the scatter capture re-minted with the current pin records its own authority revision', async () => {
+  const fixture = JSON.parse(await readFile(join(projectRoot, 'test/fixtures/authority/scatter-m4/capture.json'), 'utf8'))
+  const revision = '7aa54b54492c0a158b000a5c563e94e6e4dce3dc'
+  assert.equal(fixture.capture.authorityRevision, revision)
+  assert.equal(fixture.validation?.authorityRevision, revision)
+  assert.equal(fixture.validation.verifiedRendererCount, 1)
+  assert.equal(fixture.validation.readsPerVerifiedRenderer, 3)
+  assert.equal(fixture.validation.programStateApplied, false)
+  assert.ok(Date.parse(fixture.validation.startedAt) <= Date.parse(fixture.validation.completedAt))
+  for (let index = 0; index < fixture.cases.length; index++) {
+    assert.equal(fixture.validation.readbacks[index].sha256, fixture.cases[index].reference.rgbaSha256)
   }
 })
 

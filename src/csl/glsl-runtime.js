@@ -279,6 +279,14 @@ export class GlslCpuRuntime {
         for (let index = 0; index < left.length; index += 1) out[index] = (left[index] ^ right[index]) >>> 0
         return out
       },
+      // Unsigned right shift (`v >> 16u` on uvecN): logical shift on the full
+      // uint32 range, matching GPU semantics. Signed-vector shifts do not occur
+      // in any pinned canonical program; `xor` above sets the same >>> 0
+      // precedent for integer-vector ops that must not round to float32.
+      rshift(out, left, right) {
+        for (let index = 0; index < left.length; index += 1) out[index] = (left[index] >>> component(right, index)) >>> 0
+        return out
+      },
     })
 
     const dot = (left, right) => {
@@ -472,10 +480,16 @@ export class GlslCpuRuntime {
 
   #integerVector(width, unsigned, a, b, c, d) {
     const out = this.#allocInteger(width, unsigned)
-    const input = b === undefined && isVector(a) ? a : null
-    const broadcast = b === undefined && !input
+    const args = [a, b, c, d].filter((value) => value !== undefined)
+    // GLSL vector constructor: a single scalar argument broadcasts; otherwise
+    // the arguments' components fill left to right, so `uvec3(uvec2 v, uint s)`
+    // is (v.x, v.y, s) — scatterJitter (upstream 7aa54b54) hashes exactly that
+    // shape, and treating the leading vector as one slot silently zeroed it.
+    const values = args.length === 1 && !isVector(args[0])
+      ? null
+      : args.flatMap((value) => (isVector(value) ? Array.from(value) : [value]))
     for (let index = 0; index < width; index += 1) {
-      const value = input ? input[index] : broadcast ? a : index === 0 ? a : index === 1 ? b : index === 2 ? c : d
+      const value = values ? values[index] : args[0]
       out[index] = unsigned ? (value ?? 0) >>> 0 : (value ?? 0) | 0
     }
     return out

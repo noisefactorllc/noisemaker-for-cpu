@@ -1287,11 +1287,11 @@
     }
   },
   "defaults/filter__scatter.golden.png": {
-    "captureRevision": "2026-10-17-m4-metal-webgl2-gap002-scatter",
+    "captureRevision": "2026-11-04-gpu-webgl2-scatter-jitter-sync",
     "captureRecord": {
-      "sourceRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+      "sourceRevision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
       "fixtureSha256": "b3df29e42e3e35500e465abc4ec745f5abb4fa0aec65a587632471e0c9786670",
-      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+      "renderer": "ANGLE (NVIDIA, Vulkan 1.4.329 (NVIDIA NVIDIA RTX 4000 Ada Generation (0x000027B2)), NVIDIA)",
       "browser": "HeadlessChrome/156.0.8078.4",
       "size": 8,
       "time": 0.25,
@@ -1302,12 +1302,12 @@
         "write": "global_o0_write",
         "presented": "global_o0_write"
       },
-      "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source, served to headless Chromium with ANGLE Metal on an Apple M4 (macOS 26.6.2). Load the manifest and the fixture effects, compile the fixture, apply the demo ProgramState step values, render(0.25) once, and read global_o0_write twice and global_o0_read once as top-down RGBA8 through WebGL2Backend.readPixels. Two renderers in each of two headless browser sessions returned identical bytes.",
+      "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source, served to headless Chromium with ANGLE Vulkan on an NVIDIA RTX 4000 Ada (Linux). Load the manifest and the fixture effects, compile the fixture, render(0.25) once, and read global_o0_write twice and global_o0_read once as top-down RGBA8 through WebGL2Backend.readPixels. Two independent renderers in fresh pages returned identical global_o0_write bytes; global_o0_read is the never-written initial buffer.",
       "readbacks": [
         {
           "id": "global_o0_write",
-          "sha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c",
-          "repeatSha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c"
+          "sha256": "7743576012b2bec069fcaf9ac615b7aa29b60df0bf479e844efb4667cda5f574",
+          "repeatSha256": "7743576012b2bec069fcaf9ac615b7aa29b60df0bf479e844efb4667cda5f574"
         },
         {
           "id": "global_o0_read",
@@ -1315,37 +1315,15 @@
         }
       ],
       "replaces": {
-        "pngSha256": "2ff6f8ffa2499cb295a12722d17b4172eb5e9173fb21d96ee38c9eac40f4eaf4",
-        "rgbaSha256": "5073f8c2827de460d4db8ab491a133012cbd075010a1b50361cacc93e849ab23",
-        "provenance": "unknown",
+        "pngSha256": "70077d8c2618d4dcbcadd7e89fdf065fc75637c7ee21c972e73fb4ace9d601b5",
+        "rgbaSha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c",
+        "provenance": "recorded",
         "freshCaptureDifference": {
-          "maxError": 49,
-          "channelsOverTolerance": 3,
+          "maxError": 218,
+          "channelsOverTolerance": 174,
           "tolerance": 2
         },
-        "approval": "The operator approved replacing the retained golden with this M4 authority capture on 2026-10-17."
-      },
-      "authorityValidation": {
-        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
-        "fixtureSha256": "b3df29e42e3e35500e465abc4ec745f5abb4fa0aec65a587632471e0c9786670",
-        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
-        "size": 8,
-        "time": 0.25,
-        "seed": 1,
-        "frames": 1,
-        "independentRenderers": 1,
-        "readsPerRenderer": 2,
-        "programStateApplied": true,
-        "readbacks": [
-          {
-            "surface": "global_o0_write",
-            "sha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c",
-            "repeatSha256": "720c8f3fe81d79fa5a4501cc119702f4a0600ee32a271556cd501dc1a73f820c"
-          }
-        ],
-        "startedAt": "2026-10-21T23:23:05.089Z",
-        "completedAt": "2026-10-21T23:23:21.530Z",
-        "sourceFilesVerified": 1600
+        "approval": "Replaced by the 2026-11-04 upstream noisemaker 2cf5bad0..7aa54b54 sync, which changes the scatter jitter hash by design; the retained M4 golden predates that change."
       }
     }
   },

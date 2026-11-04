@@ -368,6 +368,48 @@ function lowerFloatLiterals(transpiled) {
   )
 }
 
+function restoreScatterJitterUintSteps(transpiled, originalSource) {
+  // scatterJitter.glsl (upstream 7aa54b54) derives the jitter offset in exact
+  // integers: a PCG3D hash `h`, `uvec2 steps = ((h.xy >> uvec2(16u)) * (2u * r256)) >> uvec2(16u)`,
+  // and `vec2 offset = vec2(ivec2(steps) - int(r256)) / 256.0`. Two transpiler
+  // defects would silently corrupt it. The `h.xy` swizzle lowers to a float32
+  // pool vector, which rounds h's full-range uint32 words before the shift, and
+  // the int cast `int(r256)` of a uint-typed local lowers to nothing, so the
+  // `- radius` recentering vanishes and offsets collapse into [0, radius).
+  // Rebuild both: construct the swizzled pair through the exact unsigned
+  // integer-vector constructor (full-range words, plain-array storage), keep
+  // the shift/scale chain as emitted (with the source's 128 px radius cap every
+  // product stays below 2^32, as the GLSL uint arithmetic does), and subtract
+  // r256 in the float domain before the /256 (both forms hold the same small
+  // integers exactly; the power-of-two divisor is exact in float32 and float64
+  // alike). Every rewrite must find the transpiler's verbatim emission or the
+  // build fails instead of shipping a silently miscompiled kernel.
+  const offsetMatch = originalSource.match(/vec2 (\w+) = vec2\(ivec2\((\w+)\) - int\((\w+)\)\) \/ 256\.0;/)
+  if (!offsetMatch) return transpiled
+  const [, offset, steps, r256] = offsetMatch
+  const hash = originalSource.match(/uvec3 (\w+) = (?:pcg3d|pcg3|pcg)\(/)?.[1]
+  if (!hash) throw new Error('Scatter jitter uint-steps lowering: PCG3D hash declaration not found in source')
+  // poolLocalVectors later rewrites plain `new Float32Array(...)` pool
+  // allocations, so match both spellings here.
+  const swizzleNeedle = new RegExp(`new (?:\\$runtime\\.Pooled)?Float32Array\\(\\[${hash}\\[0\\], ${hash}\\[1\\]\\]\\)`)
+  if (!swizzleNeedle.test(transpiled)) {
+    throw new Error(`Unable to restore scatter jitter uint steps: the ${hash}.xy swizzle emission was not found`)
+  }
+  let out = transpiled.replace(swizzleNeedle, () => `$runtime.stdlib.uvec2(${hash}[0], ${hash}[1])`)
+  const offsetNeedle = new RegExp(
+    `var ${offset} = cpu_ivec2_vec2\\(${steps}\\)\\.map\\(function \\(_\\) \\{return _;\\}\\)\\.map\\(function \\(_\\) \\{return _ \\/ 256(?:\\.0)?;\\}\\);`,
+  )
+  if (!offsetNeedle.test(out)) {
+    throw new Error(`Unable to restore scatter jitter uint steps: the ${offset} emission was not found`)
+  }
+  // Subtract and divide as scalars over a plain array: cpu_ivec2(steps) is an
+  // Int32Array and TypedArray.map preserves the element type, so chaining the
+  // float division on it truncates each offset to a whole texel.
+  out = out.replace(offsetNeedle, () =>
+    `var ${offset} = [cpu_ivec2(${steps})[0] - ${r256}, cpu_ivec2(${steps})[1] - ${r256}].map(function (_) {return _ / 256;});`)
+  return out
+}
+
 function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
   // The transpiler loses uvec type information when GLSL mixes uint vector
   // components with the bare operators (hash3/hash4-style LCG mixing), and
@@ -1208,6 +1250,7 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
       )
   }
   transpiled = lowerUnsignedJavaScript(transpiled, originalSource)
+  transpiled = restoreScatterJitterUintSteps(transpiled, originalSource)
   transpiled = preserveUintCastOperands(transpiled, originalSource)
   transpiled = lowerFloatLiterals(transpiled)
   transpiled = preserveIntCastPrecedence(transpiled)

@@ -1,5 +1,5 @@
 {
-  "revision": "2cf5bad078ecd94b00c966d08a2dd50cd095f884",
+  "revision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
   "cases": [
     {
       "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
@@ -252,6 +252,10 @@
     {
       "path": "shaders/effects/filter/scanlineError/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/noise\",\n        \"filter/scanlineError\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nnoise(seed: 1).scanlineError(noise: 1.5, mode: vhs).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        96,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/scatter/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    128,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/scatter\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: uvMap).scatter(radius: 16.934, seed: 9).write(o0)\\nrender(o0)\"\n}\n"
     },
     {
       "path": "shaders/effects/filter/scratches/parity-case.json",

@@ -7,12 +7,20 @@ import { CpuRenderer, Surface, createDefaultRegistry, kernelFactories } from '..
 import { decodePng } from '../src/node/png.js'
 import { compareRgba8 } from '../scripts/parity/lib.js'
 
-// Apple M4 authority captures of single-frame programs outside the 8x8 default
+// GPU authority captures of single-frame programs outside the 8x8 default
 // fixtures (other sizes, seeds, times and inputs). Each directory's capture.json
 // records the pinned sources, the capture host and protocol, and one entry per
 // case. A case expects exact bytes, the ±2 contract (strict), or a reviewed NEAR
 // residual whose CPU candidate and measured difference are pinned.
 const CAPTURE_DIRECTORIES = ['scatter-m4', 'snow-m4', 'spookyTicker-m4']
+// Per directory, the authority revision its validation ran at. The scatter
+// capture was re-minted with the 7aa54b54 pin; the other directories keep their
+// earlier validation records.
+const EXPECTED_VALIDATION_REVISIONS = {
+  'scatter-m4': '7aa54b54492c0a158b000a5c563e94e6e4dce3dc',
+  'snow-m4': 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8',
+  'spookyTicker-m4': 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8',
+}
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex')
 
 const manifest = JSON.parse(await readFile(new URL('../scripts/upstream/pinned-source-manifest.json', import.meta.url), 'utf8'))
@@ -27,7 +35,7 @@ for (const directory of CAPTURE_DIRECTORIES) {
     // The validation stays at the revision where it ran. Sources the pin has
     // since changed keep their captured record; unchanged sources must still
     // match the pin.
-    assert.equal(authority.authorityRevision, 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8')
+    assert.equal(authority.authorityRevision, EXPECTED_VALIDATION_REVISIONS[directory])
     for (const entry of authority.sources) {
       const pinned = pinnedSources.get(entry.path)
       assert.ok(pinned, `${entry.path} is no longer in the pinned manifest`)
@@ -45,7 +53,7 @@ for (const directory of CAPTURE_DIRECTORIES) {
   })
 
   for (const kase of fixture.cases) {
-    test(`${directory} ${kase.name} matches the M4 authority (${kase.expect})`, async () => {
+    test(`${directory} ${kase.name} matches the authority capture (${kase.expect})`, async () => {
       const png = await readFile(new URL(kase.reference.image, root))
       assert.equal(sha256(png), kase.reference.pngSha256)
       const reference = decodePng(png)

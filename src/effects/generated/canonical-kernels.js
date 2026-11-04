@@ -18596,11 +18596,21 @@ function canonicalFactory126($bindings, $runtime) {
 }
 
 function canonicalFactory127($bindings, $runtime) {
-  const { float, floor, fract, min, max, clamp, length, dot, texture } = $runtime.stdlib
+  const { vec2, ivec2, abs, floor, min, max, clamp, length, dot, add, texture, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   var cpu_vector_write_0_0, cpu_vector_write_0_1;
   
-  function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_uvec3 (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec3_vec3 (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec3_float_float_float (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec2 (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_uvec2_vec2 (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_uvec2_float_float (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
   
   var MODE = $bindings["MODE"];
   var inputTex = $bindings["inputTex"];
@@ -18609,12 +18619,7 @@ function canonicalFactory127($bindings, $runtime) {
   var radius = $bindings["radius"];
   var seed = $bindings["seed"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
-  function hash22 (p) {
-  	p = $runtime.copy(p);
-  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.10300000011920929, p[0] * 0.09730000048875809]));
-  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469]))]);
-  	return fract(new $runtime.PooledFloat32Array([cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]), cpu_float((cpu_float(p3[0] + p3[2])) * p3[1])]));
-  };
+  function pcg3d (value) { return $runtime.stdlib.pcg3d(value); };
   function lum (c) {
   	c = $runtime.copy(c);
   	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
@@ -18634,13 +18639,17 @@ function canonicalFactory127($bindings, $runtime) {
   };
   function main () {
   	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
+  	var texel = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var texSize = textureSize(inputTex, 0);
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var hashCoord = globalCoord instanceof Float32Array ? $runtime.copy(globalCoord) : globalCoord;
   	if (MODE == 4) {
   	floor(new $runtime.PooledFloat32Array([globalCoord[0] / 3, globalCoord[1] / 3])).map(function (_) {return _ * 3;}).reduce((res,el,i)=>(res[i] = el, res), hashCoord);
   	};
-  	var rnd = hash22(new $runtime.PooledFloat32Array([hashCoord[0] + cpu_float((seed) * 101.69999694824219), hashCoord[1] + cpu_float((seed) * 101.69999694824219)])).map(function (_) {return _ - 0.5;});
-  	var offset = new $runtime.PooledFloat32Array([(rnd[0] * 2) * radius, (rnd[1] * 2) * radius]);
+  	var h = pcg3d(cpu_uvec3(cpu_uvec2_vec2(cpu_ivec2_vec2(floor(hashCoord))), seed|0));
+  	var r256 = (min(abs(radius), 128)) * 256|0;
+  	var steps = vec2.rshift([], ((vec2.rshift([], $runtime.stdlib.uvec2(h[0], h[1]), cpu_uvec2(16))).map(function (_) {return _ * (cpu_umul(2, r256));})), cpu_uvec2(16));
+  	var offset = [cpu_ivec2(steps)[0] - r256, cpu_ivec2(steps)[1] - r256].map(function (_) {return _ / 256;});
   	if (MODE == 3) {
   	var grad = lumGradient(uv);
   	var gradLen = length(grad);
@@ -18649,9 +18658,9 @@ function canonicalFactory127($bindings, $runtime) {
   	(cpu_vector_write_0_0 = (dot(offset, perp)) * perp[0], cpu_vector_write_0_1 = (dot(offset, perp)) * perp[1], offset[0] = cpu_vector_write_0_0, offset[1] = cpu_vector_write_0_1, offset);
   	};
   	};
-  	var sampleUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((gl_FragCoord[0] + offset[0]), resolution[0]), $runtime.fdiv((gl_FragCoord[1] + offset[1]), resolution[1])]), 0, 1);
-  	var src = texture(inputTex, uv);
-  	var samp = texture(inputTex, sampleUV);
+  	var sampleTexel = clamp(ivec2.add([], texel, cpu_ivec2_vec2(floor(new $runtime.PooledFloat32Array([offset[0] + 0.5, offset[1] + 0.5])))), cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1]));
+  	var src = texelFetch(inputTex, texel, 0);
+  	var samp = texelFetch(inputTex, sampleTexel, 0);
   	var result = samp instanceof Float32Array ? $runtime.copy(samp) : samp;
   	if (MODE == 1) {
   	min(src, samp).reduce((res,el,i)=>(res[i] = el, res), result);

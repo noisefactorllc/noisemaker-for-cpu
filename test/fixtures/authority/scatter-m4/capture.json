@@ -1,9 +1,9 @@
 {
-  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The CPU reproduces them after the scatter hash uses float32 literals, float32 operation boundaries and a float32 seed term. Where a sample lands exactly on a texel edge, the M4 divides with its hardware reciprocal and rounds the sample coordinate to the upper texel; the CPU follows that division (src/csl/metal-division.js), so those pixels match too.",
+  "note": "filter/scatter against a GPU authority at the pinned upstream revision. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The pinned jitter derives its offset in exact integers from the PCG3D hash, so the CPU reproduces every case byte for byte on any backend.",
   "tolerance": 2,
   "capture": {
-    "at": "2026-10-17",
-    "authorityRevision": "6cb1a3c3e21010db956d41e7a6d57a02b0be1e7d",
+    "at": "2026-11-04",
+    "authorityRevision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
     "sources": [
       {
         "path": "shaders/effects/filter/scatter/definition.js",
@@ -12,8 +12,8 @@
       },
       {
         "path": "shaders/effects/filter/scatter/glsl/scatterJitter.glsl",
-        "size": 4475,
-        "sha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71"
+        "size": 5665,
+        "sha256": "bf22d2fba241ce0ce0c05bd96c11ebb515e8ed458cf03e050aa5d1493dcf53e6"
       },
       {
         "path": "shaders/effects/filter/scatter/glsl/scatterSmooth.glsl",
@@ -27,45 +27,45 @@
       },
       {
         "path": "shaders/effects/synth/noise/glsl/noise.glsl",
-        "size": 18131,
-        "sha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274"
+        "size": 18200,
+        "sha256": "607378cb929b309b826bca05580769c18e93000faa7afdc69d9b7d57dff6fb7e"
       },
       {
         "path": "shaders/effects/synth/media/definition.js",
-        "size": 4642,
-        "sha256": "9dd0c2bd5b7ace0fbb29cbfd02f56d4156b9da04a366ed5c6dfcbb45a4020f24"
+        "size": 4740,
+        "sha256": "e70c3427c7be8eaf0681a404d13ba58986f1984afb47534cb105d4280ee401a3"
       },
       {
         "path": "shaders/effects/synth/media/glsl/mediaInput.glsl",
-        "size": 6598,
-        "sha256": "3f26aa8aa6d813e0825f7ccbe1c0ab6d9e91445283d27d6d87d72eeb0b7b0c9c"
+        "size": 9666,
+        "sha256": "b7905564ff42d2373ecc28ffc5184d072eb88b1f4b85026c08abb541accb2f63"
       },
       {
         "path": "shaders/src/index.js",
-        "size": 3678,
-        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+        "size": 3780,
+        "sha256": "015548febb4fc491ab7e92d36e2d59272430cbfb625573cbf2466f032140b988"
       },
       {
         "path": "shaders/src/renderer/canvas.js",
-        "size": 90314,
-        "sha256": "eadd0fd9ca8578f31744d94efce85879429149dee354b5bb73b95b5fbe8872af"
+        "size": 105660,
+        "sha256": "0e3a3e461d90899b3a4788935e1bbe982b5ab1c270e28ee24bd5d4e69cd984f8"
       },
       {
         "path": "shaders/src/runtime/backends/webgl2.js",
-        "size": 81454,
-        "sha256": "951ce0245fefaa29dda4dffe3e6fe0835773aa2a6f0e6889825676c772da894c"
+        "size": 82173,
+        "sha256": "b55d4d72d4d33bd172726a630f847e382aebb9997cf3b23d4813140bd28d4d35"
       },
       {
         "path": "shaders/src/runtime/pipeline.js",
-        "size": 134155,
-        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+        "size": 134469,
+        "sha256": "44792b0b87a2341dfd7fb1e1b7c04aabdee71c791fa5538b2c29af639a5d773f"
       }
     ],
-    "host": "Apple M4, macOS 26.6.2 (25G83)",
+    "host": "Linux, NVIDIA RTX 4000 Ada",
     "browserVersion": "156.0.8078.4",
-    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
-    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
-    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Metal. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL, apply the demo ProgramState step values, upload the case input (or a transparent canvas) to every media step with flipY true, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
+    "renderer": "ANGLE (NVIDIA, Vulkan 1.4.329 (NVIDIA NVIDIA RTX 4000 Ada Generation (0x000027B2)), NVIDIA)",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Vulkan on an NVIDIA RTX 4000 Ada. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL (every recorded program sets each seed explicitly, so the demo ProgramState step application is a no-op), upload the case input (or a transparent canvas) to every media step texture id with flipY true, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
   },
   "cases": [
     {
@@ -79,13 +79,13 @@
       "expect": "strict",
       "reference": {
         "image": "noise-scatter-41x23.png",
-        "pngSha256": "c73c468231cffa0a556ec5caf8f20af9ae49b79b3347f18b8fd7ace8686cd203",
-        "rgbaSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646"
+        "pngSha256": "37ead38e82515919c807a9e8ad066cf24b398e021cd151ff472d164e6ba6dbc4",
+        "rgbaSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b"
       },
       "independentCaptures": {
-        "writeSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646",
-        "repeatSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646",
-        "independentSha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646"
+        "writeSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b",
+        "repeatSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b",
+        "independentSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b"
       }
     },
     {
@@ -99,13 +99,13 @@
       "expect": "strict",
       "reference": {
         "image": "noise-scatter-64x64-fixture-seeds.png",
-        "pngSha256": "fec6b8bbb15f8f6eb8f533b7ddaf606bd60ac16bb02c516c9ed1679e9d7539da",
-        "rgbaSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1"
+        "pngSha256": "154c8c38ed93fcadd368756518b46db8cd99e37b8212aa15ace514aa890a6390",
+        "rgbaSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160"
       },
       "independentCaptures": {
-        "writeSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1",
-        "repeatSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1",
-        "independentSha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1"
+        "writeSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160",
+        "repeatSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160",
+        "independentSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160"
       }
     },
     {
@@ -130,13 +130,13 @@
       "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-64x64-seed7.png",
-        "pngSha256": "338d251aa9f5143e5bca6e0faadf8c44391711aae6c624d7c47ef488cc297a19",
-        "rgbaSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20"
+        "pngSha256": "ed9041b88cc0901df3752cb2c974c18fb52f3a47d904a168cdd73d87d7809e57",
+        "rgbaSha256": "92748f6eff0a8803e4b83aa544adcb293ad3d1bb9a0d76e79016f472cad386d6"
       },
       "independentCaptures": {
-        "writeSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20",
-        "repeatSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20",
-        "independentSha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20"
+        "writeSha256": "92748f6eff0a8803e4b83aa544adcb293ad3d1bb9a0d76e79016f472cad386d6",
+        "repeatSha256": "92748f6eff0a8803e4b83aa544adcb293ad3d1bb9a0d76e79016f472cad386d6",
+        "independentSha256": "92748f6eff0a8803e4b83aa544adcb293ad3d1bb9a0d76e79016f472cad386d6"
       }
     },
     {
@@ -161,13 +161,13 @@
       "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-64x64-seed42.png",
-        "pngSha256": "8a87e164af13e26a67d8e39f525be4f8a5f8ae019fa8a39068ee2a8f60236daf",
-        "rgbaSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58"
+        "pngSha256": "d119c3a53805b6092d00d337bf83ae9ef99db484985ea1ffae2dd593834e95ab",
+        "rgbaSha256": "b0118da0cc9ee9d9a3232568c2d59632dbf6cae794fb4e5eb6c7a3b1acb1ba6d"
       },
       "independentCaptures": {
-        "writeSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58",
-        "repeatSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58",
-        "independentSha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58"
+        "writeSha256": "b0118da0cc9ee9d9a3232568c2d59632dbf6cae794fb4e5eb6c7a3b1acb1ba6d",
+        "repeatSha256": "b0118da0cc9ee9d9a3232568c2d59632dbf6cae794fb4e5eb6c7a3b1acb1ba6d",
+        "independentSha256": "b0118da0cc9ee9d9a3232568c2d59632dbf6cae794fb4e5eb6c7a3b1acb1ba6d"
       }
     },
     {
@@ -192,13 +192,13 @@
       "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-64x64-clumped-radius25.png",
-        "pngSha256": "e0c8dc4a846715d57cb32828610eec20433f6f20b4f2d18147eca6fedb324301",
-        "rgbaSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813"
+        "pngSha256": "8b398fb83a8e78541f25e8fd06f0f2d777ddcc72d3fdca6a4a4630c015d072fc",
+        "rgbaSha256": "fb55867ad340cde86caf08ba1f7a12223f7ed4a394add749eabf5da055a064f9"
       },
       "independentCaptures": {
-        "writeSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813",
-        "repeatSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813",
-        "independentSha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813"
+        "writeSha256": "fb55867ad340cde86caf08ba1f7a12223f7ed4a394add749eabf5da055a064f9",
+        "repeatSha256": "fb55867ad340cde86caf08ba1f7a12223f7ed4a394add749eabf5da055a064f9",
+        "independentSha256": "fb55867ad340cde86caf08ba1f7a12223f7ed4a394add749eabf5da055a064f9"
       }
     },
     {
@@ -223,13 +223,13 @@
       "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-8x8-seed1.png",
-        "pngSha256": "bda9411c364a00d0c11315b7ff2b89818f1056dff0119bbe184cf9db8752e7b2",
-        "rgbaSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940"
+        "pngSha256": "6013a60cffb430948e93f7006adc228624b1a7327eda539435956f1611b64a0c",
+        "rgbaSha256": "696b5c0ee2b7e270eea1918ea7337c884682a9e6a9d481fd1f810ff9d6fb47ba"
       },
       "independentCaptures": {
-        "writeSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940",
-        "repeatSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940",
-        "independentSha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940"
+        "writeSha256": "696b5c0ee2b7e270eea1918ea7337c884682a9e6a9d481fd1f810ff9d6fb47ba",
+        "repeatSha256": "696b5c0ee2b7e270eea1918ea7337c884682a9e6a9d481fd1f810ff9d6fb47ba",
+        "independentSha256": "696b5c0ee2b7e270eea1918ea7337c884682a9e6a9d481fd1f810ff9d6fb47ba"
       }
     },
     {
@@ -254,13 +254,13 @@
       "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-41x23-seed7.png",
-        "pngSha256": "fbd2442596f8e021a6c0a324e1c2b0ea58fe00f55feb8b0d320d263dd06a829c",
-        "rgbaSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d"
+        "pngSha256": "524a337e11097aa9cef3cddd69b94a641ed0604129298ed033213c482c244144",
+        "rgbaSha256": "6ce3f619070083faa230b1ee37f3d037781af36759eec500a6a94260513b6102"
       },
       "independentCaptures": {
-        "writeSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d",
-        "repeatSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d",
-        "independentSha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d"
+        "writeSha256": "6ce3f619070083faa230b1ee37f3d037781af36759eec500a6a94260513b6102",
+        "repeatSha256": "6ce3f619070083faa230b1ee37f3d037781af36759eec500a6a94260513b6102",
+        "independentSha256": "6ce3f619070083faa230b1ee37f3d037781af36759eec500a6a94260513b6102"
       }
     },
     {
@@ -285,20 +285,20 @@
       "expect": "exact",
       "reference": {
         "image": "coordinate-scatter-512x20-seed7.png",
-        "pngSha256": "d1ab5acb15701dc1ec969861c943b7f0f27375f41464b37d0cd40443264a046a",
-        "rgbaSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e"
+        "pngSha256": "80e1e00ff5e1110ee77b761b993cbf902fc773315f3e7c0473a697352705fb0a",
+        "rgbaSha256": "bf332702be23e528523dfb56c6fa118e00ed40a9e8dffd0ed6ba6a683900d236"
       },
       "independentCaptures": {
-        "writeSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e",
-        "repeatSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e",
-        "independentSha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e"
+        "writeSha256": "bf332702be23e528523dfb56c6fa118e00ed40a9e8dffd0ed6ba6a683900d236",
+        "repeatSha256": "bf332702be23e528523dfb56c6fa118e00ed40a9e8dffd0ed6ba6a683900d236",
+        "independentSha256": "bf332702be23e528523dfb56c6fa118e00ed40a9e8dffd0ed6ba6a683900d236"
       }
     }
   ],
   "validation": {
-    "authorityRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
-    "startedAt": "2026-10-20T16:15:48.850431Z",
-    "completedAt": "2026-10-20T16:16:15.025163Z",
+    "authorityRevision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
+    "startedAt": "2026-11-04T10:21:27.390828Z",
+    "completedAt": "2026-11-04T10:21:30.601857Z",
     "sources": [
       {
         "path": "shaders/effects/filter/scatter/definition.js",
@@ -307,8 +307,8 @@
       },
       {
         "path": "shaders/effects/filter/scatter/glsl/scatterJitter.glsl",
-        "size": 4475,
-        "sha256": "e68ff4dc90236e866895d4720d58e81b9151a67d9cc62b43085efbf634fa4e71"
+        "size": 5665,
+        "sha256": "bf22d2fba241ce0ce0c05bd96c11ebb515e8ed458cf03e050aa5d1493dcf53e6"
       },
       {
         "path": "shaders/effects/filter/scatter/glsl/scatterSmooth.glsl",
@@ -322,8 +322,8 @@
       },
       {
         "path": "shaders/effects/synth/noise/glsl/noise.glsl",
-        "size": 18131,
-        "sha256": "410a98f0d4ec80acde225cb5366a3bbaf752e5743f99bcd651a2c3cbb6cc3274"
+        "size": 18200,
+        "sha256": "607378cb929b309b826bca05580769c18e93000faa7afdc69d9b7d57dff6fb7e"
       },
       {
         "path": "shaders/effects/synth/media/definition.js",
@@ -337,13 +337,13 @@
       },
       {
         "path": "shaders/src/index.js",
-        "size": 3678,
-        "sha256": "33f89d999b06f426fd6ab147c50a64f466ff8422dccd6668febd289fd409d3c0"
+        "size": 3780,
+        "sha256": "015548febb4fc491ab7e92d36e2d59272430cbfb625573cbf2466f032140b988"
       },
       {
         "path": "shaders/src/renderer/canvas.js",
-        "size": 93851,
-        "sha256": "83348b9ed42fc3428c9ca6ff5ec6aaeb3f9fc7551b535c912ebbd24c6210acdc"
+        "size": 105660,
+        "sha256": "0e3a3e461d90899b3a4788935e1bbe982b5ab1c270e28ee24bd5d4e69cd984f8"
       },
       {
         "path": "shaders/src/runtime/backends/webgl2.js",
@@ -352,8 +352,8 @@
       },
       {
         "path": "shaders/src/runtime/pipeline.js",
-        "size": 134155,
-        "sha256": "62b8df96d7b3ab1c0c076f9063850973792bb10b6bfc3f1f0b83e5c1355a296d"
+        "size": 134469,
+        "sha256": "44792b0b87a2341dfd7fb1e1b7c04aabdee71c791fa5538b2c29af639a5d773f"
       }
     ],
     "verifiedRendererCount": 1,
@@ -363,35 +363,35 @@
     "readbacks": [
       {
         "name": "noise-scatter-41x23",
-        "sha256": "b589f92a3d8ac9522c2d7b0fc3b2ea8dfc724288e4d413f66442ba04c6a12646"
+        "sha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b"
       },
       {
         "name": "noise-scatter-64x64-fixture-seeds",
-        "sha256": "3527825d81eaffeadd922c352b150c3a16abd8cf0c1496a62b422ba62acfe1c1"
+        "sha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160"
       },
       {
         "name": "coordinate-scatter-64x64-seed7",
-        "sha256": "f624cd7b91dd928ca152edbe89d832b8a0770c0d9c88f4c6909fc6c447099a20"
+        "sha256": "92748f6eff0a8803e4b83aa544adcb293ad3d1bb9a0d76e79016f472cad386d6"
       },
       {
         "name": "coordinate-scatter-64x64-seed42",
-        "sha256": "405a5836508b05514f0408abe5f9b76248bb4d56fcfa129cf930635b38672f58"
+        "sha256": "b0118da0cc9ee9d9a3232568c2d59632dbf6cae794fb4e5eb6c7a3b1acb1ba6d"
       },
       {
         "name": "coordinate-scatter-64x64-clumped-radius25",
-        "sha256": "9f6019e20712b1f978339f12beebe252f0f63beb33669e226c149d9c453be813"
+        "sha256": "fb55867ad340cde86caf08ba1f7a12223f7ed4a394add749eabf5da055a064f9"
       },
       {
         "name": "coordinate-scatter-8x8-seed1",
-        "sha256": "e2725d55ca9a98a9b3f91c13d10ee46d87a58f72dfbfb92bf0bc9893fbf2c940"
+        "sha256": "696b5c0ee2b7e270eea1918ea7337c884682a9e6a9d481fd1f810ff9d6fb47ba"
       },
       {
         "name": "coordinate-scatter-41x23-seed7",
-        "sha256": "9928a77956f66201a7bbb391afb6a5c75c49363c2141aebc8124a8062ee7670d"
+        "sha256": "6ce3f619070083faa230b1ee37f3d037781af36759eec500a6a94260513b6102"
       },
       {
         "name": "coordinate-scatter-512x20-seed7",
-        "sha256": "e59d00ebe95a12ada85416fb7dc81b28a29b0e7129dee6021eb4fd19c812474e"
+        "sha256": "bf332702be23e528523dfb56c6fa118e00ed40a9e8dffd0ed6ba6a683900d236"
       }
     ]
   }
