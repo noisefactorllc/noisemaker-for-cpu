@@ -71,3 +71,20 @@ test('external posterize at 97x43 matches the M4 authority through sync, async, 
     await rm(directory, { recursive: true, force: true })
   }
 })
+
+test('external texture inputs are pixel surfaces; the port has no canvas context path', async () => {
+  assert.equal('getContext' in Surface.prototype, false)
+  const fixture = JSON.parse(await readFile(new URL('capture.json', fixtures), 'utf8'))
+  const reference = decodePng(await readFile(new URL(fixture.reference.image, fixtures)))
+  const input = decodePng(await readFile(new URL(fixture.input.image, fixtures)))
+  const { width, height, time, seed } = fixture
+  assert.equal(input.width, width)
+  const options = {
+    width, height, time, seed,
+    externalTextures: { imageTex: Surface.fromRgba8(width, height, input.data) },
+  }
+  const renderer = () => new CpuRenderer({ registry: createDefaultRegistry(), kernelFactories })
+  const actual = renderer().render(fixture.program, options).toRgba8()
+  assert.ok(compareRgba8(actual, reference.data, fixture.tolerance).pass)
+  assert.deepEqual((await renderer().renderAsync(fixture.program, options)).toRgba8(), actual)
+})

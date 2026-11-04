@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "note": "Reference-image provenance for the retained parity goldens. captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) \u2014 never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.",
+  "note": "Reference-image provenance for the retained parity goldens. captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) — never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.",
   "goldens": {
     "defaults/filter3d__flow3d.golden.png": {
       "sha256": "0e25ec0cab45888569a74411b55bb36855f48674e0bd4abf52155f10007fa1da",
