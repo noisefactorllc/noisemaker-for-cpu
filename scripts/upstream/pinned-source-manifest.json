@@ -1,5 +1,5 @@
 {
- "revision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
+ "revision": "1faed961be169863e84fd719a4ca85c27a8b1322",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -1062,8 +1062,8 @@
   },
   {
    "path": "shaders/effects/filter/craquelure/glsl/craquelure.glsl",
-   "size": 9516,
-   "sha256": "a21be5c20bec6d75d648c0a2debcc69843193e676f5195efff7b643bb0cc9e2b"
+   "size": 10348,
+   "sha256": "876e499ca270346151a873e74c744c884e96e9db7632a9341a0baf5107724d53"
   },
   {
    "path": "shaders/effects/filter/craquelure/help.md",
@@ -1071,9 +1071,19 @@
    "sha256": "3445356a4792027a27e28f5006e2b9b994333a789453590e8e4ec21315e07a38"
   },
   {
+   "path": "shaders/effects/filter/craquelure/parity-attestation.json",
+   "size": 804,
+   "sha256": "94cf1a898a2fdd5825405f9d8d9fa5b1e04728c8a921adaf10b0d30fae0b8c78"
+  },
+  {
+   "path": "shaders/effects/filter/craquelure/parity-case.json",
+   "size": 308,
+   "sha256": "505aa35674b8786ce32b08221b4299f15c613663783c1005873da5762abb18c2"
+  },
+  {
    "path": "shaders/effects/filter/craquelure/wgsl/craquelure.wgsl",
-   "size": 6295,
-   "sha256": "93f6cc46da2734208753af368d852ef65e9ec2db2916270a3576a0ca98d68b81"
+   "size": 6685,
+   "sha256": "07a3375ae6e94a4766221110584f4773f8c372469164110dd4b7ccc26319c480"
   },
   {
    "path": "shaders/effects/filter/crt/definition.js",
@@ -1287,8 +1297,8 @@
   },
   {
    "path": "shaders/effects/filter/feedback/glsl/feedback.glsl",
-   "size": 10931,
-   "sha256": "d0048fb91c30eafbb4532b2f02ed416e3dff61b14ce5861ce3565db81a743ca2"
+   "size": 12187,
+   "sha256": "fcad07a4b0373fef883be7ac751e25b626d24c8c2a07dbba59661b5c47e88f6e"
   },
   {
    "path": "shaders/effects/filter/feedback/help.md",
@@ -1298,7 +1308,7 @@
   {
    "path": "shaders/effects/filter/feedback/parity-attestation.json",
    "size": 788,
-   "sha256": "8b4a1ac1d2d477e0e1ede0dcd76004a1a191c5fcb4e2e8f43f520361f8029312"
+   "sha256": "4f3821d4e0bc48e1d3bffc5f6648efbdbc401d29c7775953c2421cd1ce7fff1c"
   },
   {
    "path": "shaders/effects/filter/feedback/parity-case.json",
@@ -1312,8 +1322,8 @@
   },
   {
    "path": "shaders/effects/filter/feedback/wgsl/feedback.wgsl",
-   "size": 11705,
-   "sha256": "75d7dcfdf371368fb5c0021a814ccebfa22bcb1aae38f6ef62723e059401420b"
+   "size": 13312,
+   "sha256": "8250d3b9a035540383883afb4420fed258e6dd0d1c3b8eff688ab57e82e880ba"
   },
   {
    "path": "shaders/effects/filter/fibers/definition.js",
@@ -2882,8 +2892,8 @@
   },
   {
    "path": "shaders/effects/filter/scatter/help.md",
-   "size": 1850,
-   "sha256": "5686aeca83474ed8f48b9943a82a2638e1ced03f265d0d86e66c5fca9f3e2209"
+   "size": 1892,
+   "sha256": "b16d07270feabb66079dd9b5ae3acb085e3f27648f098456fce84fe108421ad1"
   },
   {
    "path": "shaders/effects/filter/scatter/parity-attestation.json",
@@ -3392,18 +3402,28 @@
   },
   {
    "path": "shaders/effects/filter/stipple/glsl/stipple.glsl",
-   "size": 8490,
-   "sha256": "69d75b6fab4281fe0a0997eaf6b7b81e5ab30f0da5dfec9255c9dbb6e914c609"
+   "size": 10823,
+   "sha256": "84755c2b6b2bf86a9c0b73a1faceda9b9bbb5fbf7d7a0570e91e2caf979f52a6"
   },
   {
    "path": "shaders/effects/filter/stipple/help.md",
-   "size": 2227,
-   "sha256": "01528f2b0179a38ffa04abf3aea2ced6e0286419c8c1207ede07d54a219e7c61"
+   "size": 2391,
+   "sha256": "d5ded9ff6b07619cba749a7be46cd4a476920594761af2ee4bfe005583bd0b72"
+  },
+  {
+   "path": "shaders/effects/filter/stipple/parity-attestation.json",
+   "size": 799,
+   "sha256": "77791d3e468de8e1ee5a38e0f96ab684e07a68c03c4d5a1f84d18fb0e6813690"
+  },
+  {
+   "path": "shaders/effects/filter/stipple/parity-case.json",
+   "size": 302,
+   "sha256": "fb2bf9ef545b500cdc878e5034aedda162657735e3be046382e636d3cdc51aa8"
   },
   {
    "path": "shaders/effects/filter/stipple/wgsl/stipple.wgsl",
-   "size": 5872,
-   "sha256": "bce8945888c44a27e289d0e7c0debe5eb1b04e4ed264eade5c30349f32ccf440"
+   "size": 8158,
+   "sha256": "a3e533b5241ca9a736548fdf92d717012e70dd38a2fe26eb26b80a30d70d3892"
   },
   {
    "path": "shaders/effects/filter/strayHair/definition.js",

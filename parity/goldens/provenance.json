@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "note": "Reference-image provenance for the retained parity goldens. captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) — never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.",
+  "note": "Reference-image provenance for the retained parity goldens. captureRevision is null and provenance is unknown for every golden committed without an explicit capture record; a capture revision may only be recorded from a documented capture (GPU session, host revision, authority backend) \u2014 never from the generated kernel pin, which is the candidate source revision reported as sourceRevision.",
   "goldens": {
     "defaults/filter3d__flow3d.golden.png": {
       "sha256": "0e25ec0cab45888569a74411b55bb36855f48674e0bd4abf52155f10007fa1da",
@@ -944,32 +944,47 @@
       }
     },
     "defaults/filter__craquelure.golden.png": {
-      "sha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
+      "sha256": "cf67e2cabab82d34767fe2786d63dee259b2e33979788929a2a34a276a43e8b5",
       "bytes": 332,
       "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
-      "captureRevision": "2026-10-21-m4-metal-webgl2-pin-c4f7cdd7-sweep",
+      "captureRevision": "2026-11-05-gpu-webgl2-stipple-craquelure-sync",
       "captureRecord": {
-        "sourceRevision": "c4f7cdd7656eb3e3ca8ced6624f19d6474607de8",
+        "sourceRevision": "1faed961be169863e84fd719a4ca85c27a8b1322",
         "fixtureSha256": "352bb90b60e78d4929c04b59ed057df3cf5fbd271a8386b49296c70136741068",
-        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA RTX 4000 Ada Generation, OpenGL) on a Linux GPU worker; the page could not report an unmasked renderer string, so the GPU identity comes from the driver: NVIDIA RTX 4000 Ada Generation, driver 595.99.02",
+        "browser": "HeadlessChrome/156.0.8078.73",
         "size": 8,
         "time": 0.25,
         "seed": 1,
         "frames": 1,
-        "programStateApplied": true,
         "surface": {
-          "write": "global_o0_write"
+          "read": "global_o0_read",
+          "write": "global_o0_write",
+          "presented": "global_o0_write"
         },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source, served to headless Chromium with ANGLE GL (EGL) on an NVIDIA RTX 4000 Ada (Linux). Load the manifest and the fixture effects, compile the fixture, render(0.25) once, and read global_o0_write twice and global_o0_read once as top-down RGBA8 through WebGL2Backend.readPixels. Two independent renderers in fresh pages returned identical global_o0_write bytes; global_o0_read is the never-written initial buffer.",
         "readbacks": [
           {
-            "surface": "global_o0_write",
-            "sha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
-            "repeatSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5"
+            "id": "global_o0_write",
+            "sha256": "adeaeb498a040b3431da04f621397eac5ee9f07684c453dc2732ea8d0f5ed29d",
+            "repeatSha256": "adeaeb498a040b3431da04f621397eac5ee9f07684c453dc2732ea8d0f5ed29d"
+          },
+          {
+            "id": "global_o0_read",
+            "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
           }
         ],
-        "startedAt": "2026-10-21T23:23:05.089Z",
-        "completedAt": "2026-10-21T23:23:21.530Z",
-        "durationMs": 69
+        "replaces": {
+          "pngSha256": "9b3a7a2427be73731b824ae93fb651860e2a441f35c74aa62b6af940bb9077b9",
+          "rgbaSha256": "99c2170b9881f17786c3c0c87610454d4c52a4a46d9ae599a197340856a4c9d5",
+          "provenance": "unknown",
+          "freshCaptureDifference": {
+            "maxError": 37,
+            "channelsOverTolerance": 16,
+            "tolerance": 2
+          },
+          "approval": "Replaced by the 2026-11-05 upstream noisemaker f0ca5193..1faed961 sync; the retained craquelure golden was captured at c4f7cdd7, before upstream changed craquelure to integer hashes at e3317b04; the change is by design in the 8e0e2b36..e3317b04 range of the 2026-11-05 upstream noisemaker sync."
+        }
       }
     },
     "defaults/filter__crt.golden.png": {
@@ -2950,11 +2965,48 @@
       }
     },
     "defaults/filter__stipple.golden.png": {
-      "sha256": "4e407a27b4f09cba75e8ac325a0bc66088211e35e1026145fa047d13dba9f40c",
-      "bytes": 257,
+      "sha256": "bbda9c7e2addc22c73dc1f1734ea6b403aa79c86a5e9ac8db449a91dbb381fd2",
+      "bytes": 201,
       "introducedIn": "5f12866e919f76fc19e4d3e6f0670d61d10dc672",
-      "captureRevision": null,
-      "captureRecord": null
+      "captureRevision": "2026-11-05-gpu-webgl2-stipple-craquelure-sync",
+      "captureRecord": {
+        "sourceRevision": "1faed961be169863e84fd719a4ca85c27a8b1322",
+        "fixtureSha256": "fd90ae1f03b218400a3649d9e212146f723d816036508fa34ced12b1492e6f54",
+        "renderer": "ANGLE (NVIDIA, NVIDIA RTX 4000 Ada Generation, OpenGL) on a Linux GPU worker; the page could not report an unmasked renderer string, so the GPU identity comes from the driver: NVIDIA RTX 4000 Ada Generation, driver 595.99.02",
+        "browser": "HeadlessChrome/156.0.8078.73",
+        "size": 8,
+        "time": 0.25,
+        "seed": 1,
+        "frames": 1,
+        "surface": {
+          "read": "global_o0_read",
+          "write": "global_o0_write",
+          "presented": "global_o0_write"
+        },
+        "protocol": "Upstream CanvasRenderer from an exact archive of the pinned source, served to headless Chromium with ANGLE GL (EGL) on an NVIDIA RTX 4000 Ada (Linux). Load the manifest and the fixture effects, compile the fixture, render(0.25) once, and read global_o0_write twice and global_o0_read once as top-down RGBA8 through WebGL2Backend.readPixels. Two independent renderers in fresh pages returned identical global_o0_write bytes; global_o0_read is the never-written initial buffer.",
+        "readbacks": [
+          {
+            "id": "global_o0_write",
+            "sha256": "1294d3c492e067261a6e1ef7ec974fe7669e7739ec7118e576d33d96475a110b",
+            "repeatSha256": "1294d3c492e067261a6e1ef7ec974fe7669e7739ec7118e576d33d96475a110b"
+          },
+          {
+            "id": "global_o0_read",
+            "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+          }
+        ],
+        "replaces": {
+          "pngSha256": "4e407a27b4f09cba75e8ac325a0bc66088211e35e1026145fa047d13dba9f40c",
+          "rgbaSha256": "db85f25805d035cc3c5ab6d0be819b2d97b864c368ac9615c81408320a8e4489",
+          "provenance": "unknown",
+          "freshCaptureDifference": {
+            "maxError": 235,
+            "channelsOverTolerance": 190,
+            "tolerance": 2
+          },
+          "approval": "Replaced by the 2026-11-05 upstream noisemaker f0ca5193..1faed961 sync; the retained stipple golden predates the upstream integer stipple rewrite at 1faed961 and has no capture record; the rewrite is by design in the 4cbfcc77..1faed961 range of the 2026-11-05 upstream noisemaker sync."
+        }
+      }
     },
     "defaults/filter__strayHair.golden.png": {
       "sha256": "6624f33d8078372bd43bd4f074ad21b5c04c167df82b6bb70a1707aeae91f632",

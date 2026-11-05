@@ -425,10 +425,10 @@ export const programCoverage = Object.freeze([
     "program": "craquelure",
     "file": "craquelure.glsl",
     "status": "generated",
-    "sourceSha256": "a21be5c20bec6d75d648c0a2debcc69843193e676f5195efff7b643bb0cc9e2b",
-    "sourceBytes": 9516,
-    "normalizedBytes": 9611,
-    "generatedBytes": 4935
+    "sourceSha256": "876e499ca270346151a873e74c744c884e96e9db7632a9341a0baf5107724d53",
+    "sourceBytes": 10348,
+    "normalizedBytes": 10889,
+    "generatedBytes": 5444
   },
   {
     "effectId": "filter/crt",
@@ -525,10 +525,10 @@ export const programCoverage = Object.freeze([
     "program": "feedback",
     "file": "feedback.glsl",
     "status": "generated",
-    "sourceSha256": "d0048fb91c30eafbb4532b2f02ed416e3dff61b14ce5861ce3565db81a743ca2",
-    "sourceBytes": 10931,
-    "normalizedBytes": 11085,
-    "generatedBytes": 14562
+    "sourceSha256": "fcad07a4b0373fef883be7ac751e25b626d24c8c2a07dbba59661b5c47e88f6e",
+    "sourceBytes": 12187,
+    "normalizedBytes": 12341,
+    "generatedBytes": 15121
   },
   {
     "effectId": "filter/fibers",
@@ -1525,10 +1525,10 @@ export const programCoverage = Object.freeze([
     "program": "stipple",
     "file": "stipple.glsl",
     "status": "generated",
-    "sourceSha256": "69d75b6fab4281fe0a0997eaf6b7b81e5ab30f0da5dfec9255c9dbb6e914c609",
-    "sourceBytes": 8490,
-    "normalizedBytes": 8711,
-    "generatedBytes": 5985
+    "sourceSha256": "84755c2b6b2bf86a9c0b73a1faceda9b9bbb5fbf7d7a0570e91e2caf979f52a6",
+    "sourceBytes": 10823,
+    "normalizedBytes": 11385,
+    "generatedBytes": 7202
   },
   {
     "effectId": "filter/strayHair",

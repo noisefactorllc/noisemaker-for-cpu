@@ -1,5 +1,5 @@
 {
-  "revision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
+  "revision": "1faed961be169863e84fd719a4ca85c27a8b1322",
   "cases": [
     {
       "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
@@ -116,6 +116,10 @@
     {
       "path": "shaders/effects/filter/corrupt/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"filter/corrupt\",\n        \"synth/noise\"\n    ],\n    \"dsl\": \"search synth, filter\\nnoise(seed: 1, scaleX: 50, scaleY: 50).corrupt().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/craquelure/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    128,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/craquelure\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: uvMap).craquelure(seed: 1).write(o0)\\nrender(o0)\"\n}\n"
     },
     {
       "path": "shaders/effects/filter/crt/parity-case.json",
@@ -300,6 +304,10 @@
     {
       "path": "shaders/effects/filter/spookyTicker/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth/solid\",\n        \"filter/spookyTicker\"\n    ],\n    \"dsl\": \"search filter, synth\\n\\nsolid(color: #101820).spookyTicker().write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"settleMs\": 2000,\n    \"epsilon\": 0,\n    \"requireColorVariation\": true,\n    \"tiles\": {\n        \"size\": [\n            32,\n            32\n        ],\n        \"renderScale\": 2\n    }\n}\n"
+    },
+    {
+      "path": "shaders/effects/filter/stipple/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"surface\": \"o0\",\n  \"resolution\": [\n    128,\n    128\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true,\n  \"effects\": [\n    \"synth/testPattern\",\n    \"filter/stipple\"\n  ],\n  \"dsl\": \"search synth, filter\\n\\ntestPattern(pattern: uvMap).stipple(seed: 1).write(o0)\\nrender(o0)\"\n}\n"
     },
     {
       "path": "shaders/effects/filter/strayHair/parity-case.json",

@@ -287,6 +287,12 @@ export class GlslCpuRuntime {
         for (let index = 0; index < left.length; index += 1) out[index] = (left[index] >>> component(right, index)) >>> 0
         return out
       },
+      // Unsigned left shift (`v << 12u` on uvecN): logical shift on the full
+      // uint32 range, matching GPU semantics.
+      lshift(out, left, right) {
+        for (let index = 0; index < left.length; index += 1) out[index] = (left[index] << component(right, index)) >>> 0
+        return out
+      },
     })
 
     const dot = (left, right) => {

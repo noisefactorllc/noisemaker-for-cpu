@@ -9625,10 +9625,20 @@ function canonicalFactory40($bindings, $runtime) {
 }
 
 function canonicalFactory41($bindings, $runtime) {
-  const { float, vec2, radians, sin, cos, sqrt, floor, fract, clamp, mix, smoothstep, length, dot, normalize, add, texture } = $runtime.stdlib
+  const { float, vec2, ivec2, radians, sin, cos, sqrt, floor, fract, clamp, mix, smoothstep, length, dot, normalize, add, texture } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_uvec3 (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec3_vec3 (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec3_float_float_float (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec2 (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_uvec2_vec2 (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_uvec2_float_float (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  
   
   var inputTex = $bindings["inputTex"];
   var resolution = $bindings["resolution"];
@@ -9638,35 +9648,32 @@ function canonicalFactory41($bindings, $runtime) {
   var brightness = $bindings["brightness"];
   var seed = $bindings["seed"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
+  function pcg3d (value) { return $runtime.stdlib.pcg3d(value); };
   function hash12 (p) {
-  	p = $runtime.copy(p);
-  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.1031000018119812, p[0] * 0.1031000018119812]));
-  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469]))]);
-  	return fract(cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]));
+  	return (cpu_float((pcg3d(cpu_uvec3(cpu_uvec2(p), 0))[0]) >>> 8)) / 16777216;
   };
-  function hash22 (p) {
-  	p = $runtime.copy(p);
-  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.10300000011920929, p[0] * 0.09730000048875809]));
-  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469]))]);
-  	return fract(new $runtime.PooledFloat32Array([cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]), cpu_float((cpu_float(p3[0] + p3[2])) * p3[1])]));
+  function hash22 (p, seedVal) {
+  	var h = vec2.rshift([], [0, 1].map(function (x, i) { return this[x] >>> 0 }, pcg3d(cpu_uvec3(cpu_uvec2(p), seedVal|0))), cpu_uvec2(8));
+  	return new $runtime.PooledFloat32Array([h[0] / 16777216, h[1] / 16777216]);
   };
   function vnoise (p) {
   	p = $runtime.copy(p);
-  	var i = floor(p);
+  	var i = cpu_ivec2_vec2(floor(p));
   	var f = fract(p);
   	var u = new $runtime.PooledFloat32Array([(f[0] * f[0]) * (3 - 2 * f[0]), (f[1] * f[1]) * (3 - 2 * f[1])]);
-  	return mix(mix(hash12(i), hash12(new $runtime.PooledFloat32Array([i[0] + 1, i[1]])), u[0]), mix(hash12(new $runtime.PooledFloat32Array([i[0], i[1] + 1])), hash12(new $runtime.PooledFloat32Array([i[0] + 1, i[1] + 1])), u[0]), u[1]);
+  	return mix(mix(hash12(i), hash12(ivec2.add([], i, cpu_ivec2(1, 0))), u[0]), mix(hash12(ivec2.add([], i, cpu_ivec2(0, 1))), hash12(ivec2.add([], i, cpu_ivec2(1, 1))), u[0]), u[1]);
   };
   function voronoiF1F2 (p, jitter, seedVal) {
   	p = $runtime.copy(p);
   	var g = floor(p);
   	var f = new $runtime.PooledFloat32Array([p[0] - g[0], p[1] - g[1]]);
+  	var gi = cpu_ivec2_vec2(g);
   	var best = 1000000000;
   	var second = 1000000000;
   	for (var y = -1; y <= 1; y++) {
   	for (var x = -1; x <= 1; x++) {
   	var cell = new $runtime.PooledFloat32Array([(x), (y)]);
-  	var pt = vec2.add([], new $runtime.PooledFloat32Array([cell[0] + 0.5, cell[1] + 0.5]), (hash22(new $runtime.PooledFloat32Array([g[0] + cell[0] + seedVal * 101.69999694824219, g[1] + cell[1] + seedVal * 101.69999694824219])).map(function (_) {return _ - 0.5;})).map(function (_) {return _ * jitter;}));
+  	var pt = vec2.add([], new $runtime.PooledFloat32Array([cell[0] + 0.5, cell[1] + 0.5]), (hash22(ivec2.add([], gi, cpu_ivec2(x, y)), seedVal).map(function (_) {return _ - 0.5;})).map(function (_) {return _ * jitter;}));
   	var d = dot(new $runtime.PooledFloat32Array([pt[0] - f[0], pt[1] - f[1]]), new $runtime.PooledFloat32Array([pt[0] - f[0], pt[1] - f[1]]));
   	if (d < best) {
   	second = best;
@@ -9690,7 +9697,7 @@ function canonicalFactory41($bindings, $runtime) {
   function crackMask (gc, spacingPx, depthPct, seedVal) {
   	gc = $runtime.copy(gc);
   	var wob = new $runtime.PooledFloat32Array([(vnoise(new $runtime.PooledFloat32Array([gc[0] / 6, gc[1] / 6]))) * 2, (vnoise(new $runtime.PooledFloat32Array([gc[0] / 6 + 37.70000076293945, gc[1] / 6 + 91.30000305175781]))) * 2]);
-  	var p = new $runtime.PooledFloat32Array([(gc[0] + wob[0]) / spacingPx, (gc[1] + wob[1]) / spacingPx]);
+  	var p = new $runtime.PooledFloat32Array([$runtime.fdiv(gc[0] + wob[0], spacingPx), $runtime.fdiv(gc[1] + wob[1], spacingPx)]);
   	var f1f2 = voronoiF1F2(p, 1, seedVal);
   	var d = (f1f2[1] - f1f2[0]) * spacingPx;
   	var edge = 1.5 + (depthPct / 100) * 2;
@@ -9700,12 +9707,11 @@ function canonicalFactory41($bindings, $runtime) {
   	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
   	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
   	var src = texture(inputTex, uv);
-  	var seedF = (seed);
-  	var kC = crackMask(globalCoord, spacing, depth, seedF);
-  	var kR = crackMask(new $runtime.PooledFloat32Array([globalCoord[0] + 1, globalCoord[1]]), spacing, depth, seedF);
-  	var kL = crackMask(new $runtime.PooledFloat32Array([globalCoord[0] - 1, globalCoord[1]]), spacing, depth, seedF);
-  	var kT = crackMask(new $runtime.PooledFloat32Array([globalCoord[0], globalCoord[1] + 1]), spacing, depth, seedF);
-  	var kB = crackMask(new $runtime.PooledFloat32Array([globalCoord[0], globalCoord[1] - 1]), spacing, depth, seedF);
+  	var kC = crackMask(globalCoord, spacing, depth, seed);
+  	var kR = crackMask(new $runtime.PooledFloat32Array([globalCoord[0] + 1, globalCoord[1]]), spacing, depth, seed);
+  	var kL = crackMask(new $runtime.PooledFloat32Array([globalCoord[0] - 1, globalCoord[1]]), spacing, depth, seed);
+  	var kT = crackMask(new $runtime.PooledFloat32Array([globalCoord[0], globalCoord[1] + 1]), spacing, depth, seed);
+  	var kB = crackMask(new $runtime.PooledFloat32Array([globalCoord[0], globalCoord[1] - 1]), spacing, depth, seed);
   	var gradK = new $runtime.PooledFloat32Array([(kR - kL) * 0.5, (kT - kB) * 0.5]);
   	var hC = -kC;
   	var hR = hC - gradK[0];
@@ -11617,6 +11623,25 @@ function canonicalFactory51($bindings, $runtime) {
   var refractBDir = $bindings["refractBDir"];
   var resetState = $bindings["resetState"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
+  function pin (x) {
+  	var bound = 1.0000000150474662e+30 * resolution[0];
+  	return min(max(x, -bound), bound);
+  };
+  function productError (a, b, p) {
+  	var sa = pin(4097 * a);
+  	var ah = pin(sa - pin(sa - a));
+  	var al = a - ah;
+  	var sb = pin(4097 * b);
+  	var bh = pin(sb - pin(sb - b));
+  	var bl = b - bh;
+  	return pin(pin(pin(pin(ah * bh) - p) + pin(ah * bl)) + pin(al * bh)) + pin(al * bl);
+  };
+  function divRound (a, b) {
+  	var q = pin(a / b);
+  	var p = pin(q * b);
+  	var r = pin(pin(a - p) - productError(q, b, p));
+  	return q + pin(r / b);
+  };
   function map (value, inMin, inMax, outMin, outMax) {
   	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
   };
@@ -11893,7 +11918,8 @@ function canonicalFactory51($bindings, $runtime) {
   	blend(texture(inputTex, leftUV), getImage(rightUV), blendMode, mixAmt * 0.009999999776482582).reduce((res,el,i)=>(res[i] = el, res), color);
   	};
   	var hsv = rgb2hsv(new $runtime.PooledFloat32Array([color[0], color[1], color[2]]));
-  	hsv[0] = mod(hsv[0] + map(hueRotation, -180, 180, -0.05000000074505806, 0.05000000074505806), 1);
+  	var hueShift = pin(-0.05000000074505806 + divRound(pin(0.10000000149011612 * (hueRotation + 180)), 360));
+  	hsv[0] = fract(hsv[0] + hueShift);
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, hsv2rgb(hsv));
   	color = [0, 1, 2, null].map(function (idx, i) { return idx == null ? color[i] : this[idx]; }, brightnessContrast(new $runtime.PooledFloat32Array([color[0], color[1], color[2]])));
   	(fragColor[0] = color[0], fragColor[1] = color[1], fragColor[2] = color[2], fragColor[3] = color[3], fragColor);
@@ -20011,15 +20037,20 @@ function canonicalFactory148($bindings, $runtime) {
 canonicalFactory148.usesDerivatives = true
 
 function canonicalFactory149($bindings, $runtime) {
-  const { float, vec2, radians, sin, cos, floor, fract, max, clamp, mix, step, smoothstep, length, dot, add, texture, fwidth } = $runtime.stdlib
+  const { vec2, vec3, ivec2, sqrt, floor, min, max, clamp, add, subtract, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
-  function cpu_float (value) { return $runtime.stdlib.float(value); };
-  function cpu_texture_a (samplerValue, coordValue) {
-  	coordValue = $runtime.copy(coordValue);
-  	var cpuSample = texture(samplerValue, coordValue);
-  	return cpuSample[3];
-  };
+  function cpu_ivec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_vec2 (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_ivec2_float_float (a, b) { return $runtime.stdlib.ivec2(a, b); };
+  function cpu_uvec3 (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec3_vec3 (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec3_float_float_float (a, b, c) { return $runtime.stdlib.uvec3(a, b, c); };
+  function cpu_uvec2 (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_uvec2_vec2 (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_uvec2_float_float (a, b) { return $runtime.stdlib.uvec2(a, b); };
+  function cpu_umul (left, right) { return $runtime.stdlib.umul(left, right); };
+  
   
   var MODE = $bindings["MODE"];
   var inputTex = $bindings["inputTex"];
@@ -20031,112 +20062,125 @@ function canonicalFactory149($bindings, $runtime) {
   var paperColor = $bindings["paperColor"];
   var seed = $bindings["seed"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
-  function hash12 (p) {
-  	p = $runtime.copy(p);
-  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.1031000018119812, p[0] * 0.1031000018119812]));
-  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469]))]);
-  	return fract(cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]));
+  function pcg3d (value) { return $runtime.stdlib.pcg3d(value); };
+  function hash16 (cell, s) {
+  	cell = $runtime.copy(cell);
+  	return (pcg3d(cpu_uvec3(cell, s))[0]) >>> 16;
   };
-  function hash22 (p) {
-  	p = $runtime.copy(p);
-  	var p3 = fract(new $runtime.PooledFloat32Array([p[0] * 0.1031000018119812, p[1] * 0.10300000011920929, p[0] * 0.09730000048875809]));
-  	p3 = new $runtime.PooledFloat32Array([p3[0] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[1] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469])), p3[2] + dot(p3, new $runtime.PooledFloat32Array([p3[1] + 33.33000183105469, p3[2] + 33.33000183105469, p3[0] + 33.33000183105469]))]);
-  	return fract(new $runtime.PooledFloat32Array([cpu_float((cpu_float(p3[0] + p3[1])) * p3[2]), cpu_float((cpu_float(p3[0] + p3[2])) * p3[1])]));
+  function unorm16 (x) {
+  	return min((clamp(x, 0, 1)) * 65536|0, 65535);
   };
-  function lum (c) {
+  function lum16 (c) {
   	c = $runtime.copy(c);
-  	return dot(c, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
+  	return (unorm16(c[0]) * 13933 + unorm16(c[1]) * 46872 + unorm16(c[2]) * 4731) >>> 16;
   };
-  function vnoise (p) {
-  	p = $runtime.copy(p);
-  	var i = floor(p);
-  	var f = fract(p);
-  	var u = new $runtime.PooledFloat32Array([(f[0] * f[0]) * (3 - 2 * f[0]), (f[1] * f[1]) * (3 - 2 * f[1])]);
-  	return mix(mix(hash12(i), hash12(new $runtime.PooledFloat32Array([i[0] + 1, i[1]])), u[0]), mix(hash12(new $runtime.PooledFloat32Array([i[0], i[1] + 1])), hash12(new $runtime.PooledFloat32Array([i[0] + 1, i[1] + 1])), u[0]), u[1]);
+  function smooth12 (t) {
+  	return (((t * t) >>> 12) * (12288 - cpu_umul(2, t))) >>> 12;
   };
-  function fbm (p) {
-  	p = $runtime.copy(p);
+  function vnoise (n, d, s) {
+  	n = $runtime.copy(n);
+  	d = $runtime.copy(d);
+  	var i = new $runtime.PooledFloat32Array([Math.trunc(n[0] / d[0]), Math.trunc(n[1] / d[1])]);
+  	var f = new $runtime.PooledFloat32Array([Math.trunc((((n[0] - i[0] * d[0]) << 12) >>> 0) / d[0]), Math.trunc((((n[1] - i[1] * d[1]) << 12) >>> 0) / d[1])]);
+  	var ux = smooth12(f[0]);
+  	var uy = smooth12(f[1]);
+  	var ab = ((hash16(i, s)) * (4096 - ux) + (hash16(vec2.add([], i, cpu_uvec2(1, 0)), s)) * ux) >>> 12;
+  	var cd = ((hash16(vec2.add([], i, cpu_uvec2(0, 1)), s)) * (4096 - ux) + (hash16(vec2.add([], i, cpu_uvec2(1, 1)), s)) * ux) >>> 12;
+  	return (ab * (4096 - uy) + cd * uy) >>> 12;
+  };
+  function fbm (n, grain, s) {
+  	n = $runtime.copy(n);
+  	var M = [65536, 32284, 15903, 7834, 3859];
   	var v = 0;
-  	var a = 0.5;
-  	for (var i = 0; i < 5; i++) {
-  	v += a * vnoise(p);
-  	p = new $runtime.PooledFloat32Array([p[0] * 2.0299999713897705, p[1] * 2.0299999713897705]);
-  	a *= 0.5;
+  	for (var k = 0; k < 5; k++) {
+  	var dk = max((cpu_umul(grain, M[k]) + 8192) >>> 14, 1);
+  	v += (vnoise(n, cpu_uvec2(dk), s)) >>> (k + 1|0);
   	};
   	return v;
   };
-  function voronoiCell (p, jitter, seedVal) {
-  	p = $runtime.copy(p);
-  	var g = floor(p);
-  	var f = new $runtime.PooledFloat32Array([p[0] - g[0], p[1] - g[1]]);
-  	var best = 1000000000;
-  	var res = new $runtime.PooledFloat32Array([0, 0, 0, 0]);
-  	for (var y = -1; y <= 1; y++) {
-  	for (var x = -1; x <= 1; x++) {
-  	var cell = new $runtime.PooledFloat32Array([(x), (y)]);
-  	var pt = vec2.add([], new $runtime.PooledFloat32Array([cell[0] + 0.5, cell[1] + 0.5]), (hash22(new $runtime.PooledFloat32Array([g[0] + cell[0] + seedVal * 101.69999694824219, g[1] + cell[1] + seedVal * 101.69999694824219])).map(function (_) {return _ - 0.5;})).map(function (_) {return _ * jitter;}));
-  	var d = dot(new $runtime.PooledFloat32Array([pt[0] - f[0], pt[1] - f[1]]), new $runtime.PooledFloat32Array([pt[0] - f[0], pt[1] - f[1]]));
-  	if (d < best) {
-  	best = d;
-  	(res[0] = g[0] + pt[0], res[1] = g[1] + pt[1], res[2] = g[0] + cell[0], res[3] = g[1] + cell[1], res);
+  function isqrt (x) {
+  	var r = sqrt((x))|0;
+  	if ((r * r) > x) {
+  	r--;
   	};
+  	if ((r * r) > x) {
+  	r--;
   	};
+  	if ((r + 1) * (r + 1) <= x) {
+  	r++;
   	};
-  	return res;
+  	if ((r + 1) * (r + 1) <= x) {
+  	r++;
+  	};
+  	return r;
   };
-  function tonemap2 (t, ink, paper) {
-  	ink = $runtime.copy(ink);
-  	paper = $runtime.copy(paper);
-  	return mix(ink, paper, clamp(t, 0, 1));
-  };
-  function rotate2D (v, angleDeg) {
-  	v = $runtime.copy(v);
-  	var a = radians(angleDeg);
-  	var co = cos(a);
-  	var si = sin(a);
-  	return new $runtime.PooledFloat32Array([co * v[0] + si * v[1], -si * v[0] + co * v[1]]);
+  function inkStep (edge, value, d256) {
+  	return (25 * (value|0) + 819200) >= (25 * (edge|0) + 64 * d256) ? 1 : 0;
   };
   function main () {
-  	var globalCoord = new $runtime.PooledFloat32Array([gl_FragCoord[0] + tileOffset[0], gl_FragCoord[1] + tileOffset[1]]);
-  	var uv = new $runtime.PooledFloat32Array([$runtime.fdiv(gl_FragCoord[0], resolution[0]), $runtime.fdiv(gl_FragCoord[1], resolution[1])]);
-  	var alpha = cpu_texture_a(inputTex, uv);
+  	var texel = cpu_ivec2_vec2(new $runtime.PooledFloat32Array([gl_FragCoord[0], gl_FragCoord[1]]));
+  	var texSize = textureSize(inputTex, 0);
+  	var px = cpu_uvec2(ivec2.add([], texel, cpu_ivec2_vec2(tileOffset)));
+  	var center = new $runtime.PooledFloat32Array([(2 * px[0] + 1) * 128, (2 * px[1] + 1) * 128]);
+  	var src = texelFetch(inputTex, texel, 0);
+  	var s = seed|0;
+  	var d256 = floor(density * 256)|0;
+  	var g256 = clamp((max(grainSize, 0)) * 256|0, 1, 32768);
   	var result = new $runtime.PooledFloat32Array([0, 0, 0]);
   	if (MODE == 0) {
-  	var p = new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], cellSize), $runtime.fdiv(globalCoord[1], cellSize)]);
-  	var cell = voronoiCell(p, 0.8999999761581421, (seed));
-  	var seedGc = new $runtime.PooledFloat32Array([cell[0] * cellSize, cell[1] * cellSize]);
-  	var seedUV = clamp(new $runtime.PooledFloat32Array([$runtime.fdiv((seedGc[0] - tileOffset[0]), resolution[0]), $runtime.fdiv((seedGc[1] - tileOffset[1]), resolution[1])]), 0, 1);
-  	var seedColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, seedUV)));
-  	var radius = 0.3499999940395355 + 0.4000000059604645 * (1 - lum(seedColor));
-  	var d = length(new $runtime.PooledFloat32Array([p[0] - cell[0], p[1] - cell[1]]));
-  	var aa = max(fwidth(d) * 1.5, 0.000009999999747378752);
-  	var inside = 1 - smoothstep(radius - aa, radius + aa, d);
-  	mix(paperColor, seedColor, inside).reduce((res,el,i)=>(res[i] = el, res), result);
+  	var c256 = clamp((max(cellSize, 0)) * 256|0, 1, 65535);
+  	var g = new $runtime.PooledFloat32Array([Math.trunc(center[0] / c256), Math.trunc(center[1] / c256)]);
+  	var f = cpu_ivec2_vec2((vec2.lshift([], (new $runtime.PooledFloat32Array([center[0] - g[0] * c256, center[1] - g[1] * c256])), cpu_uvec2(12))).map(function (_) {return Math.trunc(_ / c256);}));
+  	var best = 2147483647;
+  	var bestPt = cpu_ivec2(0);
+  	for (var y = -1; y <= 1; y++) {
+  	for (var x = -1; x <= 1; x++) {
+  	var cell = cpu_ivec2(x, y);
+  	var h = vec2.rshift([], [0, 1].map(function (x, i) { return this[x] >>> 0 }, pcg3d(cpu_uvec3(cpu_uvec2_vec2(vec2.add([], cpu_ivec2_vec2(g), cell)), s))), cpu_uvec2(16));
+  	var pt = ivec2.add([], new $runtime.PooledFloat32Array([cell[0] * 4096 + 205, cell[1] * 4096 + 205]), cpu_ivec2_vec2(vec2.rshift([], (new $runtime.PooledFloat32Array([Math.trunc((h[0] * 9) / 10), Math.trunc((h[1] * 9) / 10)])), cpu_uvec2(4))));
+  	var dv = new $runtime.PooledFloat32Array([pt[0] - f[0], pt[1] - f[1]]);
+  	var dd = dv[0] * dv[0] + dv[1] * dv[1];
+  	if (dd < best) {
+  	best = dd;
+  	(bestPt[0] = pt[0], bestPt[1] = pt[1], bestPt);
+  	};
+  	};
+  	};
+  	var seed256 = vec2.add([], (cpu_ivec2_vec2(g).map(function (_) {return _ - 1;})).map(function (_) {return _ * c256;}), cpu_ivec2_vec2(vec2.rshift([], (cpu_uvec2(new $runtime.PooledFloat32Array([bestPt[0] + 4096, bestPt[1] + 4096])).map(function (_) {return _ * c256;})), cpu_uvec2(12))));
+  	var seedTexel = clamp(ivec2.subtract([], (max(seed256, cpu_ivec2(0)).map(function (_) {return _ >> 8;})), cpu_ivec2_vec2(tileOffset)), cpu_ivec2(0), new $runtime.PooledFloat32Array([texSize[0] - 1, texSize[1] - 1]));
+  	var seedColor = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texelFetch(inputTex, seedTexel, 0)));
+  	var radius = 1434 + ((1638 * (65535 - lum16(seedColor))) >>> 16);
+  	var d = isqrt(best|0)|0;
+  	var aa = 2097152 / c256|0;
+  	var t = d <= (radius - aa) ? 0 : (d >= (radius + aa) ? 4096 : Math.trunc((((d - radius + aa|0) << 12) >>> 0) / (2 * aa|0)));
+  	var inside = 4096 - smooth12(t);
+  	var paper = cpu_uvec3(unorm16(paperColor[0]), unorm16(paperColor[1]), unorm16(paperColor[2]));
+  	var ink = cpu_uvec3(unorm16(seedColor[0]), unorm16(seedColor[1]), unorm16(seedColor[2]));
+  	vec3.rshift([], (new $runtime.PooledFloat32Array([paper[0] * (4096 - inside) + ink[0] * inside, paper[1] * (4096 - inside) + ink[1] * inside, paper[2] * (4096 - inside) + ink[2] * inside])), cpu_uvec3(12)).map(function (_) {return _ / 65536;}).reduce((res,el,i)=>(res[i] = el, res), result);
   	} else {
   	if ((MODE == 1) || (MODE == 2) || (MODE == 3)) {
-  	var gc = globalCoord instanceof Float32Array ? $runtime.copy(globalCoord) : globalCoord;
+  	var pos = center instanceof Float32Array ? $runtime.copy(center) : center;
+  	var grain = g256 instanceof Float32Array ? $runtime.copy(g256) : g256;
   	if (MODE == 3) {
-  	rotate2D(gc, 45).reduce((res,el,i)=>(res[i] = el, res), gc);
+  	cpu_uvec2_float_float((px[0] + px[1] + 1) * 256, (px[1] + 1048576 - px[0]) * 256).reduce((res,el,i)=>(res[i] = el, res), pos);
+  	grain = (cpu_umul(g256, 92682) + 32768) >>> 16;
   	};
-  	var noiseP = new $runtime.PooledFloat32Array([0, 0]);
+  	var lattice = new $runtime.PooledFloat32Array([0, 0]);
   	if (MODE == 1) {
-  	(noiseP[0] = $runtime.fdiv(gc[0], grainSize), noiseP[1] = $runtime.fdiv(gc[1], grainSize), noiseP);
+  	cpu_uvec2(grain).reduce((res,el,i)=>(res[i] = el, res), lattice);
   	} else {
-  	(noiseP[0] = gc[0] * ($runtime.fdiv(1, grainSize)), noiseP[1] = gc[1] * ($runtime.fdiv(1, (grainSize * 8))), noiseP);
+  	cpu_uvec2(grain, cpu_umul(grain, 8)).reduce((res,el,i)=>(res[i] = el, res), lattice);
   	};
-  	var n = vnoise(new $runtime.PooledFloat32Array([noiseP[0] + (seed) * 101.69999694824219, noiseP[1] + (seed) * 101.69999694824219]));
-  	n += (density - 50) / 100;
-  	var src = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv)));
-  	(result[0] = step(n, src[0]), result[1] = step(n, src[1]), result[2] = step(n, src[2]), result);
+  	var n = vnoise(pos, lattice, s);
+  	(result[0] = inkStep(n, unorm16(src[0]), d256), result[1] = inkStep(n, unorm16(src[1]), d256), result[2] = inkStep(n, unorm16(src[2]), d256), result);
   	} else {
-  	var src = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texture(inputTex, uv)));
-  	var l = lum(src);
-  	var clumpNoise = (fbm(new $runtime.PooledFloat32Array([$runtime.fdiv(globalCoord[0], (grainSize * 4)) + (seed) * 101.69999694824219, $runtime.fdiv(globalCoord[1], (grainSize * 4)) + (seed) * 101.69999694824219]))) * (mix(1.2000000476837158, 0.6000000238418579, l));
-  	clumpNoise += (density - 50) / 100;
-  	tonemap2(step(clumpNoise, l), new $runtime.PooledFloat32Array([0.05000000074505806, 0.05000000074505806, 0.05000000074505806]), new $runtime.PooledFloat32Array([0.9700000286102295, 0.9700000286102295, 0.9700000286102295])).reduce((res,el,i)=>(res[i] = el, res), result);
+  	var l = lum16(new $runtime.PooledFloat32Array([src[0], src[1], src[2]]));
+  	var amp = 78643 - ((cpu_umul(39322, l)) >>> 16);
+  	var clumpNoise = ((fbm(center, g256, s)) * (amp >>> 2)) >>> 14;
+  	result = (inkStep(clumpNoise, l, d256)) > 0.5 ? new $runtime.PooledFloat32Array([0.9700000286102295, 0.9700000286102295, 0.9700000286102295]) : new $runtime.PooledFloat32Array([0.05000000074505806, 0.05000000074505806, 0.05000000074505806]).reduce((res,el,i)=>(res[i] = el, res), result);
   	};
   	};
-  	(fragColor[0] = result[0], fragColor[1] = result[1], fragColor[2] = result[2], fragColor[3] = alpha, fragColor);
+  	(fragColor[0] = result[0], fragColor[1] = result[1], fragColor[2] = result[2], fragColor[3] = src[3], fragColor);
   };
   return function canonicalKernel(context, out) {
     $runtime.beginPixel(context)

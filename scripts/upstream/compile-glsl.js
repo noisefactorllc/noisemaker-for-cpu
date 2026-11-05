@@ -444,6 +444,106 @@ function restoreUnsignedIntegerArithmetic(transpiled, originalSource) {
   return out
 }
 
+function restoreCraquelureUintHash(transpiled, originalSource, effectId) {
+  // filter/craquelure hashes in integers (upstream e3317b04): hash12 shifts the
+  // pcg3d word with a uint `>> 8u` that the transpiler emits as a signed JS
+  // `>>` (words >= 2^31 sign-extend into negative hashes), and hash22's
+  // `pcg3d(...).xy >> uvec2(8u)` pools the full uint32 words into a pooled
+  // Float32Array first - float32 spacing above 2^24 already loses the low bits
+  // that the following shift needs, so the shift must see the exact words.
+  // Every rewrite matches the transpiler's exact emission (pre-pooling form)
+  // and is guarded by the upstream GLSL it translates, so a lowering change
+  // fails the build instead of shipping a miscompiled kernel.
+  if (effectId !== 'filter/craquelure') return transpiled
+  const guards = [
+    ['pcg3d(uvec3(uvec2(p), 0u)).x >> 8u', 'hash12 unsigned shift'],
+    ['pcg3d(uvec3(uvec2(p), uint(seedVal))).xy >> uvec2(8u)', 'hash22 unsigned vector shift'],
+    ['(gc + wob) / spacingPx', 'cell-space division'],
+  ]
+  for (const [needle, label] of guards) {
+    if (!originalSource.includes(needle)) throw new Error(`craquelure source changed: ${label}`)
+  }
+  const rewrites = [
+    ['return (cpu_float((pcg3d(cpu_uvec3(cpu_uvec2(p), 0))[0]) >> 8)) / 16777216;',
+     'return (cpu_float((pcg3d(cpu_uvec3(cpu_uvec2(p), 0))[0]) >>> 8)) / 16777216;'],
+    ['var h = vec2.rshift([], new Float32Array([0, 1].map(function (x, i) { return this[x]}, pcg3d(cpu_uvec3(cpu_uvec2(p), seedVal|0)))), cpu_uvec2(8));',
+     'var h = vec2.rshift([], [0, 1].map(function (x, i) { return this[x] >>> 0 }, pcg3d(cpu_uvec3(cpu_uvec2(p), seedVal|0))), cpu_uvec2(8));'],
+    // `p = (gc + wob) / spacingPx` divides by a run-time function parameter; the
+    // Metal authority compiles it as `a * rcp(spacingPx)`, so route it through
+    // $runtime.fdiv like every other run-time divisor (the generic fdiv
+    // operation pass only recognizes main/global-scope divisors).
+    ['var p = new Float32Array([(gc[0] + wob[0]) / spacingPx, (gc[1] + wob[1]) / spacingPx]);',
+     'var p = new Float32Array([$runtime.fdiv(gc[0] + wob[0], spacingPx), $runtime.fdiv(gc[1] + wob[1], spacingPx)]);'],
+  ]
+  let out = transpiled
+  for (const [before, after] of rewrites) {
+    if (!out.includes(before)) throw new Error(`craquelure lowering changed: ${before}`)
+    out = out.replace(before, after)
+  }
+  return out
+}
+
+function restoreStippleUintSemantics(transpiled, originalSource, effectId) {
+  // filter/stipple is fixed-point uint arithmetic. The transpiler loses the
+  // uint typing: it emits signed `>>` where GLSL shifts a uint (half of all
+  // hash words are >= 2^31 and a signed shift sign-extends them), raw float
+  // division where GLSL divides uints (uvec division truncates), and lowers
+  // the pointillize cell-anchor multiply `(ivec2(g) - 1) * int(c256)` to a
+  // map that returns 0. Every rewrite below matches the transpiler's exact
+  // emission (pre-pooling form) and is guarded by the upstream GLSL it
+  // translates, so a lowering change fails the build instead of shipping a
+  // miscompiled kernel.
+  if (effectId !== 'filter/stipple') return transpiled
+  const guards = [
+    ['.x >> 16u', 'hash16 unsigned shift'],
+    ['(n - i * d) << uvec2(12u)) / d', 'vnoise fixed-point division'],
+    ['(ivec2(g) - 1) * int(c256)', 'cell anchor multiply'],
+    ['(uint(d - radius + aa) << 12u) / uint(2 * aa)', 'edge fixed-point'],
+    ['1638u * (65535u - lum16(seedColor))', 'radius shift'],
+  ]
+  for (const [needle, label] of guards) {
+    if (!originalSource.includes(needle)) throw new Error(`stipple source changed: ${label}`)
+  }
+  const rewrites = [
+    ['return (pcg3d(cpu_uvec3(cell, s))[0]) >> 16;', 'return (pcg3d(cpu_uvec3(cell, s))[0]) >>> 16;'],
+    ['return (unorm16(c[0]) * 13933 + unorm16(c[1]) * 46872 + unorm16(c[2]) * 4731) >> 16;', 'return (unorm16(c[0]) * 13933 + unorm16(c[1]) * 46872 + unorm16(c[2]) * 4731) >>> 16;'],
+    ['return (((t * t) >> 12) * (12288 - cpu_umul(2, t))) >> 12;', 'return (((t * t) >>> 12) * (12288 - cpu_umul(2, t))) >>> 12;'],
+    ['var i = new Float32Array([n[0] / d[0], n[1] / d[1]]);', 'var i = new Float32Array([Math.trunc(n[0] / d[0]), Math.trunc(n[1] / d[1])]);'],
+    ['var f = vec2.divide([], (vec2.lshift([], (new Float32Array([n[0] - i[0] * d[0], n[1] - i[1] * d[1]])), cpu_uvec2(12))), d);', 'var f = new Float32Array([Math.trunc((((n[0] - i[0] * d[0]) << 12) >>> 0) / d[0]), Math.trunc((((n[1] - i[1] * d[1]) << 12) >>> 0) / d[1])]);'],
+    ['var ab = ((hash16(i, s)) * (4096 - ux) + (hash16(vec2.add([], i, cpu_uvec2(1, 0)), s)) * ux) >> 12;', 'var ab = ((hash16(i, s)) * (4096 - ux) + (hash16(vec2.add([], i, cpu_uvec2(1, 0)), s)) * ux) >>> 12;'],
+    ['var cd = ((hash16(vec2.add([], i, cpu_uvec2(0, 1)), s)) * (4096 - ux) + (hash16(vec2.add([], i, cpu_uvec2(1, 1)), s)) * ux) >> 12;', 'var cd = ((hash16(vec2.add([], i, cpu_uvec2(0, 1)), s)) * (4096 - ux) + (hash16(vec2.add([], i, cpu_uvec2(1, 1)), s)) * ux) >>> 12;'],
+    ['return (ab * (4096 - uy) + cd * uy) >> 12;', 'return (ab * (4096 - uy) + cd * uy) >>> 12;'],
+    ['var dk = max((grain * M[k] + 8192) >> 14, 1);', 'var dk = max((cpu_umul(grain, M[k]) + 8192) >>> 14, 1);'],
+    ['v += (vnoise(n, cpu_uvec2(dk), s)) >> (k + 1|0);', 'v += (vnoise(n, cpu_uvec2(dk), s)) >>> (k + 1|0);'],
+    ['var g = new Float32Array([$runtime.fdiv(center[0], c256), $runtime.fdiv(center[1], c256)]);', 'var g = new Float32Array([Math.trunc(center[0] / c256), Math.trunc(center[1] / c256)]);'],
+    ['.map(function (_) {return $runtime.fdiv(_, c256);})', '.map(function (_) {return Math.trunc(_ / c256);})'],
+    ['new Float32Array([(h[0] * 9) / 10, (h[1] * 9) / 10])', 'new Float32Array([Math.trunc((h[0] * 9) / 10), Math.trunc((h[1] * 9) / 10)])'],
+    ['(cpu_ivec2_vec2(g).map(function (_) {return _ - 1;})).map(function (_) {return 0;})', '(cpu_ivec2_vec2(g).map(function (_) {return _ - 1;})).map(function (_) {return _ * c256;})'],
+    ['var radius = 1434 + (1638 * (65535 - lum16(seedColor))) >> 16|0;', 'var radius = 1434 + ((1638 * (65535 - lum16(seedColor))) >>> 16);'],
+    ['var t = d <= (radius - aa) ? 0 : (d >= (radius + aa) ? 4096 : ((d - radius + aa|0) << 12) / (2 * aa|0));', 'var t = d <= (radius - aa) ? 0 : (d >= (radius + aa) ? 4096 : Math.trunc((((d - radius + aa|0) << 12) >>> 0) / (2 * aa|0)));'],
+    ['grain = (cpu_umul(g256, 92682) + 32768) >> 16;', 'grain = (cpu_umul(g256, 92682) + 32768) >>> 16;'],
+    ['var amp = 78643 - ((cpu_umul(39322, l)) >> 16);', 'var amp = 78643 - ((cpu_umul(39322, l)) >>> 16);'],
+    ['var clumpNoise = ((fbm(center, g256, s)) * (amp >> 2)) >> 14;', 'var clumpNoise = ((fbm(center, g256, s)) * (amp >>> 2)) >>> 14;'],
+    // vnoise's hash22 pools the full uint32 pcg3d words before the
+    // `>> uvec2(16u)`; a pooled Float32Array already loses the low bits above
+    // 2^24, so shift the exact words: drop the pooled wrapper and force the
+    // unsigned bit pattern in the map callback.
+    ['var h = vec2.rshift([], new Float32Array([0, 1].map(function (x, i) { return this[x]}, pcg3d(cpu_uvec3(cpu_uvec2_vec2(vec2.add([], cpu_ivec2_vec2(g), cell)), s)))), cpu_uvec2(16));',
+     'var h = vec2.rshift([], [0, 1].map(function (x, i) { return this[x] >>> 0 }, pcg3d(cpu_uvec3(cpu_uvec2_vec2(vec2.add([], cpu_ivec2_vec2(g), cell)), s))), cpu_uvec2(16));'],
+    // The transpiler lowers the source assignment `result = cond ? vec3(0.97) : vec3(0.05)`
+    // to a bare ternary whose false branch alone writes result through the reduce's
+    // accumulator; the paper branch must assign result too, as the source assignment does.
+    ['(inkStep(clumpNoise, l, d256)) > 0.5 ? new Float32Array([0.9700000286102295, 0.9700000286102295, 0.9700000286102295]) : new Float32Array([0.05000000074505806, 0.05000000074505806, 0.05000000074505806]).reduce((res,el,i)=>(res[i] = el, res), result);',
+     'result = (inkStep(clumpNoise, l, d256)) > 0.5 ? new Float32Array([0.9700000286102295, 0.9700000286102295, 0.9700000286102295]) : new Float32Array([0.05000000074505806, 0.05000000074505806, 0.05000000074505806]).reduce((res,el,i)=>(res[i] = el, res), result);'],
+  ]
+  let out = transpiled
+  for (const [before, after] of rewrites) {
+    if (!out.includes(before)) throw new Error(`stipple lowering changed: ${before}`)
+    out = out.replace(before, after)
+  }
+  return out
+}
+
 function restoreIntegerDivision(transpiled, originalSource, effectId) {
   // GLSL int/int division truncates toward zero; the transpiler loses int typing on
   // component-indexed operands (e.g. `int z = pixelCoord.y / volSize;` inside the volume
@@ -1235,6 +1335,8 @@ function factorySource(index, effectId, transpiled, normalized, originalSource) 
   transpiled = lowerFloatLiterals(transpiled)
   transpiled = preserveIntCastPrecedence(transpiled)
   transpiled = restoreUnsignedIntegerArithmetic(transpiled, originalSource)
+  transpiled = restoreCraquelureUintHash(transpiled, originalSource, effectId)
+  transpiled = restoreStippleUintSemantics(transpiled, originalSource, effectId)
   transpiled = restoreIntegerDivision(transpiled, originalSource, effectId)
   transpiled = reduceVectorEquality(transpiled)
   transpiled = copyAliasedVectorDeclarations(transpiled)

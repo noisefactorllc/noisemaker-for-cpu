@@ -71,9 +71,9 @@ test('GLSL array parameter copies preserve vector rows and isolate mutations', (
 
 test('generated kernels lower GLSL decimal literals to float32 constants', () => {
   const source = canonicalKernelFactories['filter/stipple:stipple'].toString()
-  assert.match(source, /0\.1031000018119812/)
-  assert.doesNotMatch(source, /\* 0\.1031\b/)
-  assert.match(source, /cpu_float\(\(cpu_float\(p3\[0\] \+ p3\[1\]\)\) \* p3\[2\]\)/)
+  assert.match(source, /0\.9700000286102295/)
+  assert.doesNotMatch(source, /\[0\.97, 0\.97, 0\.97\]/)
+  assert.match(source, /new \$runtime\.PooledFloat32Array\(\[0\.9700000286102295, 0\.9700000286102295, 0\.9700000286102295\]\)/)
 })
 
 test('snow hash keeps scalar float32 register writes before fract', () => {
