@@ -1,5 +1,5 @@
 {
- "revision": "1faed961be169863e84fd719a4ca85c27a8b1322",
+ "revision": "15d7719bd3eaa859920980d18184ab45329f8bd5",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -1297,8 +1297,8 @@
   },
   {
    "path": "shaders/effects/filter/feedback/glsl/feedback.glsl",
-   "size": 12187,
-   "sha256": "fcad07a4b0373fef883be7ac751e25b626d24c8c2a07dbba59661b5c47e88f6e"
+   "size": 12192,
+   "sha256": "4e6fd1acc5b7e262a22cfc5e7c8a35b91bc66d05f9f64ee77132ad240789f6e3"
   },
   {
    "path": "shaders/effects/filter/feedback/help.md",
@@ -1308,7 +1308,7 @@
   {
    "path": "shaders/effects/filter/feedback/parity-attestation.json",
    "size": 788,
-   "sha256": "4f3821d4e0bc48e1d3bffc5f6648efbdbc401d29c7775953c2421cd1ce7fff1c"
+   "sha256": "6b70f65c900e21752801f2dd52ce419047763711a660ef452c406967c358339a"
   },
   {
    "path": "shaders/effects/filter/feedback/parity-case.json",
@@ -1322,8 +1322,8 @@
   },
   {
    "path": "shaders/effects/filter/feedback/wgsl/feedback.wgsl",
-   "size": 13312,
-   "sha256": "8250d3b9a035540383883afb4420fed258e6dd0d1c3b8eff688ab57e82e880ba"
+   "size": 13317,
+   "sha256": "a5ac7ebfbfe7b18038ab694e3b52db2fcd32e47938b4f88571f7ddc51e00721b"
   },
   {
    "path": "shaders/effects/filter/fibers/definition.js",
@@ -2892,8 +2892,8 @@
   },
   {
    "path": "shaders/effects/filter/scatter/help.md",
-   "size": 1892,
-   "sha256": "b16d07270feabb66079dd9b5ae3acb085e3f27648f098456fce84fe108421ad1"
+   "size": 1893,
+   "sha256": "461e1b8f3cfa8d5076028c44afcd40185d38c9240f2d88d2d8e03835801ca9f1"
   },
   {
    "path": "shaders/effects/filter/scatter/parity-attestation.json",
@@ -6272,8 +6272,8 @@
   },
   {
    "path": "shaders/effects/synth/polygon/help.md",
-   "size": 725,
-   "sha256": "c929f45d8e09112abaabcd85a8bd65726482e3efa567f82d77d83889d1d5f407"
+   "size": 727,
+   "sha256": "554130657cdc508c8e16d7f522b2dcc1bd31701ac7a2d0467ab0ae7ab0d78179"
   },
   {
    "path": "shaders/effects/synth/polygon/parity-attestation.json",

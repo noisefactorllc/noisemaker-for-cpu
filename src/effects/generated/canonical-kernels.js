@@ -11640,7 +11640,7 @@ function canonicalFactory51($bindings, $runtime) {
   	var q = pin(a / b);
   	var p = pin(q * b);
   	var r = pin(pin(a - p) - productError(q, b, p));
-  	return q + pin(r / b);
+  	return pin(q + pin(r / b));
   };
   function map (value, inMin, inMax, outMin, outMax) {
   	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
