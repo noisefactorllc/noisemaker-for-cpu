@@ -49,7 +49,24 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: node --test
+      # The suite runs through the repository entrypoint, one bounded invocation
+      # per shard; together the shards run every test file once.
+      # NM_SHARD_COUNT matches .nm-test-shards.
+      - name: Test shard 0
+        run: node scripts/test-changed.mjs
+        env:
+          NM_SHARD_COUNT: '3'
+          NM_SHARD_INDEX: '0'
+      - name: Test shard 1
+        run: node scripts/test-changed.mjs
+        env:
+          NM_SHARD_COUNT: '3'
+          NM_SHARD_INDEX: '1'
+      - name: Test shard 2
+        run: node scripts/test-changed.mjs
+        env:
+          NM_SHARD_COUNT: '3'
+          NM_SHARD_INDEX: '2'
 
   parity:
     if: github.event_name != 'push'
