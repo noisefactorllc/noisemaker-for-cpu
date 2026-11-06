@@ -1,9 +1,9 @@
 {
-  "note": "filter/scatter against a GPU authority at the pinned upstream revision. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The pinned jitter derives its offset in exact integers from the PCG3D hash, so the CPU reproduces every case byte for byte on any backend.",
+  "note": "filter/scatter against the Apple M4 authority. The coordinate cases encode each input texel position in the red and green channels (the 512x20 case adds the high bits in blue), so every output pixel names the texel its jitter sampled. The pinned jitter derives its offset in exact integers from the PCG3D hash, so the CPU reproduces every coordinate case byte for byte. The noise cases are graded within the tolerance.",
   "tolerance": 2,
   "capture": {
-    "at": "2026-11-04",
-    "authorityRevision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
+    "at": "2026-11-06",
+    "authorityRevision": "6f98d26ab84f17ba7fb154bb74252d6362736f89",
     "sources": [
       {
         "path": "shaders/effects/filter/scatter/definition.js",
@@ -61,11 +61,11 @@
         "sha256": "44792b0b87a2341dfd7fb1e1b7c04aabdee71c791fa5538b2c29af639a5d773f"
       }
     ],
-    "host": "Linux, NVIDIA RTX 4000 Ada",
+    "host": "Apple M4, macOS 26.5 (25F71)",
     "browserVersion": "156.0.8078.4",
-    "renderer": "ANGLE (NVIDIA, Vulkan 1.4.329 (NVIDIA NVIDIA RTX 4000 Ada Generation (0x000027B2)), NVIDIA)",
-    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
-    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Vulkan on an NVIDIA RTX 4000 Ada. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL (every recorded program sets each seed explicitly, so the demo ProgramState step application is a no-op), upload the case input (or a transparent canvas) to every media step texture id with flipY true, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "protocol": "Pinned upstream archive served to headless Chromium with ANGLE Metal on an Apple M4. Two independent CanvasRenderer instances, each in a fresh page: load the effects, compile the DSL (every recorded program sets each seed explicitly; no demo ProgramState step values are applied), upload the case input to every media step texture id with flipY true, render one frame at the case time, read global_o0_write twice from the first renderer and once from the second. All three readbacks are identical."
   },
   "cases": [
     {
@@ -79,13 +79,13 @@
       "expect": "strict",
       "reference": {
         "image": "noise-scatter-41x23.png",
-        "pngSha256": "37ead38e82515919c807a9e8ad066cf24b398e021cd151ff472d164e6ba6dbc4",
-        "rgbaSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b"
+        "pngSha256": "5f1e1dbdadaca596e7a32bcd861c6f16b78f79b16d980ec70d2545d6c60caf37",
+        "rgbaSha256": "9f506f124258ba23f4ff3c61f7bdb8c98c7b09d353c7b6d6a06827d8b371e035"
       },
       "independentCaptures": {
-        "writeSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b",
-        "repeatSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b",
-        "independentSha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b"
+        "writeSha256": "9f506f124258ba23f4ff3c61f7bdb8c98c7b09d353c7b6d6a06827d8b371e035",
+        "repeatSha256": "9f506f124258ba23f4ff3c61f7bdb8c98c7b09d353c7b6d6a06827d8b371e035",
+        "independentSha256": "9f506f124258ba23f4ff3c61f7bdb8c98c7b09d353c7b6d6a06827d8b371e035"
       }
     },
     {
@@ -99,13 +99,13 @@
       "expect": "strict",
       "reference": {
         "image": "noise-scatter-64x64-fixture-seeds.png",
-        "pngSha256": "154c8c38ed93fcadd368756518b46db8cd99e37b8212aa15ace514aa890a6390",
-        "rgbaSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160"
+        "pngSha256": "94f08a7208892609586dd1c9d7a9f20d682289dde28e563f9a4cfea9b6b0dbce",
+        "rgbaSha256": "9888c2edc79f8ba02259dcdb3ca76ac5ed51954a00a876fb25636535b17526bf"
       },
       "independentCaptures": {
-        "writeSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160",
-        "repeatSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160",
-        "independentSha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160"
+        "writeSha256": "9888c2edc79f8ba02259dcdb3ca76ac5ed51954a00a876fb25636535b17526bf",
+        "repeatSha256": "9888c2edc79f8ba02259dcdb3ca76ac5ed51954a00a876fb25636535b17526bf",
+        "independentSha256": "9888c2edc79f8ba02259dcdb3ca76ac5ed51954a00a876fb25636535b17526bf"
       }
     },
     {
@@ -296,9 +296,9 @@
     }
   ],
   "validation": {
-    "authorityRevision": "7aa54b54492c0a158b000a5c563e94e6e4dce3dc",
-    "startedAt": "2026-11-04T10:21:27.390828Z",
-    "completedAt": "2026-11-04T10:21:30.601857Z",
+    "authorityRevision": "6f98d26ab84f17ba7fb154bb74252d6362736f89",
+    "startedAt": "2026-11-06T21:52:56.373Z",
+    "completedAt": "2026-11-06T21:52:57.700Z",
     "sources": [
       {
         "path": "shaders/effects/filter/scatter/definition.js",
@@ -359,15 +359,15 @@
     "verifiedRendererCount": 1,
     "readsPerVerifiedRenderer": 3,
     "programStateApplied": false,
-    "protocol": "Compile each recorded DSL with the current-source CanvasRenderer. Upload the recorded input or a transparent canvas. Render the recorded time. All retained first-renderer readbacks match the retained reference hash. The historical independent-renderer capture remains recorded separately.",
+    "protocol": "Compile each recorded DSL with the pinned-source CanvasRenderer on the capture host, upload the recorded input, render the recorded time and read global_o0_write three times from one renderer. Every readback matches the retained reference hash.",
     "readbacks": [
       {
         "name": "noise-scatter-41x23",
-        "sha256": "c50b605d97f75b149b3a52b2fe3d03af80a59e9f3ddde87ef6e9d08900e9ea2b"
+        "sha256": "9f506f124258ba23f4ff3c61f7bdb8c98c7b09d353c7b6d6a06827d8b371e035"
       },
       {
         "name": "noise-scatter-64x64-fixture-seeds",
-        "sha256": "fbe37289e977982c4d687e1594b83b99986c87ffb9dab64a42b7640d5ac96160"
+        "sha256": "9888c2edc79f8ba02259dcdb3ca76ac5ed51954a00a876fb25636535b17526bf"
       },
       {
         "name": "coordinate-scatter-64x64-seed7",

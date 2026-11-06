@@ -138,7 +138,7 @@ test('current source revalidation does not relabel historical renderer protocols
 
 test('the scatter capture re-minted with the current pin records its own authority revision', async () => {
   const fixture = JSON.parse(await readFile(join(projectRoot, 'test/fixtures/authority/scatter-m4/capture.json'), 'utf8'))
-  const revision = '7aa54b54492c0a158b000a5c563e94e6e4dce3dc'
+  const revision = '6f98d26ab84f17ba7fb154bb74252d6362736f89'
   assert.equal(fixture.capture.authorityRevision, revision)
   assert.equal(fixture.validation?.authorityRevision, revision)
   assert.equal(fixture.validation.verifiedRendererCount, 1)

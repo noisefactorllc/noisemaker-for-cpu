@@ -14,10 +14,10 @@ import { compareRgba8 } from '../scripts/parity/lib.js'
 // residual whose CPU candidate and measured difference are pinned.
 const CAPTURE_DIRECTORIES = ['scatter-m4', 'snow-m4', 'spookyTicker-m4']
 // Per directory, the authority revision its validation ran at. The scatter
-// capture was re-minted with the 7aa54b54 pin; the other directories keep their
-// earlier validation records.
+// capture was re-minted on the Apple M4 authority with the 6f98d26a pin; the
+// other directories keep their earlier validation records.
 const EXPECTED_VALIDATION_REVISIONS = {
-  'scatter-m4': '7aa54b54492c0a158b000a5c563e94e6e4dce3dc',
+  'scatter-m4': '6f98d26ab84f17ba7fb154bb74252d6362736f89',
   'snow-m4': 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8',
   'spookyTicker-m4': 'c4f7cdd7656eb3e3ca8ced6624f19d6474607de8',
 }
