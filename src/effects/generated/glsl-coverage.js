@@ -525,10 +525,10 @@ export const programCoverage = Object.freeze([
     "program": "feedback",
     "file": "feedback.glsl",
     "status": "generated",
-    "sourceSha256": "4e6fd1acc5b7e262a22cfc5e7c8a35b91bc66d05f9f64ee77132ad240789f6e3",
-    "sourceBytes": 12192,
-    "normalizedBytes": 12346,
-    "generatedBytes": 15126
+    "sourceSha256": "047cbf124875f9d146c41c24f58081e19fb78b7d8c5cf4887e4255ea5bb43ca3",
+    "sourceBytes": 12346,
+    "normalizedBytes": 12500,
+    "generatedBytes": 15021
   },
   {
     "effectId": "filter/fibers",

@@ -11821,11 +11821,7 @@ function canonicalFactory51($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
