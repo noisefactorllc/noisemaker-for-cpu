@@ -5,89 +5,89 @@ export const programCoverage = Object.freeze([
     "program": "bitEffects",
     "file": "bitEffects.glsl",
     "status": "generated",
-    "sourceSha256": "1066c6794400f025288147568179b2913b3f6464201e21fa470f3f5a1f6ca06b",
-    "sourceBytes": 12748,
-    "normalizedBytes": 13272,
-    "generatedBytes": 13542
+    "sourceSha256": "ce0bc2e032849d863ddb733297367cd8c640c32caccad09000ac8199e23e18d5",
+    "sourceBytes": 12671,
+    "normalizedBytes": 13195,
+    "generatedBytes": 13437
   },
   {
     "effectId": "classicNoisedeck/caustic",
     "program": "caustic",
     "file": "caustic.glsl",
     "status": "generated",
-    "sourceSha256": "9ff29d7f4b4baacb800295540ab1c939f9482dbb1f2f48173819c947334c4fd7",
-    "sourceBytes": 15714,
-    "normalizedBytes": 16087,
-    "generatedBytes": 17909
+    "sourceSha256": "601d01e7ba6b3a9d97c760c14401541d6d37e03826a83bd3c492491a7abba5d0",
+    "sourceBytes": 15637,
+    "normalizedBytes": 16010,
+    "generatedBytes": 17804
   },
   {
     "effectId": "classicNoisedeck/cellNoise",
     "program": "cellNoise",
     "file": "cellNoise.glsl",
     "status": "generated",
-    "sourceSha256": "f9ef70baecd0e068f873792219b33f5a0391904ebbd480182d2233bb39227ce2",
-    "sourceBytes": 9712,
-    "normalizedBytes": 9955,
-    "generatedBytes": 12100
+    "sourceSha256": "bd71605f96541f445e435ca5f65d5b80c5ee7b1e29b136cea4a63ec30431e651",
+    "sourceBytes": 9635,
+    "normalizedBytes": 9878,
+    "generatedBytes": 11995
   },
   {
     "effectId": "classicNoisedeck/cellRefract",
     "program": "cellRefract",
     "file": "cellRefract.glsl",
     "status": "generated",
-    "sourceSha256": "aa93167faa07ee22ff0be9c653b5602ac88b1b962e405548cafab43b9e867a70",
-    "sourceBytes": 13719,
-    "normalizedBytes": 14052,
-    "generatedBytes": 16205
+    "sourceSha256": "ada20a78762ccfa36b83995b7020f37e434e23da20650027ffa1784a8344430b",
+    "sourceBytes": 13642,
+    "normalizedBytes": 13975,
+    "generatedBytes": 16100
   },
   {
     "effectId": "classicNoisedeck/coalesce",
     "program": "coalesce",
     "file": "coalesce.glsl",
     "status": "generated",
-    "sourceSha256": "a0f96df68ce058e5e2154c78880b5a611eaf5ab9adcd64242368978c813b6b58",
-    "sourceBytes": 9962,
-    "normalizedBytes": 10024,
-    "generatedBytes": 14670
+    "sourceSha256": "8141548c1de6aa0da2dccf4599c2a1bf29a26321c837fa4802103014587a919b",
+    "sourceBytes": 9885,
+    "normalizedBytes": 9947,
+    "generatedBytes": 14565
   },
   {
     "effectId": "classicNoisedeck/colorLab",
     "program": "colorLab",
     "file": "colorLab.glsl",
     "status": "generated",
-    "sourceSha256": "4bf9ea925634ee684e01917ea3b690d332b37905d21c8aa7377bf88625570945",
-    "sourceBytes": 9276,
-    "normalizedBytes": 9392,
-    "generatedBytes": 13759
+    "sourceSha256": "8fb3a991281479e65376151223e52e23ea7b7301c391788feca855a66ceabdcc",
+    "sourceBytes": 9199,
+    "normalizedBytes": 9315,
+    "generatedBytes": 13654
   },
   {
     "effectId": "classicNoisedeck/composite",
     "program": "composite",
     "file": "composite.glsl",
     "status": "generated",
-    "sourceSha256": "ae3f29a129016653a5705647cb61c5c6448504e44ad321539fb4ce2e120d9123",
-    "sourceBytes": 6120,
-    "normalizedBytes": 6062,
-    "generatedBytes": 7281
+    "sourceSha256": "b6ff5bd8b3b0f98499f91b8a9ec679b88e08a123f9662157801543429bdd4a79",
+    "sourceBytes": 6043,
+    "normalizedBytes": 5985,
+    "generatedBytes": 7176
   },
   {
     "effectId": "classicNoisedeck/effects",
     "program": "effects",
     "file": "effects.glsl",
     "status": "generated",
-    "sourceSha256": "b4f4279698ce60bd3c0c45f8339a4869cd6c2f0714f219ee6b2e997328057316",
-    "sourceBytes": 28403,
-    "normalizedBytes": 28804,
-    "generatedBytes": 29132
+    "sourceSha256": "ed942954001dc94c191bd617c462e63d68bd68e3e3d4545c8863b7228f64879d",
+    "sourceBytes": 28326,
+    "normalizedBytes": 28727,
+    "generatedBytes": 29027
   },
   {
     "effectId": "classicNoisedeck/fractal",
     "program": "fractal",
     "file": "fractal.glsl",
     "status": "adapter",
-    "sourceSha256": "a73c8044185be58e3ae1b0f14b954dbaa7bb8852290b821dba44167fee5e037b",
-    "sourceBytes": 10067,
-    "normalizedBytes": 10180,
+    "sourceSha256": "737c53308c306163c02885e2edc3700b571aaec41ef98b8cf817e3175b5475bd",
+    "sourceBytes": 9990,
+    "normalizedBytes": 10103,
     "generatedBytes": 0
   },
   {
@@ -105,50 +105,50 @@ export const programCoverage = Object.freeze([
     "program": "kaleido",
     "file": "kaleido.glsl",
     "status": "generated",
-    "sourceSha256": "18a201e5189430578a2cd1d03cea911957a08f3bd7f3e74e78b97eb9f946ed52",
-    "sourceBytes": 27570,
-    "normalizedBytes": 28389,
-    "generatedBytes": 29221
+    "sourceSha256": "2cf9e5528e3b19debec7e9761afbcf0f47452a124dd4bef74b907b2ee67f9642",
+    "sourceBytes": 27493,
+    "normalizedBytes": 28312,
+    "generatedBytes": 29116
   },
   {
     "effectId": "classicNoisedeck/lensDistortion",
     "program": "lensDistortion",
     "file": "lensDistortion.glsl",
     "status": "generated",
-    "sourceSha256": "f4e6453fe233692fa67c5fdbb3eb8f7a512d21bc722e63af6fc23166a62dd444",
-    "sourceBytes": 8269,
-    "normalizedBytes": 8503,
-    "generatedBytes": 11153
+    "sourceSha256": "925f4150c4029d13c35de55203d58cb91d8a1f9abfb8146fbb40dcf7cfc1b402",
+    "sourceBytes": 8192,
+    "normalizedBytes": 8426,
+    "generatedBytes": 11048
   },
   {
     "effectId": "classicNoisedeck/moodscape",
     "program": "moodscape",
     "file": "moodscape.glsl",
     "status": "generated",
-    "sourceSha256": "2b020887bfb1a4dd366b1583e4ff68fd47193bd4993ba1052170de0981aabfa1",
-    "sourceBytes": 19628,
-    "normalizedBytes": 20022,
-    "generatedBytes": 22149
+    "sourceSha256": "c93cc8744c2368446fe6214a80cdc9e6fd8b36b1dee89f511812c7ba2f0145dc",
+    "sourceBytes": 19551,
+    "normalizedBytes": 19945,
+    "generatedBytes": 22044
   },
   {
     "effectId": "classicNoisedeck/noise",
     "program": "noise",
     "file": "noise.glsl",
     "status": "generated",
-    "sourceSha256": "513f8278e29564b7f2b0735b539b5990b53dc920d487fffb87d54a0c92fc5f0b",
-    "sourceBytes": 32596,
-    "normalizedBytes": 33516,
-    "generatedBytes": 31792
+    "sourceSha256": "276b5ca70973c57057adb389d8cb49946a0bdedb4486ffafbaa8e8e876d14a9a",
+    "sourceBytes": 32519,
+    "normalizedBytes": 33439,
+    "generatedBytes": 31687
   },
   {
     "effectId": "classicNoisedeck/noise3d",
     "program": "noise3d",
     "file": "noise3d.glsl",
     "status": "generated",
-    "sourceSha256": "e7762ec990058d51d2c07febd5a4dba9fa90d650cc21cf68c9a5a511d27485b2",
-    "sourceBytes": 19723,
-    "normalizedBytes": 20463,
-    "generatedBytes": 29805
+    "sourceSha256": "ad1bbcfe511216aadec7d0bfbf53e1b1317a333bcc0d31cd29203c6a73b83cd3",
+    "sourceBytes": 19646,
+    "normalizedBytes": 20386,
+    "generatedBytes": 29700
   },
   {
     "effectId": "classicNoisedeck/refract",
@@ -165,30 +165,30 @@ export const programCoverage = Object.freeze([
     "program": "shapeMixer",
     "file": "shapeMixer.glsl",
     "status": "generated",
-    "sourceSha256": "51bee071387b3498bd9e8abad5ca3b93b3e38100b9a56b8f4abcb177ea9d675b",
-    "sourceBytes": 21721,
-    "normalizedBytes": 22327,
-    "generatedBytes": 22971
+    "sourceSha256": "ae511c7398c65a9a8b5adc09d00efda254184da5636abea143685a92363e1a7c",
+    "sourceBytes": 21644,
+    "normalizedBytes": 22250,
+    "generatedBytes": 22866
   },
   {
     "effectId": "classicNoisedeck/shapes",
     "program": "shapes",
     "file": "shapes.glsl",
     "status": "generated",
-    "sourceSha256": "28775b3e960c9051a320d48c7974792fbef33eaab80e5ca9aed5af43e8645d5e",
-    "sourceBytes": 21292,
-    "normalizedBytes": 21798,
-    "generatedBytes": 23330
+    "sourceSha256": "a9885b0ceeb5d73bf5c851775d28f9d948fb0521bbc6b42d2b4afc206f5ec7e5",
+    "sourceBytes": 21215,
+    "normalizedBytes": 21721,
+    "generatedBytes": 23225
   },
   {
     "effectId": "classicNoisedeck/shapes3d",
     "program": "shapes3d",
     "file": "shapes3d.glsl",
     "status": "generated",
-    "sourceSha256": "818badfbadcf295d1863d208c0d0582a1349ff64f44dbf43f905a92fcfd4c5ad",
-    "sourceBytes": 16152,
-    "normalizedBytes": 16442,
-    "generatedBytes": 18145
+    "sourceSha256": "e17550180972bf97883c33eb4b280bfb3456d9212162c91e76cc8befbae941dc",
+    "sourceBytes": 16075,
+    "normalizedBytes": 16365,
+    "generatedBytes": 18040
   },
   {
     "effectId": "classicNoisedeck/splat",
@@ -1175,10 +1175,10 @@ export const programCoverage = Object.freeze([
     "program": "prismaticAberration",
     "file": "prismaticAberration.glsl",
     "status": "generated",
-    "sourceSha256": "513eac95fdf7f67a6839ee5d96e5bbfd76b6cfa62d3254df6fed23d8effe380e",
-    "sourceBytes": 4247,
-    "normalizedBytes": 4206,
-    "generatedBytes": 5888
+    "sourceSha256": "3461a6b0ec3d47f4be1d06ae3ecfbacdb98836a8424bb0ed7f3d3c67af3173d9",
+    "sourceBytes": 4170,
+    "normalizedBytes": 4129,
+    "generatedBytes": 5783
   },
   {
     "effectId": "filter/reindex",

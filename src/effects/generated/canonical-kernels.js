@@ -253,11 +253,7 @@ function canonicalFactory0($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -490,11 +486,7 @@ function canonicalFactory1($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -876,11 +868,7 @@ function canonicalFactory2($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -1274,11 +1262,7 @@ function canonicalFactory3($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -1723,11 +1707,7 @@ function canonicalFactory4($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -2042,11 +2022,7 @@ function canonicalFactory5($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -2271,11 +2247,7 @@ function canonicalFactory6($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -2620,11 +2592,7 @@ function canonicalFactory7($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -3813,11 +3781,7 @@ function canonicalFactory9($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -4316,11 +4280,7 @@ function canonicalFactory10($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -4595,11 +4555,7 @@ function canonicalFactory11($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -5523,11 +5479,7 @@ function canonicalFactory12($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -6198,11 +6150,7 @@ function canonicalFactory13($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -6569,11 +6517,7 @@ function canonicalFactory15($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -7554,11 +7498,7 @@ function canonicalFactory16($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -7818,11 +7758,7 @@ function canonicalFactory17($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
@@ -17617,11 +17553,7 @@ function canonicalFactory114($bindings, $runtime) {
   	if ((0.6666666865348816 <= h) && (h < 0.8333333134651184)) {
   	(rgb[0] = x, rgb[1] = 0, rgb[2] = c, rgb);
   	} else {
-  	if ((0.8333333134651184 <= h) && (h < 1)) {
   	(rgb[0] = c, rgb[1] = 0, rgb[2] = x, rgb);
-  	} else {
-  	(rgb[0] = 0, rgb[1] = 0, rgb[2] = 0, rgb);
-  	};
   	};
   	};
   	};
