@@ -3,6 +3,13 @@
 // by the supervisor) it runs only the test files whose source references those
 // paths, so iteration tests stay within the bounded run limit. Exact-source CI
 // still runs the full suite because it does not set the variable.
+//
+// With NM_SHARD_COUNT and NM_SHARD_INDEX set (0-based; .nm-test-shards at the
+// repository root declares the count) the selection — full suite or
+// changed-path selection — is reduced to that shard: every file whose index in
+// the sorted list satisfies index % count == index. Together the shards run
+// every selected test exactly once, and each invocation stays within the
+// 5-minute run limit. Without those variables the behavior is unchanged.
 import { spawn } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -28,12 +35,34 @@ function collectTestFiles() {
     }
   }
   walk('test')
-  return found
+  return found.sort()
 }
 
+const shardCount = Number.parseInt(process.env.NM_SHARD_COUNT ?? '', 10)
+const shardIndex = Number.parseInt(process.env.NM_SHARD_INDEX ?? '', 10)
+const sharded = Number.isInteger(shardCount) && shardCount > 0
+  && Number.isInteger(shardIndex) && shardIndex >= 0 && shardIndex < shardCount
+
+// Keeps shard identity stable: a file's shard follows its index in the sorted
+// full test list, so shard N holds the same files in full-suite and
+// changed-path runs.
+const allTestFiles = collectTestFiles()
+const shardOf = (files) => (sharded
+  ? files.filter((file) => allTestFiles.indexOf(file) % shardCount === shardIndex)
+  : files)
+
 if (changed.length === 0) {
-  const child = fullSuite()
-  child.on('close', (code) => process.exit(code ?? 1))
+  if (!sharded) {
+    const child = fullSuite()
+    child.on('close', (code) => process.exit(code ?? 1))
+  } else {
+    const files = shardOf(allTestFiles)
+    console.error(`NM_SHARD_INDEX=${shardIndex}/${shardCount}: running ${files.length} test file(s)`)
+    const child = spawn(process.execPath, ['--test', '--test-concurrency=2', ...files], {
+      cwd: projectRoot, stdio: 'inherit',
+    })
+    child.on('close', (code) => process.exit(code ?? 1))
+  }
 } else {
   const needles = new Set()
   for (const path of changed) {
@@ -50,11 +79,14 @@ if (changed.length === 0) {
       selected.push(path)
     }
   }
-  if (selected.length === 0) {
+  const files = shardOf(selected)
+  if (files.length === 0) {
     console.error('NM_CHANGED_FILES: no test file references the changed paths; nothing to run')
     process.exit(0)
   }
-  console.error(`NM_CHANGED_FILES: running ${selected.length} test file(s)`)
-  const child = spawn(process.execPath, ['--test', '--test-concurrency=2', ...selected], { cwd: projectRoot, stdio: 'inherit' })
+  console.error(sharded
+    ? `NM_CHANGED_FILES: running shard ${shardIndex}/${shardCount}: ${files.length} test file(s)`
+    : `NM_CHANGED_FILES: running ${files.length} test file(s)`)
+  const child = spawn(process.execPath, ['--test', '--test-concurrency=2', ...files], { cwd: projectRoot, stdio: 'inherit' })
   child.on('close', (code) => process.exit(code ?? 1))
 }

@@ -7,12 +7,13 @@ import { canonicalKernelFactories } from '../src/effects/generated/canonical-ker
 // Upstream 8395d1da made feedback's hsv2rgb take its last sector as the else
 // branch. fract() returns 1.0 for a hue just below a whole number, and a
 // compiler that folds hsv2rgb's own fract() into the caller's fract() then
-// reaches the sector chain with h = 1.0. The pinned GLSL wraps that h through
-// the last sector — rgb = (c, 0, x), the colour of h = 0.0 — instead of
-// falling into a black vec3(0). This file evaluates the generated kernel's
-// own hsv2rgb (the transpiled source is a plain string in the module, and the
-// rendered pipeline can never reach h >= 1.0 because the kernel applies
-// fract() before the call) and pins the boundary result.
+// reaches the sector chain with the raw h = 1.0. The pinned GLSL wraps that h
+// through the last sector — rgb = (c, 0, x), the colour of h = 0.0 — instead
+// of falling into a black vec3(0). The rendered pipeline always applies
+// fract() before the call, so no render reaches h >= 1.0; this file therefore
+// evaluates the generated kernel's own hsv2rgb (a plain string inside the
+// module) twice: once with the port's fract, once with an identity fract that
+// reproduces the folded-compiler case the fix defends against.
 
 const kernelsSource = await readFile(new URL('../src/effects/generated/canonical-kernels.js', import.meta.url), 'utf8')
 
@@ -42,8 +43,7 @@ function extractHsv2rgb(factorySource) {
 
 // The feedback factory's hsv2rgb sees the port runtime's vector helpers plus
 // the stdlib single-argument math builtins as bare names.
-function evaluateHsv2rgb(source) {
-  const fract = (value) => value - Math.floor(value)
+function evaluateHsv2rgb(source, fract) {
   const abs = Math.abs
   const mod = (left, right) => left - right * Math.floor(left / right)
   function pooledFloat32Array(initializer) {
@@ -56,17 +56,28 @@ function evaluateHsv2rgb(source) {
   return new Function('$runtime', 'fract', 'abs', 'mod', `${source}\nreturn hsv2rgb;`)(runtime, fract, abs, mod)
 }
 
-const hsv2rgb = evaluateHsv2rgb(extractHsv2rgb(extractFactory('canonicalFactory51')))
-
 function fract(value) {
   return value - Math.floor(value)
 }
 
+const source = extractHsv2rgb(extractFactory('canonicalFactory51'))
+const hsv2rgb = evaluateHsv2rgb(source, fract)
+// The folded case: hsv2rgb's own fract() is compiled away, as Mesa did before
+// the fix, so the raw h reaches the sector chain unchanged.
+const hsv2rgbFolded = evaluateHsv2rgb(source, (value) => value)
+
 test('the generated feedback hsv2rgb has no black fallback sector', () => {
   assert.equal(canonicalKernelFactories['filter/feedback:feedback']?.name, 'canonicalFactory51',
     'the extracted hsv2rgb must come from the generated filter/feedback factory')
-  assert.ok(!/rgb\[0\] = 0, rgb\[1\] = 0, rgb\[2\] = 0/.test(extractHsv2rgb(extractFactory('canonicalFactory51'))),
+  assert.ok(!/rgb\[0\] = 0, rgb\[1\] = 0, rgb\[2\] = 0/.test(source),
     'the old black vec3(0) fallback sector is gone')
+})
+
+test('the sector chain takes raw h = 1.0 as h = 0.0, not black', () => {
+  // With the fold reproduced, h = 1.0 reaches the last sector (the else
+  // branch) unchanged. There x is 0, so the colour is that of h = 0.0.
+  assert.deepEqual([...hsv2rgbFolded(new Float32Array([1, 1, 1]))], [1, 0, 0])
+  assert.deepEqual(hsv2rgbFolded(new Float32Array([1, 1, 1])), hsv2rgb(new Float32Array([0, 1, 1])))
 })
 
 test('h = 1.0 renders as h = 0.0, not black', () => {
