@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findExecutable, inspectChromium, inspectFirefox, inspectSafari, inspectWebkit, listenWithFallback, serve } from '../scripts/browser-check.mjs'
+import { findExecutable, inspectChromium, inspectFirefox, inspectSafari, inspectWebkit, listenWithFallback, serve, STATUS_PROBE } from '../scripts/browser-check.mjs'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
@@ -362,4 +362,73 @@ test('firefox without a Playwright package fails at argument parsing', () => {
     { cwd: root, encoding: 'utf8', timeout: 5000 })
   assert.notEqual(result.status, 0)
   assert.match(result.stderr, /--browser firefox needs --playwright/)
+})
+
+// The in-page status probe reads the demo canvas through a 2d context, with a
+// copy-canvas fallback for engines that refuse the direct read (Safari 27
+// reports InvalidStateError). These tests evaluate the probe against stub DOMs.
+function stubDocument(canvas) {
+  const copies = []
+  return {
+    copies,
+    document: {
+      getElementById: (id) => (id === 'canvas' ? canvas : id === 'status' ? { textContent: '1 passes' } : { offsetParent: {} }),
+      createElement: () => {
+        const copy = { width: 0, height: 0, bitmap: null }
+        copy.getContext = () => ({
+          drawImage(source) {
+            copy.bitmap = source.bitmap
+            copy.width = source.width
+            copy.height = source.height
+          },
+          getImageData: (x, y, w, h) => ({ data: new Uint8ClampedArray(copy.bitmap) }),
+        })
+        copies.push(copy)
+        return copy
+      },
+      body: { classList: { contains: () => false } },
+    },
+    window: { __browserCheckErrors: [] },
+  }
+}
+
+function runProbe(canvas) {
+  const { document, window } = stubDocument(canvas)
+  return JSON.parse(new Function('document', 'window', `return ${STATUS_PROBE}`)(document, window))
+}
+
+test('status probe reads a rendered 2d canvas directly', () => {
+  const canvas = {
+    width: 2, height: 2,
+    bitmap: [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 0, 0, 0, 0],
+    getContext: () => ({ getImageData: (x, y, w, h) => ({ data: new Uint8ClampedArray(canvas.bitmap) }) }),
+  }
+  const probe = runProbe(canvas)
+  assert.deepEqual(probe.canvas, { width: 2, height: 2, nonZeroPixels: 3 })
+})
+
+test('status probe falls back to a canvas copy when the direct read is refused', () => {
+  const invalidState = new DOMException('The object is in an invalid state.', 'InvalidStateError')
+  const canvas = {
+    width: 2, height: 2,
+    bitmap: [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 0, 0, 0, 0],
+    getContext: () => { throw invalidState },
+  }
+  const { document, window, copies } = stubDocument(canvas)
+  const probe = JSON.parse(new Function('document', 'window', `return ${STATUS_PROBE}`)(document, window))
+  assert.equal(copies.length, 1)
+  assert.deepEqual(probe.canvas, { width: 2, height: 2, nonZeroPixels: 3 })
+})
+
+test('status probe reports the error when every readback path is refused', () => {
+  const invalidState = new DOMException('The object is in an invalid state.', 'InvalidStateError')
+  const canvas = {
+    width: 2, height: 2,
+    getContext: (type) => { throw invalidState },
+  }
+  const { document, window } = stubDocument(canvas)
+  // The copy canvas refuses its 2d context too, so the fallback rethrows.
+  document.createElement = () => ({ width: 0, height: 0, getContext: () => null })
+  const probe = JSON.parse(new Function('document', 'window', `return ${STATUS_PROBE}`)(document, window))
+  assert.match(probe.canvas.error, /InvalidStateError/)
 })

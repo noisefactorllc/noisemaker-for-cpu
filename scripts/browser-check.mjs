@@ -227,9 +227,25 @@ const STATUS_PROBE = `(() => {
   let canvasStats = null
   if (canvas && canvas.width && canvas.height) {
     try {
-      const context = canvas.getContext('2d')
-      if (context) {
-        const data = context.getImageData(0, 0, canvas.width, canvas.height).data
+      // Reads the canvas through its own 2d context, and, when that context is
+      // refused (Safari 27 reports InvalidStateError for getContext('2d') on a
+      // canvas its renderer still holds), through a fresh 2d canvas that copies
+      // the rendered bitmap. The readback path only; the non-blank assertion
+      // stays unchanged.
+      let data = null
+      try {
+        const context = canvas.getContext('2d')
+        if (context) data = context.getImageData(0, 0, canvas.width, canvas.height).data
+      } catch (error) {
+        const copy = document.createElement('canvas')
+        copy.width = canvas.width
+        copy.height = canvas.height
+        const copyContext = copy.getContext('2d')
+        if (!copyContext) throw error
+        copyContext.drawImage(canvas, 0, 0)
+        data = copyContext.getImageData(0, 0, copy.width, copy.height).data
+      }
+      if (data) {
         let nonZero = 0
         for (let i = 0; i < data.length; i += 4) {
           if (data[i] || data[i + 1] || data[i + 2] || data[i + 3]) nonZero++
@@ -249,6 +265,8 @@ const STATUS_PROBE = `(() => {
     pageErrors: window.__browserCheckErrors || [],
   })
 })()`
+
+export { STATUS_PROBE }
 
 async function availablePort() {
   const server = createTcpServer()
