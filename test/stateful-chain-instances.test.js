@@ -38,6 +38,24 @@ const PAIRS = [
     'search synth, filter\nnoise(seed: 1).watercolor().watercolor().write(o0)\nrender(o0)\n',
     'search synth, filter\nnoise(seed: 1).watercolor().write(o1)\nread(o1).watercolor().write(o0)\nrender(o0)\n',
   ],
+  // Different stateful effects in one chain size from their own zoom: the
+  // reactionDiffusion state keeps the chain-scoped size, the cellularAutomata
+  // instance gets its own.
+  [
+    'search synth, mixer\nreactionDiffusion(zoom: x4).blendMode(tex: cellularAutomata(zoom: x16)).write(o0)\nrender(o0)\n',
+    'search synth, mixer\ncellularAutomata(zoom: x16).write(o2)\nreactionDiffusion(zoom: x4).blendMode(tex: read(o2)).write(o0)\nrender(o0)\n',
+  ],
+  [
+    'search synth, mixer\nnoise(seed: 1).blendMode(tex: reactionDiffusion(zoom: x4)).blendMode(tex: cellularAutomata(zoom: x16)).write(o0)\nrender(o0)\n',
+    'search synth, mixer\ncellularAutomata(zoom: x16).write(o2)\nreactionDiffusion(zoom: x4).write(o3)\nnoise(seed: 1).blendMode(tex: read(o3)).blendMode(tex: read(o2)).write(o0)\nrender(o0)\n',
+  ],
+]
+
+const LOOP_CHAINS = [
+  // Adjacent loop regions share the chain-scoped accumulator, whose content
+  // equals the region input there, so each region passes the image through.
+  ['search synth, render\nperlin(seed: 1).loopBegin().loopEnd().write(o0)\nrender(o0)\n',
+   'search synth, render\nperlin(seed: 1).loopBegin().loopEnd().loopBegin().loopEnd().write(o0)\nrender(o0)\n'],
 ]
 
 function renderBytes(source) {
@@ -47,4 +65,21 @@ function renderBytes(source) {
 
 test('repeated stateful instances in one chain render as their flattened per-instance programs', () => {
   for (const [inline, flat] of PAIRS) assert.deepEqual(renderBytes(inline), renderBytes(flat), inline)
+})
+
+test('two loop regions in one chain share the chain-scoped accumulator', () => {
+  for (const [single, pair] of LOOP_CHAINS) assert.deepEqual(renderBytes(pair), renderBytes(single), pair)
+  // A step between the two regions makes the shared feedback observable: the
+  // second region reads the first region's accumulator, which still holds the
+  // pre-invert image, so the chain is not the flattened fresh-per-region form.
+  const shared = 'search synth, filter, render\nperlin(seed: 1).loopBegin(alpha: 100).loopEnd().invert().loopBegin(alpha: 100).loopEnd().write(o0)\nrender(o0)\n'
+  const fresh = 'search synth, filter, render\nperlin(seed: 1).loopBegin(alpha: 100).loopEnd().write(o1)\nread(o1).invert().loopBegin(alpha: 100).loopEnd().write(o0)\nrender(o0)\n'
+  assert.notDeepEqual(renderBytes(shared), renderBytes(fresh), shared)
+})
+
+test('repeated mesh renderers keep the loader mesh and work with the loader in another chain', () => {
+  const repeated = 'search render\nmeshLoader().meshRender().meshRender().write(o0)\nrender(o0)\n'
+  const flattened = 'search render\nmeshLoader().meshRender().write(o1)\nread(o1).meshRender().write(o0)\nrender(o0)\n'
+  assert.deepEqual(renderBytes(repeated), renderBytes(flattened), repeated)
+  assert.equal(renderBytes('search render\nmeshLoader().write(o0)\nread(o0).meshRender().meshRender().write(o1)\nrender(o1)\n').length, SIZE * SIZE * 4)
 })

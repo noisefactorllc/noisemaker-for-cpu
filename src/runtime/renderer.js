@@ -711,22 +711,22 @@ export class CpuRenderer {
   // `time = wrap01(T - (N-1-i)/600)` where `T` is the render-level `time` option.
   // ---------------------------------------------------------------------------------------
 
-  runIterationGroupSync(group, groupInput, surfaces, owned, renderOptions, stats) {
+  runIterationGroupSync(group, groupInput, surfaces, owned, renderOptions, stats, chainResources) {
     if (!group.iterated) {
       let current = groupInput
       for (const step of group.steps) current = this.runEffectSync(step, current, surfaces, owned, renderOptions, stats)
       return current
     }
-    return this.runIteratedGroupSync(group, groupInput, surfaces, owned, renderOptions, stats)
+    return this.runIteratedGroupSync(group, groupInput, surfaces, owned, renderOptions, stats, chainResources)
   }
 
-  async runIterationGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler) {
+  async runIterationGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler, chainResources) {
     if (!group.iterated) {
       let current = groupInput
       for (const step of group.steps) current = await this.runEffectAsync(step, current, surfaces, owned, renderOptions, stats, scheduler)
       return current
     }
-    return this.runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler)
+    return this.runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler, chainResources)
   }
 
   // `iterationCount: 0` → group output is a clone of the group's input surface, or (when the
@@ -1003,7 +1003,7 @@ export class CpuRenderer {
   // map (plus `groupResources`) instead of one. `groupResources` is ALWAYS fully released here
   // (never retained past one render() call) — particle state never survives beyond the group run
   // that owns it, matching the determinism/statelessness constraint.
-  finishGroupResources(stepStates, groupResources, result, surfaces, owned) {
+  finishGroupResources(stepStates, groupResources, result, surfaces, owned, chainResources) {
     const retained = new Set(isChainBundle(result)
       ? [result.image, result.volume, result.geometry].filter(Boolean)
       : [result].filter(Boolean))
@@ -1012,12 +1012,19 @@ export class CpuRenderer {
         if (!retained.has(resource)) this.releaseTransient(resource, surfaces, owned)
       }
     }
+    // The loop accumulator is chain-scoped: hand it to the chain's next loop
+    // region instead of releasing it with the group's other scratch resources.
+    const accum = groupResources.get('global_accum')
+    if (chainResources && accum) {
+      groupResources.delete('global_accum')
+      chainResources.set('global_accum', accum)
+    }
     for (const resource of new Set(groupResources.values())) {
       if (!retained.has(resource)) this.releaseTransient(resource, surfaces, owned)
     }
   }
 
-  runIteratedGroupSync(group, groupInput, surfaces, owned, renderOptions, stats) {
+  runIteratedGroupSync(group, groupInput, surfaces, owned, renderOptions, stats, chainResources) {
     // Upstream (shaders/src/runtime/pipeline.js render()) executes each pass exactly
     // resolveRepeatCount(pass) times per frame — there is no group-level multiplier.
     // For effects whose passes carry a `repeat` (synth/reactionDiffusion, synth/navierStokes,
@@ -1036,11 +1043,26 @@ export class CpuRenderer {
     const groupResources = new Map()
     if (group.loop) {
       const inputImage = chainBundle(groupInput).image
-      const accum = this.pool.acquire(inputImage.width, inputImage.height)
-      accum.format = inputImage.format ?? 'rgba16f'
-      accum.clear()
-      owned.add(accum)
-      groupResources.set('global_accum', accum)
+      // Upstream scopes the loop accumulator by chain (a global that different
+      // effects share keeps its chain scope), so a second loop region in the
+      // same chain continues the first region's feedback surface instead of a
+      // zeroed one. An inherited surface of the wrong size (cannot arise in one
+      // chain's image stream, but guarded) is released and re-created.
+      const inherited = chainResources?.get('global_accum')
+      if (inherited && inputImage && (inherited.width !== inputImage.width || inherited.height !== inputImage.height)) {
+        chainResources.delete('global_accum')
+        this.releaseTransient(inherited, surfaces, owned)
+      } else if (inherited) {
+        chainResources.delete('global_accum')
+        groupResources.set('global_accum', inherited)
+      }
+      if (!groupResources.has('global_accum')) {
+        const accum = this.pool.acquire(inputImage.width, inputImage.height)
+        accum.format = inputImage.format ?? 'rgba16f'
+        accum.clear()
+        owned.add(accum)
+        groupResources.set('global_accum', accum)
+      }
     }
     const ownerStateSize = groupOwnerStateSize(group)
     const inputBundle = chainBundle(groupInput)
@@ -1062,7 +1084,7 @@ export class CpuRenderer {
       lastGroupOutput = stepInput
     }
 
-    this.finishGroupResources(stepStates, groupResources, lastGroupOutput, surfaces, owned)
+    this.finishGroupResources(stepStates, groupResources, lastGroupOutput, surfaces, owned, chainResources)
     const retained = new Set(isChainBundle(lastGroupOutput)
       ? [lastGroupOutput.image, lastGroupOutput.volume, lastGroupOutput.geometry].filter(Boolean)
       : [lastGroupOutput].filter(Boolean))
@@ -1071,7 +1093,7 @@ export class CpuRenderer {
     return lastGroupOutput
   }
 
-  async runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler) {
+  async runIteratedGroupAsync(group, groupInput, surfaces, owned, renderOptions, stats, scheduler, chainResources) {
     // Mirror of runIteratedGroupSync's pass-repeat rule (see its comment).
     const owner = group.steps.find((step) => step.definition?.iterated) ?? group.steps[0]
     const requested = owner.params.iterationCount
@@ -1084,11 +1106,22 @@ export class CpuRenderer {
     const groupResources = new Map()
     if (group.loop) {
       const inputImage = chainBundle(groupInput).image
-      const accum = this.pool.acquire(inputImage.width, inputImage.height)
-      accum.format = inputImage.format ?? 'rgba16f'
-      accum.clear()
-      owned.add(accum)
-      groupResources.set('global_accum', accum)
+      // Chain-scoped accumulator, same as the sync path's comment above.
+      const inherited = chainResources?.get('global_accum')
+      if (inherited && inputImage && (inherited.width !== inputImage.width || inherited.height !== inputImage.height)) {
+        chainResources.delete('global_accum')
+        this.releaseTransient(inherited, surfaces, owned)
+      } else if (inherited) {
+        chainResources.delete('global_accum')
+        groupResources.set('global_accum', inherited)
+      }
+      if (!groupResources.has('global_accum')) {
+        const accum = this.pool.acquire(inputImage.width, inputImage.height)
+        accum.format = inputImage.format ?? 'rgba16f'
+        accum.clear()
+        owned.add(accum)
+        groupResources.set('global_accum', accum)
+      }
     }
     const ownerStateSize = groupOwnerStateSize(group)
     const inputBundle = chainBundle(groupInput)
@@ -1110,7 +1143,7 @@ export class CpuRenderer {
       lastGroupOutput = stepInput
     }
 
-    this.finishGroupResources(stepStates, groupResources, lastGroupOutput, surfaces, owned)
+    this.finishGroupResources(stepStates, groupResources, lastGroupOutput, surfaces, owned, chainResources)
     const retained = new Set(isChainBundle(lastGroupOutput)
       ? [lastGroupOutput.image, lastGroupOutput.volume, lastGroupOutput.geometry].filter(Boolean)
       : [lastGroupOutput].filter(Boolean))
@@ -1890,6 +1923,11 @@ export class CpuRenderer {
   }
 
   runChainSync(chain, surfaces, owned, renderOptions, stats) {
+    // The chain-scoped resource map carries the loop accumulator across the
+    // chain's loop regions, matching upstream's chain-scoped shared globals.
+    // Each inline chain argument is its own chain scope (fresh map inside the
+    // recursive call).
+    const chainResources = new Map()
     let current = null
     for (const group of computeIterationGroups(chain.steps)) {
       const only = group.steps.length === 1 ? group.steps[0] : null
@@ -1902,13 +1940,15 @@ export class CpuRenderer {
             this.writeSurface(inline.surface, chainBundle(value).image, surfaces, owned)
           }
         }
-        current = this.runIterationGroupSync(group, current, surfaces, owned, renderOptions, stats)
+        current = this.runIterationGroupSync(group, current, surfaces, owned, renderOptions, stats, chainResources)
       }
     }
     return current
   }
 
   async runChainAsync(chain, surfaces, owned, renderOptions, stats, scheduler) {
+    // Chain-scoped resource map, mirroring runChainSync above.
+    const chainResources = new Map()
     let current = null
     for (const group of computeIterationGroups(chain.steps)) {
       const only = group.steps.length === 1 ? group.steps[0] : null
@@ -1921,7 +1961,7 @@ export class CpuRenderer {
             this.writeSurface(inline.surface, chainBundle(value).image, surfaces, owned)
           }
         }
-        current = await this.runIterationGroupAsync(group, current, surfaces, owned, renderOptions, stats, scheduler)
+        current = await this.runIterationGroupAsync(group, current, surfaces, owned, renderOptions, stats, scheduler, chainResources)
       }
     }
     return current
