@@ -1,5 +1,5 @@
 {
- "revision": "6f98d26ab84f17ba7fb154bb74252d6362736f89",
+ "revision": "cf95f49c900762ac1f23cb620dc16654c98ace77",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -6977,8 +6977,8 @@
   },
   {
    "path": "shaders/src/runtime/expander.js",
-   "size": 72724,
-   "sha256": "73570c2cd2430aa1cc7568932bb0c7267ee4b08b1b8de5ebd4c1c026145a40e7"
+   "size": 75440,
+   "sha256": "ee07eedd35e5efa9924dc1a85affba561a63d438388da896120f3a062f54c3fa"
   },
   {
    "path": "shaders/src/runtime/external-input.js",

@@ -1,5 +1,5 @@
 {
-  "revision": "6f98d26ab84f17ba7fb154bb74252d6362736f89",
+  "revision": "cf95f49c900762ac1f23cb620dc16654c98ace77",
   "cases": [
     {
       "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
