@@ -4,8 +4,8 @@ import test from 'node:test'
 import { CpuRenderer } from '../src/runtime/renderer.js'
 import { createDefaultRegistry, kernelFactories, kernels } from '../src/effects/catalog.js'
 
-// GAP-059: each stateful effect instance in a chain keeps its own state and
-// zoom size. Upstream's shaders/tests/test_stateful_instances.js covers two
+// Each stateful effect instance in a chain keeps its own state and zoom
+// size. Upstream's shaders/tests/test_stateful_instances.js covers two
 // instances of one stateful effect in one chain (an inline surface argument
 // or a repeated filter); the port keeps stateful state in each step's own
 // resources (src/runtime/renderer.js), so the same behavior is pinned through
