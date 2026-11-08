@@ -66,10 +66,10 @@ async function runFakeSafari(mode) {
       }
       if (mode === 'execute-error') return reply({ error: 'javascript error', message: 'probe failed' }, 500)
       probes += 1
-      // 'screenshot-canvas' keeps reporting the Safari 27 InvalidStateError
+      // Both screenshot modes keep reporting the Safari 27 InvalidStateError
       // readback on every probe, with the canvas viewport rect for the
       // screenshot fallback.
-      const canvas = mode === 'screenshot-canvas'
+      const canvas = mode === 'screenshot-canvas' || mode === 'screenshot-blank'
         ? { error: 'InvalidStateError: The object is in an invalid state.' }
         : { width: 10, height: 10, nonZeroPixels: 100 }
       return reply(JSON.stringify({ rendering: false, status: '20 passes', appContainer: true,
@@ -79,8 +79,11 @@ async function runFakeSafari(mode) {
         pageErrors: mode === 'page-error' ? ['early module exception'] : [] }))
     }
     if (path === '/session/fake-session/screenshot' && req.method === 'GET') {
+      // 'screenshot-blank' serves an opaque black screenshot (alpha 255,
+      // color 0) so the color-only count must report a blank canvas.
+      const color = mode === 'screenshot-blank' ? 0 : 255
       const image = { width: 2, height: 2, data: new Uint8Array([
-        255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255,
+        color, 0, 0, 255, color, 0, 0, 255, color, 0, 0, 255, color, 0, 0, 255,
       ]) }
       return reply({ data: encodePng(image).toString('base64') })
     }
@@ -133,6 +136,12 @@ test('Safari WebDriver reads the canvas from a page screenshot when the JS readb
   const { result } = await runFakeSafari('screenshot-canvas')
   assert.equal(result.pass, true)
   assert.deepEqual(result.canvas, { width: 2, height: 2, nonZeroPixels: 4, readback: 'page-screenshot' })
+})
+
+test('Safari WebDriver rejects an opaque blank screenshot region by color, not alpha', async () => {
+  const { result } = await runFakeSafari('screenshot-blank')
+  assert.equal(result.pass, false)
+  assert.deepEqual(result.canvas, { width: 2, height: 2, nonZeroPixels: 0, readback: 'page-screenshot' })
 })
 
 test('Windows discovery accepts Chrome under Program Files without PATH', () => {

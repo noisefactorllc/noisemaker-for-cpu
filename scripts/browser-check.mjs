@@ -414,7 +414,9 @@ async function canvasFromScreenshot({ port, sessionId, probe }) {
     for (let py = y; py < bottom; py += 1) {
       for (let px = x; px < right; px += 1) {
         const offset = (py * image.width + px) * 4
-        if (image.data[offset] || image.data[offset + 1] || image.data[offset + 2] || image.data[offset + 3]) nonZero += 1
+        // Count color only: a page screenshot is composited and typically
+        // opaque, so its alpha channel is 255 even where nothing was drawn.
+        if (image.data[offset] || image.data[offset + 1] || image.data[offset + 2]) nonZero += 1
       }
     }
     return { width: right - x, height: bottom - y, nonZeroPixels: nonZero, readback: 'page-screenshot' }
