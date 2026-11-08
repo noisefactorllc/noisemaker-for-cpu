@@ -35,6 +35,8 @@ import { tmpdir } from 'node:os'
 import { delimiter, dirname, isAbsolute, join, normalize, resolve, sep, win32 } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { decodePng } from '../src/node/png.js'
+
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(scriptDir, '..')
 
@@ -224,6 +226,19 @@ class Cdp {
 const STATUS_PROBE = `(() => {
   const status = (document.getElementById('status') && document.getElementById('status').textContent) || ''
   const canvas = document.getElementById('canvas')
+  let canvasRect = null
+  if (canvas) {
+    // The screenshot fallback (inspectSafari) needs the canvas viewport rect, and
+    // getBoundingClientRect is viewport-relative, so the probe scrolls the canvas
+    // into view before measuring it. scrollIntoView is a no-op when it is visible.
+    if (typeof canvas.scrollIntoView === 'function') {
+      try { canvas.scrollIntoView({ block: 'nearest' }) } catch (error) {}
+    }
+    if (typeof canvas.getBoundingClientRect === 'function') {
+      const rect = canvas.getBoundingClientRect()
+      canvasRect = { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+    }
+  }
   let canvasStats = null
   if (canvas && canvas.width && canvas.height) {
     try {
@@ -262,6 +277,8 @@ const STATUS_PROBE = `(() => {
     status: status.trim(),
     appContainer: !!app && app.offsetParent !== null,
     canvas: canvasStats,
+    canvasRect,
+    dpr: window.devicePixelRatio || 1,
     pageErrors: window.__browserCheckErrors || [],
   })
 })()`
@@ -331,10 +348,7 @@ export async function inspectSafari({ port, targetURL, requests, executable, tim
         script: `return ${STATUS_PROBE};`, args: [],
       })
       probe = JSON.parse(value)
-      // The canvas readback can refuse a just-presented frame (Safari 27 reports
-      // InvalidStateError for early probes), so keep polling until the canvas
-      // itself reads without error too, not only until the status text settles.
-      if (!probe.rendering && /passes/.test(probe.status) && !probe.canvas?.error) break
+      if (!probe.rendering && /passes/.test(probe.status)) break
       await sleep(500)
     }
     const mainFrameStatus = requests.find((request) => request.path === '/examples/browser/index.html')?.status ?? null
@@ -342,7 +356,14 @@ export async function inspectSafari({ port, targetURL, requests, executable, tim
       .map((request) => `${request.status} ${new URL(request.path, targetURL)}`)
     const pageErrors = probe?.pageErrors || []
     const renderCompleted = !!probe && /passes/.test(probe.status)
-    const canvas = probe?.canvas || null
+    let canvas = probe?.canvas || null
+    // When WebKit refuses every JS readback of the canvas (Safari 27 reports
+    // InvalidStateError for getImageData, drawImage, and toDataURL on a canvas
+    // its renderer holds on the GPU), verify the same canvas pixels from a
+    // full-page screenshot, which the compositor always has.
+    if (canvas?.error && probe?.canvasRect && probe?.dpr != null) {
+      canvas = await canvasFromScreenshot({ port, sessionId, probe })
+    }
     const nonBlank = !!canvas && !canvas.error && canvas.nonZeroPixels > canvas.width * canvas.height * 0.5
     const pass = renderCompleted && nonBlank && probe.appContainer && mainFrameStatus === 200 &&
       moduleFailures.length === 0 && pageErrors.length === 0
@@ -373,8 +394,36 @@ export async function inspectSafari({ port, targetURL, requests, executable, tim
   }
 }
 
-async function runSafari(args, executable, server, targetURL, requests) {
-  let driver
+// Reads the rendered canvas from a full-page WebDriver screenshot. The
+// compositor has the pixels even when WebKit refuses every JS readback of a
+// GPU-backed canvas, so this verifies the same on-screen pixels the demo
+// presents. The probe reports the canvas viewport rect and the device pixel
+// ratio; the crop uses their product in screenshot device pixels.
+async function canvasFromScreenshot({ port, sessionId, probe }) {
+  try {
+    const shot = await webdriverRequest(port, `/session/${encodeURIComponent(sessionId)}/screenshot`, 'GET', undefined, 30000)
+    const image = decodePng(Buffer.from(shot.data, 'base64'))
+    const dpr = probe.dpr || 1
+    const rect = probe.canvasRect
+    const x = Math.max(0, Math.floor(rect.x * dpr))
+    const y = Math.max(0, Math.floor(rect.y * dpr))
+    const right = Math.min(image.width, Math.ceil((rect.x + rect.width) * dpr))
+    const bottom = Math.min(image.height, Math.ceil((rect.y + rect.height) * dpr))
+    if (right <= x || bottom <= y) return { error: 'canvas region is empty in the page screenshot' }
+    let nonZero = 0
+    for (let py = y; py < bottom; py += 1) {
+      for (let px = x; px < right; px += 1) {
+        const offset = (py * image.width + px) * 4
+        if (image.data[offset] || image.data[offset + 1] || image.data[offset + 2] || image.data[offset + 3]) nonZero += 1
+      }
+    }
+    return { width: right - x, height: bottom - y, nonZeroPixels: nonZero, readback: 'page-screenshot' }
+  } catch (error) {
+    return { error: `page screenshot readback failed: ${String(error).slice(0, 120)}` }
+  }
+}
+
+async function runSafari(args, executable, server, targetURL, requests) {  let driver
   let driverError = ''
   let driverSpawnError = null
   try {

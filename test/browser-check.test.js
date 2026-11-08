@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { findExecutable, inspectChromium, inspectFirefox, inspectSafari, inspectWebkit, listenWithFallback, serve, STATUS_PROBE } from '../scripts/browser-check.mjs'
+import { encodePng } from '../src/node/png.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 
@@ -65,14 +66,23 @@ async function runFakeSafari(mode) {
       }
       if (mode === 'execute-error') return reply({ error: 'javascript error', message: 'probe failed' }, 500)
       probes += 1
-      // 'canvas-recovers' reports the Safari 27 InvalidStateError readback for the
-      // first two probes and a good canvas afterwards, so the check must keep polling.
-      const canvas = mode === 'canvas-recovers' && probes < 3
+      // 'screenshot-canvas' keeps reporting the Safari 27 InvalidStateError
+      // readback on every probe, with the canvas viewport rect for the
+      // screenshot fallback.
+      const canvas = mode === 'screenshot-canvas'
         ? { error: 'InvalidStateError: The object is in an invalid state.' }
         : { width: 10, height: 10, nonZeroPixels: 100 }
       return reply(JSON.stringify({ rendering: false, status: '20 passes', appContainer: true,
         canvas,
+        canvasRect: { x: 0, y: 0, width: 2, height: 2 },
+        dpr: 1,
         pageErrors: mode === 'page-error' ? ['early module exception'] : [] }))
+    }
+    if (path === '/session/fake-session/screenshot' && req.method === 'GET') {
+      const image = { width: 2, height: 2, data: new Uint8Array([
+        255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255,
+      ]) }
+      return reply({ data: encodePng(image).toString('base64') })
     }
     if (path === '/session/fake-session' && req.method === 'DELETE') {
       if (mode === 'delete-error') return reply({ error: 'unknown error', message: 'delete failed' }, 500)
@@ -119,10 +129,10 @@ test('Safari WebDriver rejects a failed same-origin module request', async () =>
   assert.equal(deleted, true)
 })
 
-test('Safari WebDriver keeps polling while the canvas readback refuses the frame', async () => {
-  const { result, probes } = await runFakeSafari('canvas-recovers')
+test('Safari WebDriver reads the canvas from a page screenshot when the JS readback is refused', async () => {
+  const { result } = await runFakeSafari('screenshot-canvas')
   assert.equal(result.pass, true)
-  assert.equal(probes, 3)
+  assert.deepEqual(result.canvas, { width: 2, height: 2, nonZeroPixels: 4, readback: 'page-screenshot' })
 })
 
 test('Windows discovery accepts Chrome under Program Files without PATH', () => {

@@ -43,11 +43,7 @@ export class CanvasSink {
     if (result.width !== this.descriptor.width || result.height !== this.descriptor.height) {
       throw new Error(`CanvasSink frame extent ${result.width}x${result.height} does not match configured extent ${this.descriptor.width}x${this.descriptor.height}`)
     }
-    // willReadFrequently keeps the canvas software-backed: Safari 27 holds
-    // GPU-backed 2d canvases on the GPU and refuses every JS readback of them
-    // (getImageData, drawImage, toDataURL) with InvalidStateError, which breaks
-    // the browser check's canvas probe. The rendered pixels are identical.
-    const context = this.canvas.getContext('2d', { willReadFrequently: true })
+    const context = this.canvas.getContext('2d')
     if (!context) throw new Error('Canvas 2D context is unavailable')
     const image = context.createImageData(result.width, result.height)
     image.data.set(result.toRgba8())
