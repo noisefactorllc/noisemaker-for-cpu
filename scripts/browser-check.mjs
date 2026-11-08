@@ -331,7 +331,10 @@ export async function inspectSafari({ port, targetURL, requests, executable, tim
         script: `return ${STATUS_PROBE};`, args: [],
       })
       probe = JSON.parse(value)
-      if (!probe.rendering && /passes/.test(probe.status)) break
+      // The canvas readback can refuse a just-presented frame (Safari 27 reports
+      // InvalidStateError for early probes), so keep polling until the canvas
+      // itself reads without error too, not only until the status text settles.
+      if (!probe.rendering && /passes/.test(probe.status) && !probe.canvas?.error) break
       await sleep(500)
     }
     const mainFrameStatus = requests.find((request) => request.path === '/examples/browser/index.html')?.status ?? null

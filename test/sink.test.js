@@ -32,6 +32,19 @@ test('CanvasSink presents distinct RenderResult rows in top-down order into a Ca
   assert.deepEqual([presented.x, presented.y], [0, 0])
 })
 
+test('CanvasSink requests the 2d context with willReadFrequently so Safari can hold the canvas software-backed', () => {
+  const context = {
+    createImageData(width, height) { return { width, height, data: new Uint8ClampedArray(width * height * 4) } },
+    putImageData() {},
+  }
+  const calls = []
+  const sink = new api.CanvasSink({ width: 0, height: 0, getContext: (...args) => { calls.push(args); return context } })
+
+  sink.configure({ width: 1, height: 1 })
+  sink.submit(frame())
+  assert.deepEqual(calls, [['2d', { willReadFrequently: true }]])
+})
+
 test('CanvasSink rejects malformed descriptors and frame extents', () => {
   const context = {
     createImageData(width, height) { return { data: new Uint8ClampedArray(width * height * 4) } },

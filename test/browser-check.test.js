@@ -24,6 +24,7 @@ async function runFakeSafari(mode) {
   const web = await serve(root, { safari: true, requests })
   const targetURL = `http://127.0.0.1:${web.address().port}/examples/browser/index.html`
   let deleted = false
+  let probes = 0
   const driver = createServer(async (req, res) => {
     const reply = (value, status = 200) => {
       res.writeHead(status, { 'content-type': 'application/json' })
@@ -63,8 +64,14 @@ async function runFakeSafari(mode) {
         return reply({ error: 'javascript error', message: 'status probe omitted diagnostics or canvas' }, 500)
       }
       if (mode === 'execute-error') return reply({ error: 'javascript error', message: 'probe failed' }, 500)
+      probes += 1
+      // 'canvas-recovers' reports the Safari 27 InvalidStateError readback for the
+      // first two probes and a good canvas afterwards, so the check must keep polling.
+      const canvas = mode === 'canvas-recovers' && probes < 3
+        ? { error: 'InvalidStateError: The object is in an invalid state.' }
+        : { width: 10, height: 10, nonZeroPixels: 100 }
       return reply(JSON.stringify({ rendering: false, status: '20 passes', appContainer: true,
-        canvas: { width: 10, height: 10, nonZeroPixels: 100 },
+        canvas,
         pageErrors: mode === 'page-error' ? ['early module exception'] : [] }))
     }
     if (path === '/session/fake-session' && req.method === 'DELETE') {
@@ -78,9 +85,9 @@ async function runFakeSafari(mode) {
   try {
     try {
       const result = await inspectSafari({ port, targetURL, requests, executable: 'safaridriver', timeout: 3000 })
-      return { result, deleted }
+      return { result, deleted, probes }
     } catch (error) {
-      return { error, deleted }
+      return { error, deleted, probes }
     }
   } finally {
     await close(driver)
@@ -110,6 +117,12 @@ test('Safari WebDriver rejects a failed same-origin module request', async () =>
   assert.equal(result.pass, false)
   assert.match(result.moduleFailures.join(' '), /404.*missing-module\.mjs/)
   assert.equal(deleted, true)
+})
+
+test('Safari WebDriver keeps polling while the canvas readback refuses the frame', async () => {
+  const { result, probes } = await runFakeSafari('canvas-recovers')
+  assert.equal(result.pass, true)
+  assert.equal(probes, 3)
 })
 
 test('Windows discovery accepts Chrome under Program Files without PATH', () => {
