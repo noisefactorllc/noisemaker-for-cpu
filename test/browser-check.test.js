@@ -80,12 +80,13 @@ async function runFakeSafari(mode) {
     }
     if (path === '/session/fake-session/screenshot' && req.method === 'GET') {
       // 'screenshot-blank' serves an opaque black screenshot (alpha 255,
-      // color 0) so the color-only count must report a blank canvas.
+      // color 0) so the color-only count must report a blank canvas. Real
+      // safaridriver returns the base64 image as the response value itself.
       const color = mode === 'screenshot-blank' ? 0 : 255
       const image = { width: 2, height: 2, data: new Uint8Array([
         color, 0, 0, 255, color, 0, 0, 255, color, 0, 0, 255, color, 0, 0, 255,
       ]) }
-      return reply({ data: encodePng(image).toString('base64') })
+      return reply(encodePng(image).toString('base64'))
     }
     if (path === '/session/fake-session' && req.method === 'DELETE') {
       if (mode === 'delete-error') return reply({ error: 'unknown error', message: 'delete failed' }, 500)

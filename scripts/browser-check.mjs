@@ -402,7 +402,11 @@ export async function inspectSafari({ port, targetURL, requests, executable, tim
 async function canvasFromScreenshot({ port, sessionId, probe }) {
   try {
     const shot = await webdriverRequest(port, `/session/${encodeURIComponent(sessionId)}/screenshot`, 'GET', undefined, 30000)
-    const image = decodePng(Buffer.from(shot.data, 'base64'))
+    // W3C Take Screenshot returns the base64 image as the value itself;
+    // some drivers wrap it as {data: "<base64>"}.
+    const encoded = typeof shot === 'string' ? shot : shot?.data
+    if (typeof encoded !== 'string') return { error: 'page screenshot readback failed: WebDriver returned no screenshot data' }
+    const image = decodePng(Buffer.from(encoded, 'base64'))
     const dpr = probe.dpr || 1
     const rect = probe.canvasRect
     const x = Math.max(0, Math.floor(rect.x * dpr))
