@@ -17,7 +17,14 @@ import { isAutomationValue, resolveAutomationUniform } from './automation.js'
 import { paletteData } from '../effects/generated/canonical-adapter-data.js'
 import { computeIterationGroups, isParticleStateName, isSurfaceIo, wrap01, ITERATION_DELTA_TIME } from './iteration.js'
 
-// Fallback size/format for a group-scoped particle-state texture (`global_xyz`/`global_vel`/
+// Pass an isolated sink failure to the sink that threw it. A sink opts in
+// with an optional onError(error) method, for example to end an output whose
+// new size it cannot send. Rendering and the other sinks continue either way.
+function reportSinkError(error, sink) {
+  if (typeof sink?.onError === 'function') sink.onError(error)
+}
+
+// Fallback size for a group-scoped particle-state texture (`global_xyz`/`global_vel`/
 // `global_rgba`/`global_life_data`/`global_*_trail`) that nobody in its iteration group declares
 // in `definition.textures` (e.g. a `points/*` effect used without a `pointsEmit` ahead of it).
 // Sized from the REFERENCING step's own `stateSize` param when it has one (never the screen-size
@@ -348,7 +355,7 @@ export class CpuRenderer {
     }
     this.cpuTextureCache = new Map()
     this.cpuTextureCacheBytes = 0
-    this.sinkManager = new SinkManager()
+    this.sinkManager = new SinkManager({ onError: reportSinkError })
     this._sinkDescriptor = {
       width: 0,
       height: 0,

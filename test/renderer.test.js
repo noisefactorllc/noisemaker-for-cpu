@@ -200,3 +200,68 @@ test('CpuRenderer delegates shouldDeferRender to its sinkManager', () => {
   remove()
   assert.equal(renderer.shouldDeferRender(), false)
 })
+
+test('CpuRenderer passes each sink its own isolated configure, deferRender and submit errors', () => {
+  const renderer = fixture()
+  const configureError = new Error('configure failed')
+  const deferError = new Error('defer probe failed')
+  const submitError = new Error('submit failed')
+  const reported = []
+  let failing = false
+  const failed = {
+    configure() { if (failing) throw configureError },
+    deferRender() { if (failing) throw deferError; return false },
+    submit() { if (failing) throw submitError; return true },
+    close() {},
+    onError(error) { reported.push(['failed', error]) },
+  }
+  // A sink without onError fails exactly as before: counted and isolated.
+  const silent = {
+    configure() { if (failing) throw new Error('silent configure failed') },
+    submit() { if (failing) throw new Error('silent submit failed'); return true },
+    close() {},
+  }
+  // A sink whose reporter throws does not stop the render or the frame.
+  let reporterCalls = 0
+  const throwingReporter = {
+    configure() { if (failing) throw new Error('configure failed again') },
+    submit() { return true },
+    close() {},
+    onError() {
+      reporterCalls += 1
+      throw new Error('reporter failed')
+    },
+  }
+  // A sink that does not fail sees the same calls and no report.
+  const healthyCalls = []
+  const healthy = {
+    configure(descriptor) { healthyCalls.push(['configure', descriptor.width, descriptor.height]) },
+    deferRender() { healthyCalls.push(['deferRender']); return false },
+    submit(result, timestamp) { healthyCalls.push(['submit', timestamp]); return true },
+    close() {},
+    onError(error) { reported.push(['healthy', error]) },
+  }
+  renderer.addSink(failed)
+  renderer.addSink(silent)
+  renderer.addSink(throwingReporter)
+  renderer.addSink(healthy)
+  failing = true
+
+  const frame = renderer.render('search synth\nsolid(color: [0.2, 0.4, 0.6]).write(o0)\nrender(o0)', { width: 2, height: 1, presentationTimestamp: 7 })
+  const deferred = renderer.shouldDeferRender()
+
+  assert.equal(deferred, false)
+  assert.deepEqual(reported, [
+    ['failed', configureError],
+    ['failed', submitError],
+    ['failed', deferError],
+  ])
+  assert.equal(reporterCalls, 1)
+  assert.deepEqual(healthyCalls, [['configure', 2, 1], ['submit', 7], ['deferRender']])
+  assert.deepEqual(renderer.sinkManager.stats.get(failed), { accepted: 0, dropped: 0, failed: 3 })
+  assert.deepEqual(renderer.sinkManager.stats.get(silent), { accepted: 0, dropped: 0, failed: 2 })
+  assert.deepEqual(renderer.sinkManager.stats.get(throwingReporter), { accepted: 1, dropped: 0, failed: 1 })
+  assert.deepEqual(renderer.sinkManager.stats.get(healthy), { accepted: 1, dropped: 0, failed: 0 })
+  assert.equal(frame.width, 2)
+  assert.equal(frame.height, 1)
+})
