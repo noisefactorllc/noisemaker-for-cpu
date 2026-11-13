@@ -24,7 +24,7 @@ function reportSinkError(error, sink) {
   if (typeof sink?.onError === 'function') sink.onError(error)
 }
 
-// Fallback size for a group-scoped particle-state texture (`global_xyz`/`global_vel`/
+// Fallback size/format for a group-scoped particle-state texture (`global_xyz`/`global_vel`/
 // `global_rgba`/`global_life_data`/`global_*_trail`) that nobody in its iteration group declares
 // in `definition.textures` (e.g. a `points/*` effect used without a `pointsEmit` ahead of it).
 // Sized from the REFERENCING step's own `stateSize` param when it has one (never the screen-size
