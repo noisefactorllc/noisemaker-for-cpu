@@ -56,6 +56,20 @@ test('integer constructors and PCG registers reuse pools across pixels', () => {
   assert.equal(runtime.stdlib.pcg3d(firstUnsigned), firstPcg)
 })
 
+test('integer constructors broadcast one scalar and fill components left to right', () => {
+  const { ivec2, ivec3, ivec4, uvec2, uvec3, uvec4 } = new GlslCpuRuntime().stdlib
+  const floats = new Float32Array([1.5, -2.25, 3000, 65536.7])
+  assert.deepEqual([...ivec4(floats)], [1, -2, 3000, 65536])
+  assert.deepEqual([...uvec4(floats)], [1, 4294967294, 3000, 65536])
+  assert.deepEqual([...uvec3(uvec2(7, 9), 5)], [7, 9, 5])
+  assert.deepEqual([...uvec4(uvec2(1, 2), uvec2(3, 4))], [1, 2, 3, 4])
+  assert.deepEqual([...ivec3(ivec2(-4, 5))], [-4, 5, 0])
+  assert.deepEqual([...ivec2(ivec4(6, 7, 8, 9))], [6, 7])
+  assert.deepEqual([...ivec2(3.9)], [3, 3])
+  assert.deepEqual([...uvec3(-1)], [4294967295, 4294967295, 4294967295])
+  assert.deepEqual([...uvec3()], [0, 0, 0])
+})
+
 test('GLSL array parameter copies preserve vector rows and isolate mutations', () => {
   const runtime = new GlslCpuRuntime()
   const palette = [new Float32Array([0, 0, 0]), new Float32Array([1, 0.5, 1])]

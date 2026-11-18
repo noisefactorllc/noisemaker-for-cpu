@@ -486,18 +486,34 @@ export class GlslCpuRuntime {
 
   #integerVector(width, unsigned, a, b, c, d) {
     const out = this.#allocInteger(width, unsigned)
-    const args = [a, b, c, d].filter((value) => value !== undefined)
     // GLSL vector constructor: a single scalar argument broadcasts; otherwise
     // the arguments' components fill left to right, so `uvec3(uvec2 v, uint s)`
     // is (v.x, v.y, s) — scatterJitter (upstream 7aa54b54) hashes exactly that
     // shape, and treating the leading vector as one slot silently zeroed it.
-    const values = args.length === 1 && !isVector(args[0])
-      ? null
-      : args.flatMap((value) => (isVector(value) ? Array.from(value) : [value]))
-    for (let index = 0; index < width; index += 1) {
-      const value = values ? values[index] : args[0]
-      out[index] = unsigned ? (value ?? 0) >>> 0 : (value ?? 0) | 0
+    // Hash kernels construct integer vectors per pixel, so this fills `out`
+    // without allocating temporary arrays.
+    const count = (a !== undefined) + (b !== undefined) + (c !== undefined) + (d !== undefined)
+    const first = a !== undefined ? a : b !== undefined ? b : c !== undefined ? c : d
+    if (count <= 1 && !isVector(first)) {
+      const value = unsigned ? (first ?? 0) >>> 0 : (first ?? 0) | 0
+      for (let index = 0; index < width; index += 1) out[index] = value
+      return out
     }
+    let index = 0
+    for (let slot = 0; slot < 4 && index < width; slot += 1) {
+      const arg = slot === 0 ? a : slot === 1 ? b : slot === 2 ? c : d
+      if (arg === undefined) continue
+      if (isVector(arg)) {
+        for (let item = 0; item < arg.length && index < width; item += 1, index += 1) {
+          const value = arg[item]
+          out[index] = unsigned ? (value ?? 0) >>> 0 : (value ?? 0) | 0
+        }
+      } else {
+        out[index] = unsigned ? arg >>> 0 : arg | 0
+        index += 1
+      }
+    }
+    for (; index < width; index += 1) out[index] = 0
     return out
   }
 
