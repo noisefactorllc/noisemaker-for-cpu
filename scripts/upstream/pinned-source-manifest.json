@@ -1,5 +1,5 @@
 {
- "revision": "b631fc2c37d75f4cedbdc5e760486f7ecd3a2ca8",
+ "revision": "7f3721e973944db9a680bc7048b2c3a5b49c9d8a",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5572,8 +5572,8 @@
   },
   {
    "path": "shaders/effects/render/renderLandscape3d/glsl/landscape.glsl",
-   "size": 13406,
-   "sha256": "c9e9ab5c4d7226e774f8d1b9f8aff9d54fd4d6cd97e07c2d3c907df1d7b07ff8"
+   "size": 14915,
+   "sha256": "179f6394c13db68de0b2c0f07551c7a661380b7335421c36c4a3389792ac5f43"
   },
   {
    "path": "shaders/effects/render/renderLandscape3d/help.md",
@@ -5583,7 +5583,7 @@
   {
    "path": "shaders/effects/render/renderLandscape3d/parity-attestation.json",
    "size": 797,
-   "sha256": "03096aee5695e36bc7c4b0de3d17a2f7ac42d7c24cbd99ae31b28ec0f52862c6"
+   "sha256": "c3a76862a1e8e32c980b3f4f70a0ee124d76a4f818bd90ee68efcc0a0e51e6a7"
   },
   {
    "path": "shaders/effects/render/renderLandscape3d/parity-case.json",
@@ -5592,8 +5592,8 @@
   },
   {
    "path": "shaders/effects/render/renderLandscape3d/wgsl/landscape.wgsl",
-   "size": 13517,
-   "sha256": "cabe432def6312231e704bf80bfaf0306753ba2e05c76486315218e5ca8142be"
+   "size": 15057,
+   "sha256": "f0a0e28f78177dff2003507cad9c45bdfe2d913cef854f57c84334c645202795"
   },
   {
    "path": "shaders/effects/render/renderLit3d/definition.js",
@@ -6718,7 +6718,7 @@
   {
    "path": "shaders/effects/synth3d/heightmap3d/parity-attestation.json",
    "size": 790,
-   "sha256": "8f947463c3579618593247c7e03c31606234e23472238b84bc099954fb41929d"
+   "sha256": "feebba4272e96ac8a6fe7eda3684b3e511aeb9ca82ebb07c93379a7385b6b004"
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/parity-case.json",

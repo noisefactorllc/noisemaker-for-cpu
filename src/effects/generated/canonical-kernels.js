@@ -29165,7 +29165,7 @@ function canonicalFactory249($bindings, $runtime) {
 canonicalFactory249.outputNames = ["fragColor","geoOut"]
 
 function canonicalFactory250($bindings, $runtime) {
-  const { float, vec3, ivec2, ivec3, sin, cos, tan, pow, abs, floor, fract, min, max, clamp, length, dot, normalize, lessThan, lessThanEqual, greaterThanEqual, any, multiply, texelFetch } = $runtime.stdlib
+  const { float, vec3, ivec2, ivec3, sin, cos, tan, pow, abs, floor, fract, min, max, clamp, length, dot, normalize, lessThan, lessThanEqual, greaterThanEqual, any, subtract, multiply, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -29328,6 +29328,29 @@ function canonicalFactory250($bindings, $runtime) {
   	};
   	return fallback;
   };
+  function voxelOccupied (cell) {
+  	if ((any(lessThan(cell, cpu_ivec3(0)))) || (any(greaterThanEqual(cell, cpu_ivec3(volumeSize))))) {
+  	return false;
+  	};
+  	var density = texelFetch(analyticalGeo, cpu_ivec2_float_float(cell[0], cell[1] + cell[2] * volumeSize), 0)[3];
+  	return (density > 0) && (density >= threshold);
+  };
+  function exposedFace (cell, crossed, toward, normal) {
+  	normal = $runtime.copy(normal);
+  	if (((crossed[0]|0) + (crossed[1]|0) + crossed[2]|0) < 2) {
+  	return normal;
+  	};
+  	if (crossed[1] && (!voxelOccupied(ivec3.subtract([], cell, cpu_ivec3(0, toward[1], 0))))) {
+  	return new $runtime.PooledFloat32Array([0, -(toward[1]), 0]);
+  	};
+  	if (crossed[0] && (!voxelOccupied(ivec3.subtract([], cell, cpu_ivec3(toward[0], 0, 0))))) {
+  	return new $runtime.PooledFloat32Array([-(toward[0]), 0, 0]);
+  	};
+  	if (crossed[2] && (!voxelOccupied(ivec3.subtract([], cell, cpu_ivec3(0, 0, toward[2]))))) {
+  	return new $runtime.PooledFloat32Array([0, 0, -(toward[2])]);
+  	};
+  	return normal;
+  };
   function inverseRotation (p) {
   	p = $runtime.copy(p);
   	var c = cos(new $runtime.PooledFloat32Array([rotateX, rotateY, rotateZ]));
@@ -29417,6 +29440,7 @@ function canonicalFactory250($bindings, $runtime) {
   	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([worldNormal[0] * 0.5 + 0.5, worldNormal[1] * 0.5 + 0.5, worldNormal[2] * 0.5 + 0.5]), clamp(hitDist / 320, 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
   	return;
   	};
+  	var crossed = new $runtime.PooledFloat32Array([false, false, false]);
   	for (var step = 0; step < (volumeSize * 3); step++) {
   	if ((any(lessThan(cell, cpu_ivec3(0)))) || (any(greaterThanEqual(cell, cpu_ivec3(volumeSize)))) || (distance >= leave)) {
   	break;
@@ -29424,13 +29448,13 @@ function canonicalFactory250($bindings, $runtime) {
   	var atlas = cpu_ivec2_float_float(cell[0], cell[1] + cell[2] * volumeSize);
   	var density = texelFetch(analyticalGeo, atlas, 0)[3];
   	if ((density > 0) && (density >= threshold)) {
-  	var worldNormal = forwardRotation(normal);
+  	var worldNormal = forwardRotation(exposedFace(cell, crossed, stepDir, normal));
   	new $runtime.PooledFloat32Array([...lighting(new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texelFetch(volumeCache, atlas, 0))), worldNormal, viewDirection), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([worldNormal[0] * 0.5 + 0.5, worldNormal[1] * 0.5 + 0.5, worldNormal[2] * 0.5 + 0.5]), clamp(distance / 320, 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
   	return;
   	};
   	distance = min(min(nextT[0], nextT[1]), nextT[2]);
-  	var crossed = lessThanEqual(nextT, new $runtime.PooledFloat32Array([distance, distance, distance]));
+  	crossed = lessThanEqual(nextT, new $runtime.PooledFloat32Array([distance, distance, distance]));
   	(normal[0] = 0, normal[1] = 0, normal[2] = 0, normal);
   	if (crossed[1]) {
   	normal[1] = -(stepDir[1]);
@@ -29490,6 +29514,7 @@ function canonicalFactory250($bindings, $runtime) {
   	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp($runtime.fdiv(hitDist, (size * 4)), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
   	return;
   	};
+  	var crossed = new $runtime.PooledFloat32Array([false, false, false]);
   	for (var step = 0; step < (volumeSize * 3); step++) {
   	if ((any(lessThan(cell, cpu_ivec3(0)))) || (distance >= leave)) {
   	break;
@@ -29497,13 +29522,14 @@ function canonicalFactory250($bindings, $runtime) {
   	var atlas = cpu_ivec2_float_float(cell[0], cell[1] + cell[2] * volumeSize);
   	var density = texelFetch(analyticalGeo, atlas, 0)[3];
   	if ((density > 0) && (density >= threshold)) {
+  	exposedFace(cell, crossed, cpu_ivec3(-1), normal).reduce((res,el,i)=>(res[i] = el, res), normal);
   	var color = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texelFetch(volumeCache, atlas, 0)));
   	new $runtime.PooledFloat32Array([...lighting(color, normal, new $runtime.PooledFloat32Array([0.5773502588272095, 0.5773502588272095, 0.5773502588272095])), 1]).reduce((res,el,i)=>(res[i] = el, res), fragColor);
   	new $runtime.PooledFloat32Array([...new $runtime.PooledFloat32Array([normal[0] * 0.5 + 0.5, normal[1] * 0.5 + 0.5, normal[2] * 0.5 + 0.5]), clamp($runtime.fdiv(distance, (size * 4)), 0, 1)]).reduce((res,el,i)=>(res[i] = el, res), geoOut);
   	return;
   	};
   	distance = min(min(nextT[0], nextT[1]), nextT[2]);
-  	var crossed = lessThanEqual(nextT, new $runtime.PooledFloat32Array([distance, distance, distance]));
+  	crossed = lessThanEqual(nextT, new $runtime.PooledFloat32Array([distance, distance, distance]));
   	if (crossed[1]) {
   	(normal[0] = 0, normal[1] = 1, normal[2] = 0, normal);
   	} else {

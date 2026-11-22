@@ -2595,10 +2595,10 @@ export const programCoverage = Object.freeze([
     "program": "landscape",
     "file": "landscape.glsl",
     "status": "generated",
-    "sourceSha256": "c9e9ab5c4d7226e774f8d1b9f8aff9d54fd4d6cd97e07c2d3c907df1d7b07ff8",
-    "sourceBytes": 13406,
-    "normalizedBytes": 14016,
-    "generatedBytes": 17693
+    "sourceSha256": "179f6394c13db68de0b2c0f07551c7a661380b7335421c36c4a3389792ac5f43",
+    "sourceBytes": 14915,
+    "normalizedBytes": 15539,
+    "generatedBytes": 18862
   },
   {
     "effectId": "render/renderLit3d",
