@@ -1,5 +1,5 @@
 {
- "revision": "75027859fbb9016880152d5155ef8221fb71a558",
+ "revision": "478f94eae7ebe34116dfc661ac52b373b884008b",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -5583,7 +5583,7 @@
   {
    "path": "shaders/effects/render/renderLandscape3d/parity-attestation.json",
    "size": 797,
-   "sha256": "c3a76862a1e8e32c980b3f4f70a0ee124d76a4f818bd90ee68efcc0a0e51e6a7"
+   "sha256": "a8e15fb45c9aa8d958c551cecf656a51ab8e263534ba6e5103f1da9c1a96612d"
   },
   {
    "path": "shaders/effects/render/renderLandscape3d/parity-case.json",
@@ -6707,18 +6707,18 @@
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/glsl/precompute.glsl",
-   "size": 1985,
-   "sha256": "2a634fd3355925d3590f5857523acf185f7d77e0d32a5488c6546a5ea51e1427"
+   "size": 3221,
+   "sha256": "5048bda8ed7006354d5b2492a65a8ac7064d7ab0c3c74bd5d9f989ff4c3ba29b"
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/help.md",
-   "size": 1455,
-   "sha256": "fc40bf8a514ee117d2287c188cad00d291af12aa1964339a2faaf26118049ee1"
+   "size": 1751,
+   "sha256": "d873f7221ffe7d468af4931ef1b2dee4a884ca505fbde8063d6ae81dd12d7ce4"
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/parity-attestation.json",
    "size": 790,
-   "sha256": "feebba4272e96ac8a6fe7eda3684b3e511aeb9ca82ebb07c93379a7385b6b004"
+   "sha256": "fa8d246887ffa94607ed8b8ea278d40634ea079148c02fc6eb92e5ac34a20c93"
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/parity-case.json",
@@ -6727,8 +6727,8 @@
   },
   {
    "path": "shaders/effects/synth3d/heightmap3d/wgsl/precompute.wgsl",
-   "size": 2160,
-   "sha256": "a0b53de7e9b0bf4ba707e5741ab6ce70fbdafa0199bd421b61800da6659ed77b"
+   "size": 3487,
+   "sha256": "72b7fe063cda72d5ccf32553a5d63f08905026a538f0af4d7f769ad8127421ef"
   },
   {
    "path": "shaders/effects/synth3d/noise3d/definition.js",

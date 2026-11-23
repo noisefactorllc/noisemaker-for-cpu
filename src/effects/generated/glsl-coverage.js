@@ -3045,10 +3045,10 @@ export const programCoverage = Object.freeze([
     "program": "precompute",
     "file": "precompute.glsl",
     "status": "generated",
-    "sourceSha256": "2a634fd3355925d3590f5857523acf185f7d77e0d32a5488c6546a5ea51e1427",
-    "sourceBytes": 1985,
-    "normalizedBytes": 2337,
-    "generatedBytes": 2993
+    "sourceSha256": "5048bda8ed7006354d5b2492a65a8ac7064d7ab0c3c74bd5d9f989ff4c3ba29b",
+    "sourceBytes": 3221,
+    "normalizedBytes": 3576,
+    "generatedBytes": 3730
   },
   {
     "effectId": "synth3d/noise3d",

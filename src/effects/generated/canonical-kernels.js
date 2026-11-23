@@ -36845,7 +36845,7 @@ function canonicalFactory293($bindings, $runtime) {
 canonicalFactory293.outputNames = ["fragColor","geoOut"]
 
 function canonicalFactory294($bindings, $runtime) {
-  const { float, ivec2, ivec3, floor, clamp, dot, normalize, lessThan, greaterThanEqual, any, add, subtract, textureSize, texelFetch } = $runtime.stdlib
+  const { float, vec2, ivec2, ivec3, floor, max, clamp, dot, normalize, lessThan, greaterThanEqual, any, all, add, subtract, multiply, divide, textureSize, texelFetch } = $runtime.stdlib
   const gl_FragCoord = $runtime.fragCoord
   
   function cpu_float (value) { return $runtime.stdlib.float(value); };
@@ -36862,13 +36862,28 @@ function canonicalFactory294($bindings, $runtime) {
   var volumeSize = $bindings["volumeSize"];
   var heightScale = $bindings["heightScale"];
   var baseHeight = $bindings["baseHeight"];
+  var aspect = $bindings["aspect"];
+  var aspectInv = $bindings["aspectInv"];
   var fragColor = new Float32Array([0, 0, 0, 0]);
   var geoOut = new Float32Array([0, 0, 0, 0]);
+  function terrainSpan () {
+  	var halfSize = (volumeSize) * 0.5;
+  	return cpu_ivec2(aspect < 1 ? max(2, 2 * (floor(halfSize * aspect + 0.5)|0)) : volumeSize, aspectInv < 1 ? max(2, 2 * (floor(halfSize * aspectInv + 0.5)|0)) : volumeSize);
+  };
+  function terrainColumn (column) {
+  	return vec2.subtract([], cpu_ivec2(column[0], volumeSize - 1 - column[1]), (terrainSpan().map(function (_) {return volumeSize - _;})).map(function (_) {return _ / 2;}));
+  };
+  function inTerrain (column) {
+  	var image = terrainColumn(column);
+  	return (all(greaterThanEqual(image, cpu_ivec2(0)))) && (all(lessThan(image, terrainSpan())));
+  };
   function imageTexel (column, size) {
-  	var image = cpu_ivec2(column[0], volumeSize - 1 - column[1]);
-  	return clamp(new $runtime.PooledFloat32Array([((image[0] * 2 + 1) * size[0]) / (volumeSize * 2), ((image[1] * 2 + 1) * size[1]) / (volumeSize * 2)]), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
+  	return clamp(ivec2.divide([], (ivec2.multiply([], (terrainColumn(column).map(function (_) {return _ * 2;}).map(function (_) {return _ + 1;})), size)), (terrainSpan().map(function (_) {return _ * 2;}))), cpu_ivec2(0), new $runtime.PooledFloat32Array([size[0] - 1, size[1] - 1]));
   };
   function columnHeight (column) {
+  	if (!inTerrain(column)) {
+  	return 0;
+  	};
   	var rgb = new $runtime.PooledFloat32Array([0, 1, 2].map(function (x, i) { return this[x]}, texelFetch(heightTex, imageTexel(column, textureSize(heightTex, 0)), 0)));
   	var luminance = dot(rgb, new $runtime.PooledFloat32Array([0.2125999927520752, 0.7152000069618225, 0.0722000002861023]));
   	return floor((clamp(luminance * heightScale + baseHeight, 0, 1)) * (volumeSize) + 0.5);
