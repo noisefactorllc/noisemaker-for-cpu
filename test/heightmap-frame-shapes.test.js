@@ -8,9 +8,7 @@ import { CpuRenderer, createDefaultRegistry, kernelFactories } from '../src/inde
 // the volume's width and a centered part of its depth, on a tall frame the
 // depth and a centered part of the width, and on a square frame all of both.
 // The background is transparent, so the opaque pixels of the view bound the
-// terrain itself. A uvMap color image carries u in red and v in green, so the
-// view's sampled corners also show the images as authored: image right is
-// screen right, image top is screen top, with no rotation.
+// terrain itself.
 
 const program = (posZ) => `search synth, synth3d, render
 heightmap3d(heightTex: solid(color: #ffffff), tex: testPattern(pattern: uvMap), volumeSize: x16, heightScale: 1).renderLandscape3d(viewMode: perspective, rotateX: 1.5708, posZ: ${posZ}, bgAlpha: 0, ambient: 1, diffuseIntensity: 0, specularIntensity: 0).write(o0)
@@ -53,8 +51,6 @@ test('seen from above, the terrain is centered with empty margins and keeps the 
     const shape = width / height
     assert.ok(Math.abs(boxWidth / boxHeight - shape) <= shape * 0.1,
       `${label}: the terrain measured ${boxWidth} by ${boxHeight} pixels, and its frame is ${width} by ${height}`)
-    // The image's own corners, and the terrain's corners at the same relative
-    // place, so the two images are read the same way.
     const dx = Math.round(boxWidth * 0.27)
     const dy = Math.round(boxHeight * 0.27)
     const area = { x0: 0, x1: width - 1, y0: 0, y1: height - 1 }
@@ -79,11 +75,11 @@ test('seen from above, the terrain is centered with empty margins and keeps the 
     assert.ok(Math.abs(across(corners.image)) > 64 && Math.abs(down(corners.image)) > 64,
       `${label}: the uvMap reference must vary along both axes`)
     assert.ok(Math.sign(across(corners.view)) === Math.sign(across(corners.image)) && Math.abs(across(corners.view)) > 64,
-      `${label}: seen from above, image right must be screen right (red ${corners.view.topLeft[0]} -> ${corners.view.topRight[0]})`)
+      `${label}: image right must be screen right`)
     assert.ok(Math.sign(down(corners.view)) === Math.sign(down(corners.image)) && Math.abs(down(corners.view)) > 64,
-      `${label}: seen from above, image top must be screen top (green ${corners.view.topLeft[1]} -> ${corners.view.bottomLeft[1]}, authored ${corners.image.topLeft[1]} -> ${corners.image.bottomLeft[1]})`)
+      `${label}: image top must be screen top`)
     assert.ok(Math.abs(corners.view.bottomLeft[0] - corners.view.topLeft[0]) <= 24
       && Math.abs(corners.view.topRight[1] - corners.view.topLeft[1]) <= 24,
-      `${label}: seen from above, the image must not be rotated`)
+      `${label}: the image must not be rotated`)
   }
 })
