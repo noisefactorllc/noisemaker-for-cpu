@@ -1,5 +1,5 @@
 {
- "revision": "7f3721e973944db9a680bc7048b2c3a5b49c9d8a",
+ "revision": "75027859fbb9016880152d5155ef8221fb71a558",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -4867,8 +4867,8 @@
   },
   {
    "path": "shaders/effects/points/heightGrid/glsl/agent.glsl",
-   "size": 1180,
-   "sha256": "9edb336514439c0cbe2c29eb38ad8acb26586bd5d59ac0f68ed999ba2ce9024a"
+   "size": 1607,
+   "sha256": "1a026b7c2f347e7d41e58d81b1674b000d73bd77be1d983e4b58ee8a89be248a"
   },
   {
    "path": "shaders/effects/points/heightGrid/glsl/passthrough.glsl",
@@ -4877,13 +4877,13 @@
   },
   {
    "path": "shaders/effects/points/heightGrid/help.md",
-   "size": 1444,
-   "sha256": "e620b4a96e7e74358cd22fc2032b347fb049981b7d9a89ce9bcfd10f7a86e3cc"
+   "size": 1697,
+   "sha256": "b275f07ba6c577f9608891f899e0f679a70e4bdb1d8e8bb8fa0404f4e806e88c"
   },
   {
    "path": "shaders/effects/points/heightGrid/parity-attestation.json",
    "size": 792,
-   "sha256": "4e6021ae622f45cb95da3ea2b93a909ec156c7d7384cb9f4fdfc4e079036e684"
+   "sha256": "e3ad8993dbb7ffce58ad2be2a5d378c9f7ca8c6ffb0c23d4217b0557706c1e78"
   },
   {
    "path": "shaders/effects/points/heightGrid/parity-case.json",
@@ -4892,8 +4892,8 @@
   },
   {
    "path": "shaders/effects/points/heightGrid/wgsl/agent.wgsl",
-   "size": 1553,
-   "sha256": "192fe39d51e1752025cc905067b35b1ae7f74d6ae7bb9af22d92950c49979e24"
+   "size": 1975,
+   "sha256": "2ef73250979265c77c0c1a0b9b2f9ba97fdd06ff5ce9e321f6bced73ee6ab7eb"
   },
   {
    "path": "shaders/effects/points/heightGrid/wgsl/passthrough.wgsl",
@@ -5338,7 +5338,7 @@
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-attestation.json",
    "size": 803,
-   "sha256": "fb577339bf2dadb41b1fd494771a0ffb40250e819b10e30830694647bd855f82"
+   "sha256": "9087d88d36362ef5556682b2c5f054dec3b64fbadd3b0ab5ae7cb0819932a978"
   },
   {
    "path": "shaders/effects/render/pointsBillboardRender/parity-case.json",
@@ -5468,7 +5468,7 @@
   {
    "path": "shaders/effects/render/pointsRender/parity-attestation.json",
    "size": 794,
-   "sha256": "85e1681bae09036a7b859ac8952afabaf8249337061e2aae24554cd5400f072c"
+   "sha256": "141cca17148e07fcb55e648c2cc4437c82b0037736ff88d567d4a21f5406494f"
   },
   {
    "path": "shaders/effects/render/pointsRender/parity-case.json",

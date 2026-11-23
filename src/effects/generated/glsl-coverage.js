@@ -2185,10 +2185,10 @@ export const programCoverage = Object.freeze([
     "program": "agent",
     "file": "agent.glsl",
     "status": "generated",
-    "sourceSha256": "9edb336514439c0cbe2c29eb38ad8acb26586bd5d59ac0f68ed999ba2ce9024a",
-    "sourceBytes": 1180,
-    "normalizedBytes": 1252,
-    "generatedBytes": 1455
+    "sourceSha256": "1a026b7c2f347e7d41e58d81b1674b000d73bd77be1d983e4b58ee8a89be248a",
+    "sourceBytes": 1607,
+    "normalizedBytes": 1679,
+    "generatedBytes": 1535
   },
   {
     "effectId": "points/heightGrid",
