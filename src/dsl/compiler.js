@@ -184,11 +184,11 @@ class CompileScope extends Map {
 function mergeArgs(stored, call) {
   if (!stored.argMode) return { ...call, name: stored.name }
   if (!call.argMode) return { ...stored, loc: call.loc }
-  if (stored.argMode !== call.argMode) throw new DslError('Partial and call arguments must use the same named or positional form', call.loc)
-  if (stored.argMode === 'positional') return { ...call, name: stored.name, args: [...stored.args, ...call.args] }
-  const merged = new Map(stored.args.map((arg) => [arg.name, arg]))
-  for (const arg of call.args) merged.set(arg.name, arg)
-  return { ...call, name: stored.name, args: [...merged.values()], argMode: 'named' }
+  if (stored.argMode === 'positional' && call.argMode === 'positional') return { ...call, name: stored.name, args: [...stored.args, ...call.args] }
+  const args = [...stored.args, ...call.args]
+  const positional = args.filter((arg) => arg.name === null)
+  const named = new Map(args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg]))
+  return { ...call, name: stored.name, args: [...positional, ...named.values()], argMode: positional.length ? 'merged' : 'named' }
 }
 
 // A `from(ns, ...)` namespace on the call site wins over one stored in the partial,
@@ -199,6 +199,28 @@ function mergePartial(stored, call) {
   if (namespace) merged.namespace = namespace
   else delete merged.namespace
   return merged
+}
+
+function effectArguments(call, definition) {
+  let args = call.args
+  if (args.filter((arg) => arg.name === null).length > definition.paramNames.length) {
+    console.warn(`Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`)
+    let positionalIndex = 0
+    args = args.filter((arg) => arg.name !== null || positionalIndex++ < definition.paramNames.length)
+  }
+  if (call.argMode === 'merged') {
+    // Separate stable calls can meet through a let. Their positionals keep
+    // their slot index; a keyword overrides that slot instead of shifting
+    // the positional into the next unfilled parameter. Discard ignored values
+    // before resolving them, so they cannot create inline render chains.
+    const named = args.filter((arg) => arg.name !== null)
+    const overridden = new Set(named.map((arg) => definition.paramAliases?.[arg.name] ?? arg.name))
+    const positional = args.filter((arg) => arg.name === null)
+      .map((arg, index) => ({ ...arg, name: definition.paramNames[index] }))
+      .filter((arg) => !overridden.has(arg.name))
+    args = [...positional, ...named]
+  }
+  return args
 }
 
 // `read3d(vol, geo)` and `write3d(vol, geo)` take two positional references:
@@ -247,13 +269,16 @@ function compileChain(chain, bindings, { inline = false } = {}) {
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       call = mergePartial(partial.call, call)
     }
+    const namespaces = call.namespace ? [call.namespace] : search
+    const definition = registry.resolve(call.name, namespaces)
+    const rawArgs = definition ? effectArguments(call, definition) : call.args
     // Chain arguments compile while the arguments resolve; they belong to this call.
     const outerPending = bindings.pending
     bindings.pending = []
     let args
     let inlineChains
     try {
-      args = resolveArgs(call.args, bindings)
+      args = resolveArgs(rawArgs, bindings)
     } finally {
       inlineChains = bindings.pending
       bindings.pending = outerPending
@@ -292,8 +317,6 @@ function compileChain(chain, bindings, { inline = false } = {}) {
       hasVolume = true
       continue
     }
-    const namespaces = call.namespace ? [call.namespace] : search
-    const definition = registry.resolve(call.name, namespaces)
     if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${namespaces.join(', ')}`, call.loc)
     if (definition.domain === 'volume-generator') {
       if (index !== 0 && !(definition.iterated && hasVolume)) {

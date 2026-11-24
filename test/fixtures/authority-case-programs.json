@@ -1,5 +1,5 @@
 {
-  "revision": "478f94eae7ebe34116dfc661ac52b373b884008b",
+  "revision": "084176b716a1bc779f24de79069f3e76b86277c1",
   "cases": [
     {
       "path": "shaders/effects/classicNoisedeck/bitEffects/parity-case.json",
@@ -480,6 +480,14 @@
     {
       "path": "shaders/effects/render/render3d/parity-case.json",
       "content": "{\n    \"schemaVersion\": 1,\n    \"effects\": [\n        \"synth3d/noise3d\",\n        \"render/render3d\"\n    ],\n    \"dsl\": \"search synth3d, render\\n\\nnoise3d(volumeSize: x32).render3d(filtering: voxel).write(o0)\\nrender(o0)\",\n    \"surface\": \"o0\",\n    \"resolution\": [\n        64,\n        64\n    ],\n    \"epsilon\": 0,\n    \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/renderCubemap3d/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth3d/noise3d\",\n    \"render/renderCubemap3d\"\n  ],\n  \"dsl\": \"search synth3d, render\\n\\nnoise3d(scale: 4)\\n  .renderCubemap3d(threshold: 0.5, filtering: 0)\\n  .write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    192\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
+    },
+    {
+      "path": "shaders/effects/render/renderCubemapSurface/parity-case.json",
+      "content": "{\n  \"schemaVersion\": 1,\n  \"effects\": [\n    \"synth3d/noise3d\",\n    \"render/renderCubemapSurface\"\n  ],\n  \"dsl\": \"search synth3d, render\\n\\nnoise3d(scale: 4)\\n  .renderCubemapSurface()\\n  .write(o0)\\n\\nrender(o0)\",\n  \"surface\": \"o0\",\n  \"resolution\": [\n    192,\n    192\n  ],\n  \"epsilon\": 0,\n  \"requireColorVariation\": true\n}\n"
     },
     {
       "path": "shaders/effects/render/renderLandscape3d/parity-case.json",

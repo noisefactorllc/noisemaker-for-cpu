@@ -28397,6 +28397,7 @@ function canonicalFactory247($bindings, $runtime) {
   var PI = 3.1415927410125732;
   var MAX_STEPS = 256;
   var MAX_DIST = 10;
+  var MARCHER_LIGHT_X = -1;
   function atlasTexel (p, volSize) {
   	return cpu_ivec2_float_float(p[0], p[1] + p[2] * volSize);
   };
@@ -28621,7 +28622,7 @@ function canonicalFactory247($bindings, $runtime) {
   	p = $runtime.copy(p);
   	rd = $runtime.copy(rd);
   	var n = calcNormal(p);
-  	var lightDir = normalize(new $runtime.PooledFloat32Array([-1, 1, -1]));
+  	var lightDir = normalize(new $runtime.PooledFloat32Array([MARCHER_LIGHT_X, 1, -1]));
   	var diff = max(dot(n, lightDir), 0);
   	var amb = 0.15000000596046448;
   	var halfVec = normalize(new $runtime.PooledFloat32Array([lightDir[0] - rd[0], lightDir[1] - rd[1], lightDir[2] - rd[2]]));
@@ -28639,7 +28640,7 @@ function canonicalFactory247($bindings, $runtime) {
   	p = $runtime.copy(p);
   	rd = $runtime.copy(rd);
   	n = $runtime.copy(n);
-  	var lightDir = normalize(new $runtime.PooledFloat32Array([-1, 1, -1]));
+  	var lightDir = normalize(new $runtime.PooledFloat32Array([MARCHER_LIGHT_X, 1, -1]));
   	var diff = max(dot(n, lightDir), 0);
   	var amb = 0.30000001192092896;
   	var volColor = sampleVoxel(voxel);
@@ -28743,6 +28744,7 @@ function canonicalFactory248($bindings, $runtime) {
   var PI = 3.1415927410125732;
   var MAX_STEPS = 256;
   var MAX_DIST = 10;
+  var MARCHER_LIGHT_X = 1;
   function atlasTexel (p, volSize) {
   	return cpu_ivec2_float_float(p[0], p[1] + p[2] * volSize);
   };
@@ -28967,7 +28969,7 @@ function canonicalFactory248($bindings, $runtime) {
   	p = $runtime.copy(p);
   	rd = $runtime.copy(rd);
   	var n = calcNormal(p);
-  	var lightDir = normalize(new $runtime.PooledFloat32Array([1, 1, -1]));
+  	var lightDir = normalize(new $runtime.PooledFloat32Array([MARCHER_LIGHT_X, 1, -1]));
   	var diff = max(dot(n, lightDir), 0);
   	var amb = 0.15000000596046448;
   	var halfVec = normalize(new $runtime.PooledFloat32Array([lightDir[0] - rd[0], lightDir[1] - rd[1], lightDir[2] - rd[2]]));
@@ -28985,7 +28987,7 @@ function canonicalFactory248($bindings, $runtime) {
   	p = $runtime.copy(p);
   	rd = $runtime.copy(rd);
   	n = $runtime.copy(n);
-  	var lightDir = normalize(new $runtime.PooledFloat32Array([1, 1, -1]));
+  	var lightDir = normalize(new $runtime.PooledFloat32Array([MARCHER_LIGHT_X, 1, -1]));
   	var diff = max(dot(n, lightDir), 0);
   	var amb = 0.30000001192092896;
   	var volColor = sampleVoxel(voxel);

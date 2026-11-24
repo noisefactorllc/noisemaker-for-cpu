@@ -2565,29 +2565,29 @@ export const programCoverage = Object.freeze([
     "program": "render3d",
     "file": "render3d.glsl",
     "status": "generated",
-    "sourceSha256": "138d3e0daa247100fe3553b2699bce3f302e77fce25d9d4fb507868d31a84a30",
-    "sourceBytes": 14393,
-    "normalizedBytes": 14959,
-    "generatedBytes": 14465
+    "sourceSha256": "88708d8a300ebdf74c4fa2470ecba4e214efba5c2bc476f59ccb0019c7c9b226",
+    "sourceBytes": 14244,
+    "normalizedBytes": 14810,
+    "generatedBytes": 14519
   },
   {
     "effectId": "render/renderCubemap3d",
     "program": "renderCubemap3d",
     "file": "renderCubemap3d.glsl",
     "status": "generated",
-    "sourceSha256": "bcebff481c2d945e140870b50ce3e32e12bc3f198f75a53dc6d2450d5777db26",
-    "sourceBytes": 14026,
-    "normalizedBytes": 14597,
-    "generatedBytes": 14071
+    "sourceSha256": "46046c3360de7b70ae0e48a54bc6a4b643ce1bc158625bf3239c60b6e3123f31",
+    "sourceBytes": 14113,
+    "normalizedBytes": 14684,
+    "generatedBytes": 14126
   },
   {
     "effectId": "render/renderCubemapSurface",
     "program": "renderCubemapSurface",
     "file": "renderCubemapSurface.glsl",
     "status": "generated",
-    "sourceSha256": "ce467e742120b8a2ec9c34898a2fd1e2f56a85cbe5d27774bcbb1b7f204511fc",
-    "sourceBytes": 4410,
-    "normalizedBytes": 4703,
+    "sourceSha256": "07ed8f69414d43e6bac80151965b8f200c54634f0e208b7847131cdc197ea4c1",
+    "sourceBytes": 4749,
+    "normalizedBytes": 5042,
     "generatedBytes": 5077
   },
   {

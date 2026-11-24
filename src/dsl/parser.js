@@ -217,7 +217,7 @@ class Parser {
         }
         const start = this.peek()
         args.push({ name: argName, value: this.parseValueExpression(), loc: location(start) })
-      } while (this.match(','))
+      } while (this.match(',') && !this.check(')'))
     }
     this.consume(')')
     const call = { kind: 'Call', name: name.lexeme, args, argMode: mode, loc: location(name) }
@@ -282,7 +282,7 @@ class Parser {
       const values = []
       if (!this.check(']')) {
         do values.push(this.parseValueExpression())
-        while (this.match(','))
+        while (this.match(',') && !this.check(']'))
       }
       this.consume(']')
       return values
@@ -331,7 +331,7 @@ class Parser {
         const values = []
         if (!this.check(')')) {
           do values.push(this.parseValueExpression())
-          while (this.match(','))
+          while (this.match(',') && !this.check(')'))
         }
         this.consume(')')
         return { kind: 'vector', width: Number(name.at(-1)), values, loc: location(token) }
