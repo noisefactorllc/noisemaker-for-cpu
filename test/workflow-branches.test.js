@@ -10,7 +10,7 @@ const workflow = (name) => readFileSync(new URL(`../.github/workflows/${name}`, 
 
 // The lines of a top-level key, up to the next top-level key.
 function topBlock(text, key) {
-  const lines = text.split('\n')
+  const lines = text.split(/\r?\n/)
   const start = lines.findIndex((line) => line === `${key}:`)
   assert.ok(start >= 0, `the workflow has a top-level ${key}:`)
   const end = lines.findIndex((line, index) => index > start && /^\S/.test(line))
@@ -60,6 +60,16 @@ const WORKFLOWS = {
   'platform-browser.yml': { test: ['windows', 'safari', 'webkit-floor', 'firefox-floor'], release: [] },
   'downstream.yml': { test: [], release: ['notify'] },
 }
+
+// A Windows checkout gives the workflow files CRLF line ends.
+test('the contract reads workflow text with CRLF line ends as it reads LF text', () => {
+  for (const name of Object.keys(WORKFLOWS)) {
+    const text = workflow(name).replace(/\r\n/g, '\n')
+    const crlf = text.replace(/\n/g, '\r\n')
+    assert.deepEqual(triggers(crlf), triggers(text), name)
+    assert.deepEqual(jobs(crlf), jobs(text), name)
+  }
+})
 
 test('each workflow has only the jobs this contract classifies', () => {
   const files = readdirSync(new URL('../.github/workflows/', import.meta.url)).filter((file) => /\.ya?ml$/.test(file))
