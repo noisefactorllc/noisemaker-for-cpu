@@ -14,11 +14,13 @@ on:
   schedule:
     - cron: '29 8 * * 1'
   push:
-    branches: [main]
+    # A push to 2.x runs the test job only: the parity job runs on no push,
+    # and the dispatch job releases from main alone.
+    branches: [main, 2.x]
     paths:
       - "export-kit/**"
       - "!export-kit/README-generation.md"
-      - ".github/workflows/export-kit.yml"
+      - ".github/workflows/**"
       - "LICENSE"
       - "src/**"
       - "bin/**"
