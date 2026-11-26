@@ -1,3 +1,39 @@
+function resolveBlendFactor(factor) {
+  const name = typeof factor === 'string' ? factor.toLowerCase().replace(/_/g, '-') : factor
+  switch (name) {
+    case 0: case 'zero': return () => 0
+    case 0x0300: case 'src-color': case 'src': return src => src
+    case 0x0301: case 'one-minus-src-color': case 'one-minus-src': return src => 1 - src
+    case 0x0302: case 'src-alpha': return (src, dst, srcAlpha) => srcAlpha
+    case 0x0303: case 'one-minus-src-alpha': return (src, dst, srcAlpha) => 1 - srcAlpha
+    case 0x0304: case 'dst-alpha': return (src, dst, srcAlpha, dstAlpha) => dstAlpha
+    case 0x0305: case 'one-minus-dst-alpha': return (src, dst, srcAlpha, dstAlpha) => 1 - dstAlpha
+    case 0x0306: case 'dst-color': case 'dst': return (src, dst) => dst
+    case 0x0307: case 'one-minus-dst-color': case 'one-minus-dst': return (src, dst) => 1 - dst
+    default: return () => 1
+  }
+}
+
+// Canonical passes render into fresh surfaces. Blend the fragment output with
+// the previous contents of this attachment before rounding to its format.
+export function blendPassOutput(blend, destination, previous) {
+  const [srcFactor, dstFactor] = Array.isArray(blend) ? blend : ['one', 'one']
+  const sourceWeight = resolveBlendFactor(srcFactor)
+  const destinationWeight = resolveBlendFactor(dstFactor)
+  const output = destination.data
+  const backdrop = previous?.width === destination.width && previous.height === destination.height ? previous.data : null
+  for (let pixel = 0; pixel < output.length; pixel += 4) {
+    const srcAlpha = output[pixel + 3]
+    const dstAlpha = backdrop?.[pixel + 3] ?? 0
+    for (let channel = 0; channel < 4; channel++) {
+      const index = pixel + channel
+      const src = output[index]
+      const dst = backdrop?.[index] ?? 0
+      output[index] = src * sourceWeight(src, dst, srcAlpha, dstAlpha) + dst * destinationWeight(src, dst, srcAlpha, dstAlpha)
+    }
+  }
+}
+
 export function runPass(options) {
   const {
     kernel,

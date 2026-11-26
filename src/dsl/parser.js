@@ -10,6 +10,9 @@ function parseColor(lexeme) {
   if (hex.length === 3) hex = [...hex].map((char) => char + char).join('')
   const values = [0, 2, 4].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255)
   if (hex.length === 8) values.push(Number.parseInt(hex.slice(6, 8), 16) / 255)
+  // Keep the public array representation while distinguishing a hex colour
+  // from an array literal when binding scalar r/g/b parameters.
+  Object.defineProperty(values, 'kind', { value: 'color' })
   return values
 }
 
@@ -94,8 +97,12 @@ class Parser {
     const name = this.identifier('Expected binding name after let')
     this.consume('=')
     let value
-    if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(') value = this.parseCall()
-    else value = this.parseValueExpression()
+    if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(') {
+      value = this.parseCall()
+      if ((value.name === 'read' || value.name === 'read3d') && this.isPunctuation('.')) {
+        value = this.parseExpressionChain(value)
+      }
+    } else value = this.parseValueExpression()
     this.match(';')
     return { kind: 'Binding', name: name.lexeme, value, loc: location(start) }
   }
@@ -126,9 +133,21 @@ class Parser {
     const volume = reference()
     this.consume(',')
     const geometry = reference()
-    this.consume(')')
     const args = [volume, geometry].map((value) => ({ name: null, value, loc: value.loc }))
+    this.parseIoElementId(args)
+    this.consume(')')
     return { kind: 'Call', name: 'write3d', args, argMode: 'positional', loc: location(name) }
+  }
+
+  // Built-in I/O accepts one metadata keyword after its positional targets.
+  // An ordinary effect call still requires either positionals or keywords.
+  parseIoElementId(args) {
+    if (!this.check(',') || this.peek(1).type !== 'identifier' || this.peek(1).lexeme !== '_id' ||
+        this.peek(2).type !== 'punctuation' || this.peek(2).lexeme !== ':') return false
+    this.current += 3
+    const start = this.peek()
+    args.push({ name: '_id', value: this.parseValueExpression(), loc: location(start) })
+    return true
   }
 
   atSubchain() {
@@ -207,6 +226,9 @@ class Parser {
     if (!this.check(')')) {
       do {
         const isNamed = this.peek().type === 'identifier' && this.peek(1).lexeme === ':'
+        if (name.lexeme === 'write' && isNamed && this.peek().lexeme === '_id') {
+          throw new DslError('write() requires a positional surface before _id', location(this.peek()))
+        }
         const nextMode = isNamed ? 'named' : 'positional'
         if (mode && mode !== nextMode && !allowMixed) throw new DslError('Cannot mix positional and named arguments', location(this.peek()))
         mode = mode && mode !== nextMode ? 'mixed' : nextMode
@@ -217,6 +239,14 @@ class Parser {
         }
         const start = this.peek()
         args.push({ name: argName, value: this.parseValueExpression(), loc: location(start) })
+        if (mode === 'positional' && name.lexeme === 'write') {
+          this.parseIoElementId(args)
+          break
+        }
+        if (mode === 'positional' && (name.lexeme === 'read' || name.lexeme === 'read3d') && this.parseIoElementId(args)) {
+          this.match(',')
+          break
+        }
       } while (this.match(',') && !this.check(')'))
     }
     this.consume(')')
@@ -303,29 +333,22 @@ class Parser {
       }
       // A one-argument `read3d(vol0)` names a volume or geometry for a parameter,
       // as upstream's validator reads it. With two arguments it starts a chain.
-      if (name === 'read3d' && this.isPunctuation('(')) {
+      if ((name === 'read' || name === 'read3d') && this.isPunctuation('(')) {
         this.current -= 1
         const call = this.parseCall()
-        if (call.args.length === 1 && call.args[0].value?.kind === 'identifier') return call.args[0].value
-        return this.parseExpressionChain(call)
-      }
-      if (name === 'read' && this.match('(')) {
-        if (this.peek().type === 'identifier' && this.peek(1).lexeme === ':') {
-          const argumentName = this.identifier().lexeme
-          if (argumentName !== 'surface' && argumentName !== 'tex') {
-            throw new DslError('read() surface argument must be named "surface" or "tex"', location(this.previous()))
-          }
-          this.consume(':')
+        if (this.isPunctuation('.')) return this.parseExpressionChain(call)
+        const targets = call.args.filter(arg => arg.name !== '_id' && arg.name !== '_skip')
+        if (name === 'read3d') {
+          if (targets.length === 1 && targets[0].value?.kind === 'identifier') return targets[0].value
+          return this.parseExpressionChain(call)
         }
-        const surface = this.parseSurface()
-        this.consume(')')
-        // `read(oN).effect()` in a value position is a chain argument that starts
-        // from the surface. A bare `read(oN)` stays a plain surface reference.
-        if (this.isPunctuation('.')) {
-          const read = { kind: 'Call', name: 'read', args: [{ name: null, value: surface, loc: surface.loc }], argMode: 'positional', loc: location(token) }
-          return this.parseExpressionChain(read)
+        if (targets.length !== 1 || targets[0].value?.kind !== 'surface') {
+          throw new DslError('Expected surface reference', call.loc)
         }
-        return surface
+        if (targets[0].name !== null && !['surface', 'tex'].includes(targets[0].name)) {
+          throw new DslError('read() surface argument must be named "surface" or "tex"', targets[0].loc)
+        }
+        return targets[0].value
       }
       if (['vec2', 'vec3', 'vec4'].includes(name) && this.match('(')) {
         const values = []

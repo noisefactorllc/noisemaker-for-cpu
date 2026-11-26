@@ -139,12 +139,22 @@ export class EffectDefinition {
     this.description = spec.description ?? ''
     this.params = cloneValue(spec.params ?? {})
     this.paramNames = Object.freeze(Object.keys(this.params))
-    this.passes = cloneValue(spec.passes)
+    // A CPU pixel kernel writes the same Surface whether the upstream fragment
+    // equivalent calls it a color attachment or a compute storage target.
+    this.passes = cloneValue(spec.passes.map((pass) =>
+      pass.storageTextures && !Object.keys(pass.outputs ?? {}).length
+        ? { ...pass, outputs: pass.storageTextures }
+        : pass))
     this.textures = cloneValue(spec.textures ?? {})
     this.externalTexture = spec.externalTexture ?? null
-    this.outputTex = spec.outputTex ?? null
-    this.outputTex3d = spec.outputTex3d ?? null
-    this.outputGeo = spec.outputGeo ?? null
+    for (const field of ['outputTex', 'outputTex3d', 'outputGeo', 'outputXyz', 'outputVel', 'outputRgba']) {
+      const name = spec[field]
+      if (name === undefined) continue
+      if (typeof name !== 'string' || !name.trim()) {
+        throw new TypeError(`"${field}" must be a non-empty string`)
+      }
+      this[field] = name
+    }
     this.loopRole = spec.loopRole ?? null
     // Deprecated parameter names, mirroring upstream's `paramAliases`
     // (shaders/src/lang/paramAliases.js): named arguments using an old name

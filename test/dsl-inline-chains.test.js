@@ -75,29 +75,14 @@ const PAIRS = [
   ],
 ]
 
-// The grammar also lets a chain argument start from read() or hold a subchain
-// block. The pinned validator cannot compile these two forms: its substitute()
-// reads `args` of every chain element, and a Read or Subchain node has none, so
-// compile() throws a TypeError. The port compiles them by the grammar, so the
-// differential test below leaves them out.
-const GRAMMAR_PAIRS = [
-  // A chain that starts from read(), after a mid-chain write in the same statement.
-  [
-    'search synth, filter, mixer\nnoise(seed: 1).write(o1).blendMode(tex: read(o1).invert(), mode: screen).write(o0)\nrender(o0)\n',
-    'search synth, filter, mixer\nnoise(seed: 1).write(o1)\nread(o1).invert().write(o2)\nread(o1).blendMode(tex: read(o2), mode: screen).write(o0)\nrender(o0)\n',
-  ],
-  // A subchain block inside a chain argument.
-  [
-    'search synth, filter, mixer\nnoise(seed: 1).blendMode(tex: noise(seed: 2).subchain(name: "x") { .invert() }, mode: screen).write(o0)\nrender(o0)\n',
-    'search synth, filter, mixer\nnoise(seed: 2).invert().write(o1)\nnoise(seed: 1).blendMode(tex: read(o1), mode: screen).write(o0)\nrender(o0)\n',
-  ],
-]
-
 const REJECTED = [
+  // Upstream 9fed01d1 diagnoses non-effect elements in a chain argument.
+  ['search synth, filter, mixer\nnoise().write(o1).blendMode(tex: read(o1).invert()).write(o0)\n', /Chain for argument 'tex'/],
+  ['search synth, filter, mixer\nnoise().blendMode(tex: noise().subchain("x") { .invert() }).write(o0)\n', /Chain for argument 'tex'/],
   // write() is only allowed in statement context. The port reports it with the
   // existing message for a name that cannot be a chain element.
   ['search synth, mixer\nnoise(seed: 1).blendMode(tex: solid(color: #ff0000).write(o1), mode: screen).write(o0)\nrender(o0)\n', /Expected effect or IO function name/],
-  // A chain argument must start with a generator or read().
+  // A chain argument must produce its own image.
   ['search filter, mixer, synth\nnoise(seed: 1).blendMode(tex: invert(), mode: screen).write(o0)\nrender(o0)\n', /filter\/invert requires an input/],
   // An effect that the search order does not resolve.
   ['search synth, mixer\nnoise(seed: 1).blendMode(tex: wobble(), mode: screen).write(o0)\nrender(o0)\n', /Unknown effect "wobble"/],
@@ -111,7 +96,7 @@ function renderBytes(source) {
 test('the committed authority case programs are the parity-case.json files of the pinned manifest', () => {
   assert.equal(fixture.revision, PINNED_UPSTREAM_REVISION)
   const expected = manifest.entries.filter((entry) => entry.path.endsWith('/parity-case.json'))
-  assert.equal(expected.length, 155)
+  assert.equal(expected.length, 157)
   assert.deepEqual(fixture.cases.map(({ path }) => path), expected.map(({ path }) => path))
   for (const [index, { content }] of fixture.cases.entries()) {
     const bytes = Buffer.from(content, 'utf8')
@@ -144,7 +129,7 @@ test('the eight authority case programs with chain arguments render through the 
 })
 
 test('a chain argument renders the same RGBA bytes as the chain written to an unused surface and read back', () => {
-  for (const [inline, flat] of [...PAIRS, ...GRAMMAR_PAIRS]) assert.deepEqual(renderBytes(inline), renderBytes(flat), inline)
+  for (const [inline, flat] of PAIRS) assert.deepEqual(renderBytes(inline), renderBytes(flat), inline)
 })
 
 test('the async renderer renders a chain argument to the same bytes as the sync renderer', async () => {
