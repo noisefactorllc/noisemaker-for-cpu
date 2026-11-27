@@ -1,0 +1,83 @@
+{
+  "cppRevision": "3e817caa7fd3be3302d53dda24ac07de03a32eb5",
+  "cases": [
+    {
+      "id": "filter3d__flow3d__define__behavior__0__0",
+      "source": "search synth3d, filter3d, render\nnoise3d(volumeSize: 32).flow3d(volumeSize: 32, behavior: 0, density: 20, stride: 1, strideDeviation: 0.05, kink: 1, intensity: 90, inputIntensity: 50, lifetime: 30, iterationCount: 60).render3d().write(o0)\nrender(o0)\n",
+      "options": {
+        "width": 17,
+        "height": 11,
+        "time": 0,
+        "seed": 911810354,
+        "frame": 0,
+        "oneShot": "ready",
+        "renderScale": 1
+      }
+    },
+    {
+      "id": "filter3d__flow3d__define__behavior__6__2",
+      "source": "search synth3d, filter3d, render\nnoise3d(volumeSize: 32).flow3d(volumeSize: 32, behavior: 10, density: 20, stride: 1, strideDeviation: 0.05, kink: 1, intensity: 90, inputIntensity: 50, lifetime: 30, iterationCount: 60).render3d().write(o0)\nrender(o0)\n",
+      "options": {
+        "width": 64,
+        "height": 64,
+        "time": 0,
+        "seed": 1176326558,
+        "frame": 0,
+        "oneShot": "ready",
+        "renderScale": 1
+      }
+    },
+    {
+      "id": "synth3d__noise3d__define__octaves__1__0",
+      "source": "search synth3d, filter3d, render\nnoise3d(volumeSize: 64, scale: 3, octaves: 2, colorMode: 0, ridges: false, seed: 14, speed: 1).render3d().write(o0)\nrender(o0)\n",
+      "options": {
+        "width": 17,
+        "height": 11,
+        "time": 0,
+        "seed": 2554438879,
+        "frame": 0,
+        "oneShot": "ready",
+        "renderScale": 1
+      }
+    },
+    {
+      "id": "synth3d__noise3d__define__octaves__5__2",
+      "source": "search synth3d, filter3d, render\nnoise3d(volumeSize: 64, scale: 3, octaves: 6, colorMode: 0, ridges: false, seed: 42, speed: 1).render3d().write(o0)\nrender(o0)\n",
+      "options": {
+        "width": 64,
+        "height": 64,
+        "time": 0,
+        "seed": 3288234145,
+        "frame": 0,
+        "oneShot": "ready",
+        "renderScale": 1
+      }
+    },
+    {
+      "id": "render__renderLandscape3d__define__viewMode__0__0",
+      "source": "search synth3d, filter3d, render\nnoise3d(volumeSize: 64).renderLandscape3d(volumeSize: 64, threshold: 0.5, densitySource: 0, zoom: 1, panX: 0, panY: 0, lightDirection: [-0.4, 0.85, 0.6], ambient: 0.35, diffuseIntensity: 0.85, specularIntensity: 0.12, bgColor: #060b13, bgAlpha: 1, viewMode: 1, rotateX: 0.3, rotateY: 0, rotateZ: 0, viewScale: 0.8, posX: 0, posY: 0, posZ: 0, fieldOfView: 60, filtering: 1).write(o0)\nrender(o0)\n",
+      "options": {
+        "width": 17,
+        "height": 11,
+        "time": 0,
+        "seed": 1904347503,
+        "frame": 0,
+        "oneShot": "ready",
+        "renderScale": 1
+      }
+    },
+    {
+      "id": "points/physarum#default",
+      "source": "search synth, points\nsolid(color: #3a7).physarum(heightTex: none, diffuseTex: none, moveSpeed: 1.78, turnSpeed: 1, sensorAngle: 1.26, sensorDistance: 0.03, inputWeight: 0, deposit: 0.5, decay: 0.1, resetState: false, iterationCount: 60).write(o0)\nrender(o0)\n",
+      "options": {
+        "width": 17,
+        "height": 11,
+        "time": 0.25,
+        "frame": 0,
+        "seed": 1336757707,
+        "oneShot": "ready",
+        "renderScale": 1
+      }
+    }
+  ]
+}
