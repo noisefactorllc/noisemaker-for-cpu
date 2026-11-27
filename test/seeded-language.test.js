@@ -100,17 +100,10 @@ test('a random call in an effect passed as a value inside a let that holds an ef
     /Random calls in an effect held by a let are not supported yet: 'b'/)
 })
 
-// Upstream substitutes a value let that chose an effect into the let that names
-// it. The port does not key that yet, so it refuses the program rather than
-// draw differently.
-test('a let that names another let\'s chosen effect is refused for now', () => {
-  for (const [source, message] of [
-    ['let v = pick(noise(), solid())\nlet w = v\nsolid().blendMode(tex: w).write(o0)', /cannot copy another let's chosen effect yet: 'w'/],
-    ['let v = pick(noise(), solid())\nlet b = blendMode(tex: v)\nsolid().b().write(o0)', /cannot take another let's chosen effect yet: 'b'/],
-    ['let v = pick(blendMode(tex: noise()), blendMode(tex: solid()))\nsolid().v().write(o0)', /Binding "v" is not callable/],
-  ]) {
-    assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), message, source)
-  }
+// A value let that chose an effect cannot be called as a chain element yet.
+test('calling a value let that chose an effect, as an element, is refused for now', () => {
+  assert.throws(() => compile('search synth, mixer\nseed 3\nlet v = pick(blendMode(tex: noise()), blendMode(tex: solid()))\nsolid().v().write(o0)'),
+    /Binding "v" is not callable/)
 })
 
 test('midi() and audio() refuse the arguments upstream refuses, random ones included', () => {
@@ -120,7 +113,16 @@ test('midi() and audio() refuse the arguments upstream refuses, random ones incl
     ['midi(rand(0, 1), 2, 3, 4, 5, channel: 1)', /excess positional argument/],
     ['midi(1, foo: rand(0, 1))', /unknown parameter 'foo'/],
     ['midi(1, name: rand(1, 3))', /'name' requires a quoted string/],
+    ['midi(1, name: "")', /'name' must not be empty/],
+    ['midi(1, id: "y", min: rand(0, 1))', /'id' requires readable 'name'/],
+    ['midi(mode: rand(0, 1))', /requires 'channel' or 'zone' argument/],
+    ['midi(1, zone: 2, min: rand(0, 1))', /'channel' and 'zone' are mutually exclusive/],
+    ['midi(1, members: 3)', /'members' requires 'zone'/],
+    ['audio(min: rand(0, 1))', /requires 'band' argument/],
+    ['audio(0, name: "x", min: rand(0, 1))', /requires both 'name' and 'channel'/],
   ]) {
+    // Checked where it is written, whether the let is read or not.
     assert.throws(() => compile(`search synth\nseed 5\nlet m = ${value}\nnoise().write(o0)`), message, value)
+    assert.throws(() => compile(`search synth\nseed 5\nnoise(scaleX: ${value}).write(o0)`), message, value)
   }
 })

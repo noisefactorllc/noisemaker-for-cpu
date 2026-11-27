@@ -157,7 +157,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
   if (isRandomCall(value)) {
     if (bindings.has(value.name)) throw new DslError(`'${value.name}' is a variable here and cannot be called`, value.loc)
     if (!at) throw new DslError(`A random call is not allowed here: ${value.name}()`, value.loc)
-    const ctx = { seed: bindings.draws.seed, key: at.key, draw: bindings.draws.draw, choicesFor: bindings.choicesFor, isShadowed: (name) => bindings.has(name) }
+    const ctx = { seed: bindings.scopeSeed(), key: at.key, draw: bindings.draws.draw, choicesFor: bindings.choicesFor, isShadowed: (name) => bindings.has(name) }
     return resolveRandomCall(value, ctx, at.path, (item, path, defer = false) => {
       const outer = bindings.deferChains
       if (defer) bindings.deferChains = true
@@ -294,6 +294,12 @@ class CompileScope extends Map {
     // where the let is written, and not again where the let is called.
     this.letChains = new WeakSet()
     this.deferChains = false
+    // Key names (upstream: the naming body's _id: values, the ids already
+    // claimed and the names already given) and the `_seed:` scopes in force.
+    this.bodyIds = new Set()
+    this.claimedIds = new Set()
+    this.givenNames = new Set()
+    this.seedScopes = []
     this.choicesFor = (effectName, paramName, loc) => {
       // A two-part name, `synth.noise`, names its namespace.
       const parts = effectName.split('.')
@@ -313,6 +319,26 @@ class CompileScope extends Map {
     // Names of the program's lets that a later statement declares. Reading one
     // before its let reports S003, as upstream's validator does.
     this.pendingNames = null
+  }
+
+  // The seed draws use here: the innermost `_seed:` scope's, else the program's.
+  scopeSeed() {
+    return this.seedScopes.length ? this.seedScopes.at(-1) : this.draws.seed
+  }
+
+  // Upstream's key name: an element's `_id:` unless an earlier element took it,
+  // else its occurrence name, with `'` added while it is another element's
+  // `_id:` in the body or a name already given.
+  keyNameFor(occurrence, id) {
+    if (id !== undefined && !this.claimedIds.has(id)) {
+      this.claimedIds.add(id)
+      this.givenNames.add(id)
+      return id
+    }
+    let name = occurrence
+    while (this.bodyIds.has(name) || this.givenNames.has(name)) name += "'"
+    this.givenNames.add(name)
+    return name
   }
 
   nextOccurrence(func) {
@@ -434,14 +460,32 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     let call = calls[index]
     const partial = call.boundPartial ?? bindings.get(call.name)
     let heldKey = null
-    if (partial?.kind === 'alias') {
-      call = { ...call, name: partial.name }
-    } else if (partial) {
+    let target = partial
+    // An alias names an effect; its target name resolves where it is called, so
+    // a let that later makes that name a partial is followed (upstream
+    // substitutes the alias's name).
+    for (let hops = 0; target?.kind === 'alias' && hops < 16; hops += 1) {
+      call = { ...call, name: target.name }
+      const next = bindings.get(target.name)
+      target = next && next !== target ? next : null
+    }
+    if (partial?.kind === 'alias' && target?.kind !== 'partial') {
+      // The alias's target is the effect itself.
+    } else if (target) {
+      const partial = target
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
+      // An `_id:` written where the let is called names the element at this
+      // use, with `'` added while it is one of the let's own names (upstream).
+      const siteId = validId(call.args.findLast((arg) => arg.name === '_id')?.value)
       call = mergePartial(partial.call, call)
-      // An element held by a let draws under the let's key and the occurrence
-      // name the let gave it.
+      // An element held by a let draws under the let's key and the name the let
+      // gave it.
       heldKey = partial.key
+      if (siteId !== undefined && partial.letKey) {
+        let name = siteId
+        while (partial.ownNames.has(name)) name += "'"
+        heldKey = joinKey(partial.letKey, `${partial.op}@${name}`)
+      }
     }
     const isRead = call.name === 'read' || call.name === 'read3d'
     const metadata = {}
@@ -449,6 +493,15 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       if (arg.name === '_id') {
         if (typeof arg.value === 'string' && /^[A-Za-z][A-Za-z0-9_]*$/.test(arg.value)) metadata._id = arg.value
         else delete metadata._id
+        return false
+      }
+      // `_seed: <n>` gives the element's draws the seed n (upstream scopes).
+      if (arg.name === '_seed') {
+        if (containsRandomDeep(arg.value)) throw new DslError('A random call cannot set _seed', call.loc)
+        if (!Number.isInteger(arg.value) || arg.value < 0 || arg.value > 4294967295) {
+          throw new DslError('_seed must be a whole number from 0 to 4294967295', call.loc)
+        }
+        metadata._seed = arg.value
         return false
       }
       // The upstream expander binds built-in reads before it checks effect
@@ -471,12 +524,15 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     let elementKey = null
     if (definition && !['read', 'write', 'write3d'].includes(call.name) && !(index === 0 && call.name === 'read3d' && read3dReferences(call))) {
       const op = `${definition.namespace}.${definition.func}`
-      if (heldKey) elementKey = heldKey
-      else {
-        const occurrence = count ? bindings.nextOccurrence(definition.func) : null
-        elementKey = inline && keyBase !== null ? joinKey(keyBase, `e:${op}`) : `${op}@${occurrence}`
-      }
+      let keyName = null
+      if (!heldKey && count) keyName = bindings.keyNameFor(bindings.nextOccurrence(definition.func), metadata._id)
+      // An element with its own `_seed:` restarts its keys at itself.
+      if (metadata._seed !== undefined) elementKey = op
+      else if (heldKey) elementKey = heldKey
+      else elementKey = inline && keyBase !== null ? joinKey(keyBase, `e:${op}`) : `${op}@${keyName}`
     }
+    const ownSeed = elementKey !== null && metadata._seed !== undefined
+    if (ownSeed) bindings.seedScopes.push(metadata._seed)
     // Chain arguments compile while the arguments resolve; they belong to this call.
     const outerPending = bindings.pending
     bindings.pending = []
@@ -484,6 +540,9 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     let inlineChains
     try {
       args = resolveArgs(lastOfEachName(rawArgs, definition), bindings, call, definition, elementKey)
+    } catch (error) {
+      if (ownSeed) bindings.seedScopes.pop()
+      throw error
     } finally {
       inlineChains = bindings.pending
       bindings.pending = outerPending
@@ -573,15 +632,17 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     }))])
     // With a seed directive, an effect seed the program does not set inherits:
     // a draw over the parameter's whole-number range.
-    if (bindings.draws.directive && elementKey) {
+    // Inside a `_seed:` scope too, with that scope's seed.
+    if ((bindings.draws.directive || bindings.seedScopes.length) && elementKey) {
       let inherited = null
       for (const name of definition.paramNames) {
         if (!isSeedParam(definition, name) || explicitParams.includes(name) || !canInheritSeed(definition.params[name])) continue
         inherited ??= {}
-        inherited[name] = inheritedSeed(bindings.draws.draw(bindings.draws.seed, joinKey(elementKey, name, 'inherit')), definition.params[name])
+        inherited[name] = inheritedSeed(bindings.draws.draw(bindings.scopeSeed(), joinKey(elementKey, name, 'inherit')), definition.params[name])
       }
       if (inherited) params = Object.isFrozen(params) ? Object.freeze({ ...params, ...inherited }) : Object.assign(params, inherited)
     }
+    if (ownSeed) bindings.seedScopes.pop()
     const step = { kind: 'effect', ...metadata, definition, params, explicitParams, loc: call.loc }
     if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
     steps.push(step)
@@ -612,6 +673,26 @@ function captureHexColors(value, bindings) {
   }
   const resolved = boundExpression(value, bindings)
   return resolved?.kind === 'color' ? resolved : value
+}
+
+// An `_id:` value the port keeps: a string that is an identifier.
+function validId(value) {
+  return typeof value === 'string' && /^[A-Za-z][A-Za-z0-9_]*$/.test(value) ? value : undefined
+}
+
+// Every `_id:` string written in a value, in calls at any depth.
+function collectIds(value, ids) {
+  if (Array.isArray(value)) return value.forEach((item) => collectIds(item, ids))
+  if (!value || typeof value !== 'object') return
+  if (value.kind === 'Chain') return value.calls.forEach((call) => collectIds(call.kind === 'Subchain' ? call.body : call, ids))
+  if (value.kind === 'Call') {
+    for (const arg of value.args) {
+      if (arg.name === '_id' && typeof arg.value === 'string') ids.add(arg.value)
+      collectIds(arg.value, ids)
+    }
+  } else if (value.kind === 'binary') { collectIds(value.left, ids); collectIds(value.right, ids) }
+  else if (value.kind === 'unary') collectIds(value.argument, ids)
+  else if (value.kind === 'vector') collectIds(value.values, ids)
 }
 
 // A keyword written twice keeps its last value, as upstream's keyword object
@@ -660,8 +741,9 @@ function bindCalls(value, bindings) {
   if (Array.isArray(value)) return value.forEach((item) => bindCalls(item, bindings))
   if (!value || typeof value !== 'object') return
   if (value.kind === 'identifier') {
+    // A name the value reads is the binding in force here, a value let's too.
     const binding = bindings.get(value.name)
-    if (!value.boundPartial && (binding?.kind === 'partial' || binding?.kind === 'alias')) value.boundPartial = binding
+    if (!value.boundPartial && binding) value.boundPartial = binding
   } else if (value.kind === 'Chain') {
     for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
       const binding = bindings.get(entry.name)
@@ -700,6 +782,23 @@ function namesChosenEffect(value, bindings) {
 // A bare identifier value must name something resolvable now (an earlier
 // binding, an alias, or an effect), as upstream's declareVar requires.
 function declareBinding(binding, bindings) {
+  // Upstream substitutes a value let that chose an effect into the let that
+  // names it: `let w = v` holds v's effect, and an argument that names v holds
+  // that effect as written.
+  const chosen = (value) => {
+    const bound = value?.kind === 'identifier' ? bindings.get(value.name) : null
+    return bound?.kind === 'value' && bound.resolved && bound.value?.kind === 'Chain' ? bound.value : null
+  }
+  const copied = chosen(binding.value)
+  if (copied) {
+    if (copied.calls.length !== 1 || copied.calls[0].kind !== 'Call') {
+      throw new DslError(`A let cannot copy another let's chosen chain of several effects yet: '${binding.name}'`, binding.loc)
+    }
+    return declareBinding({ ...binding, value: copied.calls[0] }, bindings)
+  }
+  if (binding.value?.kind === 'Call' && binding.value.args.some((arg) => chosen(arg.value))) {
+    binding = { ...binding, value: { ...binding.value, args: binding.value.args.map((arg) => (chosen(arg.value) ? { ...arg, value: chosen(arg.value) } : arg)) } }
+  }
   if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name) && !isRandomCall(binding.value)) {
     // Other partial arguments keep their existing use-site resolution. The
     // let's element is counted here, where the let is written, and draws under
@@ -722,11 +821,20 @@ function declareBinding(binding, bindings) {
     if (written.some((arg) => namesChosenEffect(arg.value, bindings))) {
       throw new DslError(`A let that holds an effect cannot take another let's chosen effect yet: '${binding.name}'`, binding.loc)
     }
-    const element = previous?.kind === 'partial' ? previous.element
-      : definition ? `${definition.namespace}.${definition.func}@${bindings.nextOccurrence(definition.func)}` : null
-    const key = element ? joinKey(bindings.letKey(binding.name, 'effect'), element) : null
+    // A let names its element as a body does: an `_id:` written in the let,
+    // else its occurrence name.
+    const op = definition ? `${definition.namespace}.${definition.func}` : null
+    let ownName = null
+    if (previous?.kind === 'partial') ownName = previous.ownName
+    else if (definition) {
+      const occurrence = bindings.nextOccurrence(definition.func)
+      ownName = validId(own.args.findLast((arg) => arg.name === '_id')?.value) ?? occurrence
+    }
+    const element = ownName ? `${op}@${ownName}` : null
+    const letKey = element ? bindings.letKey(binding.name, 'effect') : null
+    const key = element ? joinKey(letKey, element) : null
     countLetValues(written, bindings)
-    bindings.set(binding.name, { kind: 'partial', call, key, element })
+    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []) })
     return
   }
   if (aliasBinding(binding.value, bindings)) {
@@ -765,6 +873,8 @@ export function compileDsl(source, registry, options = {}) {
   if (ast.search.length === 0) throw new DslError('Missing required search directive', ast.loc)
 
   const bindings = new CompileScope(registry, ast.search, drawContext(ast.seed?.value ?? null, options.onDraw))
+  // The naming body's ids: every `_id:` written in the program.
+  collectIds([...ast.bindings.map((binding) => binding.value), ...ast.chains], bindings.bodyIds)
   let nextBinding = 0
   const declareThrough = (chainIndex) => {
     while (nextBinding < ast.bindings.length && (ast.bindings[nextBinding].planIndex ?? 0) <= chainIndex) {

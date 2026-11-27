@@ -4,6 +4,38 @@ import { tokenizeDsl } from './tokenize.js'
 
 const MAX_SEED = 4294967295
 
+// Upstream's parser checks every midi() and audio() call where it is written
+// (transformMidiInvocation, transformAudioInvocation), read or not.
+const AUTOMATION_SIGNATURES = {
+  midi: { order: ['channel', 'mode', 'min', 'max', 'sensitivity'], keywordOnly: ['name', 'id', 'cc', 'nrpn', 'zone', 'members'] },
+  audio: { order: ['band', 'min', 'max'], keywordOnly: ['channel', 'name', 'id'] },
+}
+
+function checkAutomationCall(call) {
+  const { order, keywordOnly } = AUTOMATION_SIGNATURES[call.name]
+  const fail = (message) => { throw new DslError(`${call.name}() ${message}`, call.loc) }
+  const positional = call.args.filter((arg) => arg.name === null)
+  if (positional.length > order.length) fail(`${keywordOnly.join(', ').replace(/, ([^,]*)$/, ' and $1')} are keyword-only`)
+  const named = new Map(call.args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg.value]))
+  const valid = [...order, ...keywordOnly]
+  for (const name of named.keys()) if (!valid.includes(name)) fail(`unknown parameter '${name}'. Valid: ${valid.join(', ')}`)
+  const free = order.filter((name) => !named.has(name))
+  if (positional.length > free.length) fail('has an excess positional argument')
+  const given = new Set([...named.keys(), ...free.slice(0, positional.length)])
+  if (call.name === 'midi') {
+    if (!given.has('channel') && !named.has('zone')) fail("requires 'channel' or 'zone' argument")
+    if (given.has('channel') && named.has('zone')) fail("'channel' and 'zone' are mutually exclusive")
+    if (named.has('members') && !named.has('zone')) fail("'members' requires 'zone'")
+  } else if (!given.has('band')) fail("requires 'band' argument")
+  if (named.has('id') && !named.has('name')) fail("'id' requires readable 'name'")
+  if (call.name === 'audio' && named.has('name') && !named.has('channel')) fail("selected device requires both 'name' and 'channel'")
+  for (const name of ['name', 'id']) {
+    if (!named.has(name)) continue
+    if (typeof named.get(name) !== 'string') fail(`'${name}' requires a quoted string`)
+    if (named.get(name).length === 0) fail(`'${name}' must not be empty`)
+  }
+}
+
 function location(token) {
   return { sourceName: token.sourceName, line: token.line, column: token.column, index: token.index }
 }
@@ -135,6 +167,7 @@ class Parser {
     const randomStart = RANDOM_FUNCTIONS.has(this.peek().lexeme)
     if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(' && !randomStart) {
       value = this.parseCall()
+      if (value.name === 'midi' || value.name === 'audio') checkAutomationCall(value)
       if ((value.name === 'read' || value.name === 'read3d') && this.isPunctuation('.')) {
         value = this.parseExpressionChain(value)
       }
@@ -401,7 +434,9 @@ class Parser {
       // and ignore these unsupported real-time inputs.
       if ((name === 'osc' || name === 'midi' || name === 'audio' || RANDOM_FUNCTIONS.has(name)) && this.isPunctuation('(')) {
         this.current -= 1
-        return this.parseCall()
+        const call = this.parseCall()
+        if (name === 'midi' || name === 'audio') checkAutomationCall(call)
+        return call
       }
       // Any other call in a value position starts a chain argument
       // (upstream `Expr ::= Chain`), for example `tex: solid(color: #f00)`.
