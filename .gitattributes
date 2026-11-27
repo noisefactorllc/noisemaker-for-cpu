@@ -1,0 +1,4 @@
+# The golden vectors are a byte-for-byte copy of the upstream file whose
+# SHA-256 test/fixtures/seeded-draws.source.json records, so no checkout may
+# change their line ends.
+test/fixtures/seeded-draws.json -text
