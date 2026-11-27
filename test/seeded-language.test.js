@@ -147,3 +147,16 @@ test('an id shared through lets, nested values or a chosen chain is refused when
     assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), message, source)
   }
 })
+
+test('an id is taken each time an element compiles with it, through lets, values and chosen chains', () => {
+  for (const source of [
+    'let b = noise(_id: "x")\nlet a = blendMode(tex: b())\nsolid().a().write(o0)\nsolid().a().write(o1)',
+    'let b = noise(_id: "x")\nlet c = blendMode(tex: b())\nlet a = c()\nsolid().a().write(o0)\nsolid().c().write(o1)',
+    'let p = noise(_id: "x")\nlet v = pick(p(), p())\nsolid().blendMode(tex: v).write(o0)\np().write(o1)',
+    'let p = noise(_id: "x")\nlet v = pick(p(), p())\nsolid().blendMode(tex: v).write(o0)\nsolid().blendMode(tex: v).write(o1)',
+    'let v = pick(noise(_id: "x"), noise(_id: "x"))\nlet a = blendMode(tex: v)\nsolid().a().write(o0)\nsolid().blendMode(tex: v).write(o1)',
+    'let v = pick(noise(_id: "x"), noise(_id: "y"))\nlet w = v\nw().write(o0)\nsolid().blendMode(tex: v).write(o1)',
+  ]) {
+    assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), /is in a 'let' value used more than once/, source)
+  }
+})

@@ -615,5 +615,41 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, mixer\nseed 3\nlet p = noise(scaleX: 2)\nlet v = pick(p(), p())\nlet w = v\nlet w = noise()\nw().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "let-partial-inside-unused-let",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b())\nb().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "let-partial-inside-replaced-let",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b())\nlet a = noise()\nb().write(o0)\na().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "bare-partial-inside-let-used-once",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b)\nsolid().a().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "dropped-keyword-partial-not-a-use",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: solid().blendMode(tex: b(), tex: noise()))\nb().write(o0)\nrender(o0)"
  }
 ]

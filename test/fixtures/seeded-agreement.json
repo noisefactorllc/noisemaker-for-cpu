@@ -2895,6 +2895,70 @@
      }
     }
    ]
+  },
+  {
+   "name": "let-partial-inside-unused-let",
+   "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b())\nb().write(o0)\nrender(o0)",
+   "draws": [],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "let-partial-inside-replaced-let",
+   "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b())\nlet a = noise()\nb().write(o0)\na().write(o1)\nrender(o0)",
+   "draws": [],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "bare-partial-inside-let-used-once",
+   "dsl": "search synth, mixer\nseed 3\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b)\nsolid().a().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:b/synth.noise@x/seed/inherit",
+     "u": 3265502533
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 34
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "dropped-keyword-partial-not-a-use",
+   "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: solid().blendMode(tex: b(), tex: noise()))\nb().write(o0)\nrender(o0)",
+   "draws": [],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {}
+    }
+   ]
   }
  ]
 }
