@@ -1,0 +1,968 @@
+{
+ "source": "noisemaker",
+ "branch": "2.x",
+ "commit": "4bd8c7cfd2fa0a4d50122218f3bd8a85c4cd1c41",
+ "programs": [
+  {
+   "name": "seed-directive-inherits",
+   "dsl": "search synth\nseed 9\nnoise().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 9,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 1129961430
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 31
+     }
+    }
+   ]
+  },
+  {
+   "name": "no-directive-draws-from-zero",
+   "dsl": "search synth\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 0,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 3736502576
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.959778308868408
+     }
+    }
+   ]
+  },
+  {
+   "name": "largest-seed",
+   "dsl": "search synth\nseed 4294967295\nnoise(scaleX: rand(1, 100), octaves: randInt(1, 8)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4294967295,
+     "key": "synth.noise@noise_1/octaves",
+     "u": 3343192513
+    },
+    {
+     "seed": 4294967295,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 3757571465
+    },
+    {
+     "seed": 4294967295,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 78546066
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "octaves": 2,
+      "scaleX": 87.612897336483,
+      "seed": 67
+     }
+    }
+   ]
+  },
+  {
+   "name": "rand-randInt-chance",
+   "dsl": "search synth\nseed 7\nnoise(scaleX: rand(1, 10), octaves: randInt(8, 1), ridges: chance(0.5), wrap: chance(1)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/octaves",
+     "u": 2545660040
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 2237534842
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/wrap",
+     "u": 1760469192
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/ridges",
+     "u": 2692368391
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 3207707207
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "octaves": 1,
+      "ridges": false,
+      "scaleX": 5.688699841499329,
+      "seed": 8,
+      "wrap": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "default-rand-scaled",
+   "dsl": "search synth\nseed 7\nnoise(scaleX: rand() * 99 + 1).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/scaleX/o0/o0",
+     "u": 2453441154
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 3207707207
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 57.55238902568817,
+      "seed": 8
+     }
+    }
+   ]
+  },
+  {
+   "name": "arithmetic-paths",
+   "dsl": "search synth\nseed 5\nnoise(scaleX: rand(1, 2) * 10 + randInt(0, 3), scaleY: 50 - rand(1, 20), speed: -randInt(1, 9)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX/o0/o0",
+     "u": 1024950266
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX/o1",
+     "u": 861475503
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleY/o1",
+     "u": 1819202067
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/speed/o0",
+     "u": 322689385
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 15.38639771938324,
+      "scaleY": 40.95224630832672,
+      "seed": 84,
+      "speed": -2
+     }
+    }
+   ]
+  },
+  {
+   "name": "pick-items",
+   "dsl": "search synth\nseed 5\nnoise(octaves: pick(1, randInt(2, 4), 6), scaleX: pick(rand(1, 5), rand(50, 90))).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/octaves/a1",
+     "u": 1376037432
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/octaves",
+     "u": 3238105211
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX/a0",
+     "u": 4108207927
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX/a1",
+     "u": 626937251
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 3019502943
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "octaves": 6,
+      "scaleX": 55.83880662918091,
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "pick-choices",
+   "dsl": "search synth\nseed 2\nnoise(type: pick(choices(noise, type))).write(o0)\nnoise(type: pick(choices(noise, type)), colorMode: pick(choices(noise, colorMode))).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_1/type",
+     "u": 2041677881
+    },
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 482878500
+    },
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_2/type",
+     "u": 2893435088
+    },
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_2/colorMode",
+     "u": 1040585366
+    },
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 312441283
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 1,
+      "type": 11
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "colorMode": 0,
+      "seed": 84,
+      "type": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "osc-arguments",
+   "dsl": "search synth\nseed 5\nnoise(scaleX: osc(min: rand(), max: 1, speed: randInt(1, 3)), scaleY: osc(oscKind.sine, rand(0, 0.5), rand(0.5, 1))).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX/k:min",
+     "u": 3108270813
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleX/k:speed",
+     "u": 1415404488
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleY/k:min",
+     "u": 3142876783
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/scaleY/k:max",
+     "u": 3094314785
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": {
+       "type": "Oscillator",
+       "oscType": 0,
+       "min": 0.7237006425857544,
+       "max": 1,
+       "speed": 1,
+       "offset": 0,
+       "seed": 1
+      },
+      "scaleY": {
+       "type": "Oscillator",
+       "oscType": 0,
+       "min": 0.36587899923324585,
+       "max": 0.860225647687912,
+       "speed": 1,
+       "offset": 0,
+       "seed": 1
+      },
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "call-level-seed",
+   "dsl": "search synth\nseed 5\nnoise(scaleX: rand(1, 9, seed: 42), scaleY: rand(seed: 0) * 50 + 1, seed: 3).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 42,
+     "key": "pin",
+     "u": 1450778842
+    },
+    {
+     "seed": 0,
+     "key": "pin",
+     "u": 4200884750
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 3.7022857666015625,
+      "scaleY": 49.90473484992981
+     }
+    }
+   ]
+  },
+  {
+   "name": "explicit-seed-wins",
+   "dsl": "search synth\nseed 5\nnoise(seed: 17).write(o0)\nnoise(seed: randInt(1, 100)).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed",
+     "u": 1994458691
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 92
+     }
+    }
+   ]
+  },
+  {
+   "name": "occurrence-names",
+   "dsl": "search synth, filter\nseed 7\nnoise(scaleX: rand(1, 9)).tint(color: randColor(), alpha: rand()).write(o0)\nnoise(scaleX: rand(1, 9)).tint(alpha: rand()).write(o1)\nnoise().write(o2)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 2237534842
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 3207707207
+    },
+    {
+     "seed": 7,
+     "key": "filter.tint@tint_1/color",
+     "u": 2307976869
+    },
+    {
+     "seed": 7,
+     "key": "filter.tint@tint_1/alpha",
+     "u": 3599349978
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_2/scaleX",
+     "u": 989059210
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 3700747921
+    },
+    {
+     "seed": 7,
+     "key": "filter.tint@tint_2/alpha",
+     "u": 445199932
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_3/seed/inherit",
+     "u": 3731916260
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 5.167733192443848,
+      "seed": 8
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.8380389213562012,
+      "color": [
+       0.2823529411764706,
+       0.12156862745098039,
+       0.043137254901960784,
+       1
+      ]
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.842266082763672,
+      "seed": 22
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.10365617275238037
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 61
+     }
+    }
+   ]
+  },
+  {
+   "name": "randColor-components",
+   "dsl": "search synth, filter\nseed 3\nsolid(color: randColor(h: 0.25)).tint(color: randColor(s: 1, v: 1)).write(o0)\nsolid(color: randColor(h: 2.75, s: 0.5, v: 0.5)).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.solid@solid_1/color",
+     "u": 492269862
+    },
+    {
+     "seed": 3,
+     "key": "filter.tint@tint_1/color",
+     "u": 2673781178
+    },
+    {
+     "seed": 3,
+     "key": "synth.solid@solid_2/color",
+     "u": 1438688129
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {
+      "color": [
+       0.12156862745098039,
+       0.1450980392156863,
+       0.09411764705882353,
+       1
+      ]
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "color": [
+       0,
+       0.7294117647058823,
+       1,
+       1
+      ]
+     }
+    },
+    {
+     "op": "synth.solid",
+     "values": {
+      "color": [
+       0.3764705882352941,
+       0.25098039215686274,
+       0.5019607843137255,
+       1
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "vector-components",
+   "dsl": "search synth, filter\nseed 5\nnoise().tint(color: [rand(), 0.5, rand(), 1]).write(o0)\nnoise().tint(color: [1, randInt(0, 1), rand(0.5, 1)]).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "filter.tint@tint_1/color/c0",
+     "u": 1038882407
+    },
+    {
+     "seed": 5,
+     "key": "filter.tint@tint_1/color/c2",
+     "u": 1990045193
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 86030841
+    },
+    {
+     "seed": 5,
+     "key": "filter.tint@tint_2/color/c1",
+     "u": 1251076867
+    },
+    {
+     "seed": 5,
+     "key": "filter.tint@tint_2/color/c2",
+     "u": 3533188270
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "color": [
+       0.24188363552093506,
+       0.5,
+       0.4633435010910034,
+       1
+      ]
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 42
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "color": [
+       1,
+       1,
+       0.9113172292709351
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "value-lets",
+   "dsl": "search synth\nseed 7\nlet s = rand(1, 5)\nlet s = rand(1, 5)\nlet unused = randInt(1, 100)\nnoise(scaleX: s, scaleY: s).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 7,
+     "key": "let:s",
+     "u": 2859602033
+    },
+    {
+     "seed": 7,
+     "key": "let:s#2",
+     "u": 2661058599
+    },
+    {
+     "seed": 7,
+     "key": "let:unused",
+     "u": 567276177
+    },
+    {
+     "seed": 7,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 3207707207
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 3.478303909301758,
+      "scaleY": 3.478303909301758,
+      "seed": 8
+     }
+    }
+   ]
+  },
+  {
+   "name": "let-arithmetic",
+   "dsl": "search synth\nseed 4\nlet a = rand(1, 5) * 2 + 1\nnoise(scaleX: a).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "let:a/o0/o0",
+     "u": 1276872888
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 1403582698
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 5.378360748291016,
+      "seed": 99
+     }
+    }
+   ]
+  },
+  {
+   "name": "let-partial",
+   "dsl": "search synth, filter\nseed 11\nlet n = noise(scaleX: 4)\nn(octaves: randInt(1, 3)).tint(alpha: rand()).write(o0)\nn().write(o1)\nnoise().write(o2)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 11,
+     "key": "let:n/synth.noise@noise_1/octaves",
+     "u": 248366429
+    },
+    {
+     "seed": 11,
+     "key": "let:n/synth.noise@noise_1/seed/inherit",
+     "u": 2535522139
+    },
+    {
+     "seed": 11,
+     "key": "filter.tint@tint_1/alpha",
+     "u": 3998420832
+    },
+    {
+     "seed": 11,
+     "key": "let:n/synth.noise@noise_1/seed/inherit",
+     "u": 2535522139
+    },
+    {
+     "seed": 11,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 3416163684
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "octaves": 3,
+      "seed": 40
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.9309548735618591
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 40
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 85
+     }
+    }
+   ]
+  },
+  {
+   "name": "let-kinds-counted-apart",
+   "dsl": "search synth\nseed 4\nlet a = noise(scaleX: 3)\nlet a = rand(1, 9)\nlet a = noise(scaleY: 5)\nlet b = rand(2, 3)\nlet b = rand(2, 3)\nnoise(scaleX: b).write(o0)\na().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "let:a",
+     "u": 3161276956
+    },
+    {
+     "seed": 4,
+     "key": "let:b",
+     "u": 1733463319
+    },
+    {
+     "seed": 4,
+     "key": "let:b#2",
+     "u": 3042112969
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_3/seed/inherit",
+     "u": 850758474
+    },
+    {
+     "seed": 4,
+     "key": "let:a#2/synth.noise@noise_2/seed/inherit",
+     "u": 3123608835
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.708297073841095,
+      "seed": 75
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 36
+     }
+    }
+   ]
+  },
+  {
+   "name": "alias",
+   "dsl": "search synth\nseed 4\nlet x = noise\nx(scaleX: rand(1, 9)).write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 4185534732
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 1403582698
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 3121475603
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 8.796165943145752,
+      "seed": 99
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 4
+     }
+    }
+   ]
+  },
+  {
+   "name": "effect-values",
+   "dsl": "search synth, mixer\nseed 3\nsolid(color: randColor()).blendMode(tex: noise(scaleX: rand(1, 9)), mix: rand(-50, 50)).write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.solid@solid_1/color",
+     "u": 492269862
+    },
+    {
+     "seed": 3,
+     "key": "mixer.blendMode@blendMode_1/tex/e:synth.noise/scaleX",
+     "u": 1751506919
+    },
+    {
+     "seed": 3,
+     "key": "mixer.blendMode@blendMode_1/tex/e:synth.noise/seed/inherit",
+     "u": 1702751371
+    },
+    {
+     "seed": 3,
+     "key": "mixer.blendMode@blendMode_1/mix",
+     "u": 2771293939
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 1816131536
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {
+      "color": [
+       0.09411764705882353,
+       0.1450980392156863,
+       0.12549019607843137,
+       1
+      ]
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 4.262435436248779,
+      "seed": 72
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {
+      "mix": 14.52420949935913
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 37
+     }
+    }
+   ]
+  },
+  {
+   "name": "nested-effect-values",
+   "dsl": "search synth, mixer\nseed 4\nsolid().blendMode(tex: solid().blendMode(tex: noise(scaleX: rand(1, 9))), mix: rand(0, 1)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex/e:mixer.blendMode/tex/e:synth.noise/scaleX",
+     "u": 4281169916
+    },
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex/e:mixer.blendMode/tex/e:synth.noise/seed/inherit",
+     "u": 775947095
+    },
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/mix",
+     "u": 3490307615
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 8.974299907684326,
+      "seed": 96
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {
+      "mix": 0.8126505613327026
+     }
+    }
+   ]
+  },
+  {
+   "name": "inherits-seed-field",
+   "dsl": "search synth, classicNoisedeck\nseed 6\nnoise().splat().write(o0)\nnoise().splat(speckSeed: 5).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 6,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 4143820871
+    },
+    {
+     "seed": 6,
+     "key": "classicNoisedeck.splat@splat_1/seed/inherit",
+     "u": 1101450173
+    },
+    {
+     "seed": 6,
+     "key": "classicNoisedeck.splat@splat_1/speckSeed/inherit",
+     "u": 1019594330
+    },
+    {
+     "seed": 6,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 3736616138
+    },
+    {
+     "seed": 6,
+     "key": "classicNoisedeck.splat@splat_2/seed/inherit",
+     "u": 1082616850
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 72
+     }
+    },
+    {
+     "op": "classicNoisedeck.splat",
+     "values": {
+      "seed": 74,
+      "speckSeed": 31
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 39
+     }
+    },
+    {
+     "op": "classicNoisedeck.splat",
+     "values": {
+      "seed": 51
+     }
+    }
+   ]
+  }
+ ]
+}

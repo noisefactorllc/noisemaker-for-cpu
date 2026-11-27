@@ -1,0 +1,166 @@
+[
+ {
+  "name": "seed-directive-inherits",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 9\nnoise().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "no-directive-draws-from-zero",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "largest-seed",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 4294967295\nnoise(scaleX: rand(1, 100), octaves: randInt(1, 8)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "rand-randInt-chance",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 7\nnoise(scaleX: rand(1, 10), octaves: randInt(8, 1), ridges: chance(0.5), wrap: chance(1)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "default-rand-scaled",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 7\nnoise(scaleX: rand() * 99 + 1).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "arithmetic-paths",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise(scaleX: rand(1, 2) * 10 + randInt(0, 3), scaleY: 50 - rand(1, 20), speed: -randInt(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "pick-items",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise(octaves: pick(1, randInt(2, 4), 6), scaleX: pick(rand(1, 5), rand(50, 90))).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "pick-choices",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 2\nnoise(type: pick(choices(noise, type))).write(o0)\nnoise(type: pick(choices(noise, type)), colorMode: pick(choices(noise, colorMode))).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "osc-arguments",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise(scaleX: osc(min: rand(), max: 1, speed: randInt(1, 3)), scaleY: osc(oscKind.sine, rand(0, 0.5), rand(0.5, 1))).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "call-level-seed",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise(scaleX: rand(1, 9, seed: 42), scaleY: rand(seed: 0) * 50 + 1, seed: 3).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "explicit-seed-wins",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise(seed: 17).write(o0)\nnoise(seed: randInt(1, 100)).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "occurrence-names",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 7\nnoise(scaleX: rand(1, 9)).tint(color: randColor(), alpha: rand()).write(o0)\nnoise(scaleX: rand(1, 9)).tint(alpha: rand()).write(o1)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "randColor-components",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter\nseed 3\nsolid(color: randColor(h: 0.25)).tint(color: randColor(s: 1, v: 1)).write(o0)\nsolid(color: randColor(h: 2.75, s: 0.5, v: 0.5)).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "vector-components",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\nnoise().tint(color: [rand(), 0.5, rand(), 1]).write(o0)\nnoise().tint(color: [1, randInt(0, 1), rand(0.5, 1)]).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "value-lets",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 7\nlet s = rand(1, 5)\nlet s = rand(1, 5)\nlet unused = randInt(1, 100)\nnoise(scaleX: s, scaleY: s).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "let-arithmetic",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 4\nlet a = rand(1, 5) * 2 + 1\nnoise(scaleX: a).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "let-partial",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 11\nlet n = noise(scaleX: 4)\nn(octaves: randInt(1, 3)).tint(alpha: rand()).write(o0)\nn().write(o1)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "let-kinds-counted-apart",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 4\nlet a = noise(scaleX: 3)\nlet a = rand(1, 9)\nlet a = noise(scaleY: 5)\nlet b = rand(2, 3)\nlet b = rand(2, 3)\nnoise(scaleX: b).write(o0)\na().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "alias",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 4\nlet x = noise\nx(scaleX: rand(1, 9)).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "effect-values",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nsolid(color: randColor()).blendMode(tex: noise(scaleX: rand(1, 9)), mix: rand(-50, 50)).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "nested-effect-values",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 4\nsolid().blendMode(tex: solid().blendMode(tex: noise(scaleX: rand(1, 9))), mix: rand(0, 1)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "inherits-seed-field",
+  "effects": [
+   "synth/noise",
+   "classicNoisedeck/splat"
+  ],
+  "dsl": "search synth, classicNoisedeck\nseed 6\nnoise().splat().write(o0)\nnoise().splat(speckSeed: 5).write(o1)\nrender(o0)"
+ }
+]

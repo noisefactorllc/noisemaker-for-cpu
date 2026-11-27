@@ -1,5 +1,8 @@
 import { DslError } from './error.js'
+import { RANDOM_FUNCTIONS } from './random.js'
 import { tokenizeDsl } from './tokenize.js'
+
+const MAX_SEED = 4294967295
 
 function location(token) {
   return { sourceName: token.sourceName, line: token.line, column: token.column, index: token.index }
@@ -58,7 +61,7 @@ class Parser {
   }
 
   parseProgram() {
-    const ast = { kind: 'DslProgram', search: [], bindings: [], chains: [], render: null, loc: location(this.peek()) }
+    const ast = { kind: 'DslProgram', search: [], seed: null, bindings: [], chains: [], render: null, loc: location(this.peek()) }
     if (this.match('search')) {
       do ast.search.push(this.searchNamespace().lexeme)
       while (this.match(','))
@@ -66,6 +69,10 @@ class Parser {
     }
     while (!this.atEnd()) {
       if (this.match(';')) continue
+      if (this.atSeedDirective()) {
+        this.parseSeedDirective(ast)
+        continue
+      }
       if (this.match('let')) {
         const binding = this.parseBinding(this.previous())
         // Upstream 9cc041d0: statement order matters. A let's planIndex is the
@@ -90,11 +97,40 @@ class Parser {
     return ast
   }
 
+  // Upstream: `seed` begins the seed directive only where a statement could not
+  // begin. A call (`seed(`) or a chain (`seed.`) is not a directive.
+  atSeedDirective() {
+    const token = this.peek()
+    if (token.type !== 'identifier' || token.lexeme !== 'seed') return false
+    const next = this.peek(1)
+    return !(next.type === 'punctuation' && (next.lexeme === '(' || next.lexeme === '.'))
+  }
+
+  // Upstream parseSeedDirective: `seed <uint32>`, once, after the search
+  // directive and before every statement.
+  parseSeedDirective(ast) {
+    const start = this.tokens[this.current++]
+    if (ast.seed) throw new DslError('Only one seed directive is allowed per program', location(start))
+    if (ast.chains.length || ast.bindings.length || ast.render) {
+      throw new DslError("'seed' directive must appear before other statements", location(start))
+    }
+    if (ast.search.length === 0) throw new DslError("'seed' directive must follow the search directive", location(start))
+    const value = this.peek()
+    if (value.type !== 'number' || !/^[0-9]+$/.test(value.lexeme) || Number(value.lexeme) > MAX_SEED) {
+      throw new DslError('The seed must be a whole number from 0 to 4294967295', location(value))
+    }
+    this.current += 1
+    ast.seed = { value: Number(value.lexeme), loc: location(start) }
+    while (this.match(';')) continue
+  }
+
   parseBinding(start) {
     const name = this.identifier('Expected binding name after let')
     this.consume('=')
     let value
-    if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(') value = this.parseCall()
+    // A random call starts a value, which arithmetic may follow.
+    const randomStart = RANDOM_FUNCTIONS.has(this.peek().lexeme)
+    if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(' && !randomStart) value = this.parseCall()
     else value = this.parseValueExpression()
     this.match(';')
     return { kind: 'Binding', name: name.lexeme, value, loc: location(start) }
@@ -202,8 +238,9 @@ class Parser {
     const args = []
     let mode = null
     // Upstream's parseCall lets the midi() and audio() value calls mix positional and
-    // keyword arguments (`allowMixed`); every other call keeps one form.
-    const allowMixed = name.lexeme === 'midi' || name.lexeme === 'audio'
+    // keyword arguments (`allowMixed`), and a random call takes positional bounds
+    // beside named ones and its own `seed:`; every other call keeps one form.
+    const allowMixed = name.lexeme === 'midi' || name.lexeme === 'audio' || RANDOM_FUNCTIONS.has(name.lexeme)
     if (!this.check(')')) {
       do {
         const isNamed = this.peek().type === 'identifier' && this.peek(1).lexeme === ':'
@@ -336,9 +373,10 @@ class Parser {
         this.consume(')')
         return { kind: 'vector', width: Number(name.at(-1)), values, loc: location(token) }
       }
-      // Oscillators are offline values. Parse MIDI/audio calls only so the
-      // compiler can warn and ignore these unsupported real-time inputs.
-      if ((name === 'osc' || name === 'midi' || name === 'audio') && this.peek().lexeme === '(') {
+      // Oscillators are offline values, and random calls resolve when the
+      // program compiles. Parse MIDI/audio calls only so the compiler can warn
+      // and ignore these unsupported real-time inputs.
+      if ((name === 'osc' || name === 'midi' || name === 'audio' || RANDOM_FUNCTIONS.has(name)) && this.isPunctuation('(')) {
         this.current -= 1
         return this.parseCall()
       }

@@ -1,5 +1,7 @@
 import { DslError } from './error.js'
+import { joinKey, pathSegment } from './draws.js'
 import { parseDsl } from './parser.js'
+import { canInheritSeed, containsRandom, drawContext, inheritedSeed, isRandomCall, isSeedParam, resolveRandomCall } from './random.js'
 import { isAutomationValue } from '../runtime/automation.js'
 
 // Mirrors upstream std_enums.js oscKind (sine..noise2d; noise/noise1d alias kind 5,
@@ -26,11 +28,14 @@ function clamp01(value) {
 // are allowed, and the oscType resolves from an integer 0..6 or an oscKind name
 // (bare or oscKind-qualified). Invalid programs throw DslError, as everywhere
 // else in this compiler.
-function compileOscillator(call, bindings, depth, resolving = []) {
+function compileOscillator(call, bindings, depth, resolving = [], at = null) {
   if (depth > MAX_AUTOMATION_DEPTH) {
     throw new DslError(`Automation nesting exceeds the maximum depth of ${MAX_AUTOMATION_DEPTH}`, call.loc)
   }
   const fields = {}
+  // A random call in an argument is keyed by the argument's name, whether it is
+  // written by position or by name.
+  const fieldAt = (name) => at && { key: at.key, path: [...at.path, pathSegment.named(name)] }
   if (call.argMode === 'named') {
     for (const arg of call.args) {
       if (!OSC_PARAM_ORDER.includes(arg.name)) {
@@ -44,7 +49,7 @@ function compileOscillator(call, bindings, depth, resolving = []) {
     })
   }
 
-  const rawType = fields.type === undefined ? 0 : evaluateValue(fields.type, bindings, depth + 1, resolving)
+  const rawType = fields.type === undefined ? 0 : evaluateValue(fields.type, bindings, depth + 1, resolving, fieldAt('type'))
   let oscType
   if (typeof rawType === 'number') {
     if (!Number.isInteger(rawType) || rawType < 0 || rawType > 6) {
@@ -63,7 +68,7 @@ function compileOscillator(call, bindings, depth, resolving = []) {
 
   const numberField = (node, name, fallback, clamp) => {
     if (node === undefined) return fallback
-    const value = evaluateValue(node, bindings, depth + 1, resolving)
+    const value = evaluateValue(node, bindings, depth + 1, resolving, fieldAt(name))
     if (value === undefined) return fallback
     if (isOscValue(value)) return value
     if (value === true) return 1
@@ -85,23 +90,35 @@ function compileOscillator(call, bindings, depth, resolving = []) {
   }
 }
 
-function compileAutomationCall(call, bindings, depth, resolving = []) {
+function compileAutomationCall(call, bindings, depth, resolving = [], at = null) {
   if (call.name !== 'osc') {
     console.warn(`Warning: ${call.name}() is unsupported in CPU ports; real-time input is unavailable. Ignoring this unsupported input value.`)
     return undefined
   }
-  return compileOscillator(call, bindings, depth, resolving)
+  return compileOscillator(call, bindings, depth, resolving, at)
+}
+
+// `at` is where a random call in the value draws: the key of the place the value
+// is written and the path inside the value (upstream randomize.js). Without it a
+// random call is not allowed here.
+function extend(at, segment) {
+  return at && { key: at.key, path: [...at.path, segment] }
 }
 
 // `resolving` threads the chain of binding names currently being resolved so a
 // cyclic let set (`let a = b`, `let b = a`) fails instead of looping forever,
 // as upstream's validator substitution detects the same cycle.
-function evaluateValue(value, bindings, oscDepth = 0, resolving = []) {
-  if (Array.isArray(value)) return value.map((item) => evaluateValue(item, bindings, oscDepth, resolving))
+function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null) {
+  if (Array.isArray(value)) return value.map((item, index) => evaluateValue(item, bindings, oscDepth, resolving, extend(at, pathSegment.component(index))))
   if (!value || typeof value !== 'object') return value
   if (value.kind === 'surface') return value
+  if (isRandomCall(value)) {
+    if (!at) throw new DslError(`A random call is not allowed here: ${value.name}()`, value.loc)
+    const ctx = { seed: bindings.draws.seed, key: at.key, draw: bindings.draws.draw, choicesFor: bindings.choicesFor }
+    return resolveRandomCall(value, ctx, at.path, (item, path) => evaluateValue(item, bindings, oscDepth, resolving, { key: at.key, path }))
+  }
   if (value.kind === 'Call') {
-    if (VALUE_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth, resolving)
+    if (VALUE_CALLS.has(value.name)) return compileAutomationCall(value, bindings, oscDepth, resolving, at)
     throw new DslError(`Unsupported DSL value ${value.kind} "${value.name}"`, value.loc)
   }
   if (value.kind === 'identifier') {
@@ -118,7 +135,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = []) {
       if (resolving.includes(value.name)) {
         throw new DslError(`Automation cycle detected: ${[...resolving, value.name].join(' -> ')}`, value.loc)
       }
-      binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, value.name])
+      binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, value.name], binding.at)
       binding.resolved = true
       return binding.value
     }
@@ -128,32 +145,40 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = []) {
     return value.name
   }
   if (value.kind === 'vector') {
-    const components = value.values.map((item) => evaluateValue(item, bindings, 0, resolving))
+    const components = value.values.map((item, index) => evaluateValue(item, bindings, 0, resolving, extend(at, pathSegment.component(index))))
     if (components.length !== value.width || components.some((item) => typeof item !== 'number')) {
       throw new DslError(`vec${value.width} requires ${value.width} numeric values`, value.loc)
     }
     return components
   }
   if (value.kind === 'unary') {
-    const input = evaluateValue(value.argument, bindings, 0, resolving)
+    const input = evaluateValue(value.argument, bindings, 0, resolving, value.operator === '-' ? extend(at, pathSegment.operand(0)) : at)
     if (typeof input !== 'number') throw new DslError('Unary arithmetic requires a number', value.loc)
     return value.operator === '-' ? -input : input
   }
   if (value.kind === 'binary') {
-    const left = evaluateValue(value.left, bindings, 0, resolving)
-    const right = evaluateValue(value.right, bindings, 0, resolving)
+    const left = evaluateValue(value.left, bindings, 0, resolving, extend(at, pathSegment.operand(0)))
+    const right = evaluateValue(value.right, bindings, 0, resolving, extend(at, pathSegment.operand(1)))
     if (typeof left !== 'number' || typeof right !== 'number') throw new DslError('Arithmetic requires numeric values', value.loc)
     if (value.operator === '+') return left + right
     if (value.operator === '-') return left - right
     if (value.operator === '*') return left * right
     return left / right
   }
-  if (value.kind === 'Chain' && bindings.pending) return bindings.compileInlineChain(value)
+  if (value.kind === 'Chain' && bindings.pending) return bindings.compileInlineChain(value, at)
   throw new DslError(`Unsupported DSL value ${value.kind}`, value.loc)
 }
 
-function resolveArgs(args, bindings) {
-  return args.map((arg) => ({ ...arg, value: evaluateValue(arg.value, bindings) }))
+// Each argument draws under its element's key and its canonical parameter name,
+// whether it is written by position or by name.
+function resolveArgs(args, bindings, definition, elementKey) {
+  let positional = 0
+  return args.map((arg) => {
+    const written = arg.name ?? definition?.paramNames[positional++]
+    const name = definition?.paramAliases?.[written] ?? written
+    const at = elementKey && name ? { key: joinKey(elementKey, name), path: [] } : null
+    return { ...arg, value: evaluateValue(arg.value, bindings, 0, [], at) }
+  })
 }
 
 // The `let` bindings of a program, plus the compiler of chain arguments. A chain in
@@ -162,19 +187,53 @@ function resolveArgs(args, bindings) {
 // renderer runs it before the step, as upstream's validator compiles the chain into
 // temporary steps ahead of the consuming effect.
 class CompileScope extends Map {
-  constructor(registry, search) {
+  constructor(registry, search, draws = drawContext(null)) {
     super()
     this.registry = registry
     this.search = search
     this.pending = null
     this.inlineCount = 0
+    // The program's draws, and the occurrence counts that name its elements
+    // (upstream: `<effect>_<n>` by source order).
+    this.draws = draws
+    this.occurrences = new Map()
+    // The declarations of each let name, counted apart for lets that hold
+    // effects and lets that hold values (upstream `let:<name>#k`).
+    this.letCounts = { effect: new Map(), value: new Map() }
+    this.choicesFor = (effectName, paramName, loc) => {
+      const candidates = this.search.map((namespace) => registry.resolve(effectName, [namespace])).filter(Boolean)
+      if (candidates.length > 1) {
+        throw new DslError(`choices(): effect name '${effectName}' is ambiguous: ${candidates.map((item) => `${item.namespace}.${item.func}`).join(', ')}`, loc)
+      }
+      if (candidates.length === 0) throw new DslError(`choices(): unknown effect '${effectName}'`, loc)
+      const param = candidates[0].params[paramName]
+      if (!param) throw new DslError(`choices(): effect '${effectName}' has no parameter named '${paramName}'`, loc)
+      if (!param.choices || typeof param.choices !== 'object') {
+        throw new DslError(`choices(): parameter '${paramName}' of '${effectName}' has no choices`, loc)
+      }
+      return Object.keys(param.choices)
+    }
     // Names of the program's lets that a later statement declares. Reading one
     // before its let reports S003, as upstream's validator does.
     this.pendingNames = null
   }
 
-  compileInlineChain(chain) {
-    const compiled = compileChain(chain, this, { inline: true })
+  nextOccurrence(func) {
+    const n = (this.occurrences.get(func) ?? 0) + 1
+    this.occurrences.set(func, n)
+    return `${func}_${n}`
+  }
+
+  letKey(name, kind) {
+    const k = (this.letCounts[kind].get(name) ?? 0) + 1
+    this.letCounts[kind].set(name, k)
+    return k === 1 ? `let:${name}` : `let:${name}#${k}`
+  }
+
+  // An effect passed as a value draws under the value's key: `<key>/e:<op>/...`.
+  compileInlineChain(chain, at) {
+    const keyBase = at ? joinKey(at.key, ...at.path) : null
+    const compiled = compileChain(chain, this, { inline: true, keyBase })
     const surface = `inline:${this.inlineCount++}`
     this.pending.push(Object.freeze({ surface, chain: compiled }))
     return { kind: 'surface', name: surface, loc: chain.loc }
@@ -248,7 +307,7 @@ function read3dReferences(call) {
 // Compiles one chain. A statement chain that begins with a generator must end with
 // write(oN). A chain argument (`inline`) needs no write(): its last image is the
 // argument's surface.
-function compileChain(chain, bindings, { inline = false } = {}) {
+function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) {
   const { registry, search } = bindings
   const steps = []
   let hasInput = false
@@ -263,22 +322,39 @@ function compileChain(chain, bindings, { inline = false } = {}) {
   for (let index = 0; index < calls.length; index += 1) {
     let call = calls[index]
     const partial = bindings.get(call.name)
+    let heldKey = null
     if (partial?.kind === 'alias') {
       call = { ...call, name: partial.name }
     } else if (partial) {
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       call = mergePartial(partial.call, call)
+      // An element held by a let draws under the let's key and the occurrence
+      // name the let gave it.
+      heldKey = partial.key
     }
     const namespaces = call.namespace ? [call.namespace] : search
     const definition = registry.resolve(call.name, namespaces)
     const rawArgs = definition ? effectArguments(call, definition) : call.args
+    // The element's key for its draws (upstream validator): its occurrence name
+    // at the top level, under its let, or under the value it is passed as. The
+    // occurrence is counted before the element's arguments, so an element
+    // passed as a value counts after the element that takes it.
+    let elementKey = null
+    if (definition && !['read', 'write', 'write3d'].includes(call.name) && !(index === 0 && call.name === 'read3d' && read3dReferences(call))) {
+      const op = `${definition.namespace}.${definition.func}`
+      if (heldKey) elementKey = heldKey
+      else {
+        const occurrence = bindings.nextOccurrence(definition.func)
+        elementKey = inline && keyBase !== null ? joinKey(keyBase, `e:${op}`) : `${op}@${occurrence}`
+      }
+    }
     // Chain arguments compile while the arguments resolve; they belong to this call.
     const outerPending = bindings.pending
     bindings.pending = []
     let args
     let inlineChains
     try {
-      args = resolveArgs(rawArgs, bindings)
+      args = resolveArgs(rawArgs, bindings, definition, elementKey)
     } finally {
       inlineChains = bindings.pending
       bindings.pending = outerPending
@@ -366,6 +442,17 @@ function compileChain(chain, bindings, { inline = false } = {}) {
       const name = arg.name ?? definition.paramNames[argumentIndex]
       return [definition.paramAliases?.[name] ?? name]
     }))])
+    // With a seed directive, an effect seed the program does not set inherits:
+    // a draw over the parameter's whole-number range.
+    if (bindings.draws.directive && elementKey) {
+      let inherited = null
+      for (const name of definition.paramNames) {
+        if (!isSeedParam(definition, name) || explicitParams.includes(name) || !canInheritSeed(definition.params[name])) continue
+        inherited ??= {}
+        inherited[name] = inheritedSeed(bindings.draws.draw(bindings.draws.seed, joinKey(elementKey, name, 'inherit')), definition.params[name])
+      }
+      if (inherited) params = Object.isFrozen(params) ? Object.freeze({ ...params, ...inherited }) : Object.assign(params, inherited)
+    }
     const step = { kind: 'effect', definition, params, explicitParams, loc: call.loc }
     if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
     steps.push(step)
@@ -392,10 +479,19 @@ function aliasBinding(value, bindings) {
 // A bare identifier value must name something resolvable now (an earlier
 // binding, an alias, or an effect), as upstream's declareVar requires.
 function declareBinding(binding, bindings) {
-  if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name)) {
+  if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name) && !isRandomCall(binding.value)) {
     // A partial keeps its call unresolved. Its arguments resolve where it is
-    // called, as upstream's validator substitutes a symbol at each use.
-    bindings.set(binding.name, { kind: 'partial', call: binding.value })
+    // called, as upstream's validator substitutes a symbol at each use. Its
+    // element is counted here, where the let is written, and draws under the
+    // let's key wherever it is called.
+    if (binding.value.args.some((arg) => containsRandom(arg.value))) {
+      throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
+    }
+    const definition = bindings.registry.resolve(binding.value.name, binding.value.namespace ? [binding.value.namespace] : bindings.search)
+    const key = definition
+      ? joinKey(bindings.letKey(binding.name, 'effect'), `${definition.namespace}.${definition.func}@${bindings.nextOccurrence(definition.func)}`)
+      : null
+    bindings.set(binding.name, { kind: 'partial', call: binding.value, key })
     return
   }
   if (aliasBinding(binding.value, bindings)) {
@@ -406,14 +502,22 @@ function declareBinding(binding, bindings) {
       !bindings.has(binding.value.name) && !bindings.registry.resolve(binding.value.name, bindings.search)) {
     throw new DslError(`Variable used before assignment: '${binding.value.name}'`, binding.value.loc)
   }
-  bindings.set(binding.name, { kind: 'value', expr: binding.value, resolved: false, value: null })
+  // A value let draws once, under its own key, wherever it is used. One that
+  // holds a random call draws where it is written, used or not, as upstream's
+  // validator resolves it at the declaration.
+  const entry = { kind: 'value', expr: binding.value, resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
+  bindings.set(binding.name, entry)
+  if (containsRandom(binding.value)) {
+    entry.value = evaluateValue(binding.value, bindings, 0, [binding.name], entry.at)
+    entry.resolved = true
+  }
 }
 
 export function compileDsl(source, registry, options = {}) {
   const ast = parseDsl(source, options)
   if (ast.search.length === 0) throw new DslError('Missing required search directive', ast.loc)
 
-  const bindings = new CompileScope(registry, ast.search)
+  const bindings = new CompileScope(registry, ast.search, drawContext(ast.seed?.value ?? null, options.onDraw))
   let nextBinding = 0
   const declareThrough = (chainIndex) => {
     while (nextBinding < ast.bindings.length && (ast.bindings[nextBinding].planIndex ?? 0) <= chainIndex) {
