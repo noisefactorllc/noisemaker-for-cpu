@@ -251,3 +251,15 @@ test('a condition or return value refuses boolean arithmetic and a let read befo
     assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
   }
 })
+
+test('arithmetic in a condition or return value takes numbers or deferred operands, as upstream parses it', () => {
+  for (const [source, message] of [
+    ['noise().write(o0)\nif (foo + 1) {\n  noise().write(o1)\n}\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nreturn [foo + 1]\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nreturn -true\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nreturn s5x\nrender(o0)', /Expect '\('/],
+    ['noise().write(o0)\nreturn foo.search\nrender(o0)', /Expected enum member/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
+  }
+})

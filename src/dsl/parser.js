@@ -613,7 +613,10 @@ class Parser {
       // A member segment may be a keyword, as upstream's memberTokenTypes allows.
       while (this.match('.')) {
         const member = this.peek()
-        if (member.type !== 'identifier' && member.type !== 'keyword') throw new DslError('Expected enum member', location(member))
+        // Upstream's memberTokenTypes: identifiers, output references and
+        // every keyword but search.
+        const accepted = member.type === 'identifier' || member.type === 'surface' || (member.type === 'keyword' && member.lexeme !== 'search')
+        if (!accepted) throw new DslError('Expected enum member', location(member))
         this.current += 1
         path += `.${member.lexeme}`
       }

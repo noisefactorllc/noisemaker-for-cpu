@@ -5164,6 +5164,44 @@
      }
     }
    ]
+  },
+  {
+   "name": "return-boolean-with-random",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn [rand(0, 1) + true]\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "return-member-output-ref",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn foo.o1\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
   }
  ]
 }

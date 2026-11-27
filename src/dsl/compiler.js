@@ -1279,18 +1279,34 @@ function checkReads(value, bindings, { condition = false } = {}) {
   }
 }
 
+// Upstream's parser takes an arithmetic operand only as a number, or deferred:
+// a random call, or another operation (isDeferred, toNumber).
+function arithmeticOperand(value) {
+  return typeof value === 'number' || isRandomCall(value) || value?.kind === 'binary' || value?.kind === 'unary'
+}
+
 function checkPendingReads(value, bindings) {
   if (Array.isArray(value)) return value.forEach((item) => checkPendingReads(item, bindings))
   if (!value || typeof value !== 'object') return
   if (value.kind === 'identifier') {
+    // Upstream's lexer splits a reference followed by more characters, `s5x`,
+    // into a reference and a name, which does not parse.
+    if (/^(s|vol|geo|xyz|vel|rgba|mesh)\d+[A-Za-z_]/.test(value.name)) throw new DslError("Expect '('", value.loc)
     if (!bindings.has(value.name) && bindings.pendingNames?.has(value.name)) {
       throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
     }
   } else if (value.kind === 'binary') {
-    if (typeof value.left === 'boolean' || typeof value.right === 'boolean') throw new DslError('Expected number', value.loc)
+    // Checked only when neither operand is deferred (upstream isDeferred).
+    const deferred = (side) => isRandomCall(side) || side?.kind === 'binary' || side?.kind === 'unary'
+    if (!deferred(value.left) && !deferred(value.right) && (!arithmeticOperand(value.left) || !arithmeticOperand(value.right))) {
+      throw new DslError('Expected number', value.loc)
+    }
     checkPendingReads(value.left, bindings)
     checkPendingReads(value.right, bindings)
-  } else if (value.kind === 'unary') checkPendingReads(value.argument, bindings)
+  } else if (value.kind === 'unary') {
+    if (!arithmeticOperand(value.argument)) throw new DslError('Expected number', value.loc)
+    checkPendingReads(value.argument, bindings)
+  }
   else if (value.kind === 'vector') checkPendingReads(value.values, bindings)
   else if (value.kind === 'Call') value.args.forEach((arg) => checkPendingReads(arg.value, bindings))
   else if (value.kind === 'Chain') value.calls.forEach((call) => checkPendingReads(call, bindings))

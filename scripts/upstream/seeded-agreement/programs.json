@@ -1218,5 +1218,19 @@
    "synth/noise"
   ],
   "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (vol0) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nif (s5) {\n  noise().write(o2)\n}\nreturn mesh0\nrender(o0)"
+ },
+ {
+  "name": "return-boolean-with-random",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn [rand(0, 1) + true]\nrender(o0)"
+ },
+ {
+  "name": "return-member-output-ref",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn foo.o1\nrender(o0)"
  }
 ]
