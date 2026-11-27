@@ -1,0 +1,6 @@
+{
+  "source": "shaders/tests/fixtures/seeded-draws.json",
+  "branch": "2.x",
+  "commit": "4bd8c7cfd2fa0a4d50122218f3bd8a85c4cd1c41",
+  "sha256": "86a10af4ea3f06d5e91f84949087f7d6a01747034ef4a463f8e9877dacb1147a"
+}
