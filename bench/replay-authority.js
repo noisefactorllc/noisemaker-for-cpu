@@ -105,7 +105,7 @@ let rendered = 0
 for (const record of selection) {
   const name = `${sha256(record.id)}.json`
   const filename = join(directory, name)
-  const receipt = { id: record.id, rgba8Sha256: expected.get(record.id) }
+  const receipt = { identity, id: record.id, rgba8Sha256: expected.get(record.id) }
   if (saved.has(name)) {
     assert.deepEqual(JSON.parse(await readFile(filename, 'utf8')), receipt, `${record.id}: invalid saved receipt`)
     continue
