@@ -285,5 +285,23 @@
    "synth/noise"
   ],
   "dsl": "search synth\nseed 5\nlet m = midi(randInt(0, 2), channel: 1)\nlet n = midi(randInt(0, 2), rand(1, 2), channel: 1, mode: 0)\nlet a = audio(rand(0, 1), band: 0)\nlet k = midi(1, min: rand(1), min: 0.5)\nnoise().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "picked-partial-keeps-its-binding",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 3)\nlet v = pick(t, t)\nlet t = noise(scaleX: 5)\nsolid().blendMode(tex: v).write(o0)\nt().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "nested-keyword-twice-in-effect-let",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet b = blendMode(tex: noise().blendMode(tex: noise(scaleX: rand(1, 2)), tex: solid()))\nsolid().b().write(o0)\nnoise().write(o1)\nrender(o0)"
  }
 ]

@@ -1559,6 +1559,95 @@
      }
     }
    ]
+  },
+  {
+   "name": "picked-partial-keeps-its-binding",
+   "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 3)\nlet v = pick(t, t)\nlet t = noise(scaleX: 5)\nsolid().blendMode(tex: v).write(o0)\nt().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "let:t/synth.noise@noise_1/seed/inherit",
+     "u": 3288666147
+    },
+    {
+     "seed": 3,
+     "key": "let:t#2/synth.noise@noise_2/seed/inherit",
+     "u": 3838363254
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 48
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 55
+     }
+    }
+   ]
+  },
+  {
+   "name": "nested-keyword-twice-in-effect-let",
+   "dsl": "search synth, mixer\nseed 3\nlet b = blendMode(tex: noise().blendMode(tex: noise(scaleX: rand(1, 2)), tex: solid()))\nsolid().b().write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:b/mixer.blendMode@blendMode_1/tex/e:synth.noise/seed/inherit",
+     "u": 3338504562
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 1816131536
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 63
+     }
+    },
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 37
+     }
+    }
+   ]
   }
  ]
 }

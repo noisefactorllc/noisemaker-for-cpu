@@ -98,13 +98,30 @@ const AUTOMATION_FIELDS = {
   audio: new Set(['band', 'min', 'max']),
 }
 
+const AUTOMATION_KEYWORD_ONLY = { midi: ['name', 'id', 'cc', 'nrpn', 'zone', 'members'], audio: ['channel', 'name', 'id'] }
+
 // Upstream's parser fills positional arguments into the slots no keyword set,
-// in order, and keeps the last value of a keyword written twice.
+// in order, and keeps the last value of a keyword written twice. It refuses an
+// excess positional, an unknown keyword and a name or id that is not a string.
 function automationFields(call) {
+  const order = AUTOMATION_ORDER[call.name]
+  const valid = [...order, ...AUTOMATION_KEYWORD_ONLY[call.name]]
+  const positional = call.args.filter((arg) => arg.name === null)
+  if (positional.length > order.length) {
+    throw new DslError(`${call.name}() ${AUTOMATION_KEYWORD_ONLY[call.name].join(', ').replace(/, ([^,]*)$/, ' and $1')} are keyword-only`, call.loc)
+  }
+  for (const arg of call.args) {
+    if (arg.name === null) continue
+    if (!valid.includes(arg.name)) throw new DslError(`${call.name}() unknown parameter '${arg.name}'. Valid: ${valid.join(', ')}`, call.loc)
+    if ((arg.name === 'name' || arg.name === 'id') && typeof arg.value !== 'string') {
+      throw new DslError(`${call.name}() '${arg.name}' requires a quoted string`, call.loc)
+    }
+  }
   const named = new Map(call.args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg.value]))
-  const free = AUTOMATION_ORDER[call.name].filter((name) => !named.has(name))
+  const free = order.filter((name) => !named.has(name))
+  if (positional.length > free.length) throw new DslError(`${call.name}() has an excess positional argument`, call.loc)
   const fields = new Map()
-  call.args.filter((arg) => arg.name === null).forEach((arg, index) => { if (index < free.length) fields.set(free[index], arg.value) })
+  positional.forEach((arg, index) => fields.set(free[index], arg.value))
   for (const [name, value] of named) fields.set(name, value)
   return fields
 }
@@ -162,7 +179,9 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
       // A let that holds an effect, passed as a value, compiles as that effect,
       // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
       if (binding.kind === 'partial') {
-        const call = { kind: 'Call', name: value.name, args: [], argMode: null, loc: value.loc }
+        // The call carries the binding in force here, so a later let of the
+        // same name does not change what it stands for.
+        const call = { kind: 'Call', name: value.name, args: [], argMode: null, loc: value.loc, boundPartial: binding }
         const chain = { kind: 'Chain', calls: [call], loc: value.loc }
         if (bindings.deferChains) return chain
         if (!bindings.pending) throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
@@ -413,7 +432,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
   const calls = chain.calls.flatMap((element) => element.kind === 'Subchain' ? element.body : [element])
   for (let index = 0; index < calls.length; index += 1) {
     let call = calls[index]
-    const partial = bindings.get(call.name)
+    const partial = call.boundPartial ?? bindings.get(call.name)
     let heldKey = null
     if (partial?.kind === 'alias') {
       call = { ...call, name: partial.name }
@@ -618,9 +637,20 @@ function countLetValues(args, bindings) {
     for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
       const definition = bindings.registry.resolve(entry.name, entry.namespace ? [entry.namespace] : bindings.search)
       if (definition) bindings.nextOccurrence(definition.func)
-      countLetValues(entry.args, bindings)
+      countLetValues(lastOfEachName(entry.args, definition), bindings)
     }
   }
+}
+
+// Whether a let's argument holds a random call, in effects passed as values too,
+// reading only the last of a keyword written twice at every depth.
+function randomInLetValue(value, bindings) {
+  if (Array.isArray(value)) return value.some((item) => randomInLetValue(item, bindings))
+  if (value?.kind !== 'Chain') return containsRandomDeep(value)
+  return value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call])).some((entry) => {
+    const definition = bindings.registry.resolve(entry.name, entry.namespace ? [entry.namespace] : bindings.search)
+    return lastOfEachName(entry.args, definition).some((arg) => randomInLetValue(arg.value, bindings))
+  })
 }
 
 // Whether a value names a value let that chose an effect, as upstream
@@ -653,7 +683,7 @@ function declareBinding(binding, bindings) {
     // The arguments this let writes, with only the last of a keyword written
     // twice (upstream keeps one). The merge above keeps these same nodes.
     const written = lastOfEachName(own.args, definition)
-    if (written.some((arg) => containsRandomDeep(arg.value))) {
+    if (written.some((arg) => randomInLetValue(arg.value, bindings))) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
     if (written.some((arg) => namesChosenEffect(arg.value, bindings))) {

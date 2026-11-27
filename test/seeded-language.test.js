@@ -112,3 +112,15 @@ test('a let that names another let\'s chosen effect is refused for now', () => {
     assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), message, source)
   }
 })
+
+test('midi() and audio() refuse the arguments upstream refuses, random ones included', () => {
+  for (const [value, message] of [
+    ['midi(1, 0, 0, 1, 1, rand(1, 2))', /keyword-only/],
+    ['audio(0, 0, 1, rand(1, 2))', /keyword-only/],
+    ['midi(rand(0, 1), 2, 3, 4, 5, channel: 1)', /excess positional argument/],
+    ['midi(1, foo: rand(0, 1))', /unknown parameter 'foo'/],
+    ['midi(1, name: rand(1, 3))', /'name' requires a quoted string/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\nlet m = ${value}\nnoise().write(o0)`), message, value)
+  }
+})
