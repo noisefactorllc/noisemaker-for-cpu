@@ -277,3 +277,14 @@ test('constant operations fold, unary plus does nothing, and split references ar
   }
   assert.ok(compile('search synth\nseed 5\nnoise().write(o0)\nreturn +true\nif (+true) {\n  noise().write(o1)\n}\nrender(o0)'))
 })
+
+test('a unary plus is checked as the value it wraps, as upstream drops it', () => {
+  for (const [source, message] of [
+    ['noise().write(o0)\nreturn 1 + +true\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nreturn -+true\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nif (+foo) {\n  noise().write(o1)\n}\nrender(o0)', /Variable used before assignment: 'foo'/],
+    ['noise().write(o0)\nif (true) {\n  noise().write(o1)\n} elif (+bar) {\n  noise().write(o2)\n}\nrender(o0)', /Variable used before assignment: 'bar'/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
+  }
+})

@@ -1273,6 +1273,8 @@ const REFERENCE_NAME = /^(s|vol|geo|xyz|vel|rgba|mesh)\d+$/
 // is not checked.
 function checkReads(value, bindings, { condition = false } = {}) {
   checkPendingReads(value, bindings)
+  // Upstream's parser drops a unary `+`, so `+foo` is checked as `foo`.
+  while (value?.kind === 'unary' && value.operator === '+') value = value.argument
   // No enum has an output reference as a member (upstream: unknown enum path).
   if (condition && value?.kind === 'identifier' && value.name.split('.').slice(1).some((segment) => /^o\d+$/.test(segment))) {
     throw new DslError(`Unknown enum path: '${value.name}'`, value.loc)
@@ -1297,7 +1299,7 @@ function isDeferredValue(value) {
 function arithmeticOperand(value) {
   if (typeof value === 'number' || isDeferredValue(value)) return true
   if (value?.kind === 'binary') return arithmeticOperand(value.left) && arithmeticOperand(value.right)
-  if (value?.kind === 'unary') return value.operator === '+' ? true : arithmeticOperand(value.argument)
+  if (value?.kind === 'unary') return arithmeticOperand(value.argument)
   return false
 }
 
