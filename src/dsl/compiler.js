@@ -325,8 +325,6 @@ class CompileScope extends Map {
     this.pendingNames = null
   }
 
-  // A let whose value carries an `_id:` may be used once: its uses would share
-  // the id (upstream S011).
   // An `_id:` written in a let's value is one id however the let is reached;
   // an element that takes it a second time would share it (upstream S011).
   takeId(arg, loc) {
