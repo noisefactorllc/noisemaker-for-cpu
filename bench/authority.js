@@ -22,6 +22,7 @@ console.log(JSON.stringify({
   platform: process.platform,
   arch: process.arch,
   osRelease: release(),
+  timing: 'render-call',
   cases: selected.length,
 }))
 
@@ -30,13 +31,15 @@ let cpuMs = 0
 for (const { id, source, options } of selected) {
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
   const startCpu = process.cpuUsage()
+  const started = performance.now()
   const result = renderer.render(source, options)
+  const renderMs = performance.now() - started
   const { user, system } = process.cpuUsage(startCpu)
   const renderCpuMs = (user + system) / 1000
-  elapsedMs += result.elapsedMs
+  elapsedMs += renderMs
   cpuMs += renderCpuMs
   console.log(JSON.stringify({
-    type: 'case', id, options, elapsedMs: result.elapsedMs, cpuMs: renderCpuMs, passes: result.stats.passes,
+    type: 'case', id, options, elapsedMs: renderMs, cpuMs: renderCpuMs, passes: result.stats.passes,
   }))
 }
 console.log(JSON.stringify({ type: 'summary', cases: selected.length, elapsedMs, cpuMs }))
