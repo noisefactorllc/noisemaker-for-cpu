@@ -120,6 +120,11 @@ class Parser {
         this.match(';')
         continue
       }
+      if (this.atControlFlow()) {
+        ast.chains.push(this.parseControlFlow())
+        this.match(';')
+        continue
+      }
       if (this.match('let')) {
         const binding = this.parseBinding(this.previous())
         // Upstream 9cc041d0: statement order matters. A let's planIndex is the
@@ -285,6 +290,8 @@ class Parser {
         body.push({ kind: 'ChainTail', calls: this.parseChainTail(), loc: location(start) })
       } else if (this.atMaybe() && !this.maybeBodyIsTail()) {
         body.push(this.parseMaybeStatement())
+      } else if (this.atControlFlow()) {
+        body.push(this.parseControlFlow())
       } else if (this.match('let')) {
         body.push(this.parseBinding(this.previous()))
       } else {
@@ -294,6 +301,49 @@ class Parser {
     }
     this.consume('}')
     return body
+  }
+
+  // Upstream's control flow: `if (c) { } elif (c) { } else { }`, `break`,
+  // `continue` and `return [value]`. Upstream reserves these names.
+  atControlFlow() {
+    const token = this.peek()
+    if (token.type !== 'identifier') return false
+    if (token.lexeme === 'if') return this.peek(1).type === 'punctuation' && this.peek(1).lexeme === '('
+    return ['break', 'continue', 'return'].includes(token.lexeme) &&
+      !(this.peek(1).type === 'punctuation' && (this.peek(1).lexeme === '(' || this.peek(1).lexeme === '.'))
+  }
+
+  parseCondition() {
+    this.consume('(')
+    const condition = this.parseValueExpression()
+    this.consume(')')
+    return condition
+  }
+
+  parseControlFlow() {
+    const start = this.tokens[this.current++]
+    const loc = location(start)
+    if (start.lexeme === 'break') return { kind: 'Break', loc }
+    if (start.lexeme === 'continue') return { kind: 'Continue', loc }
+    if (start.lexeme === 'return') {
+      // A value follows only where an expression can start (upstream exprStartTokens).
+      const ends = this.atEnd() || this.check('}') || this.check(';') || this.peek().type === 'keyword'
+      return ends ? { kind: 'Return', loc } : { kind: 'Return', value: this.parseValueExpression(), loc }
+    }
+    const condition = this.parseCondition()
+    const then = this.parseBlock(false)
+    const elif = []
+    while (this.peek().type === 'identifier' && this.peek().lexeme === 'elif') {
+      this.current += 1
+      const branchCondition = this.parseCondition()
+      elif.push({ condition: branchCondition, then: this.parseBlock(false) })
+    }
+    let otherwise = null
+    if (this.peek().type === 'identifier' && this.peek().lexeme === 'else') {
+      this.current += 1
+      otherwise = this.parseBlock(false)
+    }
+    return { kind: 'If', condition, then, elif, else: otherwise, loc }
   }
 
   parsePartDecl() {

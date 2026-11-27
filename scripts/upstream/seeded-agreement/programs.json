@@ -1122,5 +1122,45 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, filter\nseed 3\nlet t = read(o1).subchain(name: \"s\") { .tint(alpha: rand(0, 1)) }\nlet t = rand(1, 9)\nnoise(scaleX: t).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "if-branches-draw",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\nif (chance(0.5)) {\n  noise(scaleX: rand(1, 9)).write(o0)\n} elif (chance(rand())) {\n  noise(scaleY: rand(1, 9)).write(o0)\n} else {\n  noise().tint(alpha: rand()).write(o0)\n}\nnoise().write(o1)\nrender(o1)"
+ },
+ {
+  "name": "if-plain-condition",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth\nseed 5\nif (true) {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nif (false) {\n  noise().write(o1)\n}\nrender(o0)"
+ },
+ {
+  "name": "if-nested-and-in-maybe",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth\nseed 5\nmaybe(0.5) {\n  if (chance(0.3)) {\n    if (true) {\n      noise(scaleX: rand(1, 9)).write(o0)\n    }\n  }\n}\nif (randInt(0, 1)) {\n  noise().write(o1)\n}\nrender(o1)"
+ },
+ {
+  "name": "if-in-part-instances",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth\nseed 5\npart scene {\n  if (chance(0.5)) {\n    noise(scaleX: rand(1, 9)).write(o0)\n  }\n}\nuse(scene)\nuse(scene)\nif (true) {\n  noise().write(o1)\n}\nrender(o1)"
+ },
+ {
+  "name": "if-break-continue-return",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth\nseed 5\nif (true) {\n  noise(scaleX: rand(1, 9)).write(o0)\n  break\n}\ncontinue\nreturn\nrender(o0)"
  }
 ]

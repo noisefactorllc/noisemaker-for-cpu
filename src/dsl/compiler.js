@@ -331,6 +331,10 @@ class CompileScope extends Map {
     this.partStack = []
     this.partScopes = []
     this.usePath = []
+    // The `if` statements of the naming body, numbered from 1, and the
+    // control flow the program holds.
+    this.ifCount = 0
+    this.controlFlow = []
     // The bindings a let's names stand for where the let is written, by node.
     // Each part instance binds in a map of its own, over the enclosing one's,
     // so one instance's bindings never reach another's (upstream substitutes
@@ -456,7 +460,7 @@ class CompileScope extends Map {
       else overrides.set(arg.name, { value: containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : evaluateValue(arg.value, this) })
     }
     const saved = {
-      keyScope: this.keyScope.splice(0), occurrences: this.occurrences, letCounts: this.letCounts,
+      keyScope: this.keyScope.splice(0), occurrences: this.occurrences, letCounts: this.letCounts, ifCount: this.ifCount,
       bodyIds: this.bodyIds, claimedIds: this.claimedIds, givenNames: this.givenNames,
     }
     if (ownSeed !== null) {
@@ -466,6 +470,8 @@ class CompileScope extends Map {
     this.partScopes.push(this.keyScope.join('/'))
     this.occurrences = new Map()
     this.letCounts = { effect: new Map(), value: new Map() }
+    // A part body numbers its `if` statements from 1 in each instance.
+    this.ifCount = 0
     this.bodyIds = new Set()
     collectIds(part.body.map((item) => (item.kind === 'Binding' ? item.value : item.kind === 'ChainTail' ? { kind: 'Chain', calls: item.calls } : item)), this.bodyIds)
     this.claimedIds = new Set()
@@ -499,7 +505,7 @@ class CompileScope extends Map {
       this.partScopes.pop()
       if (ownSeed !== null) this.seedScopes.pop()
       this.keyScope.splice(0, this.keyScope.length, ...saved.keyScope)
-      Object.assign(this, { occurrences: saved.occurrences, letCounts: saved.letCounts, bodyIds: saved.bodyIds, claimedIds: saved.claimedIds, givenNames: saved.givenNames })
+      Object.assign(this, { occurrences: saved.occurrences, letCounts: saved.letCounts, ifCount: saved.ifCount, bodyIds: saved.bodyIds, claimedIds: saved.claimedIds, givenNames: saved.givenNames })
     }
   }
 
@@ -972,6 +978,7 @@ function collectIds(value, ids) {
   // A maybe block's or tail's body, a binding's value and a use's arguments
   // are written in the same naming body.
   if (value.kind === 'Maybe' || value.kind === 'MaybeTail') return collectIds(value.body, ids)
+  if (value.kind === 'If') return collectIds([value.condition, value.then, ...value.elif.flatMap((entry) => [entry.condition, entry.then]), value.else], ids)
   if (value.kind === 'Binding') return collectIds(value.value, ids)
   if (value.kind === 'ChainTail') return collectIds(value.calls, ids)
   if (value.kind === 'Call' || value.kind === 'Use') {
@@ -1257,6 +1264,35 @@ function declareBinding(binding, bindings) {
 // when it is taken; its body compiles, and draws, either way. A use on its own
 // expands its part's statements in the instance's scope.
 function compileStatement(statement, bindings) {
+  // Control flow compiles, and draws, as upstream compiles it; its program is
+  // not rendered, as upstream's runtime does not execute control flow yet.
+  if (statement.kind === 'If') {
+    const ifKey = `if_${++bindings.ifCount}`
+    const condition = (node, k) => {
+      if (containsRandom(node)) evaluateValue(node, bindings, 0, [], { key: bindings.scoped(ifKey, `cond${k}`), path: [] })
+    }
+    const branch = (k, body) => {
+      bindings.keyScope.push(`${ifKey}/b${k}`)
+      try {
+        compileBlock(body ?? [], bindings)
+      } finally {
+        bindings.keyScope.pop()
+      }
+    }
+    bindings.controlFlow.push('if')
+    condition(statement.condition, 0)
+    branch(0, statement.then)
+    statement.elif.forEach((entry, index) => {
+      condition(entry.condition, index + 1)
+      branch(index + 1, entry.then)
+    })
+    branch(statement.elif.length + 1, statement.else)
+    return []
+  }
+  if (statement.kind === 'Break' || statement.kind === 'Continue' || statement.kind === 'Return') {
+    bindings.controlFlow.push(statement.kind.toLowerCase())
+    return []
+  }
   if (statement.kind === 'Maybe') {
     let chains = []
     const taken = bindings.withMaybe(statement, () => { chains = compileBlock(statement.body, bindings) })
@@ -1268,7 +1304,7 @@ function compileStatement(statement, bindings) {
     bindings.withUse(calls[0], (part, declare) => {
       for (const item of part.body) {
         if (item.kind === 'Binding') declare(item)
-        else if (item.kind === 'Maybe' || (item.kind === 'Chain' && writes(item))) chains.push(...compileStatement(item, bindings))
+        else if (['Maybe', 'If', 'Break', 'Continue', 'Return'].includes(item.kind) || (item.kind === 'Chain' && writes(item))) chains.push(...compileStatement(item, bindings))
         else throw new DslError(`part '${part.name}' continues a chain; use it in a chain`, calls[0].loc)
       }
     })
@@ -1355,5 +1391,5 @@ export function compileDsl(source, registry, options = {}) {
   const renderSurface = ast.render?.name ?? lastWrittenSurface
   if (!renderSurface) throw new DslError('No render surface specified and no write() found - add render(oN) or write(oN)', ast.loc)
 
-  return Object.freeze({ search: Object.freeze(ast.search.slice()), chains: Object.freeze(chains), renderSurface, ast })
+  return Object.freeze({ search: Object.freeze(ast.search.slice()), chains: Object.freeze(chains), renderSurface, controlFlow: Object.freeze(bindings.controlFlow.slice()), ast })
 }

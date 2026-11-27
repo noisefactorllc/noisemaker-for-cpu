@@ -48,6 +48,9 @@ for (const program of fixture.programs) {
     const draws = []
     const compiled = compileDsl(program.dsl, registry, { onDraw: (draw) => draws.push(draw) })
     assert.deepEqual(order(draws), order(program.draws))
+    // A program with control flow compiles and draws but is not rendered, as
+    // upstream's runtime does not execute it: its draws are the agreement.
+    if (compiled.controlFlow.length) return
     const steps = elements(compiled)
     assert.deepEqual(steps.map((step) => `${step.definition.namespace}.${step.definition.func}`), program.elements.map((element) => element.op))
     program.elements.forEach((element, index) => {

@@ -214,3 +214,18 @@ test('a chain let that names itself in vecN() is a cycle', () => {
     assert.throws(() => compile(`search synth, filter, mixer\nseed 3\n${source}`), /Automation cycle detected/, source)
   }
 })
+
+test('a program with control flow compiles and draws, and is not rendered, as upstream runs none yet', async () => {
+  const { CpuRenderer } = await import('../src/runtime/renderer.js')
+  const { kernels, kernelFactories } = await import('../src/effects/catalog.js')
+  const renderer = new CpuRenderer({ registry, kernels, kernelFactories })
+  const draws = []
+  const source = 'search synth\nseed 5\nif (chance(0.5)) {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nnoise().write(o1)\nrender(o1)'
+  assert.deepEqual(compile(source, { onDraw: (draw) => draws.push(draw.key) }).controlFlow, ['if'])
+  assert.ok(draws.includes('if_1/cond0') && draws.includes('if_1/b0/synth.noise@noise_1/scaleX'))
+  for (const [program, keyword] of [[source, 'if'], ['search synth\nnoise().write(o0)\nbreak', 'break'], ['search synth\nnoise().write(o0)\nreturn', 'return']]) {
+    assert.throws(() => renderer.render(program, { width: 4, height: 4 }), new RegExp(`The runtime does not yet execute control flow \\('${keyword}'\\)`))
+  }
+  const rendered = renderer.render('search synth\nseed 5\nmaybe(1) {\n  noise().write(o0)\n}\nrender(o0)', { width: 4, height: 4 })
+  assert.ok(rendered)
+})

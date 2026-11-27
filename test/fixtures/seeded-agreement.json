@@ -4681,6 +4681,264 @@
      }
     }
    ]
+  },
+  {
+   "name": "if-branches-draw",
+   "dsl": "search synth, filter\nseed 5\nif (chance(0.5)) {\n  noise(scaleX: rand(1, 9)).write(o0)\n} elif (chance(rand())) {\n  noise(scaleY: rand(1, 9)).write(o0)\n} else {\n  noise().tint(alpha: rand()).write(o0)\n}\nnoise().write(o1)\nrender(o1)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "if_1/cond0",
+     "u": 3298966832
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/scaleX",
+     "u": 1955101967
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 442765804
+    },
+    {
+     "seed": 5,
+     "key": "if_1/cond1/k:p",
+     "u": 2881049884
+    },
+    {
+     "seed": 5,
+     "key": "if_1/cond1",
+     "u": 3457826180
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b1/synth.noise@noise_2/scaleY",
+     "u": 1628831357
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b1/synth.noise@noise_2/seed/inherit",
+     "u": 2707280032
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b2/synth.noise@noise_3/seed/inherit",
+     "u": 2561741743
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b2/filter.tint@tint_1/alpha",
+     "u": 2067480784
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_4/seed/inherit",
+     "u": 3337761400
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 4.641661167144775,
+      "seed": 5
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleY": 4.033934593200684,
+      "seed": 33
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 44
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.4813728332519531
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "if-plain-condition",
+   "dsl": "search synth\nseed 5\nif (true) {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nif (false) {\n  noise().write(o1)\n}\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/scaleX",
+     "u": 1955101967
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 442765804
+    },
+    {
+     "seed": 5,
+     "key": "if_2/b0/synth.noise@noise_2/seed/inherit",
+     "u": 4071354967
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 4.641661167144775,
+      "seed": 5
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 68
+     }
+    }
+   ]
+  },
+  {
+   "name": "if-nested-and-in-maybe",
+   "dsl": "search synth\nseed 5\nmaybe(0.5) {\n  if (chance(0.3)) {\n    if (true) {\n      noise(scaleX: rand(1, 9)).write(o0)\n    }\n  }\n}\nif (randInt(0, 1)) {\n  noise().write(o1)\n}\nrender(o1)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "maybe_1/decide",
+     "u": 2314005053
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/if_1/cond0",
+     "u": 1359905345
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/if_1/b0/if_2/b0/synth.noise@noise_1/scaleX",
+     "u": 490910591
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/if_1/b0/if_2/b0/synth.noise@noise_1/seed/inherit",
+     "u": 3016340183
+    },
+    {
+     "seed": 5,
+     "key": "if_3/cond0",
+     "u": 441292969
+    },
+    {
+     "seed": 5,
+     "key": "if_3/b0/synth.noise@noise_2/seed/inherit",
+     "u": 2738643920
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 21
+     }
+    }
+   ]
+  },
+  {
+   "name": "if-in-part-instances",
+   "dsl": "search synth\nseed 5\npart scene {\n  if (chance(0.5)) {\n    noise(scaleX: rand(1, 9)).write(o0)\n  }\n}\nuse(scene)\nuse(scene)\nif (true) {\n  noise().write(o1)\n}\nrender(o1)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "use@use_1/if_1/cond0",
+     "u": 4204938744
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/if_1/b0/synth.noise@noise_1/scaleX",
+     "u": 712997331
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 1593218089
+    },
+    {
+     "seed": 5,
+     "key": "use@use_2/if_1/cond0",
+     "u": 1308706949
+    },
+    {
+     "seed": 5,
+     "key": "use@use_2/if_1/b0/synth.noise@noise_1/scaleX",
+     "u": 1176845570
+    },
+    {
+     "seed": 5,
+     "key": "use@use_2/if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 2655545963
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 442765804
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.3280606269836426,
+      "seed": 90
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 3.1920456886291504,
+      "seed": 64
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "if-break-continue-return",
+   "dsl": "search synth\nseed 5\nif (true) {\n  noise(scaleX: rand(1, 9)).write(o0)\n  break\n}\ncontinue\nreturn\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/scaleX",
+     "u": 1955101967
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 442765804
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 4.641661167144775,
+      "seed": 5
+     }
+    }
+   ]
   }
  ]
 }

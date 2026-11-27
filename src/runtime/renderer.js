@@ -449,6 +449,12 @@ function bindExternalInputs(definition, uniforms, textures, renderOptions) {
   }
 }
 
+// Upstream's runtime does not execute control flow yet; a program that holds
+// it compiles, and draws, but is not rendered (upstream expander).
+function assertNoControlFlow(plan) {
+  if (plan.controlFlow?.length) throw new Error(`The runtime does not yet execute control flow ('${plan.controlFlow[0]}')`)
+}
+
 export class CpuRenderer {
   constructor(options = {}) {
     if (!options.registry) throw new TypeError('CpuRenderer requires an EffectRegistry')
@@ -2026,6 +2032,7 @@ export class CpuRenderer {
     const renderOptions = assertRenderOptions(options)
     this._configureSinks(renderOptions.width, renderOptions.height)
     const plan = compileDsl(source, this.registry, options)
+    assertNoControlFlow(plan)
     const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
     const stats = { passes: 0, pixels: 0 }
@@ -2044,6 +2051,7 @@ export class CpuRenderer {
     const renderOptions = assertRenderOptions(options)
     this._configureSinks(renderOptions.width, renderOptions.height)
     const plan = compileDsl(source, this.registry, options)
+    assertNoControlFlow(plan)
     const surfaces = new Map(renderOptions.seedSurfaces ? Object.entries(renderOptions.seedSurfaces) : [])
     const owned = new Set()
     const stats = { passes: 0, pixels: 0 }
