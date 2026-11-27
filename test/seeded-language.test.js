@@ -186,3 +186,20 @@ test('part and use refusals that follow upstream after review', () => {
     assert.throws(() => compile(`search synth, filter\nseed 3\n${source}`), message, source)
   }
 })
+
+test('chain fragments, chain lets and oscillator lets are refused as upstream refuses them', () => {
+  for (const [source, message] of [
+    ['part p {\n  .noise(scaleX: rand(1, 9)).write(o0)\n}\nuse(p)', /part 'p' continues a chain; use it in a chain/],
+    ['let t = noise(scaleX: rand(1, 9)).tint()\nnoise().write(o0)', /Random calls in an effect held by a let are not supported yet: 't'/],
+    ['part p {\n  let c = osc(type: sine, min: 0.1, max: 0.4)\n  .tint(alpha: c)\n}\nnoise().use(p).write(o0)', /cannot continue a chain/],
+  ]) {
+    assert.throws(() => compile(`search synth, filter, mixer\nseed 3\n${source}`), message, source)
+  }
+})
+
+// Upstream keys a let of several effects under its own name; the port does not
+// key that yet, so it refuses the use rather than draw differently.
+test('a let that holds a chain of several effects is refused where it is used, for now', () => {
+  assert.throws(() => compile('search synth, filter, mixer\nseed 3\nlet t = noise().tint()\nnoise().blendMode(tex: t).write(o0)'),
+    /A let that holds a chain of several effects is not supported yet: 't'/)
+})

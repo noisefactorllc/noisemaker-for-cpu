@@ -180,6 +180,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
     // A let's own partial or alias is the one in force where that let was written.
     if (value.boundPartial || bindings.has(value.name)) {
       const binding = value.boundPartial ?? bindings.get(value.name)
+      if (binding.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects is not supported yet: '${binding.name}'`, value.loc)
       // A let that holds an effect, passed as a value, compiles as that effect,
       // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
       if (binding.kind === 'partial') {
@@ -409,8 +410,11 @@ class CompileScope extends Map {
       if (arg.value?.kind === 'Chain' || (arg.value?.kind === 'Call' && !isRandomCall(arg.value))) {
         throw new DslError(`use(): an effect passed for '${arg.name}' is not supported yet`, use.loc)
       }
-      // Evaluated where the use is written, before the part's own lets exist.
-      overrides.set(arg.name, containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : evaluateValue(arg.value, this))
+      // Evaluated where the use is written, before the part's own lets exist. A
+      // name of a let that holds an effect stands for that let, keyed under it.
+      const named = arg.value?.kind === 'identifier' ? (arg.value.boundPartial ?? this.get(arg.value.name)) : null
+      if (named?.kind === 'partial' || named?.kind === 'alias') overrides.set(arg.name, { binding: named })
+      else overrides.set(arg.name, { value: containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : evaluateValue(arg.value, this) })
     }
     const saved = {
       keyScope: this.keyScope.splice(0), occurrences: this.occurrences, letCounts: this.letCounts,
@@ -439,8 +443,9 @@ class CompileScope extends Map {
         // let is still declared and drawn; the argument takes its place.
         declareBinding(item, this)
         if (overrides.has(item.name)) {
-          const value = overrides.get(item.name)
-          this.set(item.name, { kind: 'value', expr: value, resolved: true, value, at: null })
+          const override = overrides.get(item.name)
+          if (override.binding) this.set(item.name, override.binding)
+          else this.set(item.name, { kind: 'value', expr: override.value, resolved: true, value: override.value, at: null })
         }
       })
     } finally {
@@ -647,6 +652,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       // The alias's target is the effect itself.
     } else if (target) {
       const partial = target
+      if (partial.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects is not supported yet: '${partial.name}'`, call.loc)
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       // An `_id:` written where the let is called names the element at this
       // use, with `'` added while it is one of the let's own names (upstream).
@@ -677,8 +683,9 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
         if (validId(arg.value) === undefined) throw new DslError("_id: takes a string literal of letters, digits and '_' that starts with a letter", call.loc)
         bindings.takeId(arg, call.loc)
         // An id inside a part names one element per instance only when every
-        // enclosing use has an id of its own (upstream S001).
-        if (bindings.usePath.some((entry) => !entry.hasId)) {
+        // enclosing use has an id of its own (upstream S001); read and write
+        // elements are not checked.
+        if (!['read', 'read3d', 'write', 'write3d'].includes(call.name) && bindings.usePath.some((entry) => !entry.hasId)) {
           throw new DslError(`an _id: inside a part needs an _id: on every use of that part: '${call.name}'`, call.loc)
         }
         metadata._id = arg.value
@@ -1023,6 +1030,19 @@ function namesChosenEffect(value, bindings) {
 // A bare identifier value must name something resolvable now (an earlier
 // binding, an alias, or an effect), as upstream's declareVar requires.
 function declareBinding(binding, bindings) {
+  // A let of a chain of several effects: its elements are counted where it is
+  // written and a random call in it is refused, as upstream does, but a use of
+  // it is not keyed as upstream keys it yet, so a use is refused. A chain that
+  // starts by reading a surface stays a value.
+  if (binding.value?.kind === 'Chain' && !['read', 'read3d'].includes(binding.value.calls[0]?.name)) {
+    if (randomInLetValue(binding.value, bindings)) {
+      throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
+    }
+    countLetValues([{ value: binding.value }], bindings)
+    bindings.letKey(binding.name, 'effect')
+    bindings.set(binding.name, { kind: 'chainLet', name: binding.name, loc: binding.loc })
+    return
+  }
   // Upstream substitutes a value let that chose an effect into the let that
   // names it: `let w = v` holds v's effect, and an argument that names v holds
   // that effect as written.
@@ -1165,7 +1185,7 @@ function compileStatement(statement, bindings) {
     bindings.withUse(calls[0], (part, declare) => {
       for (const item of part.body) {
         if (item.kind === 'Binding') declare(item)
-        else if (item.kind === 'Maybe' || writes(item)) chains.push(...compileStatement(item, bindings))
+        else if (item.kind === 'Maybe' || (item.kind === 'Chain' && writes(item))) chains.push(...compileStatement(item, bindings))
         else throw new DslError(`part '${part.name}' continues a chain; use it in a chain`, calls[0].loc)
       }
     })

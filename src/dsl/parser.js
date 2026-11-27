@@ -180,7 +180,11 @@ class Parser {
     if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(' && !randomStart) {
       value = this.parseCall()
       if (value.name === 'midi' || value.name === 'audio') checkAutomationCall(value)
-      // A let's effect continues across '.', as upstream parses its value as a chain.
+      // A let's effect continues across '.', as upstream parses its value as a
+      // chain. An oscillator or input value cannot head a chain (upstream refuses).
+      if (this.isPunctuation('.') && ['osc', 'midi', 'audio'].includes(value.name)) {
+        throw new DslError(`A let's ${value.name}() value cannot continue a chain`, location(this.peek()))
+      }
       if (this.isPunctuation('.')) {
         value = this.parseExpressionChain(value)
       }

@@ -914,5 +914,35 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, filter\nseed 5\npart p {\n  let a = 1\n  .tint()\n}\nnoise().use(a: 1, p).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-unused-chain-let-shifts-names",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet t = noise().tint()\nnoise().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-use-arg-names-effect-let",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet n = noise(scaleX: 2)\npart p {\n  let t = 1\n  noise().blendMode(tex: t).write(o0)\n}\nuse(p, t: n)\nrender(o0)"
+ },
+ {
+  "name": "part-read-id-in-part",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\npart q {\n  read(o1, _id: \"r\").tint(alpha: rand(0, 1)).write(o2)\n}\nnoise().write(o1)\nuse(q)\nrender(o2)"
  }
 ]
