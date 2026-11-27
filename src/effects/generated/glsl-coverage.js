@@ -2605,9 +2605,9 @@ export const programCoverage = Object.freeze([
     "program": "renderLit3d",
     "file": "renderLit3d.glsl",
     "status": "generated",
-    "sourceSha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627",
-    "sourceBytes": 12406,
-    "normalizedBytes": 12849,
+    "sourceSha256": "8129bf08ffef71df58ac24dd5838795c173b9744765f807c36c3fd845e2f4f93",
+    "sourceBytes": 12414,
+    "normalizedBytes": 12857,
     "generatedBytes": 12955
   },
   {

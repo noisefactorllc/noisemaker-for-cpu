@@ -169,11 +169,31 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
   throw new DslError(`Unsupported DSL value ${value.kind}`, value.loc)
 }
 
+// Look through value aliases without evaluating expressions that may compile
+// inline chains. evaluateValue handles pending names and cycles at evaluation.
+function boundExpression(value, bindings) {
+  if (value?.kind !== 'identifier') return value
+  const seen = new Set()
+  while (value?.kind === 'identifier' && !seen.has(value.name)) {
+    seen.add(value.name)
+    const binding = bindings.get(value.name)
+    if (binding?.kind !== 'value') break
+    value = binding.expr
+  }
+  return value
+}
+
 // Each argument draws under its element's key and its canonical parameter name,
 // whether it is written by position or by name.
-function resolveArgs(args, bindings, definition, elementKey) {
+function resolveArgs(args, bindings, call, definition, elementKey) {
   let positional = 0
-  return args.map((arg) => {
+  return args.map((arg, index) => {
+    const chain = boundExpression(arg.value, bindings)
+    if (definition && chain?.kind === 'Chain' && chain.calls.some(entry =>
+      entry.kind !== 'Call' || entry.name === 'read' || entry.name === 'read3d')) {
+      const name = definition?.paramAliases?.[arg.name] ?? arg.name ?? definition?.paramNames[index]
+      throw new DslError(`Chain for argument '${name}' in ${call.name}() may contain only effect calls`, chain.loc, 'S001')
+    }
     const written = arg.name ?? definition?.paramNames[positional++]
     const name = definition?.paramAliases?.[written] ?? written
     const at = elementKey && name ? { key: joinKey(elementKey, name), path: [] } : null
@@ -247,7 +267,13 @@ function mergeArgs(stored, call) {
   const args = [...stored.args, ...call.args]
   const positional = args.filter((arg) => arg.name === null)
   const named = new Map(args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg]))
-  return { ...call, name: stored.name, args: [...positional, ...named.values()], argMode: positional.length ? 'merged' : 'named' }
+  const merged = { ...call, name: stored.name, args: [...positional, ...named.values()], argMode: positional.length ? 'merged' : 'named' }
+  // A parameter bound before a positional colour limits it to its indexed
+  // slot. Metadata binds no slot, and later keywords override only their slot.
+  if (positional.length && stored.args.some(arg => arg.name !== null && arg.name !== '_id' && arg.name !== '_skip')) {
+    merged.colorSplatLimit = stored.colorSplatLimit ?? stored.args.filter(arg => arg.name === null).length
+  }
+  return merged
 }
 
 // A `from(ns, ...)` namespace on the call site wins over one stored in the partial,
@@ -260,24 +286,32 @@ function mergePartial(stored, call) {
   return merged
 }
 
-function effectArguments(call, definition) {
+function effectArguments(call, definition, bindings) {
   let args = call.args
   if (args.filter((arg) => arg.name === null).length > definition.paramNames.length) {
     console.warn(`Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`)
     let positionalIndex = 0
     args = args.filter((arg) => arg.name !== null || positionalIndex++ < definition.paramNames.length)
   }
+  const positional = args.filter(arg => arg.name === null)
+  const r = definition.paramNames.indexOf('r')
+  if (r >= 0 && r < positional.length && r < (call.colorSplatLimit ?? Infinity) &&
+      definition.params.r.type !== 'color' && definition.paramNames[r + 1] === 'g' && definition.paramNames[r + 2] === 'b') {
+    const arg = positional[r]
+    const color = boundExpression(arg.value, bindings)
+    if (color?.kind === 'color') {
+      // A hex colour stands in three indexed slots. Positionals at the g
+      // and b indexes are ignored; a fourth positional keeps its own index.
+      positional.splice(r, 3, ...color.slice(0, 3).map(value => ({ ...arg, value })))
+      if (call.argMode !== 'merged') return positional
+    }
+  }
   if (call.argMode === 'merged') {
-    // Separate stable calls can meet through a let. Their positionals keep
-    // their slot index; a keyword overrides that slot instead of shifting
-    // the positional into the next unfilled parameter. Discard ignored values
-    // before resolving them, so they cannot create inline render chains.
-    const named = args.filter((arg) => arg.name !== null)
-    const overridden = new Set(named.map((arg) => definition.paramAliases?.[arg.name] ?? arg.name))
-    const positional = args.filter((arg) => arg.name === null)
-      .map((arg, index) => ({ ...arg, name: definition.paramNames[index] }))
-      .filter((arg) => !overridden.has(arg.name))
-    args = [...positional, ...named]
+    // Discard overridden values before resolving them or compiling inline chains.
+    const named = args.filter(arg => arg.name !== null)
+    const overridden = new Set(named.map(arg => definition.paramAliases?.[arg.name] ?? arg.name))
+    return positional.map((arg, index) => ({ ...arg, name: definition.paramNames[index] }))
+      .filter(arg => !overridden.has(arg.name)).concat(named)
   }
   return args
 }
@@ -332,9 +366,27 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
       // name the let gave it.
       heldKey = partial.key
     }
+    const isRead = call.name === 'read' || call.name === 'read3d'
+    const metadata = {}
+    const parameters = call.args.filter(arg => {
+      if (arg.name === '_id') {
+        if (typeof arg.value === 'string' && /^[A-Za-z][A-Za-z0-9_]*$/.test(arg.value)) metadata._id = arg.value
+        else delete metadata._id
+        return false
+      }
+      // The upstream expander binds built-in reads before it checks effect
+      // skipping. Its read steps retain the flag and still fetch the texture.
+      if (isRead && arg.name === '_skip') {
+        if (arg.value === true) metadata._skip = true
+        else delete metadata._skip
+        return false
+      }
+      return arg.name !== '_skip' || arg.value !== false
+    })
+    if (parameters.length !== call.args.length) call = { ...call, args: parameters }
     const namespaces = call.namespace ? [call.namespace] : search
     const definition = registry.resolve(call.name, namespaces)
-    const rawArgs = definition ? effectArguments(call, definition) : call.args
+    const rawArgs = definition ? effectArguments(call, definition, bindings) : call.args
     // The element's key for its draws (upstream validator): its occurrence name
     // at the top level, under its let, or under the value it is passed as. The
     // occurrence is counted before the element's arguments, so an element
@@ -354,14 +406,14 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
     let args
     let inlineChains
     try {
-      args = resolveArgs(rawArgs, bindings, definition, elementKey)
+      args = resolveArgs(rawArgs, bindings, call, definition, elementKey)
     } finally {
       inlineChains = bindings.pending
       bindings.pending = outerPending
     }
     if (call.name === 'read') {
       if (index !== 0 || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('read(surface) must begin a chain', call.loc)
-      steps.push({ kind: 'read', surface: args[0].value.name, loc: call.loc })
+      steps.push({ kind: 'read', ...metadata, surface: args[0].value.name, loc: call.loc })
       hasInput = true
       hasImage = true
       continue
@@ -369,7 +421,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
     if (call.name === 'write') {
       if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
       if (!hasImage || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('write(surface) requires a current image', call.loc)
-      steps.push({ kind: 'write', surface: args[0].value.name, loc: call.loc })
+      steps.push({ kind: 'write', ...metadata, surface: args[0].value.name, loc: call.loc })
       continue
     }
     // Built-in volume I/O (upstream `_write3d` and `_read3d`). write3d stores the
@@ -383,12 +435,12 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
       if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
       const references = volumeReferences(call)
       if (!references) throw new DslError('Expected surface reference', call.loc)
-      steps.push({ kind: 'write3d', volume: references[0], geometry: references[1], loc: call.loc })
+      steps.push({ kind: 'write3d', ...metadata, volume: references[0], geometry: references[1], loc: call.loc })
       continue
     }
     if (index === 0 && call.name === 'read3d' && read3dReferences(call)) {
       const [volume, geometry] = read3dReferences(call)
-      steps.push({ kind: 'read3d', volume, geometry, loc: call.loc })
+      steps.push({ kind: 'read3d', ...metadata, volume, geometry, loc: call.loc })
       hasInput = true
       hasVolume = true
       continue
@@ -453,7 +505,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
       }
       if (inherited) params = Object.isFrozen(params) ? Object.freeze({ ...params, ...inherited }) : Object.assign(params, inherited)
     }
-    const step = { kind: 'effect', definition, params, explicitParams, loc: call.loc }
+    const step = { kind: 'effect', ...metadata, definition, params, explicitParams, loc: call.loc }
     if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
     steps.push(step)
   }
@@ -473,6 +525,18 @@ function aliasBinding(value, bindings) {
   return bindings.registry.resolve(value.name, bindings.search) ? { kind: 'alias', name: value.name } : null
 }
 
+// Upstream substitutes a known hex colour into the new binding at declaration.
+function captureHexColors(value, bindings) {
+  if (value?.kind === 'Call') {
+    return { ...value, args: value.args.map(arg => ({ ...arg, value: captureHexColors(arg.value, bindings) })) }
+  }
+  if (value?.kind === 'Chain') {
+    return { ...value, calls: value.calls.map(call => captureHexColors(call, bindings)) }
+  }
+  const resolved = boundExpression(value, bindings)
+  return resolved?.kind === 'color' ? resolved : value
+}
+
 // Declares one let. Statement order (upstream 9cc041d0): a chain sees only the
 // lets declared at or before its own statement index; a later `let` of the same
 // name reassigns it for later statements; reading a pending name reports S003.
@@ -480,18 +544,23 @@ function aliasBinding(value, bindings) {
 // binding, an alias, or an effect), as upstream's declareVar requires.
 function declareBinding(binding, bindings) {
   if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name) && !isRandomCall(binding.value)) {
-    // A partial keeps its call unresolved. Its arguments resolve where it is
-    // called, as upstream's validator substitutes a symbol at each use. Its
-    // element is counted here, where the let is written, and draws under the
-    // let's key wherever it is called.
+    // Other partial arguments keep their existing use-site resolution. The
+    // let's element is counted here, where the let is written, and draws under
+    // the let's key wherever it is called. A let of another let's name keys
+    // the element under its own name, with the occurrence name the other let
+    // gave it.
     if (binding.value.args.some((arg) => containsRandom(arg.value))) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
-    const definition = bindings.registry.resolve(binding.value.name, binding.value.namespace ? [binding.value.namespace] : bindings.search)
-    const key = definition
-      ? joinKey(bindings.letKey(binding.name, 'effect'), `${definition.namespace}.${definition.func}@${bindings.nextOccurrence(definition.func)}`)
-      : null
-    bindings.set(binding.name, { kind: 'partial', call: binding.value, key })
+    let call = captureHexColors(binding.value, bindings)
+    const previous = bindings.get(call.name)
+    if (previous?.kind === 'partial') call = mergePartial(previous.call, call)
+    if (previous?.kind === 'alias') call = { ...call, name: previous.name }
+    const definition = bindings.registry.resolve(call.name, call.namespace ? [call.namespace] : bindings.search)
+    const element = previous?.kind === 'partial' ? previous.element
+      : definition ? `${definition.namespace}.${definition.func}@${bindings.nextOccurrence(definition.func)}` : null
+    const key = element ? joinKey(bindings.letKey(binding.name, 'effect'), element) : null
+    bindings.set(binding.name, { kind: 'partial', call, key, element })
     return
   }
   if (aliasBinding(binding.value, bindings)) {
@@ -505,10 +574,10 @@ function declareBinding(binding, bindings) {
   // A value let draws once, under its own key, wherever it is used. One that
   // holds a random call draws where it is written, used or not, as upstream's
   // validator resolves it at the declaration.
-  const entry = { kind: 'value', expr: binding.value, resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
+  const entry = { kind: 'value', expr: captureHexColors(binding.value, bindings), resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
   bindings.set(binding.name, entry)
   if (containsRandom(binding.value)) {
-    entry.value = evaluateValue(binding.value, bindings, 0, [binding.name], entry.at)
+    entry.value = evaluateValue(entry.expr, bindings, 0, [binding.name], entry.at)
     entry.resolved = true
   }
 }

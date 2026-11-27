@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { existsSync } from 'node:fs'
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -88,7 +88,7 @@ function projectPass(pass) {
     inputs: pass.inputs ?? {},
     outputs,
   }
-  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport', 'defines', 'samplerTypes']) {
+  for (const key of ['uniforms', 'repeat', 'blend', 'clear', 'drawMode', 'count', 'countUniform', 'type', 'entryPoint', 'drawBuffers', 'conditions', 'viewport', 'defines', 'samplerTypes', 'storageTextures']) {
     if (pass[key] !== undefined) projected[key] = pass[key]
   }
   return projected
@@ -155,20 +155,6 @@ async function loadDefinition(namespace, directoryName) {
   let definition = (await import(pathToFileURL(path).href)).default
   if (typeof definition === 'function') definition = new definition()
   if (!definition) throw new Error(`${namespace}/${directoryName} has no default effect definition`)
-  // Loader workaround: the pinned Effect base class (shaders/src/runtime/effect.js) only
-  // copies a fixed whitelist of config keys from `new Effect({...})` onto the instance, and
-  // that whitelist predates the Common Agent Architecture outputXyz/outputVel/outputRgba
-  // fields used by points/render particle definitions, so they are silently dropped rather
-  // than thrown. The pinned file itself must not be modified, so recover the (plain string)
-  // values directly from source text when the constructed instance is missing them.
-  if (OUTPUT_KEYS.some((key) => definition[key] === undefined)) {
-    const source = await readFile(path, 'utf8')
-    for (const key of OUTPUT_KEYS) {
-      if (definition[key] !== undefined) continue
-      const match = source.match(new RegExp(`\\b${key}\\s*[:=]\\s*["']([^"']+)["']`))
-      if (match) definition[key] = match[1]
-    }
-  }
   return definition
 }
 

@@ -1,5 +1,5 @@
 {
- "revision": "084176b716a1bc779f24de79069f3e76b86277c1",
+ "revision": "5596e69fd6e3b9014e9df0f8674e10e70c332e11",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -4102,8 +4102,8 @@
   },
   {
    "path": "shaders/effects/filter3d/flow3d/definition.js",
-   "size": 7794,
-   "sha256": "6b47b65aa97bca7d383675630cb8f7a56c36cae473e11ac0b4e8810b449bf71a"
+   "size": 7562,
+   "sha256": "300e4d17ec8a3c0962c2619d8b246890a73eb299fc497cbe5cee7bbc69b70f6a"
   },
   {
    "path": "shaders/effects/filter3d/flow3d/glsl/agent.glsl",
@@ -4143,7 +4143,7 @@
   {
    "path": "shaders/effects/filter3d/flow3d/parity-attestation.json",
    "size": 788,
-   "sha256": "9d3c9ae08b98044318d224ef6da8699df1934f99655947ecdd4ca2ad3472f8fa"
+   "sha256": "baaa188d315466258e802c2de48c76b6a07302ded847ef16502aa6bada967e9b"
   },
   {
    "path": "shaders/effects/filter3d/flow3d/parity-case.json",
@@ -4177,8 +4177,8 @@
   },
   {
    "path": "shaders/effects/filter3d/palette3d/definition.js",
-   "size": 2901,
-   "sha256": "070b16496ef076823d52268bb662e44b2a28529251d3bc47a0e8bb94712a58f9"
+   "size": 2843,
+   "sha256": "ddb490265034ecd5b5ed80e3196201e1d37d96ecf85851d798fb89621275cb2c"
   },
   {
    "path": "shaders/effects/filter3d/palette3d/glsl/palette3d.glsl",
@@ -4193,7 +4193,7 @@
   {
    "path": "shaders/effects/filter3d/palette3d/parity-attestation.json",
    "size": 791,
-   "sha256": "d346b1e35ba48e74d72cb3e6ae11fffb9f5c3dc87c6e8343df3d3e5319459c16"
+   "sha256": "f54e095d7c35850fffd2834baedad9e93dc4a5deca480f83c2719797a478170d"
   },
   {
    "path": "shaders/effects/filter3d/palette3d/parity-case.json",
@@ -5222,13 +5222,23 @@
   },
   {
    "path": "shaders/effects/render/meshLoader/help.md",
-   "size": 1167,
-   "sha256": "788841d96c187927087c3418ca83d45edb1b50b49dcef6eb4d91e673a2a88f63"
+   "size": 1948,
+   "sha256": "64005ec3888e9e91d40bf1dd60206b5ef6069891e0008a50e14aecd974c3ebf8"
+  },
+  {
+   "path": "shaders/effects/render/meshLoader/parity-attestation.json",
+   "size": 788,
+   "sha256": "d060a0e66faa6ac3b2b4c1f30cc1d163bce544b49cddf1c10ec106e0c4e4b8ac"
+  },
+  {
+   "path": "shaders/effects/render/meshLoader/parity-case.json",
+   "size": 333,
+   "sha256": "a2b613dfe2b76bbbe63ea0590b4c27e708f789c4995d80983ab4832fac68800f"
   },
   {
    "path": "shaders/effects/render/meshLoader/wgsl/preview.wgsl",
-   "size": 1020,
-   "sha256": "7478c9c8b2da695ded20cdd7be850747b2ab5a4454a8af94245c95bb3761acac"
+   "size": 1384,
+   "sha256": "ee94e8a8a52bd754221b2f03f6cc02d264dad2328c28bf14e75f6158d836d9b9"
   },
   {
    "path": "shaders/effects/render/meshRender/definition.js",
@@ -5252,13 +5262,13 @@
   },
   {
    "path": "shaders/effects/render/meshRender/help.md",
-   "size": 2465,
-   "sha256": "953661b15df40b19f14ceec083793deae08daaa6841bf89795be7e5c0848dcd1"
+   "size": 2857,
+   "sha256": "3294aa9d8c28346850f227e396362bd17e25e2f2590d011c21ddb0986effe947"
   },
   {
    "path": "shaders/effects/render/meshRender/parity-attestation.json",
    "size": 786,
-   "sha256": "c4c4227cbbd54aa23e9c9a9f3f8c42087534f67f49d582df7ecc2d567cca3055"
+   "sha256": "b9f4887faa883d8a6aa6e9d44262d88cfc8dee5d0f0ba7acc98a9bfadaa97309"
   },
   {
    "path": "shaders/effects/render/meshRender/parity-case.json",
@@ -5622,18 +5632,18 @@
   },
   {
    "path": "shaders/effects/render/renderLit3d/glsl/renderLit3d.glsl",
-   "size": 12406,
-   "sha256": "ea309e7e9c4bcb13fd96bf05f0e587bfd25557b7184872b32aabc160df49b627"
+   "size": 12414,
+   "sha256": "8129bf08ffef71df58ac24dd5838795c173b9744765f807c36c3fd845e2f4f93"
   },
   {
    "path": "shaders/effects/render/renderLit3d/help.md",
-   "size": 2626,
-   "sha256": "4a6a664938ffdb4039b8f2ea6069f7854ee385cae3e6842e003d7b20441cd950"
+   "size": 2628,
+   "sha256": "376f80a1f7b4d3b4e24416505fb2b26de541eaf972143a414e1778575b5cba2a"
   },
   {
    "path": "shaders/effects/render/renderLit3d/parity-attestation.json",
    "size": 791,
-   "sha256": "ca8d2c8b432bb527f8db6899554d11d6494093615aab9ce04473905d50b48661"
+   "sha256": "a38bcd827a11b20592967375ec58ace207123ec62b8b3046dcfb42b8d4a861c5"
   },
   {
    "path": "shaders/effects/render/renderLit3d/parity-case.json",
@@ -5642,8 +5652,8 @@
   },
   {
    "path": "shaders/effects/render/renderLit3d/wgsl/renderLit3d.wgsl",
-   "size": 14092,
-   "sha256": "44d5b629fc50b9f3d3a6f960099695a2ef28dd861576ecc81653f68018ced45a"
+   "size": 14100,
+   "sha256": "9f93440bc45bac75259c42b7f36f5b28040e1fcf7bbf3c91fb7be89e39112d83"
   },
   {
    "path": "shaders/effects/strings.de.json",
@@ -6401,14 +6411,24 @@
    "sha256": "45776b73047247c4c5c24f5fb69b64c66bfa4729f514534cb549673e069ddbc1"
   },
   {
+   "path": "shaders/effects/synth/roll/parity-attestation.json",
+   "size": 775,
+   "sha256": "d037f984861d9eedee7768cb536dd578a92b4dc518cce58ad903afdfb3a70b4b"
+  },
+  {
+   "path": "shaders/effects/synth/roll/parity-case.json",
+   "size": 769,
+   "sha256": "8e78b94f782d839fa8ff417977e229ddfd8159ab82375a6a09bf8c04445aeaca"
+  },
+  {
    "path": "shaders/effects/synth/roll/wgsl/copy.wgsl",
    "size": 435,
    "sha256": "97fe6b778cad5475eb34ecd800e7d6a101ef62cb52b288bd732ba4275e3bd22c"
   },
   {
    "path": "shaders/effects/synth/roll/wgsl/roll.wgsl",
-   "size": 2193,
-   "sha256": "d3ef27f11f88d4d163231f8c0e55df33c2d1718d03d1a57072a0e9f0d9aad870"
+   "size": 2358,
+   "sha256": "a83b2a8d393a39a8c2837889cb7fb88a4cad343363ffdd691d3fedaeb011cb34"
   },
   {
    "path": "shaders/effects/synth/sacredGeometry/definition.js",
@@ -6678,7 +6698,7 @@
   {
    "path": "shaders/effects/synth3d/flythrough3d/parity-attestation.json",
    "size": 795,
-   "sha256": "eacdd51a71068d85f3ce5dfdc672a9dd83a5bccf72d3d7f39d29c586187c6301"
+   "sha256": "631473a07e8f2f371e592095fd9c965de5b2f81f65f8a41f540b7fe8d9571765"
   },
   {
    "path": "shaders/effects/synth3d/flythrough3d/parity-case.json",
@@ -6708,7 +6728,7 @@
   {
    "path": "shaders/effects/synth3d/fractal3d/parity-attestation.json",
    "size": 788,
-   "sha256": "c04d6112a9ade7dfcbfb0d3dde63cb0cbf4f1df9725536feb9c36f4b378e274f"
+   "sha256": "784ae25e8d4e1cca480a4ec508de993c07660f52888ca3f6f85a012a90b81647"
   },
   {
    "path": "shaders/effects/synth3d/fractal3d/parity-case.json",
@@ -6917,8 +6937,8 @@
   },
   {
    "path": "shaders/src/lang/parser.js",
-   "size": 62379,
-   "sha256": "06f69fb4e7e900d1aa43f149b06a73a05bd4b75a7e96e6964f4ec537535f0164"
+   "size": 63643,
+   "sha256": "1eee7c90d51afe4bcf8c5d771dc2ad68089deb96baddfaaf907ff651b9dbc02f"
   },
   {
    "path": "shaders/src/lang/std_enums.js",
@@ -6937,13 +6957,13 @@
   },
   {
    "path": "shaders/src/lang/unparser.js",
-   "size": 70288,
-   "sha256": "8509ba2e0f6a2022421b1d43d04b6a9442e512b44d7b8696c947a9a6f5be6f81"
+   "size": 73757,
+   "sha256": "fe1453f79539ee99646de38fffba907dd0a3f1476a6ce272f7a33b1e03fc76d7"
   },
   {
    "path": "shaders/src/lang/validator.js",
-   "size": 98344,
-   "sha256": "830ad95aad2a371dcbdc5e9f1c4a42fbb07ac1c237c75eceeb4eb389d858d71a"
+   "size": 99667,
+   "sha256": "ccfeb2112040c88673c0d4ee1cb5422162a736b2315cfb937b2aff44f73b46f7"
   },
   {
    "path": "shaders/src/palettes.js",
@@ -6952,8 +6972,8 @@
   },
   {
    "path": "shaders/src/renderer/canvas.js",
-   "size": 135491,
-   "sha256": "db4731cc90882c92afd308af232be7c4529ad11049948ca68efed2fd44c8675e"
+   "size": 135839,
+   "sha256": "af0f5730afbedde3a47e6078a79e2a1efa2046a9438f0c0e368bcb58e5f999ae"
   },
   {
    "path": "shaders/src/renderer/cubeCamera.js",
@@ -7027,8 +7047,8 @@
   },
   {
    "path": "shaders/src/runtime/backends/webgl2.js",
-   "size": 90042,
-   "sha256": "f9b7891a77898a8bf1705f9aaaf64520f2ef60f9f2e278c2eab92f014a280590"
+   "size": 90111,
+   "sha256": "ad81eab67eba80b315166584963e8013d50e57536d128b6e39b27daf1906fed3"
   },
   {
    "path": "shaders/src/runtime/backends/webgpu-frame-export.js",
@@ -7037,13 +7057,13 @@
   },
   {
    "path": "shaders/src/runtime/backends/webgpu.js",
-   "size": 202261,
-   "sha256": "e07a03fbe2c25e3d97152d8ac980cc06cef088afba94efd5e6b3f3e2446eee45"
+   "size": 202710,
+   "sha256": "4ab000150c09ae93b8018cbe0f1b2816c57dd81cc1bf2bcb523833477efdfbd5"
   },
   {
    "path": "shaders/src/runtime/compiler.js",
-   "size": 17990,
-   "sha256": "25052d42795846ca454d4088dce89b785ffa5d27c204411282a39d598e1e8e06"
+   "size": 18912,
+   "sha256": "da98b4bd8c5c8645e84599a48bdc27f9ce8385e597f11be8c0c2d9eafe739b01"
   },
   {
    "path": "shaders/src/runtime/default-shaders.js",
@@ -7052,18 +7072,18 @@
   },
   {
    "path": "shaders/src/runtime/effect-validator.js",
-   "size": 49939,
-   "sha256": "fccba1ce382ef29588e7b0e8335628516b3323356d45defa5943a386a7358790"
+   "size": 49935,
+   "sha256": "8e6123254e6847762f284289cadaad32ec6edda7b49471f00adcac7477aa781b"
   },
   {
    "path": "shaders/src/runtime/effect.js",
-   "size": 8751,
-   "sha256": "91bee78cc58952666b136003701ec8a464338fecb113fc1cc15a0ee9b5126bfc"
+   "size": 9086,
+   "sha256": "8c09c8e16630e121c3ba622eeac6728d05eaa864ca697c0fbf2d0da07c9b723e"
   },
   {
    "path": "shaders/src/runtime/expander.js",
-   "size": 76378,
-   "sha256": "6c2b28125ec56f7c36f254a9a606cbcec8d7f4b19077a82bfad5ce152708b6ae"
+   "size": 79643,
+   "sha256": "b60b2603b9aaa9e3b49fe7f9145126420c993187c3d54ed5bb7ec94893794f2b"
   },
   {
    "path": "shaders/src/runtime/external-input.js",
@@ -7087,8 +7107,8 @@
   },
   {
    "path": "shaders/src/runtime/pipeline.js",
-   "size": 143066,
-   "sha256": "c223c89892be1ab11cd37266b38c9dbfd4101027f02a39860065c689dcd515f1"
+   "size": 143729,
+   "sha256": "0d7e632902cb37183d7d9f961c42a8d9d92ad14c27669c902f6231e642d5ceca"
   },
   {
    "path": "shaders/src/runtime/preflight.js",

@@ -12,6 +12,7 @@
 // `synth/reactionDiffusion`'s private `global_rd_state`) does NOT match this pattern — it stays
 // ordinary per-step scratch, never shared across steps.
 export const PARTICLE_STATE_PATTERN = /^global_(xyz|vel|rgba|life_data)$|^global_.*_trail$|^global_[a-z]+_base_color$/
+const particleInputs = new Set(['inputXyz', 'inputVel', 'inputRgba'])
 
 export function isParticleStateName(name) {
   return typeof name === 'string' && PARTICLE_STATE_PATTERN.test(name)
@@ -42,8 +43,12 @@ function declaresXyz(step) {
 
 function referencesParticleState(step) {
   for (const pass of step.definition.passes ?? []) {
-    for (const value of Object.values(pass.inputs ?? {})) if (isParticleStateName(value)) return true
-    for (const value of Object.values(pass.outputs ?? {})) if (isParticleStateName(value)) return true
+    for (const value of Object.values(pass.inputs ?? {})) {
+      if (particleInputs.has(value) || isParticleStateName(value)) return true
+    }
+    for (const value of Object.values(pass.outputs ?? {})) {
+      if (particleInputs.has(value) || isParticleStateName(value)) return true
+    }
   }
   return false
 }

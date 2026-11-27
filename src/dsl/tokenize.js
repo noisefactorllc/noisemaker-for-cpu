@@ -65,10 +65,10 @@ export function tokenizeDsl(source, options = {}) {
       push('string', value, location, value)
       continue
     }
-    if (char === '"') {
-      advance()
+    if (char === '"' || char === "'") {
+      const quote = advance()
       let value = ''
-      while (index < source.length && source[index] !== '"') {
+      while (index < source.length && source[index] !== quote) {
         if (source[index] === '\n') throw new DslError('Unterminated string', location)
         if (source[index] === '\\') {
           advance()

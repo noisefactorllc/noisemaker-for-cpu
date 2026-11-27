@@ -143,8 +143,6 @@ export function meshRenderTrianglesAdapter({ pass, uniforms, bindings, inputs, d
   const meshData = externalInputs?.meshData ?? emptyMeshData()
   const positions = meshData.positions ?? meshData.positionData
   const normals = meshData.normalData
-  const texWidth = meshData.texWidth
-  const texHeight = meshData.texHeight
   const width = destination.width
   const height = destination.height
   const data = destination.data
@@ -153,16 +151,18 @@ export function meshRenderTrianglesAdapter({ pass, uniforms, bindings, inputs, d
   // Per-pixel depth buffer cleared to 1.0 (gl.clear(DEPTH_BUFFER_BIT) each pass).
   const depth = new Float32Array(width * height).fill(1)
   let covered = 0
-  const vertexCount = texWidth * texHeight
-  const triangleCount = Math.floor(vertexCount / 3)
+  const uniformCount = uniforms[pass.countUniform]
+  let vertexCount = typeof uniformCount === 'number' && uniformCount > 0 ? uniformCount : pass.count || 3
+  if (vertexCount === 'auto' || vertexCount === 'input' || vertexCount === 'screen') {
+    const meshTexture = inputs.meshPositions ?? inputs.inputTex
+    vertexCount = meshTexture ? meshTexture.width * meshTexture.height : 3
+  }
+  const triangleCount = Math.floor(Math.min(vertexCount, positions.length / 4) / 3)
   for (let tri = 0; tri < triangleCount; tri++) {
     const verts = []
     let allInvalid = true
     for (let v = 0; v < 3; v++) {
-      const texel = tri * 3 + v
-      const x = texel % texWidth
-      const y = Math.floor(texel / texWidth)
-      const pi = (y * texWidth + x) * 4
+      const pi = (tri * 3 + v) * 4
       const posData = [positions[pi], positions[pi + 1], positions[pi + 2], positions[pi + 3]]
       const normalData = [normals[pi], normals[pi + 1], normals[pi + 2], normals[pi + 3]]
       if (posData[3] !== 0) allInvalid = false
