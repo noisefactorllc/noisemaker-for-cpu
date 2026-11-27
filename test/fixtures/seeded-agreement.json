@@ -2558,6 +2558,281 @@
      "values": {}
     }
    ]
+  },
+  {
+   "name": "statement-alias-keeps-effect",
+   "dsl": "search synth\nseed 5\nlet n = noise\nlet noise = noise(scaleX: 2)\nn().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 86030841
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 42
+     }
+    }
+   ]
+  },
+  {
+   "name": "statement-alias-keeps-effect-unseeded",
+   "dsl": "search synth\nlet n = noise\nlet noise = noise(scaleX: 7)\nn().write(o0)\nrender(o0)",
+   "draws": [],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "site-id-claimed-earlier",
+   "dsl": "search synth\nseed 5\nlet a = noise()\nnoise(_id: \"x\").write(o0)\na(_id: \"x\").write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@x/seed/inherit",
+     "u": 3871389758
+    },
+    {
+     "seed": 5,
+     "key": "let:a/synth.noise@noise_1/seed/inherit",
+     "u": 2872040356
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 59
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 57
+     }
+    }
+   ]
+  },
+  {
+   "name": "site-id-claims",
+   "dsl": "search synth\nseed 5\nlet a = noise()\na(_id: \"x\").write(o0)\nnoise(_id: \"x\").write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "let:a/synth.noise@x/seed/inherit",
+     "u": 4138090237
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 86030841
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 38
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 42
+     }
+    }
+   ]
+  },
+  {
+   "name": "site-id-inside-let-value",
+   "dsl": "search synth, mixer\nseed 5\nlet a = noise()\nlet b = blendMode(tex: a(_id: \"x\"))\nsolid().b().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "let:a/synth.noise@noise_1/seed/inherit",
+     "u": 2872040356
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 57
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "let-of-let-takes-own-id",
+   "dsl": "search synth\nseed 5\nlet a = noise(_id: \"x\")\nlet b = a(_id: \"y\")\nb().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "let:b/synth.noise@y/seed/inherit",
+     "u": 2545328550
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 51
+     }
+    }
+   ]
+  },
+  {
+   "name": "seed-written-twice",
+   "dsl": "search synth\nnoise(_seed: rand(0, 3), _seed: 4).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "synth.noise/seed/inherit",
+     "u": 2387955978
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 79
+     }
+    }
+   ]
+  },
+  {
+   "name": "seed-constant-expression",
+   "dsl": "search synth\nnoise(_seed: 2 + 1).write(o0)\nnoise(_seed: -0).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise/seed/inherit",
+     "u": 2962482192
+    },
+    {
+     "seed": 0,
+     "key": "synth.noise/seed/inherit",
+     "u": 1004395685
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 93
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 86
+     }
+    }
+   ]
+  },
+  {
+   "name": "copied-choice-of-partial",
+   "dsl": "search synth, mixer\nseed 3\nlet p = noise(scaleX: 2)\nlet v = pick(p(), p())\nlet w = v\nsolid().blendMode(tex: w).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "let:p/synth.noise@noise_1/seed/inherit",
+     "u": 1016674009
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 10
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "chosen-effect-nested-in-let",
+   "dsl": "search synth, mixer\nseed 3\nlet v = pick(noise(), noise())\nlet b = blendMode(tex: noise().blendMode(tex: v))\nsolid().b().write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "let:b/mixer.blendMode@blendMode_1/tex/e:synth.noise/seed/inherit",
+     "u": 3338504562
+    },
+    {
+     "seed": 3,
+     "key": "let:b/mixer.blendMode@blendMode_1/tex/e:mixer.blendMode/tex/e:synth.noise/seed/inherit",
+     "u": 4224985869
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_3/seed/inherit",
+     "u": 1799847075
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 63
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 70
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 76
+     }
+    }
+   ]
   }
  ]
 }

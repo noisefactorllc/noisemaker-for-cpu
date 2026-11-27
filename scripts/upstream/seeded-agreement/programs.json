@@ -507,5 +507,95 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, mixer\nseed 3\nlet n = noise\nlet noise = noise(scaleX: 3)\nlet b = blendMode(tex: n())\nsolid().b().write(o0)\nsolid().b().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "statement-alias-keeps-effect",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nseed 5\nlet n = noise\nlet noise = noise(scaleX: 2)\nn().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "statement-alias-keeps-effect-unseeded",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nlet n = noise\nlet noise = noise(scaleX: 7)\nn().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "site-id-claimed-earlier",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nseed 5\nlet a = noise()\nnoise(_id: \"x\").write(o0)\na(_id: \"x\").write(o1)\nrender(o0)"
+ },
+ {
+  "name": "site-id-claims",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nseed 5\nlet a = noise()\na(_id: \"x\").write(o0)\nnoise(_id: \"x\").write(o1)\nrender(o0)"
+ },
+ {
+  "name": "site-id-inside-let-value",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 5\nlet a = noise()\nlet b = blendMode(tex: a(_id: \"x\"))\nsolid().b().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "let-of-let-takes-own-id",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nseed 5\nlet a = noise(_id: \"x\")\nlet b = a(_id: \"y\")\nb().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "seed-written-twice",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nnoise(_seed: rand(0, 3), _seed: 4).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "seed-constant-expression",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nnoise(_seed: 2 + 1).write(o0)\nnoise(_seed: -0).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "copied-choice-of-partial",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet p = noise(scaleX: 2)\nlet v = pick(p(), p())\nlet w = v\nsolid().blendMode(tex: w).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "chosen-effect-nested-in-let",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet v = pick(noise(), noise())\nlet b = blendMode(tex: noise().blendMode(tex: v))\nsolid().b().write(o0)\nnoise().write(o1)\nrender(o0)"
  }
 ]

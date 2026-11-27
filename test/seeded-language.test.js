@@ -126,3 +126,13 @@ test('midi() and audio() refuse the arguments upstream refuses, random ones incl
     assert.throws(() => compile(`search synth\nseed 5\nnoise(scaleX: ${value}).write(o0)`), message, value)
   }
 })
+
+test('an _id: must be an identifier string, and a let carrying one may be used once', () => {
+  for (const [source, message] of [
+    ['noise(_id: "bad name").write(o0)', /_id: takes a string literal/],
+    ['noise(_id: "a", _id: 5).write(o0)', /_id: takes a string literal/],
+    ['let a = noise(_id: "x")\na().write(o0)\na().write(o1)', /_id: "x" is in a 'let' value used more than once/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
+  }
+})

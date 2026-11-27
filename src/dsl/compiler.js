@@ -185,7 +185,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
         const chain = { kind: 'Chain', calls: [call], loc: value.loc }
         if (bindings.deferChains) return chain
         if (!bindings.pending) throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
-        return bindings.compileInlineChain(chain, at, { count: false })
+        return bindings.compileInlineChain(chain, at, { count: true })
       }
       // An effect alias used as a value stays the effect's bare name.
       if (binding.kind === 'alias') return binding.name
@@ -319,6 +319,14 @@ class CompileScope extends Map {
     // Names of the program's lets that a later statement declares. Reading one
     // before its let reports S003, as upstream's validator does.
     this.pendingNames = null
+  }
+
+  // A let whose value carries an `_id:` may be used once: its uses would share
+  // the id (upstream S011).
+  useLet(partial, loc) {
+    if (!partial.id) return
+    if (partial.used) throw new DslError(`_id: "${partial.id}" is in a 'let' value used more than once, so its uses would share one id`, loc)
+    partial.used = true
   }
 
   // The seed draws use here: the innermost `_seed:` scope's, else the program's.
@@ -464,9 +472,11 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     // An alias names an effect; its target name resolves where it is called, so
     // a let that later makes that name a partial is followed (upstream
     // substitutes the alias's name).
+    // Upstream follows it for an effect passed as a value; a statement element
+    // calls the alias's effect itself.
     for (let hops = 0; target?.kind === 'alias' && hops < 16; hops += 1) {
       call = { ...call, name: target.name }
-      const next = bindings.get(target.name)
+      const next = inline ? bindings.get(target.name) : null
       target = next && next !== target ? next : null
     }
     if (partial?.kind === 'alias' && target?.kind !== 'partial') {
@@ -476,12 +486,17 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       // An `_id:` written where the let is called names the element at this
       // use, with `'` added while it is one of the let's own names (upstream).
-      const siteId = validId(call.args.findLast((arg) => arg.name === '_id')?.value)
+      // An id an earlier element claimed falls back to the let's name, and one
+      // written inside another let's value is the let's (upstream letKeyName).
+      const siteId = count ? validId(call.args.findLast((arg) => arg.name === '_id')?.value) : undefined
       call = mergePartial(partial.call, call)
       // An element held by a let draws under the let's key and the name the let
       // gave it.
       heldKey = partial.key
-      if (siteId !== undefined && partial.letKey) {
+      // A use with an `_id:` of its own does not share the let's id.
+      if (siteId === undefined) bindings.useLet(partial, call.loc)
+      if (siteId !== undefined && partial.letKey && !bindings.claimedIds.has(siteId)) {
+        bindings.claimedIds.add(siteId)
         let name = siteId
         while (partial.ownNames.has(name)) name += "'"
         heldKey = joinKey(partial.letKey, `${partial.op}@${name}`)
@@ -491,17 +506,23 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     const metadata = {}
     const parameters = call.args.filter(arg => {
       if (arg.name === '_id') {
-        if (typeof arg.value === 'string' && /^[A-Za-z][A-Za-z0-9_]*$/.test(arg.value)) metadata._id = arg.value
-        else delete metadata._id
+        // The last `_id:` is the element's; it must be an identifier string (upstream S001).
+        if (arg !== call.args.findLast((other) => other.name === '_id')) return false
+        if (validId(arg.value) === undefined) throw new DslError("_id: takes a string literal of letters, digits and '_' that starts with a letter", call.loc)
+        metadata._id = arg.value
         return false
       }
       // `_seed: <n>` gives the element's draws the seed n (upstream scopes).
+      // Only the last `_seed:` is read, as upstream's keywords keep one, and
+      // constant arithmetic folds first.
       if (arg.name === '_seed') {
+        if (arg !== call.args.findLast((other) => other.name === '_seed')) return false
         if (containsRandomDeep(arg.value)) throw new DslError('A random call cannot set _seed', call.loc)
-        if (!Number.isInteger(arg.value) || arg.value < 0 || arg.value > 4294967295) {
+        const seed = evaluateValue(arg.value, bindings)
+        if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295) {
           throw new DslError('_seed must be a whole number from 0 to 4294967295', call.loc)
         }
-        metadata._seed = arg.value
+        metadata._seed = seed === 0 ? 0 : seed
         return false
       }
       // The upstream expander binds built-in reads before it checks effect
@@ -786,7 +807,7 @@ function declareBinding(binding, bindings) {
   // names it: `let w = v` holds v's effect, and an argument that names v holds
   // that effect as written.
   const chosen = (value) => {
-    const bound = value?.kind === 'identifier' ? bindings.get(value.name) : null
+    const bound = value?.kind === 'identifier' ? (value.boundPartial ?? bindings.get(value.name)) : null
     return bound?.kind === 'value' && bound.resolved && bound.value?.kind === 'Chain' ? bound.value : null
   }
   const copied = chosen(binding.value)
@@ -794,10 +815,28 @@ function declareBinding(binding, bindings) {
     if (copied.calls.length !== 1 || copied.calls[0].kind !== 'Call') {
       throw new DslError(`A let cannot copy another let's chosen chain of several effects yet: '${binding.name}'`, binding.loc)
     }
-    return declareBinding({ ...binding, value: copied.calls[0] }, bindings)
+    // A chosen call of another let's partial is that partial, keyed where it was written.
+    const call = copied.calls[0]
+    const held = call.boundPartial ?? bindings.get(call.name)
+    if (held?.kind === 'partial' && call.args.length === 0) {
+      bindings.set(binding.name, held)
+      return
+    }
+    return declareBinding({ ...binding, value: call }, bindings)
   }
-  if (binding.value?.kind === 'Call' && binding.value.args.some((arg) => chosen(arg.value))) {
-    binding = { ...binding, value: { ...binding.value, args: binding.value.args.map((arg) => (chosen(arg.value) ? { ...arg, value: chosen(arg.value) } : arg)) } }
+  // Substitute chosen effects at any depth of the let's arguments.
+  const substitute = (value) => {
+    if (chosen(value)) return chosen(value)
+    if (Array.isArray(value)) return value.map(substitute)
+    if (value?.kind === 'Chain') {
+      return { ...value, calls: value.calls.map((call) => (call.kind === 'Subchain'
+        ? { ...call, body: call.body.map((entry) => ({ ...entry, args: entry.args.map((arg) => ({ ...arg, value: substitute(arg.value) })) })) }
+        : { ...call, args: call.args.map((arg) => ({ ...arg, value: substitute(arg.value) })) })) }
+    }
+    return value
+  }
+  if (binding.value?.kind === 'Call') {
+    binding = { ...binding, value: { ...binding.value, args: binding.value.args.map((arg) => ({ ...arg, value: substitute(arg.value) })) } }
   }
   if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name) && !isRandomCall(binding.value)) {
     // Other partial arguments keep their existing use-site resolution. The
@@ -825,16 +864,20 @@ function declareBinding(binding, bindings) {
     // else its occurrence name.
     const op = definition ? `${definition.namespace}.${definition.func}` : null
     let ownName = null
-    if (previous?.kind === 'partial') ownName = previous.ownName
+    const writtenId = validId(own.args.findLast((arg) => arg.name === '_id')?.value)
+    if (previous?.kind === 'partial') ownName = writtenId ?? previous.ownName
     else if (definition) {
       const occurrence = bindings.nextOccurrence(definition.func)
-      ownName = validId(own.args.findLast((arg) => arg.name === '_id')?.value) ?? occurrence
+      ownName = writtenId ?? occurrence
     }
     const element = ownName ? `${op}@${ownName}` : null
     const letKey = element ? bindings.letKey(binding.name, 'effect') : null
     const key = element ? joinKey(letKey, element) : null
     countLetValues(written, bindings)
-    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []) })
+    // An `_id:` in the let's value, on its element or inside it, limits it to one use.
+    const ids = new Set()
+    collectIds({ kind: 'Call', name: call.name, args: call.args }, ids)
+    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []), id: [...ids][0] })
     return
   }
   if (aliasBinding(binding.value, bindings)) {
