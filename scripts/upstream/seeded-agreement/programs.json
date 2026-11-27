@@ -346,5 +346,23 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, mixer\nseed 3\nlet u = noise(scaleX: 3)\nlet t = blendMode(tex: u)\nlet u = solid()\nnoise().t().write(o0)\nu().write(o1)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "let-redeclares-own-alias",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = noise\nlet t = pick(t(scaleX: 2), solid())\nsolid().blendMode(tex: t).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "let-redeclares-own-partial",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 2)\nlet t = pick(t(), solid())\nsolid().blendMode(tex: t).write(o0)\nrender(o0)"
  }
 ]

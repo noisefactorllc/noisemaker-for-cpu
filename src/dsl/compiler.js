@@ -649,7 +649,7 @@ function countLetValues(args, bindings) {
 function elementDefinition(entry, bindings) {
   const binding = entry.boundPartial ?? bindings.get(entry.name)
   const name = binding?.kind === 'alias' ? binding.name : binding?.kind === 'partial' ? binding.call.name : entry.name
-  const namespace = binding?.kind === 'partial' ? (binding.call.namespace ?? entry.namespace) : entry.namespace
+  const namespace = binding?.kind === 'partial' ? (entry.namespace ?? binding.call.namespace) : entry.namespace
   return bindings.registry.resolve(name, namespace ? [namespace] : bindings.search)
 }
 
@@ -744,8 +744,9 @@ function declareBinding(binding, bindings) {
     throw new DslError(`A let cannot copy another let's chosen effect yet: '${binding.name}'`, binding.loc)
   }
   const entry = { kind: 'value', expr: captureHexColors(binding.value, bindings), resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
-  bindings.set(binding.name, entry)
+  // Bound before the let's own name is set, so the value sees the earlier binding of that name.
   bindCalls(entry.expr, bindings)
+  bindings.set(binding.name, entry)
   if (containsRandom(binding.value)) {
     bindings.deferChains = true
     try {

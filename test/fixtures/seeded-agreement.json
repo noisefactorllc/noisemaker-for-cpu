@@ -1857,6 +1857,70 @@
      }
     }
    ]
+  },
+  {
+   "name": "let-redeclares-own-alias",
+   "dsl": "search synth, mixer\nseed 3\nlet t = noise\nlet t = pick(t(scaleX: 2), solid())\nsolid().blendMode(tex: t).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:t",
+     "u": 1802387800
+    },
+    {
+     "seed": 3,
+     "key": "mixer.blendMode@blendMode_1/tex/e:synth.noise/seed/inherit",
+     "u": 1702751371
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 72
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "let-redeclares-own-partial",
+   "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 2)\nlet t = pick(t(), solid())\nsolid().blendMode(tex: t).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:t",
+     "u": 1802387800
+    },
+    {
+     "seed": 3,
+     "key": "let:t/synth.noise@noise_1/seed/inherit",
+     "u": 3288666147
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 48
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
   }
  ]
 }
