@@ -50,7 +50,12 @@ for (const program of programs) {
   const compiled = compile(program.dsl)
   const errors = compiled.diagnostics.filter((entry) => entry.severity === 'error')
   if (errors.length) throw new Error(`${program.name}: ${errors.map((entry) => `${entry.code} ${entry.message}`).join('; ')}`)
-  const elements = compiled.plans.flatMap((plan) => plan.chain || []).filter((step) => !step.op.startsWith('_')).map((step) => {
+  // Steps in plan order, through the plans a maybe, a use or an if holds.
+  const stepsOf = (plans) => plans.flatMap((plan) => [
+    ...(plan.chain || []),
+    ...stepsOf([...(plan.then || []), ...(plan.elif || []).flatMap((branch) => branch.then || []), ...(plan.else || [])]),
+  ])
+  const elements = stepsOf(compiled.plans).filter((step) => !step.op.startsWith('_')).map((step) => {
     const drawn = [...Object.keys(step.randomSources ?? {}), ...Object.keys(step.inheritedSeeds ?? {})]
     const lets = Object.entries(step.args).filter(([, value]) => value && typeof value === 'object' && '_varRef' in value).map(([name]) => name)
     const names = [...new Set([...drawn, ...lets])].sort()

@@ -96,7 +96,7 @@ class Parser {
   }
 
   parseProgram() {
-    const ast = { kind: 'DslProgram', search: [], seed: null, bindings: [], chains: [], render: null, loc: location(this.peek()) }
+    const ast = { kind: 'DslProgram', search: [], seed: null, bindings: [], chains: [], parts: [], render: null, loc: location(this.peek()) }
     if (this.match('search')) {
       do ast.search.push(this.searchNamespace().lexeme)
       while (this.match(','))
@@ -106,6 +106,18 @@ class Parser {
       if (this.match(';')) continue
       if (this.atSeedDirective()) {
         this.parseSeedDirective(ast)
+        continue
+      }
+      // Upstream: `part <name> {` declares a part, at the top level only.
+      if (this.atPartDecl()) {
+        const part = this.parsePartDecl()
+        Object.defineProperty(part, 'planIndex', { value: ast.chains.length, enumerable: false, writable: true, configurable: true })
+        ast.parts.push(part)
+        continue
+      }
+      if (this.atMaybe() && !this.maybeBodyIsTail()) {
+        ast.chains.push(this.parseMaybeStatement())
+        this.match(';')
         continue
       }
       if (this.match('let')) {
@@ -177,14 +189,114 @@ class Parser {
   }
 
   parseChain() {
-    const first = this.parseCall()
-    const calls = [first]
-    while (this.match('.')) {
+    const first = this.toUse(this.parseCall())
+    const calls = [first, ...this.parseChainTail()]
+    return { kind: 'Chain', calls, loc: first.loc }
+  }
+
+  // `part` and `maybe` are not keywords: `part <name> {` and `maybe(` begin
+  // these forms only where nothing else can (upstream isPartDeclStart, isMaybeStart).
+  atPartDecl() {
+    return this.peek().type === 'identifier' && this.peek().lexeme === 'part' &&
+      this.peek(1).type === 'identifier' && this.peek(2).type === 'punctuation' && this.peek(2).lexeme === '{'
+  }
+
+  atMaybe(offset = 0) {
+    return this.peek(offset).type === 'identifier' && this.peek(offset).lexeme === 'maybe' &&
+      this.peek(offset + 1).type === 'punctuation' && this.peek(offset + 1).lexeme === '('
+  }
+
+  // Whether the block after `maybe(...)` is a chain tail: its first token is '.'.
+  maybeBodyIsTail(offset = 0) {
+    let index = this.current + offset + 1
+    let depth = 0
+    for (; index < this.tokens.length; index += 1) {
+      const token = this.tokens[index]
+      if (token.type === 'punctuation' && token.lexeme === '(') depth += 1
+      else if (token.type === 'punctuation' && token.lexeme === ')' && --depth === 0) break
+    }
+    const open = this.tokens[index + 1]
+    const first = this.tokens[index + 2]
+    return open?.type === 'punctuation' && open.lexeme === '{' && first?.type === 'punctuation' && first.lexeme === '.'
+  }
+
+  // `use(part, name: value, ...)` (upstream toUse): one part, or pick() of parts.
+  toUse(call) {
+    if (call.kind !== 'Call' || call.name !== 'use') return call
+    const positional = call.args.filter((arg) => arg.name === null)
+    if (positional.length !== 1 || call.args[0].name !== null) {
+      throw new DslError('use() takes one part, and its other arguments by name', call.loc)
+    }
+    return { kind: 'Use', target: positional[0].value, args: call.args.filter((arg) => arg.name !== null), loc: call.loc }
+  }
+
+  // The '.' elements and maybe tails that continue a chain.
+  parseChainTail() {
+    const calls = []
+    while (true) {
+      if (this.atMaybe() && this.maybeBodyIsTail()) {
+        calls.push(this.parseMaybeTail())
+        continue
+      }
+      if (!this.isPunctuation('.')) break
+      this.current += 1
       if (this.atSubchain()) calls.push(this.parseSubchain())
       else if (this.peek().lexeme === 'write3d' && this.peek().type === 'identifier') calls.push(this.parseWrite3d())
-      else calls.push(this.parseCall())
+      else if (this.atMaybe()) calls.push(this.parseMaybeTail())
+      else calls.push(this.toUse(this.parseCall()))
     }
-    return { kind: 'Chain', calls, loc: first.loc }
+    return calls
+  }
+
+  parseMaybeProbability() {
+    const start = this.tokens[this.current++]
+    this.consume('(')
+    const probability = this.parseValueExpression()
+    this.consume(')')
+    return { start, probability }
+  }
+
+  parseMaybeTail() {
+    const { start, probability } = this.parseMaybeProbability()
+    this.consume('{')
+    const body = this.parseChainTail()
+    this.consume('}')
+    return { kind: 'MaybeTail', probability, body, loc: location(start) }
+  }
+
+  // `maybe(p) { statements }`: lets, chains, uses and nested maybes.
+  parseMaybeStatement() {
+    const { start, probability } = this.parseMaybeProbability()
+    return { kind: 'Maybe', probability, body: this.parseBlock(false), loc: location(start) }
+  }
+
+  // A block's statements in order. A part body may also hold chain fragments.
+  parseBlock(part) {
+    this.consume('{')
+    const body = []
+    while (!this.check('}')) {
+      if (this.atEnd()) throw new DslError("Expect '}'", location(this.peek()))
+      if (this.match(';')) continue
+      if (part && (this.isPunctuation('.') || (this.atMaybe() && this.maybeBodyIsTail()))) {
+        const start = this.peek()
+        body.push({ kind: 'ChainTail', calls: this.parseChainTail(), loc: location(start) })
+      } else if (this.atMaybe() && !this.maybeBodyIsTail()) {
+        body.push(this.parseMaybeStatement())
+      } else if (this.match('let')) {
+        body.push(this.parseBinding(this.previous()))
+      } else {
+        body.push(this.parseChain())
+      }
+      this.match(';')
+    }
+    this.consume('}')
+    return body
+  }
+
+  parsePartDecl() {
+    const start = this.tokens[this.current++]
+    const name = this.identifier().lexeme
+    return { kind: 'PartDecl', name, body: this.parseBlock(true), loc: location(start) }
   }
 
   // Port of upstream parseWriteCall for write3d: two positional references, a
@@ -292,7 +404,7 @@ class Parser {
     // Upstream's parseCall lets the midi() and audio() value calls mix positional and
     // keyword arguments (`allowMixed`), and a random call takes positional bounds
     // beside named ones and its own `seed:`; every other call keeps one form.
-    const allowMixed = name.lexeme === 'midi' || name.lexeme === 'audio' || RANDOM_FUNCTIONS.has(name.lexeme)
+    const allowMixed = name.lexeme === 'midi' || name.lexeme === 'audio' || name.lexeme === 'use' || RANDOM_FUNCTIONS.has(name.lexeme)
     if (!this.check(')')) {
       do {
         const isNamed = this.peek().type === 'identifier' && this.peek(1).lexeme === ':'

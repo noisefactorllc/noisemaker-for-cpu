@@ -160,3 +160,18 @@ test('an id is taken each time an element compiles with it, through lets, values
     assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), /is in a 'let' value used more than once/, source)
   }
 })
+
+test('parts refuse what upstream refuses', () => {
+  for (const [source, message] of [
+    ['part p {\n  .tint(_id: "t")\n}\nnoise().use(p).write(o0)', /an _id: inside a part needs an _id: on every use of that part/],
+    ['noise().use(p).write(o0)', /No part named 'p'/],
+    ['noise().use(p).write(o0)\npart p {\n  .tint()\n}\nnoise().write(o1)', /used before it is declared/],
+    ['part p {\n  .tint()\n}\nnoise().use(p, a: 1).write(o0)', /part 'p' has no let 'a'/],
+    ['part p {\n  .use(p)\n}\nnoise().use(p).write(o0)', /part nesting is circular/],
+    ['part p {\n  .tint()\n}\nuse(p)', /part 'p' continues a chain; use it in a chain/],
+    ['part p {\n  .tint()\n}\npart p {\n  .tint()\n}\nnoise().write(o0)', /part 'p' is declared twice/],
+    ['maybe(2) {\n  noise().write(o0)\n}', /the probability must be a number between 0 and 1/],
+  ]) {
+    assert.throws(() => compile(`search synth, filter\nseed 3\n${source}`), message, source)
+  }
+})

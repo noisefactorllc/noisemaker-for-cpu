@@ -651,5 +651,168 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, mixer\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: solid().blendMode(tex: b(), tex: noise()))\nb().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-maybe-stmt",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\nmaybe(0.5) {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nmaybe(0.9) {\n  noise().write(o1)\n}\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "part-maybe-tail",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\nnoise().maybe(0.5) { .tint(alpha: rand()) }.write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-use",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart edge {\n  let a = rand(0, 1)\n  .tint(alpha: a)\n}\nnoise().use(edge).write(o0)\nnoise().use(edge).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "part-statement",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\npart base {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nuse(base)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "part-use-args",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart edge {\n  let a = 0.5\n  .tint(alpha: a)\n}\nnoise().use(edge, a: rand()).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-use-pick",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart a1 {\n  .tint(alpha: rand())\n}\npart a2 {\n  .tint(alpha: 0.5)\n}\nnoise().use(pick(a1, a2)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-use-seed",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\npart edge {\n  .tint(alpha: rand())\n}\nnoise().use(edge, _seed: 3).write(o0)\nnoise().use(edge, _seed: 3).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "part-use-id",
+  "effects": [
+   "synth/noise",
+   "filter/tint"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart edge {\n  .tint(alpha: rand())\n}\nnoise().use(edge, _id: \"e\").write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-maybe-lets-and-nesting",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 6\nmaybe(0.7) {\n  let a = rand(0, 1)\n  noise().tint(alpha: a).write(o0)\n  maybe(0.4) {\n    noise(scaleX: rand(1, 9)).write(o1)\n  }\n}\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "part-maybe-random-probability",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 6\nmaybe(rand(0, 1)) {\n  noise().write(o0)\n}\nnoise().maybe(rand()) { .tint() }.write(o1)\nrender(o1)"
+ },
+ {
+  "name": "part-maybe-tail-untaken-keeps-chain",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 2\nnoise().maybe(0) { .tint(alpha: rand()) }.tint(alpha: 0.5).write(o0)\nnoise().maybe(1) { .tint(alpha: rand()) }.write(o1)\nrender(o0)"
+ },
+ {
+  "name": "part-nested-parts",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart inner {\n  .tint(alpha: rand())\n}\npart outer {\n  .use(inner)\n  .tint(alpha: rand())\n}\nnoise().use(outer).use(inner).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-outer-let-in-part",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 5\nlet t = tint(alpha: 0.5)\npart p {\n  .t()\n}\nnoise().use(p).write(o0)\nnoise().t().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "part-use-args-and-lets",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart edge {\n  let a = rand(0, 1)\n  let b = 0.25\n  .tint(alpha: a).tint(alpha: b)\n}\nnoise().use(edge, b: rand(0, 1)).write(o0)\nnoise().use(edge, a: 0.5, b: 0.75).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "part-use-seed-and-id-inherit",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart gen {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nuse(gen, _seed: 9)\nuse(gen, _id: \"g\")\nuse(gen)\nrender(o0)"
+ },
+ {
+  "name": "part-part-ids-naming-body",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 5\npart p {\n  .tint(alpha: rand(), _id: \"tint_1\")\n  .tint(alpha: rand())\n}\nnoise(_id: \"tint_1\").use(p, _id: \"u\").write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-statement-part-with-maybe",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 8\npart scene {\n  let s = rand(1, 9)\n  noise(scaleX: s).write(o0)\n  maybe(0.5) {\n    noise(scaleY: s).write(o1)\n  }\n}\nuse(scene)\nuse(scene)\nrender(o0)"
+ },
+ {
+  "name": "part-use-pick-statement",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth\nseed 4\npart a1 {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\npart a2 {\n  noise(scaleY: rand(1, 9)).write(o0)\n}\nuse(pick(a1, a2))\nuse(pick(a1, a2))\nrender(o0)"
  }
 ]

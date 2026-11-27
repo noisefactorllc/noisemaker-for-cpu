@@ -1,5 +1,5 @@
 import { DslError } from './error.js'
-import { joinKey, pathSegment } from './draws.js'
+import { chanceFrom, joinKey, pathSegment } from './draws.js'
 import { parseDsl } from './parser.js'
 import { canInheritSeed, containsRandom, containsRandomDeep, drawContext, inheritedSeed, isRandomCall, isSeedParam, resolveRandomCall } from './random.js'
 import { isAutomationValue } from '../runtime/automation.js'
@@ -304,6 +304,14 @@ class CompileScope extends Map {
     this.claimedIds = new Set()
     this.givenNames = new Set()
     this.seedScopes = []
+    // The key scope (upstream keyScope): the enclosing `maybe_<n>` blocks and
+    // `use@<name>` instances. The parts by name, the parts being expanded, each
+    // instance's scope, and the top-level statement being compiled.
+    this.keyScope = []
+    this.parts = new Map()
+    this.partStack = []
+    this.partScopes = []
+    this.statementIndex = 0
     this.choicesFor = (effectName, paramName, loc) => {
       // A two-part name, `synth.noise`, names its namespace.
       const parts = effectName.split('.')
@@ -349,6 +357,136 @@ class CompileScope extends Map {
     else if (value.kind === 'vector') this.markLetIds(value.values)
   }
 
+  // A key in the current scope.
+  scoped(...segments) {
+    return joinKey(...this.keyScope, ...segments)
+  }
+
+  // The scope of the part instance being compiled, '' outside every part.
+  partScope() {
+    return this.partScopes.length ? this.partScopes.at(-1) : ''
+  }
+
+  // A maybe (upstream maybe_<n>): its probability, drawn at `<scope>/maybe_<n>/p`
+  // when random, and its decision at `<scope>/maybe_<n>/decide`. Its body
+  // compiles inside its scope either way, so its draws happen; returns the
+  // decision.
+  withMaybe(node, body) {
+    const maybeKey = this.nextOccurrence('maybe')
+    const at = { key: this.scoped(maybeKey, 'p'), path: [] }
+    const p = containsRandom(node.probability) ? evaluateValue(node.probability, this, 0, [], at) : evaluateValue(node.probability, this)
+    if (typeof p !== 'number' || !(p >= 0 && p <= 1)) throw new DslError('maybe(p): the probability must be a number between 0 and 1', node.loc)
+    const taken = chanceFrom(this.draws.draw(this.scopeSeed(), this.scoped(maybeKey, 'decide')), p)
+    this.keyScope.push(maybeKey)
+    try {
+      body()
+    } finally {
+      this.keyScope.pop()
+    }
+    return taken
+  }
+
+  // A use of a part (upstream resolvePartTarget and withPart): its key name, its
+  // part (named, or drawn by pick() at `<use>/part`), its arguments for the
+  // part's lets (drawn at `<use>/arg:<name>`), and the scope, seed and naming
+  // body of the instance. `body(part, declare)` compiles the part's items.
+  withUse(use, body) {
+    const idArg = use.args.findLast((arg) => arg.name === '_id')
+    if (idArg && validId(idArg.value) === undefined) throw new DslError("_id: takes a string literal of letters, digits and '_' that starts with a letter", use.loc)
+    const useKey = `use@${this.keyNameFor(this.nextOccurrence('use'), idArg?.value)}`
+    const part = this.resolvePart(use, useKey)
+    // An id inside a part names one element per instance only when each use
+    // has an id of its own (upstream S001).
+    if (!idArg) {
+      const ids = new Set()
+      collectIds(part.body.map((item) => (item.kind === 'Binding' ? item.value : item.kind === 'ChainTail' ? { kind: 'Chain', calls: item.calls } : item)), ids)
+      if (ids.size) throw new DslError(`an _id: inside a part needs an _id: on every use of that part: '${part.name}'`, use.loc)
+    }
+    let ownSeed = null
+    const seedArg = use.args.findLast((arg) => arg.name === '_seed')
+    if (seedArg) {
+      if (containsRandomDeep(seedArg.value)) throw new DslError('A random call cannot set _seed: it must be a literal', use.loc)
+      ownSeed = foldConstant(seedArg.value)
+      if (!Number.isInteger(ownSeed) || ownSeed < 0 || ownSeed > 4294967295) throw new DslError('_seed must be a whole number from 0 to 4294967295', use.loc)
+    }
+    const overrides = new Map()
+    for (const arg of lastOfEachName(use.args.filter((entry) => !entry.name.startsWith('_')), null)) {
+      const at = { key: this.scoped(useKey, `arg:${arg.name}`), path: [] }
+      if (arg.value?.kind === 'Chain' || (arg.value?.kind === 'Call' && !isRandomCall(arg.value))) {
+        throw new DslError(`use(): an effect passed for '${arg.name}' is not supported yet`, use.loc)
+      }
+      overrides.set(arg.name, containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : arg.value)
+    }
+    const saved = {
+      keyScope: this.keyScope.splice(0), occurrences: this.occurrences, letCounts: this.letCounts,
+      bodyIds: this.bodyIds, claimedIds: this.claimedIds, givenNames: this.givenNames,
+    }
+    if (ownSeed !== null) {
+      this.keyScope.push(`part:${part.name}`)
+      this.seedScopes.push(ownSeed)
+    } else this.keyScope.push(...saved.keyScope, useKey)
+    this.partScopes.push(this.keyScope.join('/'))
+    this.occurrences = new Map()
+    this.letCounts = { effect: new Map(), value: new Map() }
+    this.bodyIds = new Set()
+    collectIds(part.body.map((item) => (item.kind === 'Binding' ? item.value : item.kind === 'ChainTail' ? { kind: 'Chain', calls: item.calls } : item)), this.bodyIds)
+    this.claimedIds = new Set()
+    this.givenNames = new Set()
+    const shadowed = new Map()
+    for (const item of part.body) {
+      if (item.kind === 'Binding' && !shadowed.has(item.name)) shadowed.set(item.name, this.has(item.name) ? { value: this.get(item.name) } : null)
+    }
+    this.partStack.push(part.name)
+    try {
+      body(part, (item) => {
+        // A part's let, replaced by the use's argument for it or not. A replaced
+        // let is still declared and drawn; the argument takes its place.
+        declareBinding(item, this)
+        if (overrides.has(item.name)) {
+          const value = overrides.get(item.name)
+          const literal = typeof value !== 'object' || value === null || Array.isArray(value)
+          this.set(item.name, { kind: 'value', expr: value, resolved: literal, value: literal ? value : null, at: null })
+        }
+      })
+    } finally {
+      this.partStack.pop()
+      for (const [name, previous] of shadowed) {
+        if (previous) this.set(name, previous.value)
+        else this.delete(name)
+      }
+      this.partScopes.pop()
+      if (ownSeed !== null) this.seedScopes.pop()
+      this.keyScope.splice(0, this.keyScope.length, ...saved.keyScope)
+      Object.assign(this, { occurrences: saved.occurrences, letCounts: saved.letCounts, bodyIds: saved.bodyIds, claimedIds: saved.claimedIds, givenNames: saved.givenNames })
+    }
+  }
+
+  resolvePart(use, useKey) {
+    const argNames = use.args.map((arg) => arg.name).filter((name) => !name.startsWith('_'))
+    const lookUp = (name) => {
+      const part = this.parts.get(name)
+      if (!part) throw new DslError(`No part named '${name}'. Parts: ${[...this.parts.keys()].join(', ') || 'none'}`, use.loc)
+      if ((part.planIndex ?? 0) > this.statementIndex) throw new DslError(`part '${name}' is used before it is declared`, use.loc)
+      const lets = new Set(part.body.filter((item) => item.kind === 'Binding').map((item) => item.name))
+      for (const argName of argNames) if (!lets.has(argName)) throw new DslError(`part '${name}' has no let '${argName}'`, use.loc)
+      return part
+    }
+    let target = use.target
+    if (isRandomCall(target)) {
+      if (target.name !== 'pick') throw new DslError('use() takes a part name, or pick() of part names', use.loc)
+      for (const arg of target.args) {
+        if (arg.value?.kind !== 'identifier') throw new DslError('use(pick(...)) takes part names', use.loc)
+        lookUp(arg.value.name)
+      }
+      const ctx = { seed: this.scopeSeed(), key: this.scoped(useKey, 'part'), draw: this.draws.draw, choicesFor: this.choicesFor, isShadowed: () => false }
+      target = { kind: 'identifier', name: resolveRandomCall(target, ctx, [], (item) => item.name) }
+    }
+    if (target?.kind !== 'identifier') throw new DslError('use() takes a part name, or pick() of part names', use.loc)
+    const part = lookUp(target.name)
+    if (this.partStack.includes(part.name)) throw new DslError(`part nesting is circular: ${[...this.partStack, part.name].join(' -> ')}`, use.loc)
+    return part
+  }
+
   // The seed draws use here: the innermost `_seed:` scope's, else the program's.
   scopeSeed() {
     return this.seedScopes.length ? this.seedScopes.at(-1) : this.draws.seed
@@ -378,7 +516,7 @@ class CompileScope extends Map {
   letKey(name, kind) {
     const k = (this.letCounts[kind].get(name) ?? 0) + 1
     this.letCounts[kind].set(name, k)
-    return k === 1 ? `let:${name}` : `let:${name}#${k}`
+    return this.scoped(k === 1 ? `let:${name}` : `let:${name}#${k}`)
   }
 
   // An effect passed as a value draws under the value's key: `<key>/e:<op>/...`.
@@ -484,8 +622,11 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
   // wraps them in `_subchain_begin`/`_subchain_end` markers, which its expander
   // passes through without a render pass.
   const calls = chain.calls.flatMap((element) => element.kind === 'Subchain' ? element.body : [element])
-  for (let index = 0; index < calls.length; index += 1) {
-    let call = calls[index]
+  // One element of the chain. A use or a maybe tail feeds its own elements
+  // through this in place, as upstream expands them.
+  const processCall = (call, index) => {
+    if (call.kind === 'Use') return expandUse(call, index)
+    if (call.kind === 'MaybeTail') return expandMaybeTail(call, index)
     const partial = call.boundPartial ?? bindings.get(call.name)
     let heldKey = null
     let target = partial
@@ -520,6 +661,9 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
         while (partial.ownNames.has(name)) name += "'"
         heldKey = joinKey(partial.letKey, `${partial.op}@${name}`)
       }
+      // A let used inside a part instance it is not written in keys under that
+      // instance, then `outer`, then where the let is written.
+      if (heldKey && bindings.partScope() && partial.body !== bindings.partScope()) heldKey = joinKey(bindings.partScope(), 'outer', heldKey)
     }
     const isRead = call.name === 'read' || call.name === 'read3d'
     const metadata = {}
@@ -570,7 +714,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       // An element with its own `_seed:` restarts its keys at itself.
       if (metadata._seed !== undefined) elementKey = op
       else if (heldKey) elementKey = heldKey
-      else elementKey = inline && keyBase !== null ? joinKey(keyBase, `e:${op}`) : `${op}@${keyName}`
+      else elementKey = inline && keyBase !== null ? joinKey(keyBase, `e:${op}`) : bindings.scoped(`${op}@${keyName}`)
     }
     const ownSeed = elementKey !== null && metadata._seed !== undefined
     if (ownSeed) bindings.seedScopes.push(metadata._seed)
@@ -593,13 +737,13 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       steps.push({ kind: 'read', ...metadata, surface: args[0].value.name, loc: call.loc })
       hasInput = true
       hasImage = true
-      continue
+      return
     }
     if (call.name === 'write') {
       if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before write', call.loc)
       if (!hasImage || args.length !== 1 || args[0].value?.kind !== 'surface') throw new DslError('write(surface) requires a current image', call.loc)
       steps.push({ kind: 'write', ...metadata, surface: args[0].value.name, loc: call.loc })
-      continue
+      return
     }
     // Built-in volume I/O (upstream `_write3d` and `_read3d`). write3d stores the
     // current volume and geometry under the two names and passes the chain through;
@@ -613,14 +757,14 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       const references = volumeReferences(call)
       if (!references) throw new DslError('Expected surface reference', call.loc)
       steps.push({ kind: 'write3d', ...metadata, volume: references[0], geometry: references[1], loc: call.loc })
-      continue
+      return
     }
     if (index === 0 && call.name === 'read3d' && read3dReferences(call)) {
       const [volume, geometry] = read3dReferences(call)
       steps.push({ kind: 'read3d', ...metadata, volume, geometry, loc: call.loc })
       hasInput = true
       hasVolume = true
-      continue
+      return
     }
     if (!definition) throw new DslError(`Unknown effect "${call.name}" in search namespaces ${namespaces.join(', ')}`, call.loc)
     if (definition.domain === 'volume-generator') {
@@ -688,6 +832,29 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     if (inlineChains.length > 0) step.inlineChains = Object.freeze(inlineChains)
     steps.push(step)
   }
+  const state = () => ({ steps: steps.length, hasInput, hasImage, hasVolume, startsWithGenerator, openLoop })
+  const restore = (saved) => {
+    steps.length = saved.steps
+    ;({ hasInput, hasImage, hasVolume, startsWithGenerator, openLoop } = saved)
+  }
+  // A maybe tail (upstream `maybe_<n>`): its elements compile, and draw, whether
+  // or not it is taken; an untaken one leaves the chain as it was.
+  const expandMaybeTail = (tail, index) => {
+    const saved = state()
+    const taken = bindings.withMaybe(tail, () => tail.body.forEach((entry, offset) => processCall(entry, index + offset + 1)))
+    if (!taken) restore(saved)
+  }
+  // A use in a chain: the part's lets, then its chain fragments in place.
+  const expandUse = (use, index) => {
+    bindings.withUse(use, (part, declare) => {
+      for (const item of part.body) {
+        if (item.kind === 'Binding') declare(item)
+        else if (item.kind === 'ChainTail') item.calls.forEach((entry, offset) => processCall(entry, index + offset + 1))
+        else throw new DslError(`part '${part.name}' holds statements; use it on its own, as use(${part.name})`, use.loc)
+      }
+    })
+  }
+  for (let index = 0; index < calls.length; index += 1) processCall(calls[index], index)
   if (openLoop) throw new DslError('loopBegin must be closed by loopEnd before the chain ends', openLoop)
   const terminal = steps.at(-1)?.kind
   if (!inline && startsWithGenerator && terminal !== 'write' && terminal !== 'write3d') throw new DslError('Generator chain must end with write(oN)', chain.loc)
@@ -743,7 +910,12 @@ function collectIds(value, ids) {
   if (Array.isArray(value)) return value.forEach((item) => collectIds(item, ids))
   if (!value || typeof value !== 'object') return
   if (value.kind === 'Chain') return value.calls.forEach((call) => collectIds(call.kind === 'Subchain' ? call.body : call, ids))
-  if (value.kind === 'Call') {
+  // A maybe block's or tail's body, a binding's value and a use's arguments
+  // are written in the same naming body.
+  if (value.kind === 'Maybe' || value.kind === 'MaybeTail') return collectIds(value.body, ids)
+  if (value.kind === 'Binding') return collectIds(value.value, ids)
+  if (value.kind === 'ChainTail') return collectIds(value.calls, ids)
+  if (value.kind === 'Call' || value.kind === 'Use') {
     for (const arg of value.args) {
       if (arg.name === '_id' && typeof arg.value === 'string') ids.add(arg.value)
       collectIds(arg.value, ids)
@@ -932,7 +1104,7 @@ function declareBinding(binding, bindings) {
     const key = element ? joinKey(letKey, element) : null
     countLetValues(written, bindings)
     bindings.markLetIds(call)
-    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []) })
+    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []), body: bindings.partScope() })
     return
   }
   if (aliasBinding(binding.value, bindings)) {
@@ -967,6 +1139,50 @@ function declareBinding(binding, bindings) {
   }
 }
 
+// One statement, as the chains it renders. A maybe block's chains render only
+// when it is taken; its body compiles, and draws, either way. A use on its own
+// expands its part's statements in the instance's scope.
+function compileStatement(statement, bindings) {
+  if (statement.kind === 'Maybe') {
+    let chains = []
+    const taken = bindings.withMaybe(statement, () => { chains = compileBlock(statement.body, bindings) })
+    return taken ? chains : []
+  }
+  const calls = statement.calls ?? []
+  if (calls.length === 1 && calls[0].kind === 'Use') {
+    const chains = []
+    bindings.withUse(calls[0], (part, declare) => {
+      for (const item of part.body) {
+        if (item.kind === 'Binding') declare(item)
+        else if (item.kind === 'ChainTail') throw new DslError(`part '${part.name}' continues a chain; use it in a chain`, calls[0].loc)
+        else chains.push(...compileStatement(item, bindings))
+      }
+    })
+    return chains
+  }
+  return [compileChain(statement, bindings)]
+}
+
+// A block's statements in order. Its lets hold until the block ends.
+function compileBlock(items, bindings) {
+  const shadowed = new Map()
+  const chains = []
+  try {
+    for (const item of items) {
+      if (item.kind === 'Binding') {
+        if (!shadowed.has(item.name)) shadowed.set(item.name, bindings.has(item.name) ? { value: bindings.get(item.name) } : null)
+        declareBinding(item, bindings)
+      } else chains.push(...compileStatement(item, bindings))
+    }
+  } finally {
+    for (const [name, previous] of shadowed) {
+      if (previous) bindings.set(name, previous.value)
+      else bindings.delete(name)
+    }
+  }
+  return chains
+}
+
 export function compileDsl(source, registry, options = {}) {
   const ast = parseDsl(source, options)
   if (ast.search.length === 0) throw new DslError('Missing required search directive', ast.loc)
@@ -981,13 +1197,26 @@ export function compileDsl(source, registry, options = {}) {
     }
   }
 
-  const chains = ast.chains.map((chain, chainIndex) => {
+  // Parts, by name (upstream partDecls). A part expands where it is used.
+  for (const part of ast.parts) {
+    if (bindings.parts.has(part.name)) throw new DslError(`part '${part.name}' is declared twice`, part.loc)
+    for (const item of part.body) {
+      if (item.kind === 'Binding' && item.name.startsWith('_')) {
+        throw new DslError(`part '${part.name}': a let name may not start with '_': '${item.name}'`, part.loc)
+      }
+    }
+    bindings.parts.set(part.name, part)
+  }
+
+  const chains = []
+  ast.chains.forEach((statement, chainIndex) => {
+    bindings.statementIndex = chainIndex
     declareThrough(chainIndex)
     // pendingNames covers the whole chain compile, including inline chains:
     // every argument position reports a pending read, as upstream does.
     bindings.pendingNames = new Set(ast.bindings.slice(nextBinding).map((binding) => binding.name))
     try {
-      return compileChain(chain, bindings)
+      chains.push(...compileStatement(statement, bindings))
     } finally {
       bindings.pendingNames = null
     }

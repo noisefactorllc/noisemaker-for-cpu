@@ -2959,6 +2959,851 @@
      "values": {}
     }
    ]
+  },
+  {
+   "name": "part-maybe-stmt",
+   "dsl": "search synth, filter\nseed 5\nmaybe(0.5) {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nmaybe(0.9) {\n  noise().write(o1)\n}\nnoise().write(o2)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "maybe_1/decide",
+     "u": 2314005053
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/synth.noise@noise_1/scaleX",
+     "u": 1886470227
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/synth.noise@noise_1/seed/inherit",
+     "u": 1542312585
+    },
+    {
+     "seed": 5,
+     "key": "maybe_2/decide",
+     "u": 3986857540
+    },
+    {
+     "seed": 5,
+     "key": "maybe_2/synth.noise@noise_2/seed/inherit",
+     "u": 1988594536
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_3/seed/inherit",
+     "u": 1149351468
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 69
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-maybe-tail",
+   "dsl": "search synth, filter\nseed 5\nnoise().maybe(0.5) { .tint(alpha: rand()) }.write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/decide",
+     "u": 2314005053
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/filter.tint@tint_1/alpha",
+     "u": 1253767197
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use",
+   "dsl": "search synth, filter\nseed 5\npart edge {\n  let a = rand(0, 1)\n  .tint(alpha: a)\n}\nnoise().use(edge).write(o0)\nnoise().use(edge).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/let:a",
+     "u": 3419865156
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 86030841
+    },
+    {
+     "seed": 5,
+     "key": "use@use_2/let:a",
+     "u": 71935194
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.7962493896484375
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 42
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.016748666763305664
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-statement",
+   "dsl": "search synth\nseed 5\npart base {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nuse(base)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "use@use_1/synth.noise@noise_1/scaleX",
+     "u": 355599226
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 35639509
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 1.6623549461364746,
+      "seed": 10
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-args",
+   "dsl": "search synth, filter\nseed 5\npart edge {\n  let a = 0.5\n  .tint(alpha: a)\n}\nnoise().use(edge, a: rand()).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/arg:a",
+     "u": 164686089
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.038343966007232666
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-pick",
+   "dsl": "search synth, filter\nseed 5\npart a1 {\n  .tint(alpha: rand())\n}\npart a2 {\n  .tint(alpha: 0.5)\n}\nnoise().use(pick(a1, a2)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/part",
+     "u": 3262950331
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "part-use-seed",
+   "dsl": "search synth, filter\npart edge {\n  .tint(alpha: rand())\n}\nnoise().use(edge, _seed: 3).write(o0)\nnoise().use(edge, _seed: 3).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "part:edge/filter.tint@tint_1/alpha",
+     "u": 2276389994
+    },
+    {
+     "seed": 3,
+     "key": "part:edge/filter.tint@tint_1/alpha",
+     "u": 2276389994
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {}
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.5300133228302002
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {}
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.5300133228302002
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-id",
+   "dsl": "search synth, filter\nseed 5\npart edge {\n  .tint(alpha: rand())\n}\nnoise().use(edge, _id: \"e\").write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@e/filter.tint@tint_1/alpha",
+     "u": 3885456655
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.9046533703804016
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-maybe-lets-and-nesting",
+   "dsl": "search synth, filter\nseed 6\nmaybe(0.7) {\n  let a = rand(0, 1)\n  noise().tint(alpha: a).write(o0)\n  maybe(0.4) {\n    noise(scaleX: rand(1, 9)).write(o1)\n  }\n}\nnoise().write(o2)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 6,
+     "key": "maybe_1/decide",
+     "u": 2229673045
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/let:a",
+     "u": 1591473748
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/synth.noise@noise_1/seed/inherit",
+     "u": 3740993742
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/maybe_2/decide",
+     "u": 113145008
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/maybe_2/synth.noise@noise_2/scaleX",
+     "u": 2687808455
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/maybe_2/synth.noise@noise_2/seed/inherit",
+     "u": 884597794
+    },
+    {
+     "seed": 6,
+     "key": "synth.noise@noise_3/seed/inherit",
+     "u": 840983197
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 43
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.37054383754730225
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 6.006433010101318,
+      "seed": 95
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 98
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-maybe-random-probability",
+   "dsl": "search synth, filter\nseed 6\nmaybe(rand(0, 1)) {\n  noise().write(o0)\n}\nnoise().maybe(rand()) { .tint() }.write(o1)\nrender(o1)",
+   "draws": [
+    {
+     "seed": 6,
+     "key": "maybe_1/p",
+     "u": 2683347308
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/decide",
+     "u": 2229673045
+    },
+    {
+     "seed": 6,
+     "key": "maybe_1/synth.noise@noise_1/seed/inherit",
+     "u": 3740993742
+    },
+    {
+     "seed": 6,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 3736616138
+    },
+    {
+     "seed": 6,
+     "key": "maybe_2/p",
+     "u": 3557763522
+    },
+    {
+     "seed": 6,
+     "key": "maybe_2/decide",
+     "u": 3909527294
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 43
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 39
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-maybe-tail-untaken-keeps-chain",
+   "dsl": "search synth, filter\nseed 2\nnoise().maybe(0) { .tint(alpha: rand()) }.tint(alpha: 0.5).write(o0)\nnoise().maybe(1) { .tint(alpha: rand()) }.write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 482878500
+    },
+    {
+     "seed": 2,
+     "key": "maybe_1/decide",
+     "u": 3873977114
+    },
+    {
+     "seed": 2,
+     "key": "maybe_1/filter.tint@tint_1/alpha",
+     "u": 430373231
+    },
+    {
+     "seed": 2,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 312441283
+    },
+    {
+     "seed": 2,
+     "key": "maybe_2/decide",
+     "u": 309086318
+    },
+    {
+     "seed": 2,
+     "key": "maybe_2/filter.tint@tint_3/alpha",
+     "u": 1165845794
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 1
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.2714446187019348
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-nested-parts",
+   "dsl": "search synth, filter\nseed 5\npart inner {\n  .tint(alpha: rand())\n}\npart outer {\n  .use(inner)\n  .tint(alpha: rand())\n}\nnoise().use(outer).use(inner).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/use@use_1/filter.tint@tint_1/alpha",
+     "u": 817534147
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/filter.tint@tint_1/alpha",
+     "u": 1340184271
+    },
+    {
+     "seed": 5,
+     "key": "use@use_2/filter.tint@tint_1/alpha",
+     "u": 176009928
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.19034695625305176
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.3120359182357788
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.04098045825958252
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-outer-let-in-part",
+   "dsl": "search synth, filter\nseed 5\nlet t = tint(alpha: 0.5)\npart p {\n  .t()\n}\nnoise().use(p).write(o0)\nnoise().t().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 86030841
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 42
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "part-use-args-and-lets",
+   "dsl": "search synth, filter\nseed 5\npart edge {\n  let a = rand(0, 1)\n  let b = 0.25\n  .tint(alpha: a).tint(alpha: b)\n}\nnoise().use(edge, b: rand(0, 1)).write(o0)\nnoise().use(edge, a: 0.5, b: 0.75).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/arg:b",
+     "u": 165096227
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/let:a",
+     "u": 3419865156
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 86030841
+    },
+    {
+     "seed": 5,
+     "key": "use@use_2/let:a",
+     "u": 71935194
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.7962493896484375
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.03843945264816284
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 42
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.5
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.75
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-seed-and-id-inherit",
+   "dsl": "search synth, filter\nseed 5\npart gen {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\nuse(gen, _seed: 9)\nuse(gen, _id: \"g\")\nuse(gen)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 9,
+     "key": "part:gen/synth.noise@noise_1/scaleX",
+     "u": 3732337474
+    },
+    {
+     "seed": 9,
+     "key": "part:gen/synth.noise@noise_1/seed/inherit",
+     "u": 2223621698
+    },
+    {
+     "seed": 5,
+     "key": "use@g/synth.noise@noise_1/scaleX",
+     "u": 3269185875
+    },
+    {
+     "seed": 5,
+     "key": "use@g/synth.noise@noise_1/seed/inherit",
+     "u": 2569768549
+    },
+    {
+     "seed": 5,
+     "key": "use@use_3/synth.noise@noise_1/scaleX",
+     "u": 3497823522
+    },
+    {
+     "seed": 5,
+     "key": "use@use_3/synth.noise@noise_1/seed/inherit",
+     "u": 999989509
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.952020168304443,
+      "seed": 99
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.0893330574035645,
+      "seed": 50
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.515203952789307,
+      "seed": 10
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-part-ids-naming-body",
+   "dsl": "search synth, filter\nseed 5\npart p {\n  .tint(alpha: rand(), _id: \"tint_1\")\n  .tint(alpha: rand())\n}\nnoise(_id: \"tint_1\").use(p, _id: \"u\").write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@tint_1/seed/inherit",
+     "u": 48925361
+    },
+    {
+     "seed": 5,
+     "key": "use@u/filter.tint@tint_1/alpha",
+     "u": 2083422399
+    },
+    {
+     "seed": 5,
+     "key": "use@u/filter.tint@tint_2/alpha",
+     "u": 1522608721
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 62
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.48508453369140625
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.35450994968414307
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-statement-part-with-maybe",
+   "dsl": "search synth, filter\nseed 8\npart scene {\n  let s = rand(1, 9)\n  noise(scaleX: s).write(o0)\n  maybe(0.5) {\n    noise(scaleY: s).write(o1)\n  }\n}\nuse(scene)\nuse(scene)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 8,
+     "key": "use@use_1/let:s",
+     "u": 3627871700
+    },
+    {
+     "seed": 8,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 1471720663
+    },
+    {
+     "seed": 8,
+     "key": "use@use_1/maybe_1/decide",
+     "u": 672935076
+    },
+    {
+     "seed": 8,
+     "key": "use@use_1/maybe_1/synth.noise@noise_2/seed/inherit",
+     "u": 1745004442
+    },
+    {
+     "seed": 8,
+     "key": "use@use_2/let:s",
+     "u": 3644208477
+    },
+    {
+     "seed": 8,
+     "key": "use@use_2/synth.noise@noise_1/seed/inherit",
+     "u": 3306374953
+    },
+    {
+     "seed": 8,
+     "key": "use@use_2/maybe_1/decide",
+     "u": 3131651236
+    },
+    {
+     "seed": 8,
+     "key": "use@use_2/maybe_1/synth.noise@noise_2/seed/inherit",
+     "u": 3490817858
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.757437229156494,
+      "seed": 64
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleY": 7.757437229156494,
+      "seed": 43
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.787867069244385,
+      "seed": 54
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-pick-statement",
+   "dsl": "search synth\nseed 4\npart a1 {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\npart a2 {\n  noise(scaleY: rand(1, 9)).write(o0)\n}\nuse(pick(a1, a2))\nuse(pick(a1, a2))\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "use@use_1/part",
+     "u": 2989255340
+    },
+    {
+     "seed": 4,
+     "key": "use@use_1/synth.noise@noise_1/scaleX",
+     "u": 266204877
+    },
+    {
+     "seed": 4,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 952385644
+    },
+    {
+     "seed": 4,
+     "key": "use@use_2/part",
+     "u": 2733814388
+    },
+    {
+     "seed": 4,
+     "key": "use@use_2/synth.noise@noise_1/scaleX",
+     "u": 3277774463
+    },
+    {
+     "seed": 4,
+     "key": "use@use_2/synth.noise@noise_1/seed/inherit",
+     "u": 58644814
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 1.495844841003418,
+      "seed": 45
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.105330467224121,
+      "seed": 15
+     }
+    }
+   ]
   }
  ]
 }
