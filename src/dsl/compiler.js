@@ -110,14 +110,13 @@ function automationFields(call) {
   if (positional.length > order.length) {
     throw new DslError(`${call.name}() ${AUTOMATION_KEYWORD_ONLY[call.name].join(', ').replace(/, ([^,]*)$/, ' and $1')} are keyword-only`, call.loc)
   }
-  for (const arg of call.args) {
-    if (arg.name === null) continue
-    if (!valid.includes(arg.name)) throw new DslError(`${call.name}() unknown parameter '${arg.name}'. Valid: ${valid.join(', ')}`, call.loc)
-    if ((arg.name === 'name' || arg.name === 'id') && typeof arg.value !== 'string') {
-      throw new DslError(`${call.name}() '${arg.name}' requires a quoted string`, call.loc)
+  const named = new Map(call.args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg.value]))
+  for (const [name, value] of named) {
+    if (!valid.includes(name)) throw new DslError(`${call.name}() unknown parameter '${name}'. Valid: ${valid.join(', ')}`, call.loc)
+    if ((name === 'name' || name === 'id') && typeof value !== 'string') {
+      throw new DslError(`${call.name}() '${name}' requires a quoted string`, call.loc)
     }
   }
-  const named = new Map(call.args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg.value]))
   const free = order.filter((name) => !named.has(name))
   if (positional.length > free.length) throw new DslError(`${call.name}() has an excess positional argument`, call.loc)
   const fields = new Map()
@@ -174,8 +173,9 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
     throw new DslError(`Unsupported DSL value ${value.kind} "${value.name}"`, value.loc)
   }
   if (value.kind === 'identifier') {
-    if (bindings.has(value.name)) {
-      const binding = bindings.get(value.name)
+    // A let's own partial or alias is the one in force where that let was written.
+    if (value.boundPartial || bindings.has(value.name)) {
+      const binding = value.boundPartial ?? bindings.get(value.name)
       // A let that holds an effect, passed as a value, compiles as that effect,
       // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
       if (binding.kind === 'partial') {
@@ -635,11 +635,43 @@ function countLetValues(args, bindings) {
     }
     bindings.letChains.add(value)
     for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
-      const definition = bindings.registry.resolve(entry.name, entry.namespace ? [entry.namespace] : bindings.search)
-      if (definition) bindings.nextOccurrence(definition.func)
+      const definition = elementDefinition(entry, bindings)
+      // An element that calls another let's partial is that let's element, counted where it was written.
+      const held = (entry.boundPartial ?? bindings.get(entry.name))?.kind === 'partial'
+      if (definition && !held) bindings.nextOccurrence(definition.func)
       countLetValues(lastOfEachName(entry.args, definition), bindings)
     }
   }
+}
+
+// The definition a chain element's name stands for here: through an alias or a
+// partial a let holds, then the registry.
+function elementDefinition(entry, bindings) {
+  const binding = entry.boundPartial ?? bindings.get(entry.name)
+  const name = binding?.kind === 'alias' ? binding.name : binding?.kind === 'partial' ? binding.call.name : entry.name
+  const namespace = binding?.kind === 'partial' ? (binding.call.namespace ?? entry.namespace) : entry.namespace
+  return bindings.registry.resolve(name, namespace ? [namespace] : bindings.search)
+}
+
+// Mark each chain element in a value that names a let partial or alias with the
+// binding in force now, as upstream substitutes it where the let is written, so
+// a later let of the same name does not change it.
+function bindCalls(value, bindings) {
+  if (Array.isArray(value)) return value.forEach((item) => bindCalls(item, bindings))
+  if (!value || typeof value !== 'object') return
+  if (value.kind === 'identifier') {
+    const binding = bindings.get(value.name)
+    if (!value.boundPartial && (binding?.kind === 'partial' || binding?.kind === 'alias')) value.boundPartial = binding
+  } else if (value.kind === 'Chain') {
+    for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
+      const binding = bindings.get(entry.name)
+      if (!entry.boundPartial && (binding?.kind === 'partial' || binding?.kind === 'alias')) entry.boundPartial = binding
+      entry.args.forEach((arg) => bindCalls(arg.value, bindings))
+    }
+  } else if (value.kind === 'Call') value.args.forEach((arg) => bindCalls(arg.value, bindings))
+  else if (value.kind === 'binary') { bindCalls(value.left, bindings); bindCalls(value.right, bindings) }
+  else if (value.kind === 'unary') bindCalls(value.argument, bindings)
+  else if (value.kind === 'vector') bindCalls(value.values, bindings)
 }
 
 // Whether a let's argument holds a random call, in effects passed as values too,
@@ -648,7 +680,7 @@ function randomInLetValue(value, bindings) {
   if (Array.isArray(value)) return value.some((item) => randomInLetValue(item, bindings))
   if (value?.kind !== 'Chain') return containsRandomDeep(value)
   return value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call])).some((entry) => {
-    const definition = bindings.registry.resolve(entry.name, entry.namespace ? [entry.namespace] : bindings.search)
+    const definition = elementDefinition(entry, bindings)
     return lastOfEachName(entry.args, definition).some((arg) => randomInLetValue(arg.value, bindings))
   })
 }
@@ -683,6 +715,7 @@ function declareBinding(binding, bindings) {
     // The arguments this let writes, with only the last of a keyword written
     // twice (upstream keeps one). The merge above keeps these same nodes.
     const written = lastOfEachName(own.args, definition)
+    written.forEach((arg) => bindCalls(arg.value, bindings))
     if (written.some((arg) => randomInLetValue(arg.value, bindings))) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
@@ -712,6 +745,7 @@ function declareBinding(binding, bindings) {
   }
   const entry = { kind: 'value', expr: captureHexColors(binding.value, bindings), resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
   bindings.set(binding.name, entry)
+  bindCalls(entry.expr, bindings)
   if (containsRandom(binding.value)) {
     bindings.deferChains = true
     try {

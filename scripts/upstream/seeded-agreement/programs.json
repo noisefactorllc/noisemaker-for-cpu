@@ -303,5 +303,48 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, mixer\nseed 3\nlet b = blendMode(tex: noise().blendMode(tex: noise(scaleX: rand(1, 2)), tex: solid()))\nsolid().b().write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "midi-name-written-twice",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nlet m = midi(1, name: 3, name: \"x\", min: rand(0, 1))\nnoise().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "picked-chain-element-keeps-binding",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = blendMode(tex: solid(), mix: 0.25)\nlet v = pick(noise().t(), solid().t())\nlet t = blendMode(tex: noise(), mix: 0.75)\nsolid().blendMode(tex: v).write(o0)\nnoise().t().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "picked-alias-keeps-binding",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = noise\nlet v = pick(t(scaleX: 2), t(scaleX: 3))\nlet t = solid\nsolid().blendMode(tex: v).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "alias-in-effect-let",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet n = noise\nlet b = blendMode(tex: n(scaleX: rand(1, 2), scaleX: 3))\nsolid().b().write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "effect-let-names-partial",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet u = noise(scaleX: 3)\nlet t = blendMode(tex: u)\nlet u = solid()\nnoise().t().write(o0)\nu().write(o1)\nnoise().write(o2)\nrender(o0)"
  }
 ]
