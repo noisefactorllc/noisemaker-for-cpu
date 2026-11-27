@@ -180,11 +180,7 @@ class Parser {
     if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(' && !randomStart) {
       value = this.parseCall()
       if (value.name === 'midi' || value.name === 'audio') checkAutomationCall(value)
-      // A let's effect continues across '.', as upstream parses its value as a
-      // chain. An oscillator or input value cannot head a chain (upstream refuses).
-      if (this.isPunctuation('.') && ['osc', 'midi', 'audio'].includes(value.name)) {
-        throw new DslError(`A let's ${value.name}() value cannot continue a chain`, location(this.peek()))
-      }
+      // A let's call continues across '.', as upstream parses its value as a chain.
       if (this.isPunctuation('.')) {
         value = this.parseExpressionChain(value)
       }
@@ -357,7 +353,7 @@ class Parser {
       const call = this.parseCall()
       // Upstream allows write() and write3d() only in statement context.
       if (call.name === 'write' || call.name === 'write3d') throw new DslError('Expected effect or IO function name', call.loc)
-      calls.push(call)
+      calls.push(this.toUse(call))
     }
     return { kind: 'Chain', calls, loc: first.loc }
   }

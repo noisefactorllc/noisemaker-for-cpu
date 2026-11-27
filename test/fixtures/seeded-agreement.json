@@ -4153,6 +4153,276 @@
      }
     }
    ]
+  },
+  {
+   "name": "part-osc-let-chain-unused",
+   "dsl": "search synth, filter\nseed 3\npart p {\n  let c = osc(type: sine, min: 0.1, max: 0.4)\n  .tint(alpha: 0.3)\n}\nnoise().use(p).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 12
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-osc-chain-let-unused-top",
+   "dsl": "search synth, filter\nseed 3\nlet c = osc().tint()\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 936139365
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.7436952590942383,
+      "seed": 12
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-instances-rebind-use-args",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet n = noise(scaleX: 2)\nlet m = gradient()\npart p {\n  let t = 1\n  let w = blendMode(tex: t)\n  noise().w().write(o0)\n}\nuse(p, t: n)\nuse(p, t: m)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 3645161470
+    },
+    {
+     "seed": 3,
+     "key": "use@use_1/outer/let:n/synth.noise@noise_1/seed/inherit",
+     "u": 3451225161
+    },
+    {
+     "seed": 3,
+     "key": "use@use_2/synth.noise@noise_1/seed/inherit",
+     "u": 2962587196
+    },
+    {
+     "seed": 3,
+     "key": "use@use_2/outer/let:m/synth.gradient@gradient_1/seed/inherit",
+     "u": 1923501272
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 71
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 62
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 97
+     }
+    },
+    {
+     "op": "synth.gradient",
+     "values": {
+      "seed": 5
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "part-instances-rebind-values",
+   "dsl": "search synth\nseed 3\npart p {\n  let t = 1\n  let w = noise(scaleX: t)\n  w().write(o0)\n}\nuse(p, t: 2)\nuse(p, t: 3)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/let:w/synth.noise@noise_1/seed/inherit",
+     "u": 390189907
+    },
+    {
+     "seed": 3,
+     "key": "use@use_2/let:w/synth.noise@noise_1/seed/inherit",
+     "u": 2904096367
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2,
+      "seed": 8
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 3,
+      "seed": 68
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-instances-own-partials",
+   "dsl": "search synth, mixer\nseed 3\npart p {\n  let t = gradient()\n  let w = blendMode(tex: t)\n  noise().w().write(o0)\n}\nuse(p)\nuse(p)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 3645161470
+    },
+    {
+     "seed": 3,
+     "key": "use@use_1/let:t/synth.gradient@gradient_1/seed/inherit",
+     "u": 2525178966
+    },
+    {
+     "seed": 3,
+     "key": "use@use_2/synth.noise@noise_1/seed/inherit",
+     "u": 2962587196
+    },
+    {
+     "seed": 3,
+     "key": "use@use_2/let:t/synth.gradient@gradient_1/seed/inherit",
+     "u": 2476282439
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 71
+     }
+    },
+    {
+     "op": "synth.gradient",
+     "values": {
+      "seed": 95
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 97
+     }
+    },
+    {
+     "op": "synth.gradient",
+     "values": {
+      "seed": 92
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "part-chain-let-with-random-use",
+   "dsl": "search synth, filter\nseed 3\npart p {\n  let a = 1\n  .tint(alpha: a)\n}\nlet t = noise().use(p, a: rand(0, 1))\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/scaleX",
+     "u": 2884694046
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 1816131536
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 6.373161315917969,
+      "seed": 37
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-arg-unread-chain-let",
+   "dsl": "search synth, filter\nseed 3\nlet n = noise().tint()\npart p {\n  let t = 1\n  noise().write(o0)\n}\nuse(p, t: n)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 3645161470
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 71
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-read-chain-let-counted",
+   "dsl": "search synth, filter\nseed 3\nlet t = read(o1).tint()\nnoise().tint(alpha: rand(0, 1)).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    },
+    {
+     "seed": 3,
+     "key": "filter.tint@tint_2/alpha",
+     "u": 3383292207
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 12
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.7877340912818909
+     }
+    }
+   ]
   }
  ]
 }

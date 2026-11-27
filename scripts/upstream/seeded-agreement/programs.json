@@ -944,5 +944,93 @@
    "mixer/blendMode"
   ],
   "dsl": "search synth, filter\nseed 3\npart q {\n  read(o1, _id: \"r\").tint(alpha: rand(0, 1)).write(o2)\n}\nnoise().write(o1)\nuse(q)\nrender(o2)"
+ },
+ {
+  "name": "part-osc-let-chain-unused",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, filter\nseed 3\npart p {\n  let c = osc(type: sine, min: 0.1, max: 0.4)\n  .tint(alpha: 0.3)\n}\nnoise().use(p).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-osc-chain-let-unused-top",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet c = osc().tint()\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-instances-rebind-use-args",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet n = noise(scaleX: 2)\nlet m = gradient()\npart p {\n  let t = 1\n  let w = blendMode(tex: t)\n  noise().w().write(o0)\n}\nuse(p, t: n)\nuse(p, t: m)\nrender(o0)"
+ },
+ {
+  "name": "part-instances-rebind-values",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth\nseed 3\npart p {\n  let t = 1\n  let w = noise(scaleX: t)\n  w().write(o0)\n}\nuse(p, t: 2)\nuse(p, t: 3)\nrender(o0)"
+ },
+ {
+  "name": "part-instances-own-partials",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, mixer\nseed 3\npart p {\n  let t = gradient()\n  let w = blendMode(tex: t)\n  noise().w().write(o0)\n}\nuse(p)\nuse(p)\nrender(o0)"
+ },
+ {
+  "name": "part-chain-let-with-random-use",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, filter\nseed 3\npart p {\n  let a = 1\n  .tint(alpha: a)\n}\nlet t = noise().use(p, a: rand(0, 1))\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-use-arg-unread-chain-let",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet n = noise().tint()\npart p {\n  let t = 1\n  noise().write(o0)\n}\nuse(p, t: n)\nrender(o0)"
+ },
+ {
+  "name": "part-read-chain-let-counted",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet t = read(o1).tint()\nnoise().tint(alpha: rand(0, 1)).write(o0)\nrender(o0)"
  }
 ]

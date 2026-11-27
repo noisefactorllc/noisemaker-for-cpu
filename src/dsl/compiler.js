@@ -178,15 +178,16 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
   }
   if (value.kind === 'identifier') {
     // A let's own partial or alias is the one in force where that let was written.
-    if (value.boundPartial || bindings.has(value.name)) {
-      const binding = value.boundPartial ?? bindings.get(value.name)
+    if (bindings.boundOf(value) || bindings.has(value.name)) {
+      const binding = bindings.boundOf(value) ?? bindings.get(value.name)
       if (binding.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects is not supported yet: '${binding.name}'`, value.loc)
       // A let that holds an effect, passed as a value, compiles as that effect,
       // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
       if (binding.kind === 'partial') {
         // The call carries the binding in force here, so a later let of the
         // same name does not change what it stands for.
-        const call = { kind: 'Call', name: value.name, args: [], argMode: null, loc: value.loc, boundPartial: binding }
+        const call = { kind: 'Call', name: value.name, args: [], argMode: null, loc: value.loc }
+        bindings.bind(call, binding)
         const chain = { kind: 'Chain', calls: [call], loc: value.loc }
         if (bindings.deferChains) return chain
         if (!bindings.pending) throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
@@ -313,6 +314,11 @@ class CompileScope extends Map {
     this.partStack = []
     this.partScopes = []
     this.usePath = []
+    // The bindings a let's names stand for where the let is written, by node.
+    // Each part instance binds in a map of its own, over the enclosing one's,
+    // so one instance's bindings never reach another's (upstream substitutes
+    // per instance).
+    this.boundMaps = [new WeakMap()]
     this.statementIndex = 0
     this.choicesFor = (effectName, paramName, loc) => {
       // A two-part name, `synth.noise`, names its namespace.
@@ -357,6 +363,22 @@ class CompileScope extends Map {
     } else if (value.kind === 'binary') { this.markLetIds(value.left); this.markLetIds(value.right) }
     else if (value.kind === 'unary') this.markLetIds(value.argument)
     else if (value.kind === 'vector') this.markLetIds(value.values)
+  }
+
+  bind(node, binding) {
+    this.boundMaps.at(-1).set(node, binding)
+  }
+
+  boundHere(node) {
+    return this.boundMaps.at(-1).has(node)
+  }
+
+  boundOf(node) {
+    if (!node || typeof node !== 'object') return undefined
+    for (let index = this.boundMaps.length - 1; index >= 0; index -= 1) {
+      if (this.boundMaps[index].has(node)) return this.boundMaps[index].get(node)
+    }
+    return undefined
   }
 
   // A key in the current scope.
@@ -412,8 +434,8 @@ class CompileScope extends Map {
       }
       // Evaluated where the use is written, before the part's own lets exist. A
       // name of a let that holds an effect stands for that let, keyed under it.
-      const named = arg.value?.kind === 'identifier' ? (arg.value.boundPartial ?? this.get(arg.value.name)) : null
-      if (named?.kind === 'partial' || named?.kind === 'alias') overrides.set(arg.name, { binding: named })
+      const named = arg.value?.kind === 'identifier' ? (this.boundOf(arg.value) ?? this.get(arg.value.name)) : null
+      if (named?.kind === 'partial' || named?.kind === 'alias' || named?.kind === 'chainLet') overrides.set(arg.name, { binding: named })
       else overrides.set(arg.name, { value: containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : evaluateValue(arg.value, this) })
     }
     const saved = {
@@ -437,6 +459,7 @@ class CompileScope extends Map {
     }
     this.partStack.push(part.name)
     this.usePath.push({ hasId: idArg !== undefined })
+    this.boundMaps.push(new WeakMap())
     try {
       body(part, (item) => {
         // A part's let, replaced by the use's argument for it or not. A replaced
@@ -451,6 +474,7 @@ class CompileScope extends Map {
     } finally {
       this.partStack.pop()
       this.usePath.pop()
+      this.boundMaps.pop()
       for (const [name, previous] of shadowed) {
         if (previous) this.set(name, previous.value)
         else this.delete(name)
@@ -635,7 +659,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     if (call.kind === 'Use') return expandUse(call, index)
     if (call.kind === 'MaybeTail') return expandMaybeTail(call, index)
     const start = atStart()
-    const partial = call.boundPartial ?? bindings.get(call.name)
+    const partial = bindings.boundOf(call) ?? bindings.get(call.name)
     let heldKey = null
     let target = partial
     // An alias names an effect; its target name resolves where it is called, so
@@ -964,9 +988,10 @@ function countLetValues(args, bindings) {
     }
     bindings.letChains.add(value)
     for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
+      if (entry.kind !== 'Call') continue
       const definition = elementDefinition(entry, bindings)
       // An element that calls another let's partial is that let's element, counted where it was written.
-      const held = (entry.boundPartial ?? bindings.get(entry.name))?.kind === 'partial'
+      const held = (bindings.boundOf(entry) ?? bindings.get(entry.name))?.kind === 'partial'
       if (definition && !held) bindings.nextOccurrence(definition.func)
       countLetValues(lastOfEachName(entry.args, definition), bindings)
     }
@@ -976,7 +1001,7 @@ function countLetValues(args, bindings) {
 // The definition a chain element's name stands for here: through an alias or a
 // partial a let holds, then the registry.
 function elementDefinition(entry, bindings) {
-  const binding = entry.boundPartial ?? bindings.get(entry.name)
+  const binding = bindings.boundOf(entry) ?? bindings.get(entry.name)
   const name = binding?.kind === 'alias' ? binding.name : binding?.kind === 'partial' ? binding.call.name : entry.name
   const namespace = binding?.kind === 'partial' ? (entry.namespace ?? binding.call.namespace) : entry.namespace
   return bindings.registry.resolve(name, namespace ? [namespace] : bindings.search)
@@ -991,11 +1016,11 @@ function bindCalls(value, bindings) {
   if (value.kind === 'identifier') {
     // A name the value reads is the binding in force here, a value let's too.
     const binding = bindings.get(value.name)
-    if (!value.boundPartial && binding) value.boundPartial = binding
+    if (!bindings.boundHere(value) && binding) bindings.bind(value, binding)
   } else if (value.kind === 'Chain') {
     for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
       const binding = bindings.get(entry.name)
-      if (!entry.boundPartial && (binding?.kind === 'partial' || binding?.kind === 'alias')) entry.boundPartial = binding
+      if (!bindings.boundHere(entry) && (binding?.kind === 'partial' || binding?.kind === 'alias')) bindings.bind(entry, binding)
       entry.args.forEach((arg) => bindCalls(arg.value, bindings))
     }
   } else if (value.kind === 'Call') value.args.forEach((arg) => bindCalls(arg.value, bindings))
@@ -1004,12 +1029,26 @@ function bindCalls(value, bindings) {
   else if (value.kind === 'vector') bindCalls(value.values, bindings)
 }
 
+// Every identifier a value names, at any depth of its chains and calls.
+function collectNames(value, names) {
+  if (Array.isArray(value)) return value.forEach((item) => collectNames(item, names))
+  if (!value || typeof value !== 'object') return
+  if (value.kind === 'identifier') names.add(value.name)
+  else if (value.kind === 'Chain') value.calls.forEach((call) => (call.kind === 'Subchain' ? call.body : [call]).forEach((entry) => collectNames(entry.args?.map((arg) => arg.value), names)))
+  else if (value.kind === 'Call') collectNames(value.args.map((arg) => arg.value), names)
+  else if (value.kind === 'binary') { collectNames(value.left, names); collectNames(value.right, names) }
+  else if (value.kind === 'unary') collectNames(value.argument, names)
+  else if (value.kind === 'vector') collectNames(value.values, names)
+}
+
 // Whether a let's argument holds a random call, in effects passed as values too,
 // reading only the last of a keyword written twice at every depth.
 function randomInLetValue(value, bindings) {
   if (Array.isArray(value)) return value.some((item) => randomInLetValue(item, bindings))
   if (value?.kind !== 'Chain') return containsRandomDeep(value)
   return value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call])).some((entry) => {
+    // A use's or a maybe tail's arguments are not an element's (upstream S013 skips them).
+    if (entry.kind !== 'Call') return false
     const definition = elementDefinition(entry, bindings)
     return lastOfEachName(entry.args, definition).some((arg) => randomInLetValue(arg.value, bindings))
   })
@@ -1034,20 +1073,26 @@ function declareBinding(binding, bindings) {
   // written and a random call in it is refused, as upstream does, but a use of
   // it is not keyed as upstream keys it yet, so a use is refused. A chain that
   // starts by reading a surface stays a value.
-  if (binding.value?.kind === 'Chain' && !['read', 'read3d'].includes(binding.value.calls[0]?.name)) {
+  if (binding.value?.kind === 'Chain') {
+    // A chain that reads its own let is a cycle (upstream S001).
+    const names = new Set()
+    collectNames(binding.value, names)
+    if (names.has(binding.name)) throw new DslError(`Automation cycle detected: ${binding.name} -> ${binding.name}`, binding.loc)
     if (randomInLetValue(binding.value, bindings)) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
     countLetValues([{ value: binding.value }], bindings)
-    bindings.letKey(binding.name, 'effect')
-    bindings.set(binding.name, { kind: 'chainLet', name: binding.name, loc: binding.loc })
-    return
+    if (!['read', 'read3d'].includes(binding.value.calls[0]?.name)) {
+      bindings.letKey(binding.name, 'effect')
+      bindings.set(binding.name, { kind: 'chainLet', name: binding.name, loc: binding.loc })
+      return
+    }
   }
   // Upstream substitutes a value let that chose an effect into the let that
   // names it: `let w = v` holds v's effect, and an argument that names v holds
   // that effect as written.
   const chosen = (value) => {
-    const bound = value?.kind === 'identifier' ? (value.boundPartial ?? bindings.get(value.name)) : null
+    const bound = value?.kind === 'identifier' ? (bindings.boundOf(value) ?? bindings.get(value.name)) : null
     return bound?.kind === 'value' && bound.resolved && bound.value?.kind === 'Chain' ? bound.value : null
   }
   const copied = chosen(binding.value)
@@ -1057,7 +1102,7 @@ function declareBinding(binding, bindings) {
     }
     // A chosen call of another let's partial is that partial, keyed where it was written.
     const call = copied.calls[0]
-    const held = call.boundPartial ?? bindings.get(call.name)
+    const held = bindings.boundOf(call) ?? bindings.get(call.name)
     if (held?.kind === 'partial' && call.args.length === 0) {
       // It is still a let of this name, counted as one that holds an effect.
       bindings.letKey(binding.name, 'effect')
