@@ -229,3 +229,15 @@ test('a program with control flow compiles and draws, and is not rendered, as up
   const rendered = renderer.render('search synth\nseed 5\nmaybe(1) {\n  noise().write(o0)\n}\nrender(o0)', { width: 4, height: 4 })
   assert.ok(rendered)
 })
+
+test('control flow refuses what upstream refuses', () => {
+  for (const [source, message] of [
+    ['noise().write(o0)\nif (foo) {\n  noise().write(o1)\n}\nrender(o0)', /Variable used before assignment: 'foo'/],
+    ['noise().write(o0)\nif (x) {\n  noise().write(o1)\n}\nlet x = 1\nrender(o0)', /Variable used before assignment: 'x'/],
+    ['part p {\n  break\n}\nuse(p)\nnoise().write(o0)\nrender(o0)', /part 'p' continues a chain; use it in a chain/],
+    ['part p {\n  return\n}\nuse(p)\nnoise().write(o0)\nrender(o0)', /part 'p' continues a chain; use it in a chain/],
+    ['let break = 2\nnoise().write(o0)', /Expected binding name after let/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
+  }
+})

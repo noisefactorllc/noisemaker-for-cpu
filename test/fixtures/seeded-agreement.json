@@ -4939,6 +4939,129 @@
      }
     }
    ]
+  },
+  {
+   "name": "if-only-writes-in-branch",
+   "dsl": "search synth\nseed 5\nif (true) {\n  noise().write(o0)\n}",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_1/seed/inherit",
+     "u": 442765804
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "return-true",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn true",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "return-parenthesized",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn (1)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "return-then-if",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn\nif (true) {\n  noise().write(o1)\n}\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/seed/inherit",
+     "u": 3128439175
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 76
+     }
+    }
+   ]
+  },
+  {
+   "name": "condition-reads-state",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (time) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/scaleX",
+     "u": 3236937862
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/seed/inherit",
+     "u": 3128439175
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.029266357421875,
+      "seed": 76
+     }
+    }
+   ]
   }
  ]
 }

@@ -1162,5 +1162,40 @@
    "filter/tint"
   ],
   "dsl": "search synth\nseed 5\nif (true) {\n  noise(scaleX: rand(1, 9)).write(o0)\n  break\n}\ncontinue\nreturn\nrender(o0)"
+ },
+ {
+  "name": "if-only-writes-in-branch",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nif (true) {\n  noise().write(o0)\n}"
+ },
+ {
+  "name": "return-true",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn true"
+ },
+ {
+  "name": "return-parenthesized",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn (1)"
+ },
+ {
+  "name": "return-then-if",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn\nif (true) {\n  noise().write(o1)\n}\nrender(o0)"
+ },
+ {
+  "name": "condition-reads-state",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (time) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nrender(o0)"
  }
 ]

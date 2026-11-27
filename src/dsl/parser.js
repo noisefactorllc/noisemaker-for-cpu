@@ -307,10 +307,7 @@ class Parser {
   // `continue` and `return [value]`. Upstream reserves these names.
   atControlFlow() {
     const token = this.peek()
-    if (token.type !== 'identifier') return false
-    if (token.lexeme === 'if') return this.peek(1).type === 'punctuation' && this.peek(1).lexeme === '('
-    return ['break', 'continue', 'return'].includes(token.lexeme) &&
-      !(this.peek(1).type === 'punctuation' && (this.peek(1).lexeme === '(' || this.peek(1).lexeme === '.'))
+    return token.type === 'keyword' && ['if', 'break', 'continue', 'return'].includes(token.lexeme)
   }
 
   parseCondition() {
@@ -326,20 +323,23 @@ class Parser {
     if (start.lexeme === 'break') return { kind: 'Break', loc }
     if (start.lexeme === 'continue') return { kind: 'Continue', loc }
     if (start.lexeme === 'return') {
-      // A value follows only where an expression can start (upstream exprStartTokens).
-      const ends = this.atEnd() || this.check('}') || this.check(';') || this.peek().type === 'keyword'
+      // A value follows only where an expression can start (upstream
+      // exprStartTokens): not at a keyword other than true and false.
+      const next = this.peek()
+      const ends = this.atEnd() || this.check('}') || this.check(';') ||
+        (next.type === 'keyword' && next.lexeme !== 'true' && next.lexeme !== 'false')
       return ends ? { kind: 'Return', loc } : { kind: 'Return', value: this.parseValueExpression(), loc }
     }
     const condition = this.parseCondition()
     const then = this.parseBlock(false)
     const elif = []
-    while (this.peek().type === 'identifier' && this.peek().lexeme === 'elif') {
+    while (this.peek().type === 'keyword' && this.peek().lexeme === 'elif') {
       this.current += 1
       const branchCondition = this.parseCondition()
       elif.push({ condition: branchCondition, then: this.parseBlock(false) })
     }
     let otherwise = null
-    if (this.peek().type === 'identifier' && this.peek().lexeme === 'else') {
+    if (this.peek().type === 'keyword' && this.peek().lexeme === 'else') {
       this.current += 1
       otherwise = this.parseBlock(false)
     }

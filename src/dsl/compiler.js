@@ -1260,6 +1260,28 @@ function declareBinding(binding, bindings) {
   }
 }
 
+// The run-time state names a condition may read (upstream stateValues).
+const STATE_VALUES = new Set(['time', 'frame', 'mouse', 'resolution', 'seed', 'a', 'u1', 'u2', 'u3', 'u4', 's1', 's2', 'b1', 'b2', 'a1', 'a2', 'deltaTime'])
+
+// A condition or a return value reads only names that exist here: a let, a
+// state name, or (unchecked) an enum path (upstream evalCondition and
+// reportReadsBeforeLet, S003).
+function checkReads(value, bindings) {
+  if (Array.isArray(value)) return value.forEach((item) => checkReads(item, bindings))
+  if (!value || typeof value !== 'object') return
+  if (value.kind === 'identifier') {
+    if (value.name.includes('.') || bindings.has(value.name)) return
+    if (bindings.pendingNames?.has(value.name) || !STATE_VALUES.has(value.name)) {
+      throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
+    }
+    return
+  }
+  if (value.kind === 'binary') { checkReads(value.left, bindings); checkReads(value.right, bindings) }
+  else if (value.kind === 'unary') checkReads(value.argument, bindings)
+  else if (value.kind === 'vector') checkReads(value.values, bindings)
+  else if (value.kind === 'Call' && isRandomCall(value)) value.args.forEach((arg) => checkReads(arg.value, bindings))
+}
+
 // One statement, as the chains it renders. A maybe block's chains render only
 // when it is taken; its body compiles, and draws, either way. A use on its own
 // expands its part's statements in the instance's scope.
@@ -1269,6 +1291,7 @@ function compileStatement(statement, bindings) {
   if (statement.kind === 'If') {
     const ifKey = `if_${++bindings.ifCount}`
     const condition = (node, k) => {
+      checkReads(node, bindings)
       if (containsRandom(node)) evaluateValue(node, bindings, 0, [], { key: bindings.scoped(ifKey, `cond${k}`), path: [] })
     }
     const branch = (k, body) => {
@@ -1290,6 +1313,7 @@ function compileStatement(statement, bindings) {
     return []
   }
   if (statement.kind === 'Break' || statement.kind === 'Continue' || statement.kind === 'Return') {
+    if (statement.value !== undefined) checkReads(statement.value, bindings)
     bindings.controlFlow.push(statement.kind.toLowerCase())
     return []
   }
@@ -1304,7 +1328,7 @@ function compileStatement(statement, bindings) {
     bindings.withUse(calls[0], (part, declare) => {
       for (const item of part.body) {
         if (item.kind === 'Binding') declare(item)
-        else if (['Maybe', 'If', 'Break', 'Continue', 'Return'].includes(item.kind) || (item.kind === 'Chain' && writes(item))) chains.push(...compileStatement(item, bindings))
+        else if (item.kind === 'Maybe' || item.kind === 'If' || (item.kind === 'Chain' && writes(item))) chains.push(...compileStatement(item, bindings))
         else throw new DslError(`part '${part.name}' continues a chain; use it in a chain`, calls[0].loc)
       }
     })
@@ -1389,7 +1413,9 @@ export function compileDsl(source, registry, options = {}) {
     for (const step of chain.steps) if (step.kind === 'write') lastWrittenSurface = step.surface
   }
   const renderSurface = ast.render?.name ?? lastWrittenSurface
-  if (!renderSurface) throw new DslError('No render surface specified and no write() found - add render(oN) or write(oN)', ast.loc)
+  // A program with control flow is not rendered; upstream finds its surface
+  // only where it expands, so it compiles without one.
+  if (!renderSurface && !bindings.controlFlow.length) throw new DslError('No render surface specified and no write() found - add render(oN) or write(oN)', ast.loc)
 
   return Object.freeze({ search: Object.freeze(ast.search.slice()), chains: Object.freeze(chains), renderSurface, controlFlow: Object.freeze(bindings.controlFlow.slice()), ast })
 }

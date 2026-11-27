@@ -2,7 +2,8 @@ import { DslError } from './error.js'
 
 // `subchain` is reserved as in upstream's lexer (RESERVED_KEYWORDS), so it can
 // only open a subchain block after a '.' in a chain.
-const KEYWORDS = new Set(['search', 'let', 'render', 'true', 'false', 'subchain'])
+// Upstream's lexer also reserves the control-flow words.
+const KEYWORDS = new Set(['search', 'let', 'render', 'true', 'false', 'subchain', 'if', 'elif', 'else', 'break', 'continue', 'return'])
 const PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', '.', ':', '=', ';'])
 const OPERATORS = new Set(['+', '-', '*', '/'])
 
