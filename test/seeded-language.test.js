@@ -263,3 +263,17 @@ test('arithmetic in a condition or return value takes numbers or deferred operan
     assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
   }
 })
+
+test('constant operations fold, unary plus does nothing, and split references are refused, as upstream parses them', () => {
+  for (const [source, message] of [
+    ['noise().write(o0)\nreturn [1 + 2 + true]\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nreturn [-1 + true]\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nreturn o0x\nrender(o0)', /Expect '\('/],
+    ['noise().write(o0)\nreturn foo.s5x\nrender(o0)', /Expect '\('/],
+    ['noise().write(o0)\nreturn s5.foo\nrender(o0)', /Expected identifier/],
+    ['noise().write(o0)\nif (foo.o1) {\n  noise().write(o1)\n}\nrender(o0)', /Unknown enum path: 'foo.o1'/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
+  }
+  assert.ok(compile('search synth\nseed 5\nnoise().write(o0)\nreturn +true\nif (+true) {\n  noise().write(o1)\n}\nrender(o0)'))
+})

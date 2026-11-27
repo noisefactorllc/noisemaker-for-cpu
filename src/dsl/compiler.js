@@ -1273,16 +1273,32 @@ const REFERENCE_NAME = /^(s|vol|geo|xyz|vel|rgba|mesh)\d+$/
 // is not checked.
 function checkReads(value, bindings, { condition = false } = {}) {
   checkPendingReads(value, bindings)
+  // No enum has an output reference as a member (upstream: unknown enum path).
+  if (condition && value?.kind === 'identifier' && value.name.split('.').slice(1).some((segment) => /^o\d+$/.test(segment))) {
+    throw new DslError(`Unknown enum path: '${value.name}'`, value.loc)
+  }
   if (condition && value?.kind === 'identifier' && !value.name.includes('.') && !bindings.has(value.name) &&
       !STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name)) {
     throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
   }
 }
 
-// Upstream's parser takes an arithmetic operand only as a number, or deferred:
-// a random call, or another operation (isDeferred, toNumber).
+// Upstream folds an operation on constants to a number, and defers one that
+// holds a random call (isDeferred). Unary `+` does nothing.
+function isDeferredValue(value) {
+  if (isRandomCall(value)) return true
+  if (value?.kind === 'binary') return isDeferredValue(value.left) || isDeferredValue(value.right)
+  if (value?.kind === 'unary') return isDeferredValue(value.argument)
+  return false
+}
+
+// An operand upstream's parser takes: a number, a folded constant operation,
+// or a deferred one (toNumber).
 function arithmeticOperand(value) {
-  return typeof value === 'number' || isRandomCall(value) || value?.kind === 'binary' || value?.kind === 'unary'
+  if (typeof value === 'number' || isDeferredValue(value)) return true
+  if (value?.kind === 'binary') return arithmeticOperand(value.left) && arithmeticOperand(value.right)
+  if (value?.kind === 'unary') return value.operator === '+' ? true : arithmeticOperand(value.argument)
+  return false
 }
 
 function checkPendingReads(value, bindings) {
@@ -1291,20 +1307,22 @@ function checkPendingReads(value, bindings) {
   if (value.kind === 'identifier') {
     // Upstream's lexer splits a reference followed by more characters, `s5x`,
     // into a reference and a name, which does not parse.
-    if (/^(s|vol|geo|xyz|vel|rgba|mesh)\d+[A-Za-z_]/.test(value.name)) throw new DslError("Expect '('", value.loc)
+    // So does a reference followed by a member, `s5.x`.
+    const segments = value.name.split('.')
+    if (segments.some((segment) => /^(o|s|vol|geo|xyz|vel|rgba|mesh)\d+[A-Za-z_]/.test(segment))) throw new DslError("Expect '('", value.loc)
+    if (segments.length > 1 && /^(o|s|vol|geo|xyz|vel|rgba|mesh)\d+$/.test(segments[0])) throw new DslError('Expected identifier', value.loc)
     if (!bindings.has(value.name) && bindings.pendingNames?.has(value.name)) {
       throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
     }
   } else if (value.kind === 'binary') {
     // Checked only when neither operand is deferred (upstream isDeferred).
-    const deferred = (side) => isRandomCall(side) || side?.kind === 'binary' || side?.kind === 'unary'
-    if (!deferred(value.left) && !deferred(value.right) && (!arithmeticOperand(value.left) || !arithmeticOperand(value.right))) {
+    if (!isDeferredValue(value.left) && !isDeferredValue(value.right) && (!arithmeticOperand(value.left) || !arithmeticOperand(value.right))) {
       throw new DslError('Expected number', value.loc)
     }
     checkPendingReads(value.left, bindings)
     checkPendingReads(value.right, bindings)
   } else if (value.kind === 'unary') {
-    if (!arithmeticOperand(value.argument)) throw new DslError('Expected number', value.loc)
+    if (value.operator === '-' && !arithmeticOperand(value.argument)) throw new DslError('Expected number', value.loc)
     checkPendingReads(value.argument, bindings)
   }
   else if (value.kind === 'vector') checkPendingReads(value.values, bindings)
