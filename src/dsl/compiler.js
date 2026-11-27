@@ -180,7 +180,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
     // A let's own partial or alias is the one in force where that let was written.
     if (bindings.boundOf(value) || bindings.has(value.name)) {
       const binding = bindings.boundOf(value) ?? bindings.get(value.name)
-      if (binding.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects is not supported yet: '${binding.name}'`, value.loc)
+      if (binding.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects, or a use, is not supported yet: '${binding.name}'`, value.loc)
       // A let that holds an effect, passed as a value, compiles as that effect,
       // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
       if (binding.kind === 'partial') {
@@ -218,7 +218,8 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
       // An inline chain resolves its arguments afresh, so a let read again
       // while it evaluates is a cycle too.
       if (resolving.includes(value.name) || binding.evaluating) {
-        throw new DslError(`Automation cycle detected: ${[...resolving, value.name].join(' -> ')}`, value.loc)
+        const cycle = resolving.includes(value.name) ? [...resolving, value.name] : [value.name, value.name]
+        throw new DslError(`Automation cycle detected: ${cycle.join(' -> ')}`, value.loc)
       }
       binding.evaluating = true
       try {
@@ -692,7 +693,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       // The alias's target is the effect itself.
     } else if (target) {
       const partial = target
-      if (partial.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects is not supported yet: '${partial.name}'`, call.loc)
+      if (partial.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects, or a use, is not supported yet: '${partial.name}'`, call.loc)
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       // An `_id:` written where the let is called names the element at this
       // use, with `'` added while it is one of the let's own names (upstream).
