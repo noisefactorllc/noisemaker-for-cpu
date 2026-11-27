@@ -162,5 +162,71 @@
    "classicNoisedeck/splat"
   ],
   "dsl": "search synth, classicNoisedeck\nseed 6\nnoise().splat().write(o0)\nnoise().splat(speckSeed: 5).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "pick-effect-options",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nsolid().blendMode(tex: pick(noise(), solid())).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "pick-effect-option-left-out",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nsolid().blendMode(tex: pick(solid(), noise(scaleX: rand(1, 9)))).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "value-let-chooses-effect",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet v = pick(noise(), solid())\nsolid().blendMode(tex: v).write(o0)\nsolid().blendMode(tex: v).write(o1)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "effect-let-values-counted-once",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet b = blendMode(tex: noise())\nsolid().b().write(o0)\nsolid().b().write(o1)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "effect-let-as-value",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 3)\nsolid().blendMode(tex: t).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "choices-qualified",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 2\nnoise(type: pick(choices(synth.noise, type))).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "keyword-written-twice",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise(scaleX: rand(1, 9), scaleX: 4).write(o0)\nnoise(scaleY: 4, scaleY: rand(1, 9)).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "midi-arguments",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nlet m = midi(1, randInt(0, 2), min: rand(1, 2), max: 50)\nnoise().write(o0)\nrender(o0)"
  }
 ]

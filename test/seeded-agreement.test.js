@@ -52,7 +52,9 @@ for (const program of fixture.programs) {
     assert.deepEqual(steps.map((step) => `${step.definition.namespace}.${step.definition.func}`), program.elements.map((element) => element.op))
     program.elements.forEach((element, index) => {
       for (const [name, value] of Object.entries(element.values)) {
-        assert.deepEqual(comparable(steps[index].params[name]), value, `${element.op} #${index} ${name}`)
+        // A chosen effect is a texture: upstream names a temporary, the port a surface.
+        if (value?.kind === 'temp') assert.equal(steps[index].params[name]?.kind, 'surface', `${element.op} #${index} ${name}`)
+        else assert.deepEqual(comparable(steps[index].params[name]), value, `${element.op} #${index} ${name}`)
       }
     })
   })

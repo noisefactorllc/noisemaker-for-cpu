@@ -25,6 +25,21 @@ export function isRandomCall(value) {
 
 // Whether a value holds a random call. An effect passed as a value is its own
 // element, so the walk stops at a chain.
+// Whether a value holds a random call anywhere, in effects passed as values too.
+export function containsRandomDeep(value) {
+  if (Array.isArray(value)) return value.some(containsRandomDeep)
+  if (!value || typeof value !== 'object') return false
+  if (value.kind === 'Chain') {
+    return value.calls.some((call) => (call.kind === 'Subchain' ? call.body : [call]).some((entry) => entry.args.some((arg) => containsRandomDeep(arg.value))))
+  }
+  if (containsRandom(value)) return true
+  if (value.kind === 'Call') return value.args.some((arg) => containsRandomDeep(arg.value))
+  if (value.kind === 'binary') return containsRandomDeep(value.left) || containsRandomDeep(value.right)
+  if (value.kind === 'unary') return containsRandomDeep(value.argument)
+  if (value.kind === 'vector') return containsRandomDeep(value.values)
+  return false
+}
+
 export function containsRandom(value) {
   if (Array.isArray(value)) return value.some(containsRandom)
   if (!value || typeof value !== 'object') return false
@@ -86,6 +101,7 @@ function resolveChoices(call, ctx) {
   if (call.args.length !== 2 || call.args.some((arg) => arg.name !== null) || effect?.kind !== 'identifier' || param?.kind !== 'identifier') {
     throw new DslError('choices(effect, parameter) requires an effect and a parameter', call.loc)
   }
+  if (ctx.isShadowed?.('choices')) throw new DslError("'choices' is a variable here and cannot be called", call.loc)
   return ctx.choicesFor(effect.name, param.name, call.loc)
 }
 
@@ -138,14 +154,20 @@ export function resolveRandomCall(call, ctx, path, evaluate) {
 function resolvePick(call, ctx, path, evaluate) {
   const named = call.args.find((arg) => arg.name !== null && arg.name !== 'seed')
   if (named) throw new DslError(`pick() has no argument '${named.name}'`, call.loc)
+  // An effect passed as an option is kept as written: only the chosen one is
+  // compiled, as the value the pick stands for, so an option left out draws
+  // nothing (upstream resolves a chain to itself).
   const items = []
   call.args.filter((arg) => arg.name === null).forEach((arg, index) => {
     if (arg.value?.kind === 'Call' && arg.value.name === 'choices') items.push(...resolveChoices(arg.value, ctx))
-    else items.push(evaluate(arg.value, [...path, pathSegment.arg(index)]))
+    else if (arg.value?.kind === 'Chain') items.push({ chain: arg.value })
+    else items.push({ value: evaluate(arg.value, [...path, pathSegment.arg(index)]) })
   })
   if (items.length === 0) throw new DslError('pick() needs at least one value', call.loc)
   const u = drawFor(call, ctx, path)
-  return items[pickIndex(u, items.length)]
+  const chosen = items[pickIndex(u, items.length)]
+  if (typeof chosen === 'string') return chosen
+  return 'chain' in chosen ? evaluate(chosen.chain, path) : chosen.value
 }
 
 // Seed parameters with another name that inherit as `seed` does, as upstream

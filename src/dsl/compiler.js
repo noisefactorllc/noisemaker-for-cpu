@@ -1,7 +1,7 @@
 import { DslError } from './error.js'
 import { joinKey, pathSegment } from './draws.js'
 import { parseDsl } from './parser.js'
-import { canInheritSeed, containsRandom, drawContext, inheritedSeed, isRandomCall, isSeedParam, resolveRandomCall } from './random.js'
+import { canInheritSeed, containsRandom, containsRandomDeep, drawContext, inheritedSeed, isRandomCall, isSeedParam, resolveRandomCall } from './random.js'
 import { isAutomationValue } from '../runtime/automation.js'
 
 // Mirrors upstream std_enums.js oscKind (sine..noise2d; noise/noise1d alias kind 5,
@@ -90,8 +90,18 @@ function compileOscillator(call, bindings, depth, resolving = [], at = null) {
   }
 }
 
+// The positional order of midi() and audio() arguments (upstream parser).
+const AUTOMATION_ORDER = { midi: ['channel', 'mode', 'min', 'max', 'sensitivity'], audio: ['band', 'min', 'max'] }
+
 function compileAutomationCall(call, bindings, depth, resolving = [], at = null) {
   if (call.name !== 'osc') {
+    // The input is ignored, but a random call in an argument still draws and is
+    // checked, as upstream resolves it before the input is read.
+    let positional = 0
+    for (const arg of call.args) {
+      const name = arg.name ?? AUTOMATION_ORDER[call.name][positional++]
+      if (containsRandom(arg.value)) evaluateValue(arg.value, bindings, depth + 1, resolving, name && at ? { key: at.key, path: [...at.path, pathSegment.named(name)] } : null)
+    }
     console.warn(`Warning: ${call.name}() is unsupported in CPU ports; real-time input is unavailable. Ignoring this unsupported input value.`)
     return undefined
   }
@@ -113,8 +123,9 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
   if (!value || typeof value !== 'object') return value
   if (value.kind === 'surface') return value
   if (isRandomCall(value)) {
+    if (bindings.has(value.name)) throw new DslError(`'${value.name}' is a variable here and cannot be called`, value.loc)
     if (!at) throw new DslError(`A random call is not allowed here: ${value.name}()`, value.loc)
-    const ctx = { seed: bindings.draws.seed, key: at.key, draw: bindings.draws.draw, choicesFor: bindings.choicesFor }
+    const ctx = { seed: bindings.draws.seed, key: at.key, draw: bindings.draws.draw, choicesFor: bindings.choicesFor, isShadowed: (name) => bindings.has(name) }
     return resolveRandomCall(value, ctx, at.path, (item, path) => evaluateValue(item, bindings, oscDepth, resolving, { key: at.key, path }))
   }
   if (value.kind === 'Call') {
@@ -124,13 +135,22 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
   if (value.kind === 'identifier') {
     if (bindings.has(value.name)) {
       const binding = bindings.get(value.name)
-      if (binding.kind === 'partial') throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
+      // A let that holds an effect, passed as a value, compiles as that effect,
+      // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
+      if (binding.kind === 'partial') {
+        if (!bindings.pending) throw new DslError(`Effect partial "${value.name}" cannot be used as a value`, value.loc)
+        const call = { kind: 'Call', name: value.name, args: [], argMode: null, loc: value.loc }
+        return bindings.compileInlineChain({ kind: 'Chain', calls: [call], loc: value.loc }, at, { count: false })
+      }
       // An effect alias used as a value stays the effect's bare name.
       if (binding.kind === 'alias') return binding.name
       // A value binding resolves lazily at its first use. Statement order
       // (upstream 9cc041d0) makes a chain see only lets declared at or before
       // its own index, so a name declared by a later let is pending here and
       // reading it reports S003, as upstream does.
+      // An effect a value let chose compiles where it is used, under that
+      // place's key, and is not counted as an element (upstream).
+      if (binding.resolved && binding.value?.kind === 'Chain' && bindings.pending) return bindings.compileInlineChain(binding.value, at, { count: false })
       if (binding.resolved) return binding.value
       if (resolving.includes(value.name)) {
         throw new DslError(`Automation cycle detected: ${[...resolving, value.name].join(' -> ')}`, value.loc)
@@ -165,6 +185,8 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
     if (value.operator === '*') return left * right
     return left / right
   }
+  // A value let keeps an effect it holds as written until it is used.
+  if (value.kind === 'Chain' && bindings.deferChains) return value
   if (value.kind === 'Chain' && bindings.pending) return bindings.compileInlineChain(value, at)
   throw new DslError(`Unsupported DSL value ${value.kind}`, value.loc)
 }
@@ -220,8 +242,15 @@ class CompileScope extends Map {
     // The declarations of each let name, counted apart for lets that hold
     // effects and lets that hold values (upstream `let:<name>#k`).
     this.letCounts = { effect: new Map(), value: new Map() }
+    // Effects passed as values inside a let that holds an effect: counted once,
+    // where the let is written, and not again where the let is called.
+    this.letChains = new WeakSet()
+    this.deferChains = false
     this.choicesFor = (effectName, paramName, loc) => {
-      const candidates = this.search.map((namespace) => registry.resolve(effectName, [namespace])).filter(Boolean)
+      // A two-part name, `synth.noise`, names its namespace.
+      const parts = effectName.split('.')
+      const candidates = parts.length === 2 ? [registry.resolve(parts[1], [parts[0]])].filter(Boolean)
+        : this.search.map((namespace) => registry.resolve(effectName, [namespace])).filter(Boolean)
       if (candidates.length > 1) {
         throw new DslError(`choices(): effect name '${effectName}' is ambiguous: ${candidates.map((item) => `${item.namespace}.${item.func}`).join(', ')}`, loc)
       }
@@ -251,9 +280,9 @@ class CompileScope extends Map {
   }
 
   // An effect passed as a value draws under the value's key: `<key>/e:<op>/...`.
-  compileInlineChain(chain, at) {
+  compileInlineChain(chain, at, { count = !this.letChains.has(chain) } = {}) {
     const keyBase = at ? joinKey(at.key, ...at.path) : null
-    const compiled = compileChain(chain, this, { inline: true, keyBase })
+    const compiled = compileChain(chain, this, { inline: true, keyBase, count })
     const surface = `inline:${this.inlineCount++}`
     this.pending.push(Object.freeze({ surface, chain: compiled }))
     return { kind: 'surface', name: surface, loc: chain.loc }
@@ -341,7 +370,7 @@ function read3dReferences(call) {
 // Compiles one chain. A statement chain that begins with a generator must end with
 // write(oN). A chain argument (`inline`) needs no write(): its last image is the
 // argument's surface.
-function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) {
+function compileChain(chain, bindings, { inline = false, keyBase = null, count = true } = {}) {
   const { registry, search } = bindings
   const steps = []
   let hasInput = false
@@ -396,7 +425,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
       const op = `${definition.namespace}.${definition.func}`
       if (heldKey) elementKey = heldKey
       else {
-        const occurrence = bindings.nextOccurrence(definition.func)
+        const occurrence = count ? bindings.nextOccurrence(definition.func) : null
         elementKey = inline && keyBase !== null ? joinKey(keyBase, `e:${op}`) : `${op}@${occurrence}`
       }
     }
@@ -406,7 +435,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null } = {}) 
     let args
     let inlineChains
     try {
-      args = resolveArgs(rawArgs, bindings, call, definition, elementKey)
+      args = resolveArgs(lastOfEachName(rawArgs, definition), bindings, call, definition, elementKey)
     } finally {
       inlineChains = bindings.pending
       bindings.pending = outerPending
@@ -542,6 +571,34 @@ function captureHexColors(value, bindings) {
 // name reassigns it for later statements; reading a pending name reports S003.
 // A bare identifier value must name something resolvable now (an earlier
 // binding, an alias, or an effect), as upstream's declareVar requires.
+// A keyword written twice keeps its last value, as upstream's keyword object
+// does, so an earlier one neither draws nor is checked.
+function lastOfEachName(args, definition) {
+  if (!definition) return args
+  const canonical = (arg) => definition.paramAliases?.[arg.name] ?? arg.name
+  const last = new Map()
+  args.forEach((arg, index) => { if (arg.name !== null) last.set(canonical(arg), index) })
+  return args.filter((arg, index) => arg.name === null || last.get(canonical(arg)) === index)
+}
+
+// Count the effects passed as values inside a let's arguments, where the let is
+// written, outer before inner.
+function countLetValues(args, bindings) {
+  for (const arg of args) {
+    const value = arg.value
+    if (value?.kind !== 'Chain') {
+      if (Array.isArray(value)) countLetValues(value.map((item) => ({ value: item })), bindings)
+      continue
+    }
+    bindings.letChains.add(value)
+    for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
+      const definition = bindings.registry.resolve(entry.name, entry.namespace ? [entry.namespace] : bindings.search)
+      if (definition) bindings.nextOccurrence(definition.func)
+      countLetValues(entry.args, bindings)
+    }
+  }
+}
+
 function declareBinding(binding, bindings) {
   if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name) && !isRandomCall(binding.value)) {
     // Other partial arguments keep their existing use-site resolution. The
@@ -549,10 +606,12 @@ function declareBinding(binding, bindings) {
     // the let's key wherever it is called. A let of another let's name keys
     // the element under its own name, with the occurrence name the other let
     // gave it.
-    if (binding.value.args.some((arg) => containsRandom(arg.value))) {
+    if (binding.value.args.some((arg) => containsRandomDeep(arg.value))) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
     let call = captureHexColors(binding.value, bindings)
+    // The arguments this let writes; a merge below keeps these same nodes.
+    const written = call.args
     const previous = bindings.get(call.name)
     if (previous?.kind === 'partial') call = mergePartial(previous.call, call)
     if (previous?.kind === 'alias') call = { ...call, name: previous.name }
@@ -560,6 +619,7 @@ function declareBinding(binding, bindings) {
     const element = previous?.kind === 'partial' ? previous.element
       : definition ? `${definition.namespace}.${definition.func}@${bindings.nextOccurrence(definition.func)}` : null
     const key = element ? joinKey(bindings.letKey(binding.name, 'effect'), element) : null
+    countLetValues(written, bindings)
     bindings.set(binding.name, { kind: 'partial', call, key, element })
     return
   }
@@ -577,7 +637,12 @@ function declareBinding(binding, bindings) {
   const entry = { kind: 'value', expr: captureHexColors(binding.value, bindings), resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
   bindings.set(binding.name, entry)
   if (containsRandom(binding.value)) {
-    entry.value = evaluateValue(entry.expr, bindings, 0, [binding.name], entry.at)
+    bindings.deferChains = true
+    try {
+      entry.value = evaluateValue(entry.expr, bindings, 0, [binding.name], entry.at)
+    } finally {
+      bindings.deferChains = false
+    }
     entry.resolved = true
   }
 }

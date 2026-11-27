@@ -89,3 +89,13 @@ test('an effect held by a let cannot hold a random call yet, as upstream refuses
   assert.throws(() => compile('search synth\nseed 1\nlet n = noise(scaleX: rand(1, 9))\nn().write(o0)'),
     /Random calls in an effect held by a let are not supported yet: 'n'/)
 })
+
+test('a random function that a let names is a variable there, not a call', () => {
+  assert.throws(() => compile('search synth\nseed 3\nlet rand = 4\nnoise(scaleX: rand(1, 9)).write(o0)'), /'rand' is a variable here and cannot be called/)
+  assert.throws(() => compile('search synth\nseed 3\nlet choices = 4\nnoise(type: pick(choices(noise, type))).write(o0)'), /'choices' is a variable here and cannot be called/)
+})
+
+test('a random call in an effect passed as a value inside a let that holds an effect is refused too', () => {
+  assert.throws(() => compile('search synth, mixer\nseed 3\nlet b = blendMode(tex: noise(scaleX: rand(1, 9)))\nsolid().b().write(o0)'),
+    /Random calls in an effect held by a let are not supported yet: 'b'/)
+})
