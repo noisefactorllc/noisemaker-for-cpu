@@ -175,3 +175,14 @@ test('parts refuse what upstream refuses', () => {
     assert.throws(() => compile(`search synth, filter\nseed 3\n${source}`), message, source)
   }
 })
+
+test('part and use refusals that follow upstream after review', () => {
+  for (const [source, message] of [
+    ['part q {\n  noise(scaleX: rand(1, 9)).write(o0)\n}\npart p {\n  use(q)\n}\nuse(p)', /part 'p' continues a chain; use it in a chain/],
+    ['let t = tint(_id: "t")\npart p {\n  .t()\n}\nnoise().use(p).write(o0)', /an _id: inside a part needs an _id: on every use of that part/],
+    ['part p {\n  .tint().write(o0)\n}\nnoise().use(p)', /Chain must have explicit write\(\)/],
+    ['noise().maybe(1) { .write(o0) }', /Chain must have explicit write\(\)/],
+  ]) {
+    assert.throws(() => compile(`search synth, filter\nseed 3\n${source}`), message, source)
+  }
+})

@@ -180,7 +180,8 @@ class Parser {
     if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(' && !randomStart) {
       value = this.parseCall()
       if (value.name === 'midi' || value.name === 'audio') checkAutomationCall(value)
-      if ((value.name === 'read' || value.name === 'read3d') && this.isPunctuation('.')) {
+      // A let's effect continues across '.', as upstream parses its value as a chain.
+      if (this.isPunctuation('.')) {
         value = this.parseExpressionChain(value)
       }
     } else value = this.parseValueExpression()
@@ -224,7 +225,7 @@ class Parser {
   toUse(call) {
     if (call.kind !== 'Call' || call.name !== 'use') return call
     const positional = call.args.filter((arg) => arg.name === null)
-    if (positional.length !== 1 || call.args[0].name !== null) {
+    if (positional.length !== 1) {
       throw new DslError('use() takes one part, and its other arguments by name', call.loc)
     }
     return { kind: 'Use', target: positional[0].value, args: call.args.filter((arg) => arg.name !== null), loc: call.loc }

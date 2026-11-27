@@ -3804,6 +3804,272 @@
      }
     }
    ]
+  },
+  {
+   "name": "part-use-arg-names-outer-let",
+   "dsl": "search synth, filter\nseed 5\nlet x = 0.3\npart p {\n  let x = 0.9\n  let a = 0.5\n  .tint(alpha: a)\n}\nnoise().use(p, a: x).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.3
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-arg-same-name",
+   "dsl": "search synth, filter\nseed 5\nlet a = 0.3\npart p {\n  let a = 0.5\n  .tint(alpha: a)\n}\nnoise().use(p, a: a).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.3
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-maybe-let-shadows-outer",
+   "dsl": "search synth, filter\nseed 5\nlet a = rand(0, 1)\nmaybe(1) {\n  let a = rand(0, 1)\n  noise().tint(alpha: a).write(o0)\n}\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "let:a",
+     "u": 1392260322
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/decide",
+     "u": 2314005053
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/let:a",
+     "u": 1443805040
+    },
+    {
+     "seed": 5,
+     "key": "maybe_1/synth.noise@noise_1/seed/inherit",
+     "u": 1542312585
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 86
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.3361620306968689
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-part-let-continues-across-dot",
+   "dsl": "search synth, filter\nseed 5\npart p {\n  let t = tint(alpha: 0.2)\n  .tint(alpha: 0.7)\n}\nnoise().use(p).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-chain-part-with-plain-chain",
+   "dsl": "search synth, filter\nseed 5\npart p {\n  tint(alpha: rand(0, 1))\n}\nnoise().use(p).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/filter.tint@tint_1/alpha",
+     "u": 1340184271
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.3120359182357788
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-chain-part-with-use-statement",
+   "dsl": "search synth, filter\nseed 5\npart q {\n  .tint(alpha: rand(0, 1))\n}\npart p {\n  use(q)\n}\nnoise().use(p).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/use@use_1/filter.tint@tint_1/alpha",
+     "u": 817534147
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.19034695625305176
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-nested-use-with-id",
+   "dsl": "search synth, filter\nseed 5\npart inner {\n  .tint(alpha: rand(0, 1))\n}\npart outer {\n  .use(inner, _id: \"x\")\n}\nnoise().use(outer).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/use@x/filter.tint@tint_1/alpha",
+     "u": 4240370942
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {
+      "alpha": 0.987288236618042
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-unused-let-id-in-part",
+   "dsl": "search synth, filter\nseed 5\npart p {\n  let t = tint(_id: \"t\")\n  .tint()\n}\nnoise().use(p).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-supplies-generator",
+   "dsl": "search synth, filter\nseed 5\npart g {\n  .noise(scaleX: rand(1, 9))\n}\nuse(g).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "use@use_1/synth.noise@noise_1/scaleX",
+     "u": 355599226
+    },
+    {
+     "seed": 5,
+     "key": "use@use_1/synth.noise@noise_1/seed/inherit",
+     "u": 35639509
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 1.6623549461364746,
+      "seed": 10
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-use-named-before-part",
+   "dsl": "search synth, filter\nseed 5\npart p {\n  let a = 1\n  .tint()\n}\nnoise().use(a: 1, p).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    }
+   ]
   }
  ]
 }
