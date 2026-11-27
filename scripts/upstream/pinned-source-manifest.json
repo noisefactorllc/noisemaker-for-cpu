@@ -1,5 +1,5 @@
 {
- "revision": "688794aca5998d9573afa5601c2b9b023c896007",
+ "revision": "f4a1382a1dc863bebe5a3204acfdec425a19c983",
  "paths": [
   "shaders/effects",
   "shaders/src"
@@ -3567,8 +3567,8 @@
   },
   {
    "path": "shaders/effects/filter/text/definition.js",
-   "size": 5440,
-   "sha256": "7046dee495b4e3d44d6c89ef173ebc4801f9c3e72cf3e75afd3c9b9945f5d35e"
+   "size": 5424,
+   "sha256": "56d7d0435e908b7893c8270bd729f22a933d4ee8fcd0a0714ea11151871e8d27"
   },
   {
    "path": "shaders/effects/filter/text/glsl/text.glsl",
@@ -3583,7 +3583,7 @@
   {
    "path": "shaders/effects/filter/text/parity-attestation.json",
    "size": 786,
-   "sha256": "b32d751489a0ccb04b2fb76134f01cc16059af48e4f155560abb5a77241b9128"
+   "sha256": "2e2fc3b5802d22607191c4173a47cab8750e2fd5fe0b23559f60d72c0a8bc176"
   },
   {
    "path": "shaders/effects/filter/text/parity-case.json",
