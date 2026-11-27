@@ -1197,5 +1197,26 @@
    "synth/noise"
   ],
   "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (time) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nrender(o0)"
+ },
+ {
+  "name": "return-unknown-name",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn foo\nrender(o0)"
+ },
+ {
+  "name": "nested-unknown-names",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (vec2(foo, 1)) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nreturn [foo]\nrender(o0)"
+ },
+ {
+  "name": "condition-reference-names",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (vol0) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nif (s5) {\n  noise().write(o2)\n}\nreturn mesh0\nrender(o0)"
  }
 ]

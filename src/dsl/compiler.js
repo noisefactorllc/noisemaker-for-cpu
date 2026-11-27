@@ -1263,23 +1263,37 @@ function declareBinding(binding, bindings) {
 // The run-time state names a condition may read (upstream stateValues).
 const STATE_VALUES = new Set(['time', 'frame', 'mouse', 'resolution', 'seed', 'a', 'u1', 'u2', 'u3', 'u4', 's1', 's2', 'b1', 'b2', 'a1', 'a2', 'deltaTime'])
 
-// A condition or a return value reads only names that exist here: a let, a
-// state name, or (unchecked) an enum path (upstream evalCondition and
-// reportReadsBeforeLet, S003).
-function checkReads(value, bindings) {
-  if (Array.isArray(value)) return value.forEach((item) => checkReads(item, bindings))
+// Names upstream's lexer reads as references, not variables.
+const REFERENCE_NAME = /^(s|vol|geo|xyz|vel|rgba|mesh)\d+$/
+
+// The reads of a condition or a return value, as upstream checks them: a let
+// written later is S003 at any depth (reportReadsBeforeLet); arithmetic on a
+// boolean is refused ("Expected number"); and a condition that is one name
+// must name a let, a state value or a reference (evalCondition). An enum path
+// is not checked.
+function checkReads(value, bindings, { condition = false } = {}) {
+  checkPendingReads(value, bindings)
+  if (condition && value?.kind === 'identifier' && !value.name.includes('.') && !bindings.has(value.name) &&
+      !STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name)) {
+    throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
+  }
+}
+
+function checkPendingReads(value, bindings) {
+  if (Array.isArray(value)) return value.forEach((item) => checkPendingReads(item, bindings))
   if (!value || typeof value !== 'object') return
   if (value.kind === 'identifier') {
-    if (value.name.includes('.') || bindings.has(value.name)) return
-    if (bindings.pendingNames?.has(value.name) || !STATE_VALUES.has(value.name)) {
+    if (!bindings.has(value.name) && bindings.pendingNames?.has(value.name)) {
       throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
     }
-    return
-  }
-  if (value.kind === 'binary') { checkReads(value.left, bindings); checkReads(value.right, bindings) }
-  else if (value.kind === 'unary') checkReads(value.argument, bindings)
-  else if (value.kind === 'vector') checkReads(value.values, bindings)
-  else if (value.kind === 'Call' && isRandomCall(value)) value.args.forEach((arg) => checkReads(arg.value, bindings))
+  } else if (value.kind === 'binary') {
+    if (typeof value.left === 'boolean' || typeof value.right === 'boolean') throw new DslError('Expected number', value.loc)
+    checkPendingReads(value.left, bindings)
+    checkPendingReads(value.right, bindings)
+  } else if (value.kind === 'unary') checkPendingReads(value.argument, bindings)
+  else if (value.kind === 'vector') checkPendingReads(value.values, bindings)
+  else if (value.kind === 'Call') value.args.forEach((arg) => checkPendingReads(arg.value, bindings))
+  else if (value.kind === 'Chain') value.calls.forEach((call) => checkPendingReads(call, bindings))
 }
 
 // One statement, as the chains it renders. A maybe block's chains render only
@@ -1291,7 +1305,7 @@ function compileStatement(statement, bindings) {
   if (statement.kind === 'If') {
     const ifKey = `if_${++bindings.ifCount}`
     const condition = (node, k) => {
-      checkReads(node, bindings)
+      checkReads(node, bindings, { condition: true })
       if (containsRandom(node)) evaluateValue(node, bindings, 0, [], { key: bindings.scoped(ifKey, `cond${k}`), path: [] })
     }
     const branch = (k, body) => {

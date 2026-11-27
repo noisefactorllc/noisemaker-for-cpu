@@ -610,7 +610,13 @@ class Parser {
         return this.parseExpressionChain(this.parseCall())
       }
       let path = name
-      while (this.match('.')) path += `.${this.identifier('Expected enum member').lexeme}`
+      // A member segment may be a keyword, as upstream's memberTokenTypes allows.
+      while (this.match('.')) {
+        const member = this.peek()
+        if (member.type !== 'identifier' && member.type !== 'keyword') throw new DslError('Expected enum member', location(member))
+        this.current += 1
+        path += `.${member.lexeme}`
+      }
       return { kind: 'identifier', name: path, loc: location(token) }
     }
     throw new DslError('Expected DSL value', location(token))

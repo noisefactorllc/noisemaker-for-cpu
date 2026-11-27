@@ -5062,6 +5062,108 @@
      }
     }
    ]
+  },
+  {
+   "name": "return-unknown-name",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn foo\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "nested-unknown-names",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (vec2(foo, 1)) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nreturn [foo]\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/scaleX",
+     "u": 3236937862
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/seed/inherit",
+     "u": 3128439175
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.029266357421875,
+      "seed": 76
+     }
+    }
+   ]
+  },
+  {
+   "name": "condition-reference-names",
+   "dsl": "search synth\nseed 5\nnoise().write(o0)\nif (vol0) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nif (s5) {\n  noise().write(o2)\n}\nreturn mesh0\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/scaleX",
+     "u": 3236937862
+    },
+    {
+     "seed": 5,
+     "key": "if_1/b0/synth.noise@noise_2/seed/inherit",
+     "u": 3128439175
+    },
+    {
+     "seed": 5,
+     "key": "if_2/b0/synth.noise@noise_3/seed/inherit",
+     "u": 3080936826
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 7.029266357421875,
+      "seed": 76
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 27
+     }
+    }
+   ]
   }
  ]
 }

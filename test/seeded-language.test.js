@@ -241,3 +241,13 @@ test('control flow refuses what upstream refuses', () => {
     assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
   }
 })
+
+test('a condition or return value refuses boolean arithmetic and a let read before it is written, at any depth', () => {
+  for (const [source, message] of [
+    ['noise().write(o0)\nreturn true + 1\nrender(o0)', /Expected number/],
+    ['noise().write(o0)\nif (noise(scaleX: x)) {\n  noise().write(o1)\n}\nlet x = 1\nrender(o0)', /Variable used before assignment: 'x'/],
+    ['noise().write(o0)\nreturn noise(scaleX: x)\nlet x = 1\nrender(o0)', /Variable used before assignment: 'x'/],
+  ]) {
+    assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
+  }
+})
