@@ -1299,6 +1299,266 @@
      }
     }
    ]
+  },
+  {
+   "name": "pick-of-pick-effects",
+   "dsl": "search synth, mixer\nseed 4\nsolid().blendMode(tex: pick(pick(noise(), solid()), gradient())).write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex/a0",
+     "u": 1566089424
+    },
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex",
+     "u": 2968924077
+    },
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex/e:synth.gradient/seed/inherit",
+     "u": 210040689
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 1403582698
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.gradient",
+     "values": {
+      "seed": 79
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {
+      "tex": {
+       "kind": "temp",
+       "index": 1
+      }
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 99
+     }
+    }
+   ]
+  },
+  {
+   "name": "pick-let-partial-option",
+   "dsl": "search synth, mixer\nseed 4\nlet t = noise(scaleX: 3)\nsolid().blendMode(tex: pick(t, solid())).write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex",
+     "u": 2968924077
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 3121475603
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {
+      "tex": {
+       "kind": "temp",
+       "index": 1
+      }
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 4
+     }
+    }
+   ]
+  },
+  {
+   "name": "pick-value-let-option",
+   "dsl": "search synth, mixer\nseed 4\nlet v = pick(noise(), noise())\nsolid().blendMode(tex: pick(solid(), v)).write(o0)\nnoise().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 4,
+     "key": "let:v",
+     "u": 2898419981
+    },
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex",
+     "u": 2968924077
+    },
+    {
+     "seed": 4,
+     "key": "mixer.blendMode@blendMode_1/tex/e:synth.noise/seed/inherit",
+     "u": 16037820
+    },
+    {
+     "seed": 4,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 1403582698
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 21
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {
+      "tex": {
+       "kind": "temp",
+       "index": 1
+      }
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 99
+     }
+    }
+   ]
+  },
+  {
+   "name": "value-let-picks-partials",
+   "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 3)\nlet v = pick(t, t)\nsolid().blendMode(tex: v).write(o0)\nnoise().write(o2)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "let:t/synth.noise@noise_1/seed/inherit",
+     "u": 3288666147
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 1816131536
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 48
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 37
+     }
+    }
+   ]
+  },
+  {
+   "name": "effect-let-keyword-twice",
+   "dsl": "search synth, mixer\nseed 3\nlet b = blendMode(tex: noise(scaleX: rand(1, 9)), tex: solid())\nsolid().b().write(o0)\nnoise().write(o2)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 12
+     }
+    }
+   ]
+  },
+  {
+   "name": "midi-positional-slots",
+   "dsl": "search synth\nseed 5\nlet m = midi(randInt(0, 2), channel: 1)\nlet n = midi(randInt(0, 2), rand(1, 2), channel: 1, mode: 0)\nlet a = audio(rand(0, 1), band: 0)\nlet k = midi(1, min: rand(1), min: 0.5)\nnoise().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 5,
+     "key": "let:m/k:mode",
+     "u": 2359430917
+    },
+    {
+     "seed": 5,
+     "key": "let:n/k:min",
+     "u": 1750844762
+    },
+    {
+     "seed": 5,
+     "key": "let:n/k:max",
+     "u": 2478611628
+    },
+    {
+     "seed": 5,
+     "key": "let:a/k:min",
+     "u": 3074489106
+    },
+    {
+     "seed": 5,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 2245215583
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 84
+     }
+    }
+   ]
   }
  ]
 }

@@ -228,5 +228,62 @@
    "synth/noise"
   ],
   "dsl": "search synth\nseed 5\nlet m = midi(1, randInt(0, 2), min: rand(1, 2), max: 50)\nnoise().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "pick-of-pick-effects",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, mixer\nseed 4\nsolid().blendMode(tex: pick(pick(noise(), solid()), gradient())).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "pick-let-partial-option",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, mixer\nseed 4\nlet t = noise(scaleX: 3)\nsolid().blendMode(tex: pick(t, solid())).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "pick-value-let-option",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, mixer\nseed 4\nlet v = pick(noise(), noise())\nsolid().blendMode(tex: pick(solid(), v)).write(o0)\nnoise().write(o1)\nrender(o0)"
+ },
+ {
+  "name": "value-let-picks-partials",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet t = noise(scaleX: 3)\nlet v = pick(t, t)\nsolid().blendMode(tex: v).write(o0)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "effect-let-keyword-twice",
+  "effects": [
+   "synth/noise",
+   "synth/solid",
+   "mixer/blendMode",
+   "synth/gradient"
+  ],
+  "dsl": "search synth, mixer\nseed 3\nlet b = blendMode(tex: noise(scaleX: rand(1, 9)), tex: solid())\nsolid().b().write(o0)\nnoise().write(o2)\nrender(o0)"
+ },
+ {
+  "name": "midi-positional-slots",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 5\nlet m = midi(randInt(0, 2), channel: 1)\nlet n = midi(randInt(0, 2), rand(1, 2), channel: 1, mode: 0)\nlet a = audio(rand(0, 1), band: 0)\nlet k = midi(1, min: rand(1), min: 0.5)\nnoise().write(o0)\nrender(o0)"
  }
 ]

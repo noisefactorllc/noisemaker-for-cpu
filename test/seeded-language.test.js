@@ -99,3 +99,16 @@ test('a random call in an effect passed as a value inside a let that holds an ef
   assert.throws(() => compile('search synth, mixer\nseed 3\nlet b = blendMode(tex: noise(scaleX: rand(1, 9)))\nsolid().b().write(o0)'),
     /Random calls in an effect held by a let are not supported yet: 'b'/)
 })
+
+// Upstream substitutes a value let that chose an effect into the let that names
+// it. The port does not key that yet, so it refuses the program rather than
+// draw differently.
+test('a let that names another let\'s chosen effect is refused for now', () => {
+  for (const [source, message] of [
+    ['let v = pick(noise(), solid())\nlet w = v\nsolid().blendMode(tex: w).write(o0)', /cannot copy another let's chosen effect yet: 'w'/],
+    ['let v = pick(noise(), solid())\nlet b = blendMode(tex: v)\nsolid().b().write(o0)', /cannot take another let's chosen effect yet: 'b'/],
+    ['let v = pick(blendMode(tex: noise()), blendMode(tex: solid()))\nsolid().v().write(o0)', /Binding "v" is not callable/],
+  ]) {
+    assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), message, source)
+  }
+})
