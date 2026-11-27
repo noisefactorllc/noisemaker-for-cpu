@@ -824,19 +824,37 @@ function declareBinding(binding, bindings) {
     }
     return declareBinding({ ...binding, value: call }, bindings)
   }
-  // Substitute chosen effects at any depth of the let's arguments.
+  // Substitute chosen effects at any depth of the let's arguments. Nodes with
+  // nothing to substitute are kept as they are, with every mark they carry.
+  const substituteArgs = (args) => {
+    const next = args.map((arg) => {
+      const value = substitute(arg.value)
+      return value === arg.value ? arg : { ...arg, value }
+    })
+    return next.every((arg, index) => arg === args[index]) ? args : next
+  }
   const substitute = (value) => {
     if (chosen(value)) return chosen(value)
-    if (Array.isArray(value)) return value.map(substitute)
+    if (Array.isArray(value)) {
+      const next = value.map(substitute)
+      return next.every((item, index) => item === value[index]) ? value : next
+    }
     if (value?.kind === 'Chain') {
-      return { ...value, calls: value.calls.map((call) => (call.kind === 'Subchain'
-        ? { ...call, body: call.body.map((entry) => ({ ...entry, args: entry.args.map((arg) => ({ ...arg, value: substitute(arg.value) })) })) }
-        : { ...call, args: call.args.map((arg) => ({ ...arg, value: substitute(arg.value) })) })) }
+      const calls = value.calls.map((call) => {
+        if (call.kind === 'Subchain') {
+          const body = call.body.map((entry) => { const args = substituteArgs(entry.args); return args === entry.args ? entry : { ...entry, args } })
+          return body.every((entry, index) => entry === call.body[index]) ? call : { ...call, body }
+        }
+        const args = substituteArgs(call.args)
+        return args === call.args ? call : { ...call, args }
+      })
+      return calls.every((call, index) => call === value.calls[index]) ? value : { ...value, calls }
     }
     return value
   }
   if (binding.value?.kind === 'Call') {
-    binding = { ...binding, value: { ...binding.value, args: binding.value.args.map((arg) => ({ ...arg, value: substitute(arg.value) })) } }
+    const args = substituteArgs(binding.value.args)
+    if (args !== binding.value.args) binding = { ...binding, value: { ...binding.value, args } }
   }
   if (binding.value?.kind === 'Call' && !VALUE_CALLS.has(binding.value.name) && !isRandomCall(binding.value)) {
     // Other partial arguments keep their existing use-site resolution. The

@@ -19,11 +19,10 @@ read(o1, _id: "r").blendMode(tex: n(_id: "over")).write(o0)
 read(_id: "again", surface: o1).write(o2)
 noise3d().write3d(vol0, geo0, _id: "w3")
 read3d(vol0, geo0, _id: "r3").render3d().write(o3)
-read3d(_id: "named3", tex3d: vol0, geo: geo0).render3d().write(o4)
-n().write(o5)`)
+read3d(_id: "named3", tex3d: vol0, geo: geo0).render3d().write(o4)`)
   assert.deepEqual(plan.chains.map(({ steps }) => steps.map(step => step._id)), [
     ['base_2', 'flip', 'w'], ['r', undefined, undefined], ['again', undefined],
-    [undefined, 'w3'], ['r3', undefined, undefined], ['named3', undefined, undefined], ['base_2', undefined],
+    [undefined, 'w3'], ['r3', undefined, undefined], ['named3', undefined, undefined],
   ])
   const inline = plan.chains[1].steps[1].inlineChains[0].chain.steps[0]
   assert.equal(inline._id, 'over')
@@ -34,13 +33,16 @@ n().write(o5)`)
   }
 })
 
-test('invalid ids are ignored without resolving them or warning', (t) => {
+// On the 2.x line upstream refuses an id that is not an identifier string
+// (S001) and a let carrying an id used twice without ids of its own (S011).
+test('an invalid id and a let id used twice are refused, without resolving the id or warning', (t) => {
   const warnings = []
   t.mock.method(console, 'warn', message => warnings.push(message))
   for (const value of ['5', '""', '"9a"', '"a-b"', '"_a"', 'alias', 'unregistered()']) {
-    const plan = compile(`let alias = "valid"\nlet n = noise(_id: "base")\nn(_id: ${value}).write(o0, _id: ${value})\nread(o0, _id: ${value}).write(o1)`)
-    for (const { steps } of plan.chains) for (const step of steps) assert.ok(!Object.hasOwn(step, '_id'), value)
+    assert.throws(() => compile(`let alias = "valid"\nlet n = noise(_id: "base")\nn(_id: ${value}).write(o0)`),
+      /_id: takes a string literal of letters, digits and '_' that starts with a letter/, value)
   }
+  assert.throws(() => compile('let n = noise(_id: "base_2")\nn().write(o1)\nn().write(o5)'), /_id: "base_2" is in a 'let' value used more than once/)
   assert.deepEqual(warnings, [])
 })
 
