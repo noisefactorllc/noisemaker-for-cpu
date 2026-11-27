@@ -1032,5 +1032,75 @@
    "synth/gradient"
   ],
   "dsl": "search synth, filter\nseed 3\nlet t = read(o1).tint()\nnoise().tint(alpha: rand(0, 1)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-read-chain-let-picked",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet t = read(o1).tint()\nnoise().blendMode(tex: pick(t, t)).tint(alpha: rand(0, 1)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-chain-let-name-in-use-arg",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\npart p {\n  let x = 1\n  .tint()\n}\nlet a = 0.5\nlet a = noise().use(p, x: a)\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-chain-let-name-in-subchain",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet a = 0.5\nlet a = noise().subchain(name: \"s\") { .tint(alpha: a) }\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-chain-let-name-in-array",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet t = noise().tint(color: [t, 1, 1])\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-read-chain-let-subchain",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet t = read(o1).subchain(name: \"a\") { .tint(alpha: rand(0, 1)) }\nnoise().tint(alpha: rand(0, 1)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-osc-chain-let-random-args",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet c = osc(type: sine, min: rand(0, 1)).tint()\nnoise(scaleX: rand(1, 9)).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "part-chain-let-headed-by-use",
+  "effects": [
+   "synth/noise",
+   "filter/tint",
+   "synth/solid",
+   "mixer/blendMode"
+  ],
+  "dsl": "search synth, filter\nseed 3\npart p {\n  let a = 1\n  .tint(alpha: a)\n}\nlet t = use(p, a: rand(0, 1)).tint()\nnoise().tint(alpha: rand(0, 1)).write(o0)\nrender(o0)"
  }
 ]

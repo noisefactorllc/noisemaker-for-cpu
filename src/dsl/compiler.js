@@ -987,7 +987,9 @@ function countLetValues(args, bindings) {
       continue
     }
     bindings.letChains.add(value)
-    for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
+    // Its top-level calls, as upstream's chainCalls reads them: not a
+    // subchain's body.
+    for (const entry of value.calls) {
       if (entry.kind !== 'Call') continue
       const definition = elementDefinition(entry, bindings)
       // An element that calls another let's partial is that let's element, counted where it was written.
@@ -1030,15 +1032,16 @@ function bindCalls(value, bindings) {
 }
 
 // Every identifier a value names, at any depth of its chains and calls.
+// Upstream's substitute does not read a name in a use's arguments, in a
+// subchain's body or in an array or vector literal.
 function collectNames(value, names) {
-  if (Array.isArray(value)) return value.forEach((item) => collectNames(item, names))
-  if (!value || typeof value !== 'object') return
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return
   if (value.kind === 'identifier') names.add(value.name)
-  else if (value.kind === 'Chain') value.calls.forEach((call) => (call.kind === 'Subchain' ? call.body : [call]).forEach((entry) => collectNames(entry.args?.map((arg) => arg.value), names)))
-  else if (value.kind === 'Call') collectNames(value.args.map((arg) => arg.value), names)
+  else if (value.kind === 'Chain') {
+    for (const entry of value.calls) if (entry.kind === 'Call') entry.args.forEach((arg) => collectNames(arg.value, names))
+  } else if (value.kind === 'Call') value.args.forEach((arg) => collectNames(arg.value, names))
   else if (value.kind === 'binary') { collectNames(value.left, names); collectNames(value.right, names) }
   else if (value.kind === 'unary') collectNames(value.argument, names)
-  else if (value.kind === 'vector') collectNames(value.values, names)
 }
 
 // Whether a let's argument holds a random call, in effects passed as values too,
@@ -1046,9 +1049,10 @@ function collectNames(value, names) {
 function randomInLetValue(value, bindings) {
   if (Array.isArray(value)) return value.some((item) => randomInLetValue(item, bindings))
   if (value?.kind !== 'Chain') return containsRandomDeep(value)
-  return value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call])).some((entry) => {
-    // A use's or a maybe tail's arguments are not an element's (upstream S013 skips them).
-    if (entry.kind !== 'Call') return false
+  return value.calls.some((entry) => {
+    // A use's, a maybe tail's, a subchain's and an automation call's arguments
+    // are not an element's (upstream S013 skips them).
+    if (entry.kind !== 'Call' || VALUE_CALLS.has(entry.name)) return false
     const definition = elementDefinition(entry, bindings)
     return lastOfEachName(entry.args, definition).some((arg) => randomInLetValue(arg.value, bindings))
   })
@@ -1201,6 +1205,9 @@ function declareBinding(binding, bindings) {
   // Bound before the let's own name is set, so the value sees the earlier binding of that name.
   bindCalls(entry.expr, bindings)
   bindings.markLetIds(entry.expr)
+  // A read chain's elements were counted where it is written; the chain it
+  // stores is not counted again where it is used.
+  if (entry.expr?.kind === 'Chain') bindings.letChains.add(entry.expr)
   bindings.set(binding.name, entry)
   if (containsRandom(binding.value)) {
     bindings.deferChains = true
