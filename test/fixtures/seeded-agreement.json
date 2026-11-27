@@ -4631,6 +4631,56 @@
      }
     }
    ]
+  },
+  {
+   "name": "part-bare-use-let-then-value-let",
+   "dsl": "search synth, filter\nseed 3\npart p {\n  .tint()\n}\nlet t = use(p)\nlet t = rand(1, 9)\nnoise(scaleX: t).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:t",
+     "u": 1802387800
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 4.357208728790283,
+      "seed": 12
+     }
+    }
+   ]
+  },
+  {
+   "name": "part-read-chain-let-then-value-let",
+   "dsl": "search synth, filter\nseed 3\nlet t = read(o1).subchain(name: \"s\") { .tint(alpha: rand(0, 1)) }\nlet t = rand(1, 9)\nnoise(scaleX: t).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:t",
+     "u": 1802387800
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 4.357208728790283,
+      "seed": 12
+     }
+    }
+   ]
   }
  ]
 }

@@ -203,13 +203,29 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
       // place's key, and is not counted as an element (upstream).
       if (binding.resolved && binding.value?.kind === 'Chain') {
         if (bindings.deferChains) return binding.value
-        if (bindings.pending) return bindings.compileInlineChain(binding.value, at, { count: false })
+        if (bindings.pending) {
+          // Its chain reading the let again is a cycle.
+          if (binding.evaluating) throw new DslError(`Automation cycle detected: ${value.name} -> ${value.name}`, value.loc)
+          binding.evaluating = true
+          try {
+            return bindings.compileInlineChain(binding.value, at, { count: false })
+          } finally {
+            binding.evaluating = false
+          }
+        }
       }
       if (binding.resolved) return binding.value
-      if (resolving.includes(value.name)) {
+      // An inline chain resolves its arguments afresh, so a let read again
+      // while it evaluates is a cycle too.
+      if (resolving.includes(value.name) || binding.evaluating) {
         throw new DslError(`Automation cycle detected: ${[...resolving, value.name].join(' -> ')}`, value.loc)
       }
-      binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, value.name], binding.at)
+      binding.evaluating = true
+      try {
+        binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, value.name], binding.at)
+      } finally {
+        binding.evaluating = false
+      }
       binding.resolved = true
       return binding.value
     }
@@ -1031,9 +1047,20 @@ function bindCalls(value, bindings) {
   else if (value.kind === 'vector') bindCalls(value.values, bindings)
 }
 
-// Every identifier a value names, at any depth of its chains and calls.
-// Upstream's substitute does not read a name in a use's arguments, in a
-// subchain's body or in an array or vector literal.
+// Every chain in a value, nested argument chains included, as written in a let:
+// its elements were counted there.
+function markLetChains(value, bindings) {
+  if (Array.isArray(value)) return value.forEach((item) => markLetChains(item, bindings))
+  if (!value || typeof value !== 'object') return
+  if (value.kind === 'Chain') {
+    bindings.letChains.add(value)
+    for (const entry of value.calls) if (entry.kind === 'Call') entry.args.forEach((arg) => markLetChains(arg.value, bindings))
+  } else if (value.kind === 'Call') value.args.forEach((arg) => markLetChains(arg.value, bindings))
+}
+
+// The names a value reads where upstream's substitute reads them: its calls'
+// arguments at any depth, vecN() included, but not a use's arguments, a
+// subchain's body or a bracket array literal.
 function collectNames(value, names) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return
   if (value.kind === 'identifier') names.add(value.name)
@@ -1042,6 +1069,7 @@ function collectNames(value, names) {
   } else if (value.kind === 'Call') value.args.forEach((arg) => collectNames(arg.value, names))
   else if (value.kind === 'binary') { collectNames(value.left, names); collectNames(value.right, names) }
   else if (value.kind === 'unary') collectNames(value.argument, names)
+  else if (value.kind === 'vector') value.values.forEach((item) => collectNames(item, names))
 }
 
 // Whether a let's argument holds a random call, in effects passed as values too,
@@ -1201,13 +1229,15 @@ function declareBinding(binding, bindings) {
   if (namesChosenEffect(binding.value, bindings)) {
     throw new DslError(`A let cannot copy another let's chosen effect yet: '${binding.name}'`, binding.loc)
   }
-  const entry = { kind: 'value', expr: captureHexColors(binding.value, bindings), resolved: false, value: null, at: { key: bindings.letKey(binding.name, 'value'), path: [] } }
+  // A read chain is a let that holds effects, counted as upstream counts one.
+  const kind = binding.value?.kind === 'Chain' ? 'effect' : 'value'
+  const entry = { kind: 'value', expr: captureHexColors(binding.value, bindings), resolved: false, value: null, at: { key: bindings.letKey(binding.name, kind), path: [] } }
   // Bound before the let's own name is set, so the value sees the earlier binding of that name.
   bindCalls(entry.expr, bindings)
   bindings.markLetIds(entry.expr)
   // A read chain's elements were counted where it is written; the chain it
   // stores is not counted again where it is used.
-  if (entry.expr?.kind === 'Chain') bindings.letChains.add(entry.expr)
+  if (entry.expr?.kind === 'Chain') markLetChains(entry.expr, bindings)
   bindings.set(binding.name, entry)
   if (containsRandom(binding.value)) {
     bindings.deferChains = true

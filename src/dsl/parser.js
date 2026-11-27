@@ -179,6 +179,8 @@ class Parser {
     const randomStart = RANDOM_FUNCTIONS.has(this.peek().lexeme)
     if (this.peek().type === 'identifier' && this.peek(1).lexeme === '(' && !randomStart) {
       value = this.toUse(this.parseCall())
+      // A use on its own is a one-element chain, as upstream holds it.
+      if (value.kind === 'Use' && !this.isPunctuation('.')) value = { kind: 'Chain', calls: [value], loc: value.loc }
       if (value.name === 'midi' || value.name === 'audio') checkAutomationCall(value)
       // A let's call continues across '.', as upstream parses its value as a chain.
       if (this.isPunctuation('.')) {

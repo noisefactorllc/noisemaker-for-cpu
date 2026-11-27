@@ -205,3 +205,13 @@ test('a let that holds a chain of several effects is refused where it is used, f
   assert.throws(() => compile('search synth, filter, mixer\nseed 3\nlet t = noise().tint()\nnoise().blendMode(tex: t).write(o0)'),
     /A let that holds a chain of several effects is not supported yet: 't'/)
 })
+
+test('a chain let that names itself in vecN() is a cycle, and a let read while it evaluates is refused, not overflowed', () => {
+  for (const source of [
+    'let t = noise().tint(color: vec3(t, 1, 1))\nnoise().write(o0)',
+    'let a = 0.5\nlet a = read(o1).tint(color: vec3(a, 1, 1))\nnoise().write(o0)',
+    'let a = read(o1).tint(color: [a, 1, 1])\nnoise().blendMode(tex: pick(a, a)).write(o0)',
+  ]) {
+    assert.throws(() => compile(`search synth, filter, mixer\nseed 3\n${source}`), /Automation cycle detected/, source)
+  }
+})
