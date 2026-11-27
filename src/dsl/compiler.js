@@ -197,7 +197,10 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
       // place's key, and is not counted as an element (upstream).
       if (binding.resolved && binding.value?.kind === 'Chain') {
         if (bindings.deferChains) return binding.value
-        if (bindings.pending) return bindings.compileInlineChain(binding.value, at, { count: false })
+        if (bindings.pending) {
+          bindings.useLet(binding, undefined, value.loc)
+          return bindings.compileInlineChain(binding.value, at, { count: false })
+        }
       }
       if (binding.resolved) return binding.value
       if (resolving.includes(value.name)) {
@@ -323,10 +326,14 @@ class CompileScope extends Map {
 
   // A let whose value carries an `_id:` may be used once: its uses would share
   // the id (upstream S011).
-  useLet(partial, loc) {
-    if (!partial.id) return
-    if (partial.used) throw new DslError(`_id: "${partial.id}" is in a 'let' value used more than once, so its uses would share one id`, loc)
-    partial.used = true
+  // Each id has one origin, shared by a let of a let; a use marks every origin
+  // but the element's own when the use writes an `_id:` of its own.
+  useLet(binding, siteId, loc) {
+    for (const origin of binding.idOrigins ?? []) {
+      if (origin.outer && siteId !== undefined) continue
+      if (origin.used) throw new DslError(`_id: "${origin.id}" is in a 'let' value used more than once, so its uses would share one id`, loc)
+      origin.used = true
+    }
   }
 
   // The seed draws use here: the innermost `_seed:` scope's, else the program's.
@@ -488,13 +495,15 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       // use, with `'` added while it is one of the let's own names (upstream).
       // An id an earlier element claimed falls back to the let's name, and one
       // written inside another let's value is the let's (upstream letKeyName).
-      const siteId = count ? validId(call.args.findLast((arg) => arg.name === '_id')?.value) : undefined
+      const writtenSiteId = validId(call.args.findLast((arg) => arg.name === '_id')?.value)
+      const siteId = count ? writtenSiteId : undefined
       call = mergePartial(partial.call, call)
       // An element held by a let draws under the let's key and the name the let
       // gave it.
       heldKey = partial.key
-      // A use with an `_id:` of its own does not share the let's id.
-      if (siteId === undefined) bindings.useLet(partial, call.loc)
+      // A use written inside another let's value counts once, where that let is
+      // written (countLetValues), not each time it compiles.
+      if (count) bindings.useLet(partial, writtenSiteId, call.loc)
       if (siteId !== undefined && partial.letKey && !bindings.claimedIds.has(siteId)) {
         bindings.claimedIds.add(siteId)
         let name = siteId
@@ -518,7 +527,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       if (arg.name === '_seed') {
         if (arg !== call.args.findLast((other) => other.name === '_seed')) return false
         if (containsRandomDeep(arg.value)) throw new DslError('A random call cannot set _seed', call.loc)
-        const seed = evaluateValue(arg.value, bindings)
+        const seed = foldConstant(arg.value)
         if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295) {
           throw new DslError('_seed must be a whole number from 0 to 4294967295', call.loc)
         }
@@ -696,6 +705,43 @@ function captureHexColors(value, bindings) {
   return resolved?.kind === 'color' ? resolved : value
 }
 
+// A whole-number literal or arithmetic on literals, as upstream reads `_seed:`;
+// undefined for anything else, a let's name included.
+function foldConstant(value) {
+  if (typeof value === 'number') return value
+  if (value?.kind === 'unary') {
+    const input = foldConstant(value.argument)
+    return input === undefined ? undefined : value.operator === '-' ? -input : input
+  }
+  if (value?.kind === 'binary') {
+    const left = foldConstant(value.left)
+    const right = foldConstant(value.right)
+    if (left === undefined || right === undefined) return undefined
+    return value.operator === '+' ? left + right : value.operator === '-' ? left - right : value.operator === '*' ? left * right : left / right
+  }
+  return undefined
+}
+
+// The uses of let partials written inside a let's value, counted once where
+// that let is written.
+function countLetUses(args, bindings) {
+  for (const arg of args) {
+    const value = arg.value
+    if (Array.isArray(value)) { countLetUses(value.map((item) => ({ value: item })), bindings); continue }
+    if (value?.kind === 'identifier') {
+      const bound = value.boundPartial ?? bindings.get(value.name)
+      if (bound?.kind === 'partial') bindings.useLet(bound, undefined, value.loc)
+      continue
+    }
+    if (value?.kind !== 'Chain') continue
+    for (const entry of value.calls.flatMap((call) => (call.kind === 'Subchain' ? call.body : [call]))) {
+      const bound = entry.boundPartial ?? bindings.get(entry.name)
+      if (bound?.kind === 'partial') bindings.useLet(bound, validId(entry.args.findLast((other) => other.name === '_id')?.value), entry.loc)
+      countLetUses(entry.args, bindings)
+    }
+  }
+}
+
 // An `_id:` value the port keeps: a string that is an identifier.
 function validId(value) {
   return typeof value === 'string' && /^[A-Za-z][A-Za-z0-9_]*$/.test(value) ? value : undefined
@@ -819,6 +865,8 @@ function declareBinding(binding, bindings) {
     const call = copied.calls[0]
     const held = call.boundPartial ?? bindings.get(call.name)
     if (held?.kind === 'partial' && call.args.length === 0) {
+      // It is still a let of this name, counted as one that holds an effect.
+      bindings.letKey(binding.name, 'effect')
       bindings.set(binding.name, held)
       return
     }
@@ -892,10 +940,19 @@ function declareBinding(binding, bindings) {
     const letKey = element ? bindings.letKey(binding.name, 'effect') : null
     const key = element ? joinKey(letKey, element) : null
     countLetValues(written, bindings)
-    // An `_id:` in the let's value, on its element or inside it, limits it to one use.
-    const ids = new Set()
-    collectIds({ kind: 'Call', name: call.name, args: call.args }, ids)
-    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []), id: [...ids][0] })
+    // The ids in the let's value limit it to one use: the element's own id and
+    // the ids nested in its values. A let of a let shares the earlier let's
+    // origins for the ids it keeps (upstream `_letIdOrigin`).
+    const inherited = previous?.kind === 'partial' ? (previous.idOrigins ?? []) : []
+    const nested = new Set()
+    for (const arg of written) if (arg.name !== '_id') collectIds(arg.value, nested)
+    const idOrigins = [
+      ...inherited.filter((origin) => !(origin.outer && writtenId !== undefined)),
+      ...(writtenId !== undefined ? [{ id: writtenId, outer: true, used: false }] : []),
+      ...[...nested].map((id) => ({ id, outer: false, used: false })),
+    ]
+    countLetUses(written, bindings)
+    bindings.set(binding.name, { kind: 'partial', call, key, element, op, ownName, letKey, ownNames: new Set(ownName ? [ownName] : []), idOrigins })
     return
   }
   if (aliasBinding(binding.value, bindings)) {
@@ -924,8 +981,14 @@ function declareBinding(binding, bindings) {
       bindings.deferChains = false
     }
     entry.resolved = true
-    // An effect the let chose is compiled where the let is used, uncounted.
-    if (entry.value?.kind === 'Chain') bindings.letChains.add(entry.value)
+    // An effect the let chose is compiled where the let is used, uncounted. Its
+    // ids limit the let to one use.
+    if (entry.value?.kind === 'Chain') {
+      bindings.letChains.add(entry.value)
+      const ids = new Set()
+      collectIds(entry.value, ids)
+      entry.idOrigins = [...ids].map((id) => ({ id, outer: false, used: false }))
+    }
   }
 }
 

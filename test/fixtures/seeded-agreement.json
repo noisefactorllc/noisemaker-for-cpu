@@ -2833,6 +2833,68 @@
      }
     }
    ]
+  },
+  {
+   "name": "site-id-use-inside-let-value",
+   "dsl": "search synth, mixer\nseed 3\nlet b = noise(_id: \"x\")\nlet a = blendMode(tex: b(_id: \"y\"))\nsolid().a().write(o0)\nb().write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:b/synth.noise@x/seed/inherit",
+     "u": 3265502533
+    },
+    {
+     "seed": 3,
+     "key": "let:b/synth.noise@x/seed/inherit",
+     "u": 3265502533
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 34
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 34
+     }
+    }
+   ]
+  },
+  {
+   "name": "copied-partial-advances-let-count",
+   "dsl": "search synth, mixer\nseed 3\nlet p = noise(scaleX: 2)\nlet v = pick(p(), p())\nlet w = v\nlet w = noise()\nw().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "let:w#2/synth.noise@noise_2/seed/inherit",
+     "u": 2520995691
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 92
+     }
+    }
+   ]
   }
  ]
 }

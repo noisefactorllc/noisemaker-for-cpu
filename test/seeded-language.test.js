@@ -136,3 +136,14 @@ test('an _id: must be an identifier string, and a let carrying one may be used o
     assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
   }
 })
+
+test('an id shared through lets, nested values or a chosen chain is refused when used twice, and _seed: takes literals only', () => {
+  for (const [source, message] of [
+    ['let a = blendMode(tex: noise(_id: "x"))\nsolid().a(_id: "p").write(o0)\nsolid().a(_id: "q").write(o1)', /_id: "x" is in a 'let' value used more than once/],
+    ['let a = noise(_id: "x")\nlet b = a()\nb().write(o0)\na().write(o1)', /_id: "x" is in a 'let' value used more than once/],
+    ['let v = pick(noise(_id: "x"), noise(_id: "y"))\nsolid().blendMode(tex: v).write(o0)\nsolid().blendMode(tex: v).write(o1)', /is in a 'let' value used more than once/],
+    ['let n = 3\nnoise(_seed: n).write(o0)', /_seed must be a whole number/],
+  ]) {
+    assert.throws(() => compile(`search synth, mixer\nseed 3\n${source}`), message, source)
+  }
+})
