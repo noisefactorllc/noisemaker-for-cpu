@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { gunzipSync } from 'node:zlib'
 import { CpuRenderer, Surface, createDefaultRegistry, kernels, kernelFactories } from '../src/index.js'
+import { rendererInputDigest } from './renderer-input-digest.js'
 
 // Case records from the pinned C++ sweep, captured at its CPU runner boundary.
 // The C++ revision and independently recorded RGBA8 hashes live in authority-pixels.json.
@@ -87,40 +88,88 @@ const selected = new Set(requested)
 const selection = requested.length ? cases.filter(({ id }) => selected.has(id)) : cases
 assert.equal(selection.length, requested.length || reference.expected, 'Unknown or duplicate requested case')
 
-// Each completed case is an atomic receipt. The candidate, inputs, script,
-// Node version, and platform identify receipts across interruptions.
+const rendererDigest = await rendererInputDigest(root)
+// Each completed case is an atomic receipt. The renderer inputs, replay
+// harness, Node version, and platform identify compatible receipts.
 const identity = sha256(JSON.stringify({
-  revision,
+  rendererDigest,
   cases: CASE_SHA256,
   reference: sha256(referenceBytes),
   script: sha256(await readFile(new URL(import.meta.url))),
+  digestScript: sha256(await readFile(new URL('./renderer-input-digest.js', import.meta.url))),
   node: process.version,
+  nodeArgs: process.execArgv,
+  nodeOptions: sha256(process.env.NODE_OPTIONS ?? ''),
   platform: process.platform,
   arch: process.arch,
 }))
 const directory = join(proofRoot, identity)
-await mkdir(directory, { recursive: true })
-const saved = new Set(await readdir(directory))
-let rendered = 0
-for (const record of selection) {
-  const name = `${sha256(record.id)}.json`
-  const filename = join(directory, name)
-  const receipt = { identity, id: record.id, rgba8Sha256: expected.get(record.id) }
-  if (saved.has(name)) {
-    assert.deepEqual(JSON.parse(await readFile(filename, 'utf8')), receipt, `${record.id}: invalid saved receipt`)
-    continue
-  }
+const current = join(directory, revision)
+await mkdir(current, { recursive: true })
+const saved = new Set(await readdir(current))
+const nameFor = (id) => `${sha256(id)}.json`
+const receiptFor = (id, sourceRevision) => ({ identity, revision: sourceRevision, id, rgba8Sha256: expected.get(id) })
+
+async function checkReceipt(id, sourceRevision) {
+  const filename = join(directory, sourceRevision, nameFor(id))
+  assert.deepEqual(JSON.parse(await readFile(filename, 'utf8')), receiptFor(id, sourceRevision), `${id}: invalid saved receipt`)
+}
+
+async function replay(record) {
+  const receipt = receiptFor(record.id, revision)
   const renderer = new CpuRenderer({ registry: createDefaultRegistry(), kernels, kernelFactories })
   const result = await renderer.render(record.source, renderOptions(record))
   assert.equal(result.width, record.options.width, `${record.id}: output width`)
   assert.equal(result.height, record.options.height, `${record.id}: output height`)
   assert.equal(sha256(result.toRgba8()), receipt.rgba8Sha256, `${record.id}: RGBA8 mismatch`)
   assert.equal(candidateRevision(), revision, 'Candidate source changed during replay')
-  await saveReceipt(directory, filename, receipt)
-  rendered++
+  const name = nameFor(record.id)
+  await saveReceipt(current, join(current, name), receipt)
+  saved.add(name)
+}
+
+const previous = new Map()
+for (const entry of await readdir(directory, { withFileTypes: true })) {
+  if (!entry.isDirectory() || entry.name === revision || !/^[0-9a-f]{40}$/.test(entry.name)) continue
+  for (const name of await readdir(join(directory, entry.name))) {
+    if (/^[0-9a-f]{64}\.json$/.test(name)) previous.set(name, entry.name)
+  }
+}
+
+// Cross-revision evidence is eligible only after the current revision has
+// rendered and matched an authoritative default for every registered effect.
+// A resumed spot check may reuse defaults actually rendered on this revision.
+let spotCompared = 0
+const willCarry = selection.some(({ id }) => previous.has(nameFor(id)) && !saved.has(nameFor(id)))
+if (willCarry) {
+  const defaultIds = new Set(createDefaultRegistry().list().map(({ id }) => `${id.replace('/', '__')}__default`))
+  const defaults = cases.filter(({ id }) => defaultIds.has(id))
+  assert(defaultIds.size > 0, 'Expected registered defaults for carry-over')
+  assert.equal(defaults.length, defaultIds.size, 'Carry-over requires one authoritative default per effect')
+  for (const record of defaults) {
+    if (saved.has(nameFor(record.id))) await checkReceipt(record.id, revision)
+    else await replay(record)
+  }
+  spotCompared = defaults.length
+}
+
+let rendered = 0
+let carried = 0
+for (const record of selection) {
+  const name = nameFor(record.id)
+  if (saved.has(name)) {
+    await checkReceipt(record.id, revision)
+  } else if (previous.has(name)) {
+    await checkReceipt(record.id, previous.get(name))
+    carried++
+  } else {
+    await replay(record)
+    rendered++
+  }
 }
 assert.equal(candidateRevision(), revision, 'Candidate source changed during replay')
+assert.equal(await rendererInputDigest(root), rendererDigest, 'Renderer inputs changed during replay')
 console.log(JSON.stringify({
-  revision, identity, compared: selection.length, expected: reference.expected,
-  coverage: selection.length === reference.expected ? 'complete' : 'selected', rendered,
+  revision, identity, rendererDigest, compared: selection.length, expected: reference.expected,
+  coverage: selection.length === reference.expected ? 'complete' : 'selected', rendered, carried, spotCompared,
 }))
