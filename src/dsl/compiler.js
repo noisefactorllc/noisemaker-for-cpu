@@ -786,7 +786,11 @@ function effectArguments(call, definition, bindings) {
       }
     }
     if (posCursor < positional.length) {
-      console.warn(`Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`)
+      throw new DslError(
+        `Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`,
+        positional[posCursor].loc ?? call.loc,
+        'S009',
+      )
     }
     bound.push(...extraNamed)
     return bound

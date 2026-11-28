@@ -587,3 +587,17 @@ test('ordinary calls accept mixed positional and named arguments and bind positi
   // Unknown named parameters in mixed calls are still refused.
   assert.throws(() => compile('search synth\nnoise(10, bogus: 1).write(o0)\nrender(o0)'), /Unknown parameter "bogus"/)
 })
+
+test('mixed calls with excess positional arguments fail with S009', () => {
+  for (const [source, effect, count] of [
+    ['solid(#ff0000, alpha: 0.5, 0.7).write(o0)', 'solid', 2],
+    ['noise(1, 2, 75, 75, true, false, 300, 75, 25, 1, 99, seed: 3).write(o0)', 'noise', 11],
+    ['let p = solid(alpha: 0.5)\np(#ff0000, 0.7, alpha: 0.5).write(o0)', 'solid', 2],
+  ]) {
+    assert.throws(
+      () => compile(`search synth\nseed 3\n${source}\nrender(o0)`),
+      (error) => error.code === 'S009' && error.message.includes(`Too many positional arguments for ${effect}(): '${effect}' takes ${count}`),
+      source,
+    )
+  }
+})
