@@ -1416,6 +1416,9 @@ function namesChosenEffect(value, bindings) {
 // A bare identifier value must name something resolvable now (an earlier
 // binding, an alias, or an effect), as upstream's declareVar requires.
 function declareBinding(binding, bindings) {
+  if (binding.value?.kind === 'identifier') {
+    checkLetCycles(binding.value, bindings, [binding.name])
+  }
   const source = binding.value?.kind === 'identifier'
     ? (bindings.boundOf(binding.value) ?? bindings.get(binding.value.name)) : null
   if (source?.kind === 'chainLet') {

@@ -141,6 +141,32 @@ noise().write(o0)
 render(o0)
 `, registry))
 
+  // Bare identifier self-cycles and identifier copies that close a cycle report
+  // S001 at declaration rather than S003 or silently aliasing a cyclic let.
+  for (const [source, cycle] of [
+    ['let a = a\nnoise().write(o0)', 'a -> a'],
+    ['let a = 2\nlet a = a\nnoise(scaleX: a).write(o0)', 'a -> a'],
+    ['let a = noise().tint()\nlet a = a\nnoise().write(o0)', 'a -> a'],
+    ['let a = noise()\nlet a = a\nnoise().write(o0)', 'a -> a'],
+    ['let noise = noise\nsolid().write(o0)', 'noise -> noise'],
+    ['let time = time\nnoise().write(o0)', 'time -> time'],
+    ['if (true) { let a = a }\nnoise().write(o0)', 'a -> a'],
+    ['part p { let a = a\n noise() }\nuse(p).write(o0)', 'a -> a'],
+    ['let b = noise(scaleX: a).tint()\nlet a = b\nnoise().write(o0)', 'a -> b -> a'],
+    ['let b = noise(scaleX: a)\nlet a = b\nnoise().write(o0)', 'a -> b -> a'],
+    ['let b = osc(type: oscKind.sine, speed: a)\nlet a = b\nnoise().write(o0)', 'a -> b -> a'],
+  ]) {
+    assert.throws(
+      () => compileDsl(`search synth, filter\n${source}\nrender(o0)`, registry),
+      (error) => error.code === 'S001' && error.message.includes(`Automation cycle detected: ${cycle}`),
+      source,
+    )
+  }
+  assert.throws(
+    () => compileDsl('search synth\nlet a = b\nlet b = a\nnoise().write(o0)\nrender(o0)', registry),
+    { code: 'S003', message: /: Variable used before assignment$/ },
+  )
+
   // Reassigning a name after another let already bound its earlier value is not a cycle.
   const shadowed = compileDsl(`
 search synth
