@@ -1331,20 +1331,6 @@ function markLetChains(value, bindings) {
   } else if (value.kind === 'Call') value.args.forEach((arg) => markLetChains(arg.value, bindings))
 }
 
-// The names a value reads where upstream's substitute reads them: its calls'
-// arguments at any depth, vecN() included, but not a use's arguments, a
-// subchain's body or a bracket array literal.
-function collectNames(value, names) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return
-  if (value.kind === 'identifier') names.add(value.name)
-  else if (value.kind === 'Chain') {
-    for (const entry of value.calls) if (entry.kind === 'Call') entry.args.forEach((arg) => collectNames(arg.value, names))
-  } else if (value.kind === 'Call') value.args.forEach((arg) => collectNames(arg.value, names))
-  else if (value.kind === 'binary') { collectNames(value.left, names); collectNames(value.right, names) }
-  else if (value.kind === 'unary') collectNames(value.argument, names)
-  else if (value.kind === 'vector') value.values.forEach((item) => collectNames(item, names))
-}
-
 // Check a let's authored expression for declaration-time cycles, matching
 // upstream's declareVar -> substitute(clone(v.expr), [v.name]) resolution stack
 // without drawing or compiling deferred effects.
@@ -1441,9 +1427,6 @@ function declareBinding(binding, bindings) {
   // the value path so argument validation still sees the surface read.
   if (binding.value?.kind === 'Chain') {
     // A chain that reads its own let or closes a cycle is S001 at declaration.
-    const names = new Set()
-    collectNames(binding.value, names)
-    if (names.has(binding.name)) throw new DslError(`Automation cycle detected: ${binding.name} -> ${binding.name}`, binding.loc, 'S001')
     checkLetCycles(binding.value, bindings, [binding.name])
     if (randomInLetValue(binding.value, bindings)) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)

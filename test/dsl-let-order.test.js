@@ -100,6 +100,47 @@ test('a cyclic let set fails with S001 and the authority cycle order', () => {
     )
   }
 
+  // Multi-effect chain bindings report cycles in left-to-right authority order,
+  // not with a pre-pass self-check ahead of referenced lets.
+  for (const [source, cycle] of [
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = noise(scaleX: a, scaleY: b).tint()\nnoise().write(o0)',
+      'b -> a -> b',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = noise(scaleX: b, scaleY: a).tint()\nnoise().write(o0)',
+      'b -> b',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = noise(scaleX: a).tint(alpha: b)\nnoise().write(o0)',
+      'b -> a -> b',
+    ],
+    [
+      'let b = noise(scaleX: b).tint()\nnoise().write(o0)',
+      'b -> b',
+    ],
+    [
+      'let b = solid(color: vec3(b, 0, 0)).tint()\nnoise().write(o0)',
+      'b -> b',
+    ],
+    [
+      'let b = 2\nlet b = noise(scaleX: b).tint()\nnoise().write(o0)',
+      'b -> b',
+    ],
+  ]) {
+    assert.throws(
+      () => compileDsl(`search synth, filter\n${source}\nrender(o0)`, registry),
+      (error) => error.code === 'S001' && error.message.includes(`Automation cycle detected: ${cycle}`),
+      source,
+    )
+  }
+  assert.doesNotThrow(() => compileDsl(`
+search synth, filter
+let b = noise(scaleX: b, scaleX: 1).tint()
+noise().write(o0)
+render(o0)
+`, registry))
+
   // Reassigning a name after another let already bound its earlier value is not a cycle.
   const shadowed = compileDsl(`
 search synth
