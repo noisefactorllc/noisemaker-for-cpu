@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 
 import { parseDsl } from '../src/dsl/parser.js'
 import { compileDsl } from '../src/dsl/compiler.js'
+import { tokenizeDsl } from '../src/dsl/tokenize.js'
 import { EffectDefinition } from '../src/effects/definition.js'
 import { EffectRegistry } from '../src/effects/registry.js'
 import { createDefaultRegistry } from '../src/effects/catalog.js'
@@ -248,4 +249,18 @@ test('DSL accepts one balanced accumulator loop and rejects malformed loop marke
     () => compileDsl('search synth, render\nsolid().loopBegin().loopBegin().loopEnd().loopEnd().write(o0)', registry),
     /nested loopBegin regions are not supported/,
   )
+})
+
+// Mirrors upstream commit e9b37133 (limit lexer keywords to own properties): a
+// lexeme named like an Object prototype property must lex as an identifier and
+// bind as a let variable. The keyword table is an own-name set, so a
+// prototype-inheriting lookup would turn those names into keywords.
+test('prototype-property names lex as identifiers and bind as let variables', () => {
+  for (const name of ['toString', 'valueOf', 'constructor', 'hasOwnProperty', '__proto__']) {
+    assert.equal(tokenizeDsl(name)[0].type, 'identifier')
+  }
+  assert.deepEqual(tokenizeDsl('scale.toString').map((token) => token.type), ['identifier', 'punctuation', 'identifier', 'eof'])
+
+  const program = compileDsl('search synth\nlet constructor = 2\nnoise(scale: constructor).write(o0)\nrender(o0)', registry())
+  assert.equal(program.chains[0].steps[0].params.scale, 2)
 })
