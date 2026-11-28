@@ -57,9 +57,13 @@ test('let merges bind positionals by their original index and keywords override 
   }
 })
 
-test('stable let binding does not enable experimental mixed calls or object literals', () => {
-  assert.throws(() => noiseStep('noise(12, seed: 7)'), /Cannot mix positional and named arguments/)
-  assert.throws(() => noiseStep('noise(seed: 7, 12)'), /Cannot mix positional and named arguments/)
+test('mixed calls bind positionals to unclaimed slots while object literals remain refused', () => {
+  for (const call of ['noise(12, seed: 7)', 'noise(seed: 7, 12)']) {
+    const step = noiseStep(call)
+    assert.equal(step.params.type, 12, call)
+    assert.equal(step.params.seed, 7, call)
+    assert.equal(step.params.scaleX, 75, call)
+  }
   assert.throws(() => noiseStep('noise({seed: 7})'), /Expected DSL value|Unexpected character/)
 })
 

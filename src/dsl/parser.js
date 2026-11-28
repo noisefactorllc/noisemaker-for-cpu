@@ -470,10 +470,8 @@ class Parser {
     this.consume('(')
     const args = []
     let mode = null
-    // Upstream's parseCall lets the midi() and audio() value calls mix positional and
-    // keyword arguments (`allowMixed`), and a random call takes positional bounds
-    // beside named ones and its own `seed:`; every other call keeps one form.
-    const allowMixed = name.lexeme === 'midi' || name.lexeme === 'audio' || name.lexeme === 'use' || RANDOM_FUNCTIONS.has(name.lexeme)
+    // Upstream's parseCall accepts mixed positional and keyword arguments in
+    // every ordinary call (`allowMixed = true`).
     if (!this.check(')')) {
       do {
         const isNamed = this.peek().type === 'identifier' && this.peek(1).lexeme === ':'
@@ -481,7 +479,6 @@ class Parser {
           throw new DslError('write() requires a positional surface before _id', location(this.peek()))
         }
         const nextMode = isNamed ? 'named' : 'positional'
-        if (mode && mode !== nextMode && !allowMixed) throw new DslError('Cannot mix positional and named arguments', location(this.peek()))
         mode = mode && mode !== nextMode ? 'mixed' : nextMode
         let argName = null
         if (isNamed) {

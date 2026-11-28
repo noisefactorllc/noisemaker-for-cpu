@@ -507,3 +507,83 @@ test('a texture argument refuses a non-effect chain selected by a random let whi
     assert.equal(draws.length, expectedDraws, source)
   }
 })
+
+test('ordinary calls accept mixed positional and named arguments and bind positionals to unclaimed slots', () => {
+  const mixerDraws = []
+  const mixer = compile('search synth, filter, mixer\nseed 3\nsolid().blendMode(noise(), mix: 0.5).write(o0)\nrender(o0)', { onDraw: (draw) => mixerDraws.push(draw) })
+  const blendStep = mixer.chains[0].steps[1]
+  assert.equal(blendStep.params.tex.kind, 'surface')
+  assert.equal(blendStep.params.mix, 0.5)
+  assert.equal(blendStep.inlineChains.length, 1)
+  assert.equal(blendStep.inlineChains[0].chain.steps[0].definition.id, 'synth/noise')
+  assert.deepEqual(mixerDraws, [{ seed: 3, key: 'mixer.blendMode@blendMode_1/tex/e:synth.noise/seed/inherit', u: 1702751371 }])
+
+  const mixerReversedDraws = []
+  const mixerReversed = compile('search synth, filter, mixer\nseed 3\nsolid().blendMode(mix: 0.5, noise()).write(o0)\nrender(o0)', { onDraw: (draw) => mixerReversedDraws.push(draw) })
+  assert.equal(mixerReversed.chains[0].steps[1].params.mix, 0.5)
+  assert.deepEqual(mixerReversedDraws, mixerDraws)
+
+  for (const source of [
+    'search synth, filter, mixer\nseed 3\nnoise(10, scaleY: 20).write(o0)\nrender(o0)',
+    'search synth, filter, mixer\nseed 3\nnoise(scaleY: 20, 10).write(o0)\nrender(o0)',
+  ]) {
+    const draws = []
+    const program = compile(source, { onDraw: (draw) => draws.push(draw) })
+    const step = program.chains[0].steps[0]
+    assert.equal(step.params.type, 10, source)
+    assert.equal(step.params.scaleY, 20, source)
+    assert.equal(step.params.scaleX, 75, source)
+    assert.equal(step.params.seed, 12, source)
+    assert.deepEqual(draws, [{ seed: 3, key: 'synth.noise@noise_1/seed/inherit', u: 221463811 }], source)
+  }
+
+  // Positionals shift past slots already claimed by keywords (left to right).
+  const shifted = compile('search synth, filter, mixer\nseed 3\nnoise(type: 10, 4).write(o0)\nrender(o0)').chains[0].steps[0]
+  assert.equal(shifted.params.type, 10)
+  assert.equal(shifted.params.octaves, 4)
+  assert.equal(shifted.params.scaleX, 75)
+
+  const interleaved = compile('search synth, filter, mixer\nseed 3\nnoise(10, octaves: 4, 25).write(o0)\nrender(o0)').chains[0].steps[0]
+  assert.equal(interleaved.params.type, 10)
+  assert.equal(interleaved.params.octaves, 4)
+  assert.equal(interleaved.params.scaleX, 25)
+
+  // Random arguments in mixed calls draw under their bound parameter names.
+  const randDraws = []
+  const withRand = compile('search synth, filter, mixer\nseed 3\nnoise(type: 10, randInt(2, 6), scaleY: rand(10, 30)).write(o0)\nrender(o0)', { onDraw: (draw) => randDraws.push(draw) }).chains[0].steps[0]
+  assert.equal(withRand.params.type, 10)
+  assert.equal(withRand.params.scaleX, 75)
+  assert.deepEqual(randDraws.map((d) => d.key), [
+    'synth.noise@noise_1/octaves',
+    'synth.noise@noise_1/scaleY',
+    'synth.noise@noise_1/seed/inherit',
+  ])
+
+  // Mixed osc() fills unclaimed slots left to right.
+  const oscMixed = compile('search synth, filter, mixer\nseed 3\nnoise(scaleX: osc(oscKind.tri, speed: 3, 0.2)).write(o0)\nrender(o0)').chains[0].steps[0].params.scaleX
+  assert.equal(oscMixed.type, 'Oscillator')
+  assert.equal(oscMixed.oscType, 1)
+  assert.equal(oscMixed.min, 0.2)
+  assert.equal(oscMixed.speed, 3)
+
+  // Mixed call with explicit seed does not draw an inherited seed.
+  const seededDraws = []
+  const seededStep = compile('search synth, filter, mixer\nseed 3\nnoise(seed: 7, 12).write(o0)\nrender(o0)', { onDraw: (draw) => seededDraws.push(draw) }).chains[0].steps[0]
+  assert.equal(seededStep.params.type, 12)
+  assert.equal(seededStep.params.seed, 7)
+  assert.deepEqual(seededDraws, [])
+
+  // Partials with mixed arguments keep mixed slot shifting, while non-mixed merges keep index binding.
+  const partialMixed = compile('search synth, filter, mixer\nseed 3\nlet p = noise(type: 10)\np(4, seed: 7).write(o0)\nrender(o0)').chains[0].steps[0]
+  assert.equal(partialMixed.params.type, 10)
+  assert.equal(partialMixed.params.octaves, 4)
+  assert.equal(partialMixed.params.seed, 7)
+
+  const partialDefMixed = compile('search synth, filter, mixer\nseed 3\nlet p = noise(type: 10, 4)\np(seed: 7).write(o0)\nrender(o0)').chains[0].steps[0]
+  assert.equal(partialDefMixed.params.type, 10)
+  assert.equal(partialDefMixed.params.octaves, 4)
+  assert.equal(partialDefMixed.params.seed, 7)
+
+  // Unknown named parameters in mixed calls are still refused.
+  assert.throws(() => compile('search synth\nnoise(10, bogus: 1).write(o0)\nrender(o0)'), /Unknown parameter "bogus"/)
+})

@@ -126,9 +126,10 @@ test('DSL supports positional arguments and vector literals', () => {
   assert.deepEqual(plan.chains[0].steps[0].params, { scale: 8, seed: 2 })
 })
 
-test('DSL rejects missing search, mixed arguments, unknown effects, and invalid params', () => {
+test('DSL accepts mixed positional and named arguments and rejects missing search, unknown effects, and invalid params', () => {
   assert.throws(() => compileDsl('noise().write(o0)\nrender(o0)', registry()), /Missing required search directive/)
-  assert.throws(() => parseDsl('search synth\nnoise(4, seed: 2).write(o0)'), /Cannot mix positional and named arguments/)
+  const mixed = compileDsl('search synth\nnoise(4, seed: 2).write(o0)\nrender(o0)', registry())
+  assert.deepEqual(mixed.chains[0].steps[0].params, { scale: 4, seed: 2 })
   assert.throws(() => compileDsl('search synth\nwat().write(o0)\nrender(o0)', registry()), /Unknown effect "wat" in search namespaces synth/)
   assert.throws(() => compileDsl('search synth\nnoise(bogus: 1).write(o0)\nrender(o0)', registry()), /Unknown parameter "bogus".*scale, seed/)
 })

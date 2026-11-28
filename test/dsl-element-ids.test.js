@@ -55,8 +55,12 @@ test('ids on a saved pipeline leave its rendered bytes unchanged', () => {
 })
 
 test('only the trailing id metadata may follow positional I/O targets', () => {
+  for (const body of ['noise(1, _id: "n").write(o0)', 'noise(_id: "n", 1).write(o0)']) {
+    const step = compile(body).chains[0].steps[0]
+    assert.equal(step.params.type, 1, body)
+    assert.equal(step._id, 'n', body)
+  }
   for (const body of [
-    'noise(1, _id: "n").write(o0)', 'noise(_id: "n", 1).write(o0)',
     'noise().write(o0,)', 'noise().write(surface: o0, _id: "x")', 'noise().write(o0, _id: "x",)',
     'noise().write(o0, other: "x")', 'noise().write(o0, _id: "x", other: "x")',
     'noise3d().write3d(vol0, geo0, other: "x")', 'read(o0, other: "x").write(o0)',
@@ -75,6 +79,7 @@ test('a hex colour bound through let supplies r/g/b and preserves later position
   const r = 128 / 255, g = 64 / 255, b = 32 / 255
   for (const [binding, call, want] of [
     ['', 'rgbprobe(#804020)', [r, g, b, 1, 1]],
+    ['', 'rgbprobe(#804020, r: 0.25)', [0.25, g, b, 1, 1]],
     ['let color = #804020', 'rgbprobe(color, 0.5, 0.6, 0.7)', [r, g, b, 0.7, 1]],
     ['let t = rgbprobe(#804020)', 't()', [r, g, b, 1, 1]],
     ['let t = rgbprobe(#804020)', 't(_skip: false)', [r, g, b, 1, 1]],

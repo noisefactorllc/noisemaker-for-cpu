@@ -98,19 +98,25 @@ function compileOscillator(call, bindings, depth, resolving = [], at = null) {
   }
   const fields = {}
   // A random call in an argument is keyed by the argument's name, whether it is
-  // written by position or by name.
+  // written by position or by name. Keywords claim their own slots and
+  // positionals fill the remaining slots left to right (upstream transformOscInvocation).
   const fieldAt = (name) => at && { key: at.key, path: [...at.path, pathSegment.named(name)] }
-  if (call.argMode === 'named') {
-    for (const arg of call.args) {
+  const positional = []
+  for (const arg of call.args) {
+    if (arg.name !== null) {
       if (!OSC_PARAM_ORDER.includes(arg.name)) {
         throw new DslError(`osc() unknown parameter '${arg.name}'; valid: ${OSC_PARAM_ORDER.join(', ')}`, call.loc)
       }
       fields[arg.name] = arg.value
+    } else {
+      positional.push(arg.value)
     }
-  } else {
-    call.args.forEach((arg, index) => {
-      if (index < OSC_PARAM_ORDER.length) fields[OSC_PARAM_ORDER[index]] = arg.value
-    })
+  }
+  let posCursor = 0
+  for (const paramName of OSC_PARAM_ORDER) {
+    if (fields[paramName] === undefined && posCursor < positional.length) {
+      fields[paramName] = positional[posCursor++]
+    }
   }
 
   const rawType = fields.type === undefined ? 0 : evaluateValue(fields.type, bindings, depth + 1, resolving, fieldAt('type'))
@@ -718,10 +724,11 @@ function mergeArgs(stored, call) {
   const args = [...stored.args, ...call.args]
   const positional = args.filter((arg) => arg.name === null)
   const named = new Map(args.filter((arg) => arg.name !== null).map((arg) => [arg.name, arg]))
-  const merged = { ...call, name: stored.name, args: [...positional, ...named.values()], argMode: positional.length ? 'merged' : 'named' }
+  const writtenMixed = stored.argMode === 'mixed' || call.argMode === 'mixed'
+  const merged = { ...call, name: stored.name, args: [...positional, ...named.values()], argMode: positional.length ? (writtenMixed ? 'mixed' : 'merged') : 'named' }
   // A parameter bound before a positional colour limits it to its indexed
   // slot. Metadata binds no slot, and later keywords override only their slot.
-  if (positional.length && stored.args.some(arg => arg.name !== null && arg.name !== '_id' && arg.name !== '_skip')) {
+  if (!writtenMixed && positional.length && stored.args.some(arg => arg.name !== null && arg.name !== '_id' && arg.name !== '_skip')) {
     merged.colorSplatLimit = stored.colorSplatLimit ?? stored.args.filter(arg => arg.name === null).length
   }
   return merged
@@ -739,6 +746,51 @@ function mergePartial(stored, call) {
 
 function effectArguments(call, definition, bindings) {
   let args = call.args
+  if (call.argMode === 'mixed') {
+    const positional = args.filter((arg) => arg.name === null)
+    const named = args.filter((arg) => arg.name !== null)
+    const canonicalOf = (arg) => definition.paramAliases?.[arg.name] ?? arg.name
+    const namedByCanonical = new Map()
+    const extraNamed = []
+    const paramSet = new Set(definition.paramNames)
+    for (const arg of named) {
+      const canonical = canonicalOf(arg)
+      if (!paramSet.has(canonical)) {
+        extraNamed.push(arg)
+        continue
+      }
+      if (!namedByCanonical.has(canonical)) namedByCanonical.set(canonical, [])
+      namedByCanonical.get(canonical).push(arg)
+    }
+    const bound = []
+    let posCursor = 0
+    let splatValues = null
+    let splatArg = null
+    for (let i = 0; i < definition.paramNames.length; i += 1) {
+      const paramName = definition.paramNames[i]
+      const fromKeyword = namedByCanonical.has(paramName)
+      if (posCursor < positional.length && paramName === 'r' && definition.params.r.type !== 'color' &&
+          definition.paramNames[i + 1] === 'g' && definition.paramNames[i + 2] === 'b') {
+        const color = boundExpression(positional[posCursor].value, bindings)
+        if (color?.kind === 'color') {
+          splatArg = positional[posCursor++]
+          splatValues = { r: color[0], g: color[1], b: color[2] }
+        }
+      }
+      if (fromKeyword) {
+        bound.push(...namedByCanonical.get(paramName))
+      } else if (splatValues && paramName in splatValues) {
+        bound.push({ ...splatArg, name: paramName, value: splatValues[paramName] })
+      } else if (posCursor < positional.length) {
+        bound.push({ ...positional[posCursor++], name: paramName })
+      }
+    }
+    if (posCursor < positional.length) {
+      console.warn(`Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`)
+    }
+    bound.push(...extraNamed)
+    return bound
+  }
   if (args.filter((arg) => arg.name === null).length > definition.paramNames.length) {
     console.warn(`Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`)
     let positionalIndex = 0
