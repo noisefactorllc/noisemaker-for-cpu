@@ -319,3 +319,27 @@ test('a random let refuses declaration-time self-references and indirect cycles 
     assert.equal(draws.length, 2, source)
   }
 })
+
+test('unary plus on a non-numeric random call compiles as its operand while unary minus is refused', () => {
+  const withPlus = []
+  const withoutPlus = []
+  compile('search synth, filter\nseed 3\nnoise().write(o0)\nif (+chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => withPlus.push(draw) })
+  compile('search synth, filter\nseed 3\nnoise().write(o0)\nif (chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => withoutPlus.push(draw) })
+  assert.equal(withPlus.length, 3)
+  assert.deepEqual(withPlus, withoutPlus)
+
+  const letWithPlus = []
+  const letWithoutPlus = []
+  compile('search synth, filter\nseed 3\nlet c = +chance(0.5)\nnoise().write(o0)\nif (c) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => letWithPlus.push(draw) })
+  compile('search synth, filter\nseed 3\nlet c = chance(0.5)\nnoise().write(o0)\nif (c) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => letWithoutPlus.push(draw) })
+  assert.deepEqual(letWithPlus, letWithoutPlus)
+
+  assert.throws(
+    () => compile('search synth, filter\nseed 3\nnoise().write(o0)\nif (-chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)'),
+    /Unary arithmetic requires a number/,
+  )
+  assert.throws(
+    () => compile('search synth, filter\nseed 3\nlet c = -chance(0.5)\nnoise().write(o0)\nrender(o0)'),
+    /Unary arithmetic requires a number/,
+  )
+})

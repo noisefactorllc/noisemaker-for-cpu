@@ -244,8 +244,9 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
   }
   if (value.kind === 'unary') {
     const input = evaluateValue(value.argument, bindings, 0, resolving, value.operator === '-' ? extend(at, pathSegment.operand(0)) : at)
+    if (value.operator === '+') return input
     if (typeof input !== 'number') throw new DslError('Unary arithmetic requires a number', value.loc)
-    return value.operator === '-' ? -input : input
+    return -input
   }
   if (value.kind === 'binary') {
     const left = evaluateValue(value.left, bindings, 0, resolving, extend(at, pathSegment.operand(0)))

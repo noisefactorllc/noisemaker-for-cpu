@@ -521,9 +521,11 @@ class Parser {
   }
 
   parseValueUnary() {
-    if (this.match('-', '+')) {
+    // Upstream parseUnary drops unary `+`, returning its operand directly.
+    if (this.match('+')) return this.parseValueUnary()
+    if (this.match('-')) {
       const operator = this.previous()
-      return { kind: 'unary', operator: operator.lexeme, argument: this.parseValueUnary(), loc: location(operator) }
+      return { kind: 'unary', operator: '-', argument: this.parseValueUnary(), loc: location(operator) }
     }
     return this.parseValuePrimary()
   }

@@ -1,7 +1,7 @@
 {
  "source": "noisemaker",
  "branch": "2.x",
- "commit": "4bd8c7cfd2fa0a4d50122218f3bd8a85c4cd1c41",
+ "commit": "9a33fc9c3166a80b11c34afa7aa770c02480948e",
  "programs": [
   {
    "name": "seed-directive-inherits",
@@ -5199,6 +5199,41 @@
      "op": "synth.noise",
      "values": {
       "seed": 84
+     }
+    }
+   ]
+  },
+  {
+   "name": "if-unary-plus-chance",
+   "dsl": "search synth, filter\nseed 3\nnoise().write(o0)\nif (+chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    },
+    {
+     "seed": 3,
+     "key": "if_1/cond0",
+     "u": 145157069
+    },
+    {
+     "seed": 3,
+     "key": "if_1/b0/synth.noise@noise_2/seed/inherit",
+     "u": 2807768556
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 12
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 57
      }
     }
    ]

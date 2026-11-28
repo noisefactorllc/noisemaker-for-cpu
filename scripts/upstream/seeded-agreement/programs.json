@@ -1232,5 +1232,12 @@
    "synth/noise"
   ],
   "dsl": "search synth\nseed 5\nnoise().write(o0)\nreturn foo.o1\nrender(o0)"
+ },
+ {
+  "name": "if-unary-plus-chance",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth, filter\nseed 3\nnoise().write(o0)\nif (+chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)"
  }
 ]
