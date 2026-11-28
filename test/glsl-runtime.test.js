@@ -35,6 +35,35 @@ test('pooled vector and matrix helpers implement GLSL component operations', () 
   )
 })
 
+test('pooled float initializers preserve the bits written by Float32Array.set', () => {
+  const runtime = new GlslCpuRuntime()
+  const context = { fragCoord: [0.5, 0.5], uv: [0.25, 0.75] }
+  const nanBits = new DataView(new ArrayBuffer(8))
+  const nanWithPayload = (bits) => {
+    nanBits.setBigUint64(0, bits)
+    return nanBits.getFloat64(0)
+  }
+  const positiveNaN = nanWithPayload(0x7ff8123456789abcn)
+  const negativeNaN = nanWithPayload(0xfff8fedcba987654n)
+  const sparse = new Array(4)
+  sparse[0] = -0
+  sparse[1] = positiveNaN
+  sparse[3] = negativeNaN
+  const typed = new Float32Array(Uint32Array.of(0x80000000, 0x7fc01234, 0xffc05678, 0x3f800000).buffer)
+
+  for (const initializer of [[], [1 / 3], [-0, positiveNaN], [negativeNaN, 1, 2], sparse, [...sparse, 5], typed]) {
+    const expected = new Float32Array(initializer.length)
+    expected.set(initializer)
+    runtime.beginPixel(context)
+    const reused = runtime.alloc(initializer.length)
+    reused.fill(17)
+    runtime.beginPixel(context)
+    const actual = new runtime.PooledFloat32Array(initializer)
+    assert.equal(actual, reused)
+    assert.deepEqual(new Uint32Array(actual.buffer), new Uint32Array(expected.buffer))
+  }
+})
+
 test('integer constructors and PCG registers reuse pools across pixels', () => {
   const runtime = new GlslCpuRuntime()
   const context = { fragCoord: new Float32Array([0.5, 0.5]), uv: new Float32Array([0.5, 0.5]) }
