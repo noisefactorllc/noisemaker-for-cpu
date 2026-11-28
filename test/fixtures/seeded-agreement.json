@@ -5360,6 +5360,90 @@
    ]
   },
   {
+   "name": "GAP-052-literal-effect-use-override",
+   "dsl": "search synth, filter\nseed 3\npart p {\n  let e = noise()\n  e().write(o0)\n}\nuse(p, e: noise(scaleX: 3))\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/let:e/synth.noise@noise_1/seed/inherit",
+     "u": 180264044
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 936139365
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 45
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.7436952590942383,
+      "seed": 12
+     }
+    }
+   ]
+  },
+  {
+   "name": "GAP-052-chain-use-override-as-texture",
+   "dsl": "search synth, filter, mixer\nseed 3\npart p {\n  let e = noise()\n  solid().blendMode(tex: e).write(o0)\n}\nuse(p, e: noise(scaleX: 3).tint())\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/let:e/synth.noise@noise_1/seed/inherit",
+     "u": 180264044
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 936139365
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 45
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.7436952590942383,
+      "seed": 12
+     }
+    }
+   ]
+  },
+  {
    "name": "GAP-053-call-chosen-effect",
    "dsl": "search synth, filter\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\nv().tint().write(o0)\nrender(o0)",
    "draws": [
@@ -5384,6 +5468,55 @@
     {
      "op": "filter.tint",
      "values": {}
+    }
+   ]
+  },
+  {
+   "name": "GAP-054-chosen-effect-use-override-inherits-seed",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\npart p {\n  let t = 1\n  solid().blendMode(tex: t).write(o0)\n}\nuse(p, t: v)\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "use@use_1/let:t/synth.noise@noise_1/seed/inherit",
+     "u": 3405289972
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/scaleX",
+     "u": 936139365
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_1/seed/inherit",
+     "u": 221463811
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 73
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 2.7436952590942383,
+      "seed": 12
+     }
     }
    ]
   }

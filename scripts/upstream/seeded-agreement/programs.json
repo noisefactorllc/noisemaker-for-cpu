@@ -1270,6 +1270,23 @@
   "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3).tint(), solid())\nlet w = v\nsolid().blendMode(tex: w).write(o0)\nrender(o0)"
  },
  {
+  "name": "GAP-052-literal-effect-use-override",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth, filter\nseed 3\npart p {\n  let e = noise()\n  e().write(o0)\n}\nuse(p, e: noise(scaleX: 3))\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "GAP-052-chain-use-override-as-texture",
+  "effects": [
+   "filter/tint",
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\npart p {\n  let e = noise()\n  solid().blendMode(tex: e).write(o0)\n}\nuse(p, e: noise(scaleX: 3).tint())\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)"
+ },
+ {
   "name": "GAP-053-call-chosen-effect",
   "effects": [
    "filter/tint",
@@ -1277,5 +1294,14 @@
    "synth/solid"
   ],
   "dsl": "search synth, filter\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\nv().tint().write(o0)\nrender(o0)"
+ },
+ {
+  "name": "GAP-054-chosen-effect-use-override-inherits-seed",
+  "effects": [
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\npart p {\n  let t = 1\n  solid().blendMode(tex: t).write(o0)\n}\nuse(p, t: v)\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)"
  }
 ]

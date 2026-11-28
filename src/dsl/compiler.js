@@ -455,14 +455,22 @@ class CompileScope extends Map {
     const overrides = new Map()
     for (const arg of lastOfEachName(use.args.filter((entry) => !entry.name.startsWith('_')), null)) {
       const at = { key: this.scoped(useKey, `arg:${arg.name}`), path: [] }
-      if (arg.value?.kind === 'Chain' || (arg.value?.kind === 'Call' && !isRandomCall(arg.value))) {
-        throw new DslError(`use(): an effect passed for '${arg.name}' is not supported yet`, use.loc)
-      }
       // Evaluated where the use is written, before the part's own lets exist. A
       // name of a let that holds an effect stands for that let, keyed under it.
       const named = arg.value?.kind === 'identifier' ? (this.boundOf(arg.value) ?? this.get(arg.value.name)) : null
-      if (named?.kind === 'partial' || named?.kind === 'alias' || named?.kind === 'chainLet') overrides.set(arg.name, { binding: named })
-      else overrides.set(arg.name, { value: containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : evaluateValue(arg.value, this) })
+      if (named?.kind === 'partial' || named?.kind === 'alias' || named?.kind === 'chainLet') {
+        overrides.set(arg.name, { binding: named })
+        continue
+      }
+      const outer = this.deferChains
+      this.deferChains = true
+      try {
+        const value = containsRandom(arg.value) ? evaluateValue(arg.value, this, 0, [], at) : evaluateValue(arg.value, this)
+        if (value?.kind === 'Chain') bindCalls(value, this)
+        overrides.set(arg.name, { value })
+      } finally {
+        this.deferChains = outer
+      }
     }
     const saved = {
       keyScope: this.keyScope.splice(0), occurrences: this.occurrences, letCounts: this.letCounts, ifCount: this.ifCount,
@@ -496,7 +504,13 @@ class CompileScope extends Map {
         if (overrides.has(item.name)) {
           const override = overrides.get(item.name)
           if (override.binding) this.set(item.name, override.binding)
-          else this.set(item.name, { kind: 'value', expr: override.value, resolved: true, value: override.value, at: null })
+          else if (override.value?.kind === 'Chain') {
+            const letKey = this.get(item.name).letKey ?? this.letKey(item.name, 'effect')
+            const chain = prepareEffectChain(override.value, this, letKey, { countBody: false })
+            const call = singleEffect(chain)
+            const mark = call && this.letElements.get(call)
+            this.set(item.name, mark ? { kind: 'partial', call, ...mark } : { kind: 'chainLet', chain, letKey })
+          } else this.set(item.name, { kind: 'value', expr: override.value, resolved: true, value: override.value, at: null })
         }
       })
     } finally {
@@ -1054,7 +1068,7 @@ function elementDefinition(entry, bindings) {
   return bindings.registry.resolve(name, namespace ? [namespace] : bindings.search)
 }
 
-function prepareEffectChain(value, bindings, letKey) {
+function prepareEffectChain(value, bindings, letKey, { countBody = true } = {}) {
   // Part instances can share their parsed body. Copy the calls so that each
   // instance's names belong to its own chain.
   const chain = { ...value, calls: value.calls.map((source) => {
@@ -1072,19 +1086,30 @@ function prepareEffectChain(value, bindings, letKey) {
 
   const elements = []
   const names = new Set()
+  const counts = new Map()
   for (const call of chain.calls) {
     if (call.kind !== 'Call' || bindings.letElements.has(call)) continue
     const definition = elementDefinition(call, bindings)
     if (definition) {
       const held = bindings.boundOf(call)
       const partial = held?.kind === 'partial' ? held : null
-      const occurrence = partial?.ownName ?? bindings.nextOccurrence(definition.func)
+      const func = definition.func
+      let occurrence
+      if (partial?.ownName) occurrence = partial.ownName
+      else if (countBody) occurrence = bindings.nextOccurrence(func)
+      else {
+        // Override effects take positions in the argument, outside the part's
+        // occurrence counts.
+        const number = (counts.get(func) ?? 0) + 1
+        counts.set(func, number)
+        occurrence = `${func}_${number}`
+      }
       const id = validId(call.args.findLast((arg) => arg.name === '_id')?.value)
       const name = id !== undefined && !names.has(id) ? id : null
       if (name) names.add(name)
       elements.push({ call, definition, occurrence, name })
     }
-    countLetValues(lastOfEachName(call.args, definition), bindings)
+    if (countBody) countLetValues(lastOfEachName(call.args, definition), bindings)
   }
   for (const { call, definition, occurrence, name: explicitName } of elements) {
     let name = explicitName ?? occurrence
@@ -1094,7 +1119,7 @@ function prepareEffectChain(value, bindings, letKey) {
     }
     const op = `${definition.namespace}.${definition.func}`
     const key = joinKey(letKey, `${op}@${name}`)
-    bindings.letElements.set(call, { key, body: bindings.partScope() })
+    bindings.letElements.set(call, { key, letKey, op, ownName: name, ownNames: names, body: bindings.partScope() })
   }
   return chain
 }
@@ -1225,8 +1250,8 @@ function declareBinding(binding, bindings) {
   const source = binding.value?.kind === 'identifier'
     ? (bindings.boundOf(binding.value) ?? bindings.get(binding.value.name)) : null
   if (source?.kind === 'chainLet') {
-    bindings.letKey(binding.name, 'effect')
-    bindings.set(binding.name, source)
+    const letKey = bindings.letKey(binding.name, 'effect')
+    bindings.set(binding.name, { ...source, letKey })
     return
   }
   // Count compound let elements where they are written. A read chain follows
@@ -1241,7 +1266,7 @@ function declareBinding(binding, bindings) {
     }
     if (!['read', 'read3d'].includes(binding.value.calls[0]?.name)) {
       const letKey = bindings.letKey(binding.name, 'effect')
-      bindings.set(binding.name, { kind: 'chainLet', chain: prepareEffectChain(binding.value, bindings, letKey) })
+      bindings.set(binding.name, { kind: 'chainLet', chain: prepareEffectChain(binding.value, bindings, letKey), letKey })
       return
     }
     countLetValues([{ value: binding.value }], bindings)
