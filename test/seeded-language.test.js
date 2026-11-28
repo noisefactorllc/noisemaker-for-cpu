@@ -347,7 +347,7 @@ test('a random let refuses declaration-time self-references and indirect cycles 
   }
 })
 
-test('unary plus on a non-numeric random call compiles as its operand while unary minus is refused', () => {
+test('unary plus on a non-numeric random call compiles as its operand', () => {
   const withPlus = []
   const withoutPlus = []
   compile('search synth, filter\nseed 3\nnoise().write(o0)\nif (+chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => withPlus.push(draw) })
@@ -360,16 +360,20 @@ test('unary plus on a non-numeric random call compiles as its operand while unar
   compile('search synth, filter\nseed 3\nlet c = +chance(0.5)\nnoise().write(o0)\nif (c) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => letWithPlus.push(draw) })
   compile('search synth, filter\nseed 3\nlet c = chance(0.5)\nnoise().write(o0)\nif (c) {\n  noise().write(o1)\n}\nrender(o0)', { onDraw: (draw) => letWithoutPlus.push(draw) })
   assert.deepEqual(letWithPlus, letWithoutPlus)
-
-  assert.throws(
-    () => compile('search synth, filter\nseed 3\nnoise().write(o0)\nif (-chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)'),
-    /Unary arithmetic requires a number/,
-  )
-  assert.throws(
-    () => compile('search synth, filter\nseed 3\nlet c = -chance(0.5)\nnoise().write(o0)\nrender(o0)'),
-    /Unary arithmetic requires a number/,
-  )
 })
+
+for (const [name, body] of [
+  ['chance in a condition', 'noise().write(o0)\nif (-chance(0.5)) {\n  noise().write(o1)\n}'],
+  ['chance in a let', 'let c = -chance(0.5)\nnoise().write(o0)'],
+  ['an effect pick in a let', 'let c = -pick(noise(), solid())\nnoise().write(o0)'],
+]) {
+  test(`unary minus on ${name} reports S012`, () => {
+    assert.throws(
+      () => compile(`search synth, filter, mixer\nseed 3\n${body}\nrender(o0)`),
+      { code: 'S012', message: /: '-' requires a numeric argument$/ },
+    )
+  })
+}
 
 test('arithmetic refuses let names and non-numeric non-deferred operands in every value position, while literal and deferred random arithmetic compile', () => {
   for (const source of [
