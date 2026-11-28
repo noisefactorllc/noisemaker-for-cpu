@@ -369,14 +369,19 @@ function resolveArgs(args, bindings, call, definition, elementKey) {
     const at = elementKey && name ? { key: joinKey(elementKey, name), path: [] } : null
     const param = definition?.params[name]
     const value = arg.value
+    let resolved
     if (value?.kind === 'identifier' && !value.name.includes('.') &&
         !bindings.boundOf(value) && !bindings.has(value.name) &&
         !STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name) &&
         ['float', 'int', 'bool', 'boolean', 'enum', 'member', 'palette'].includes(param?.type) &&
         !(Object.hasOwn(param.choices ?? {}, value.name) && param.choices[value.name] !== null)) {
-      throw unassignedVariable(value.name, value.loc)
+      if (param.type !== 'member' || bindings.pendingNames?.has(value.name)) {
+        throw unassignedVariable(value.name, value.loc)
+      }
+      resolved = param.default
+    } else {
+      resolved = evaluateValue(arg.value, bindings, 0, [], at)
     }
-    let resolved = evaluateValue(arg.value, bindings, 0, [], at)
     if ((param?.type === 'float' || param?.type === 'int') && typeof resolved === 'number' && Number.isFinite(resolved)) {
       const clamped = typeof param.min === 'number' && resolved < param.min ? param.min
         : typeof param.max === 'number' && resolved > param.max ? param.max : resolved
