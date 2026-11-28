@@ -5358,6 +5358,34 @@
      "values": {}
     }
    ]
+  },
+  {
+   "name": "GAP-053-call-chosen-effect",
+   "dsl": "search synth, filter\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\nv().tint().write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise/seed/inherit",
+     "u": 3239126817
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 18
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    }
+   ]
   }
  ]
 }

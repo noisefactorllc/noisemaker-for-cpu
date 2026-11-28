@@ -100,10 +100,14 @@ test('a random call in an effect passed as a value inside a let that holds an ef
     /Random calls in an effect held by a let are not supported yet: 'b'/)
 })
 
-// A value let that chose an effect cannot be called as a chain element yet.
-test('calling a value let that chose an effect, as an element, is refused for now', () => {
-  assert.throws(() => compile('search synth, mixer\nseed 3\nlet v = pick(blendMode(tex: noise()), blendMode(tex: solid()))\nsolid().v().write(o0)'),
-    /Binding "v" is not callable/)
+test('calling a chosen effect keeps the draw key of its texture argument', () => {
+  const draws = []
+  compile('search synth, mixer\nseed 3\nlet v = pick(blendMode(tex: noise()), blendMode(tex: solid()))\nsolid().v().write(o0)',
+    { onDraw: (draw) => draws.push(draw) })
+  assert.deepEqual(draws, [
+    { seed: 3, key: 'let:v', u: 832950976 },
+    { seed: 3, key: 'mixer.blendMode@blendMode/tex/e:synth.noise/seed/inherit', u: 748853130 },
+  ])
 })
 
 test('midi() and audio() refuse the arguments upstream refuses, random ones included', () => {

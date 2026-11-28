@@ -694,7 +694,10 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     if (call.kind === 'MaybeTail') return expandMaybeTail(call, index)
     const start = atStart()
     const letElement = bindings.letElements.get(call)
-    const partial = bindings.boundOf(call) ?? bindings.get(call.name)
+    const binding = bindings.boundOf(call) ?? bindings.get(call.name)
+    const chosen = binding?.kind === 'value' && binding.resolved ? singleEffect(binding.value) : null
+    if (chosen) call = mergePartial(chosen, call)
+    const partial = chosen ? bindings.boundOf(chosen) : binding
     let heldKey = null
     let heldBody = null
     let target = partial
@@ -788,8 +791,9 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     let elementKey = null
     if (definition && !['read', 'write', 'write3d'].includes(call.name) && !(start && call.name === 'read3d' && read3dReferences(call))) {
       const op = `${definition.namespace}.${definition.func}`
-      let keyName = null
-      if (!heldKey && count) keyName = bindings.keyNameFor(bindings.nextOccurrence(definition.func), metadata._id)
+      // Calling a let's chosen effect does not take a numbered occurrence.
+      let keyName = chosen ? call.name : null
+      if (!heldKey && !chosen && count) keyName = bindings.keyNameFor(bindings.nextOccurrence(definition.func), metadata._id)
       // An element with its own `_seed:` restarts its keys at itself.
       if (metadata._seed !== undefined) elementKey = op
       else if (heldKey) elementKey = heldKey

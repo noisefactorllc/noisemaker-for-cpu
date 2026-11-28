@@ -1268,5 +1268,14 @@
    "synth/solid"
   ],
   "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3).tint(), solid())\nlet w = v\nsolid().blendMode(tex: w).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "GAP-053-call-chosen-effect",
+  "effects": [
+   "filter/tint",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\nv().tint().write(o0)\nrender(o0)"
  }
 ]
