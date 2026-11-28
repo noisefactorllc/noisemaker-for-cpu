@@ -1239,5 +1239,34 @@
    "synth/noise"
   ],
   "dsl": "search synth, filter\nseed 3\nnoise().write(o0)\nif (+chance(0.5)) {\n  noise().write(o1)\n}\nrender(o0)"
+ },
+ {
+  "name": "GAP-051-compound-effect-let-as-texture",
+  "effects": [
+   "filter/tint",
+   "mixer/blendMode",
+   "synth/noise"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet t = noise().tint()\nnoise(scaleX: rand(1, 9)).blendMode(tex: t).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "GAP-051-copy-let-with-use-as-texture",
+  "effects": [
+   "filter/tint",
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\npart p {\n  .tint()\n}\nlet t = noise().use(p)\nlet u = t\nsolid().blendMode(tex: pick(u, noise())).write(o0)\nrender(o0)"
+ },
+ {
+  "name": "GAP-051-copy-chosen-chain-as-texture",
+  "effects": [
+   "filter/tint",
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3).tint(), solid())\nlet w = v\nsolid().blendMode(tex: w).write(o0)\nrender(o0)"
  }
 ]

@@ -5237,6 +5237,127 @@
      }
     }
    ]
+  },
+  {
+   "name": "GAP-051-compound-effect-let-as-texture",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet t = noise().tint()\nnoise(scaleX: rand(1, 9)).blendMode(tex: t).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/scaleX",
+     "u": 2884694046
+    },
+    {
+     "seed": 3,
+     "key": "synth.noise@noise_2/seed/inherit",
+     "u": 1816131536
+    },
+    {
+     "seed": 3,
+     "key": "let:t/synth.noise@noise_1/seed/inherit",
+     "u": 3288666147
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleX": 6.373161315917969,
+      "seed": 37
+     }
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 48
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "GAP-051-copy-let-with-use-as-texture",
+   "dsl": "search synth, filter, mixer\nseed 3\npart p {\n  .tint()\n}\nlet t = noise().use(p)\nlet u = t\nsolid().blendMode(tex: pick(u, noise())).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "mixer.blendMode@blendMode_1/tex",
+     "u": 2052234742
+    },
+    {
+     "seed": 3,
+     "key": "let:t/synth.noise@noise_1/seed/inherit",
+     "u": 3288666147
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 48
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {
+      "tex": {
+       "kind": "temp",
+       "index": 2
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "GAP-051-copy-chosen-chain-as-texture",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3).tint(), solid())\nlet w = v\nsolid().blendMode(tex: w).write(o0)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "let:w/synth.noise@noise_1/seed/inherit",
+     "u": 1331977800
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 1
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
   }
  ]
 }

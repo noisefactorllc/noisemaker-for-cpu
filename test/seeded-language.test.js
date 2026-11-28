@@ -199,11 +199,14 @@ test('chain fragments, chain lets and oscillator lets are refused as upstream re
   }
 })
 
-// Upstream keys a let of several effects under its own name; the port does not
-// key that yet, so it refuses the use rather than draw differently.
-test('a let that holds a chain of several effects is refused where it is used, for now', () => {
-  assert.throws(() => compile('search synth, filter, mixer\nseed 3\nlet t = noise().tint()\nnoise().blendMode(tex: t).write(o0)'),
-    /A let that holds a chain of several effects, or a use, is not supported yet: 't'/)
+test('a compound effect let supplies a texture with its own draw key', () => {
+  const draws = []
+  compile('search synth, filter, mixer\nseed 3\nlet t = noise().tint()\nnoise().blendMode(tex: t).write(o0)',
+    { onDraw: (draw) => draws.push(draw) })
+  assert.deepEqual(draws, [
+    { seed: 3, key: 'synth.noise@noise_2/seed/inherit', u: 1816131536 },
+    { seed: 3, key: 'let:t/synth.noise@noise_1/seed/inherit', u: 3288666147 },
+  ])
 })
 
 test('a chain let that names itself in vecN() is a cycle', () => {

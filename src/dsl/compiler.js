@@ -180,7 +180,10 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
     // A let's own partial or alias is the one in force where that let was written.
     if (bindings.boundOf(value) || bindings.has(value.name)) {
       const binding = bindings.boundOf(value) ?? bindings.get(value.name)
-      if (binding.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects, or a use, is not supported yet: '${binding.name}'`, value.loc)
+      if (binding.kind === 'chainLet') {
+        if (bindings.deferChains || !bindings.pending) return binding.chain
+        return bindings.compileInlineChain(binding.chain, at, { count: false })
+      }
       // A let that holds an effect, passed as a value, compiles as that effect,
       // under the let's key (upstream `let:<name>/<op>@<occurrence>`).
       if (binding.kind === 'partial') {
@@ -317,6 +320,7 @@ class CompileScope extends Map {
     // Effects passed as values inside a let that holds an effect: counted once,
     // where the let is written, and not again where the let is called.
     this.letChains = new WeakSet()
+    this.letElements = new WeakMap()
     this.deferChains = false
     // Key names (upstream: the naming body's _id: values, the ids already
     // claimed and the names already given) and the `_seed:` scopes in force.
@@ -658,6 +662,12 @@ function read3dReferences(call) {
   return volumeReferences(call)
 }
 
+function singleEffect(chain) {
+  if (chain?.kind !== 'Chain' || chain.calls.length !== 1) return null
+  const [call] = chain.calls
+  return call.kind === 'Call' ? call : null
+}
+
 // Compiles one chain. A statement chain that begins with a generator must end with
 // write(oN). A chain argument (`inline`) needs no write(): its last image is the
 // argument's surface.
@@ -683,8 +693,10 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     if (call.kind === 'Use') return expandUse(call, index)
     if (call.kind === 'MaybeTail') return expandMaybeTail(call, index)
     const start = atStart()
+    const letElement = bindings.letElements.get(call)
     const partial = bindings.boundOf(call) ?? bindings.get(call.name)
     let heldKey = null
+    let heldBody = null
     let target = partial
     // An alias names an effect; its target name resolves where it is called, so
     // a let that later makes that name a partial is followed (upstream
@@ -700,7 +712,6 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       // The alias's target is the effect itself.
     } else if (target) {
       const partial = target
-      if (partial.kind === 'chainLet') throw new DslError(`A let that holds a chain of several effects, or a use, is not supported yet: '${partial.name}'`, call.loc)
       if (partial.kind !== 'partial') throw new DslError(`Binding "${call.name}" is not callable`, call.loc)
       // An `_id:` written where the let is called names the element at this
       // use, with `'` added while it is one of the let's own names (upstream).
@@ -712,16 +723,21 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
       // An element held by a let draws under the let's key and the name the let
       // gave it.
       heldKey = partial.key
+      heldBody = partial.body
       if (siteId !== undefined && partial.letKey && !bindings.claimedIds.has(siteId)) {
         bindings.claimedIds.add(siteId)
         let name = siteId
         while (partial.ownNames.has(name)) name += "'"
         heldKey = joinKey(partial.letKey, `${partial.op}@${name}`)
       }
-      // A let used inside a part instance it is not written in keys under that
-      // instance, then `outer`, then where the let is written.
-      if (heldKey && bindings.partScope() && partial.body !== bindings.partScope()) heldKey = joinKey(bindings.partScope(), 'outer', heldKey)
     }
+    if (letElement) {
+      heldKey = letElement.key
+      heldBody = letElement.body
+    }
+    // A let used by a different part instance draws under that instance.
+    const partScope = bindings.partScope()
+    if (heldKey && partScope && heldBody !== partScope) heldKey = joinKey(partScope, 'outer', heldKey)
     const isRead = call.name === 'read' || call.name === 'read3d'
     const metadata = {}
     const parameters = call.args.filter(arg => {
@@ -1034,6 +1050,51 @@ function elementDefinition(entry, bindings) {
   return bindings.registry.resolve(name, namespace ? [namespace] : bindings.search)
 }
 
+function prepareEffectChain(value, bindings, letKey) {
+  // Part instances can share their parsed body. Copy the calls so that each
+  // instance's names belong to its own chain.
+  const chain = { ...value, calls: value.calls.map((source) => {
+    if (source.kind !== 'Call') return source
+    const call = { ...source }
+    const captured = bindings.boundOf(source)
+    if (captured) bindings.bind(call, captured)
+    const element = bindings.letElements.get(source)
+    if (element) bindings.letElements.set(call, element)
+    return call
+  }) }
+  bindCalls(chain, bindings)
+  bindings.markLetIds(chain)
+  bindings.letChains.add(chain)
+
+  const elements = []
+  const names = new Set()
+  for (const call of chain.calls) {
+    if (call.kind !== 'Call' || bindings.letElements.has(call)) continue
+    const definition = elementDefinition(call, bindings)
+    if (definition) {
+      const held = bindings.boundOf(call)
+      const partial = held?.kind === 'partial' ? held : null
+      const occurrence = partial?.ownName ?? bindings.nextOccurrence(definition.func)
+      const id = validId(call.args.findLast((arg) => arg.name === '_id')?.value)
+      const name = id !== undefined && !names.has(id) ? id : null
+      if (name) names.add(name)
+      elements.push({ call, definition, occurrence, name })
+    }
+    countLetValues(lastOfEachName(call.args, definition), bindings)
+  }
+  for (const { call, definition, occurrence, name: explicitName } of elements) {
+    let name = explicitName ?? occurrence
+    if (explicitName === null) {
+      while (names.has(name)) name += "'"
+      names.add(name)
+    }
+    const op = `${definition.namespace}.${definition.func}`
+    const key = joinKey(letKey, `${op}@${name}`)
+    bindings.letElements.set(call, { key, body: bindings.partScope() })
+  }
+  return chain
+}
+
 // Mark each chain element in a value that names a let partial or alias with the
 // binding in force now, as upstream substitutes it where the let is written, so
 // a later let of the same name does not change it.
@@ -1157,10 +1218,15 @@ function namesChosenEffect(value, bindings) {
 // A bare identifier value must name something resolvable now (an earlier
 // binding, an alias, or an effect), as upstream's declareVar requires.
 function declareBinding(binding, bindings) {
-  // A let of a chain of several effects: its elements are counted where it is
-  // written and a random call in it is refused, as upstream does, but a use of
-  // it is not keyed as upstream keys it yet, so a use is refused. A chain that
-  // starts by reading a surface stays a value.
+  const source = binding.value?.kind === 'identifier'
+    ? (bindings.boundOf(binding.value) ?? bindings.get(binding.value.name)) : null
+  if (source?.kind === 'chainLet') {
+    bindings.letKey(binding.name, 'effect')
+    bindings.set(binding.name, source)
+    return
+  }
+  // Count compound let elements where they are written. A read chain follows
+  // the value path so argument validation still sees the surface read.
   if (binding.value?.kind === 'Chain') {
     // A chain that reads its own let is a cycle (upstream S001).
     const names = new Set()
@@ -1169,12 +1235,12 @@ function declareBinding(binding, bindings) {
     if (randomInLetValue(binding.value, bindings)) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
-    countLetValues([{ value: binding.value }], bindings)
     if (!['read', 'read3d'].includes(binding.value.calls[0]?.name)) {
-      bindings.letKey(binding.name, 'effect')
-      bindings.set(binding.name, { kind: 'chainLet', name: binding.name, loc: binding.loc })
+      const letKey = bindings.letKey(binding.name, 'effect')
+      bindings.set(binding.name, { kind: 'chainLet', chain: prepareEffectChain(binding.value, bindings, letKey) })
       return
     }
+    countLetValues([{ value: binding.value }], bindings)
   }
   // Upstream substitutes a value let that chose an effect into the let that
   // names it: `let w = v` holds v's effect, and an argument that names v holds
@@ -1185,11 +1251,9 @@ function declareBinding(binding, bindings) {
   }
   const copied = chosen(binding.value)
   if (copied) {
-    if (copied.calls.length !== 1 || copied.calls[0].kind !== 'Call') {
-      throw new DslError(`A let cannot copy another let's chosen chain of several effects yet: '${binding.name}'`, binding.loc)
-    }
+    const call = singleEffect(copied)
+    if (!call) return declareBinding({ ...binding, value: copied }, bindings)
     // A chosen call of another let's partial is that partial, keyed where it was written.
-    const call = copied.calls[0]
     const held = bindings.boundOf(call) ?? bindings.get(call.name)
     if (held?.kind === 'partial' && call.args.length === 0) {
       // It is still a let of this name, counted as one that holds an effect.
