@@ -389,16 +389,31 @@ function resolveArgs(args, bindings, call, definition, elementKey) {
     } else {
       resolved = evaluateValue(arg.value, bindings, 0, [], at)
     }
-    if ((param?.type === 'float' || param?.type === 'int') && typeof resolved === 'number' && Number.isFinite(resolved)) {
-      const clamped = typeof param.min === 'number' && resolved < param.min ? param.min
-        : typeof param.max === 'number' && resolved > param.max ? param.max : resolved
-      if (clamped !== resolved) {
-        bindings.diagnostics.push(Object.freeze({
-          code: 'S002',
-          severity: 'warning',
-          message: `Argument out of range for '${name}' in ${call.name}() (got ${resolved}, clamped to ${clamped})`,
-        }))
-        resolved = clamped
+    if (param?.type === 'float' || param?.type === 'int') {
+      if (typeof resolved === 'boolean') {
+        resolved = resolved ? 1 : 0
+      } else if (typeof resolved === 'string' && resolved.includes('.') &&
+          (containsDottedIdentifier(arg.value, resolved, bindings) || containsDottedIdentifier(chain, resolved, bindings))) {
+        const enumValue = resolveConditionEnum(resolved.split('.'), bindings)
+        if (typeof enumValue === 'number') {
+          resolved = enumValue
+        } else if (typeof enumValue === 'boolean') {
+          resolved = enumValue ? 1 : 0
+        } else if (param.choices) {
+          throw new DslError(`Cannot resolve enum value for '${name}': '${resolved}'`, arg.value?.loc ?? arg.loc ?? call.loc, 'S001')
+        }
+      }
+      if (typeof resolved === 'number' && Number.isFinite(resolved)) {
+        const clamped = typeof param.min === 'number' && resolved < param.min ? param.min
+          : typeof param.max === 'number' && resolved > param.max ? param.max : resolved
+        if (clamped !== resolved) {
+          bindings.diagnostics.push(Object.freeze({
+            code: 'S002',
+            severity: 'warning',
+            message: `Argument out of range for '${name}' in ${call.name}() (got ${resolved}, clamped to ${clamped})`,
+          }))
+          resolved = clamped
+        }
       }
     }
     diagnosticGroups.push({ index: definition?.paramNames.indexOf(name) ?? 0, entries: bindings.diagnostics.splice(diagnosticStart) })
@@ -1073,7 +1088,7 @@ function compileChain(chain, bindings, { inline = false, keyBase = null, count =
     }
     let params
     try {
-      params = definition.normalizeArguments(args)
+      params = definition.normalizeArguments(args, { allowFractionalInt: true })
     } catch (error) {
       throw new DslError(error.message, call.loc)
     }
@@ -1584,14 +1599,25 @@ const REFERENCE_NAME = /^(s|vol|geo|xyz|vel|rgba|mesh)\d+$/
 // boolean is refused ("Expected number"); and a condition resolves bindings and
 // member paths against scoped bindings, registered choices and standard enums
 // (evalCondition / resolveEnum).
-function containsDottedIdentifier(node, name) {
-  if (Array.isArray(node)) return node.some((item) => containsDottedIdentifier(item, name))
+function containsDottedIdentifier(node, name, bindings = null, seen = new Set()) {
+  if (Array.isArray(node)) return node.some((item) => containsDottedIdentifier(item, name, bindings, seen))
   if (!node || typeof node !== 'object') return false
-  if (node.kind === 'identifier') return node.name === name
-  if (node.kind === 'Call') return node.args.some((arg) => containsDottedIdentifier(arg.value, name))
-  if (node.kind === 'unary') return containsDottedIdentifier(node.argument, name)
-  if (node.kind === 'binary') return containsDottedIdentifier(node.left, name) || containsDottedIdentifier(node.right, name)
-  if (node.kind === 'vector') return containsDottedIdentifier(node.values, name)
+  if (node.kind === 'identifier') {
+    if (node.name === name) return true
+    if (bindings && !seen.has(node.name)) {
+      const binding = bindings.boundOf(node) ?? bindings.get(node.name)
+      if (binding?.kind === 'value') {
+        const nextSeen = new Set(seen)
+        nextSeen.add(node.name)
+        return containsDottedIdentifier(binding.expr, name, bindings, nextSeen)
+      }
+    }
+    return false
+  }
+  if (node.kind === 'Call') return node.args.some((arg) => containsDottedIdentifier(arg.value, name, bindings, seen))
+  if (node.kind === 'unary') return containsDottedIdentifier(node.argument, name, bindings, seen)
+  if (node.kind === 'binary') return containsDottedIdentifier(node.left, name, bindings, seen) || containsDottedIdentifier(node.right, name, bindings, seen)
+  if (node.kind === 'vector') return containsDottedIdentifier(node.values, name, bindings, seen)
   return false
 }
 

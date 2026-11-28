@@ -34,7 +34,7 @@ function colorValue(value, name) {
   return value
 }
 
-function normalizeValue(param, value, name) {
+function normalizeValue(param, value, name, options) {
   // An `osc(...)` automation value (numeric params only, matching upstream's
   // uniformSpecs contract) is kept as-is here and resolved to a concrete number
   // per render in CpuRenderer.effectParams; static values validate as before.
@@ -51,7 +51,9 @@ function normalizeValue(param, value, name) {
       break
     case 'int':
       value = param.choices ? enumValue(param, value, name) : value
-      if (typeof value !== 'number' || !Number.isInteger(value)) throw new TypeError(`Parameter "${name}" must be an integer`)
+      if (typeof value !== 'number' || !(options?.allowFractionalInt ? Number.isFinite(value) : Number.isInteger(value))) {
+        throw new TypeError(`Parameter "${name}" must be an integer`)
+      }
       break
     case 'bool':
     case 'boolean':
@@ -163,11 +165,11 @@ export class EffectDefinition {
     Object.freeze(this)
   }
 
-  normalizeArguments(args) {
+  normalizeArguments(args, options) {
     const values = {}
     for (const name of this.paramNames) {
       const param = this.params[name]
-      if ('default' in param) values[name] = normalizeValue(param, param.default, name)
+      if ('default' in param) values[name] = normalizeValue(param, param.default, name, options)
     }
     const named = args.length > 0 && args[0].name !== null
     // Deprecated aliases resolve exactly as upstream's resolveParamAliases: an
@@ -197,17 +199,17 @@ export class EffectDefinition {
             aliasWarned.add(suppliedName)
             console.warn(`param '${suppliedName}' is deprecated, use '${name}' instead. Aliases will be removed on ${ALIAS_EOL_DATE}.`)
             if (!canonicalSupplied.has(name)) {
-              values[name] = normalizeValue(this.params[name], args[index].value, name)
+              values[name] = normalizeValue(this.params[name], args[index].value, name, options)
             }
           }
           continue
         }
         if (args[index].value === undefined) continue
-        values[name] = normalizeValue(this.params[name], args[index].value, name)
+        values[name] = normalizeValue(this.params[name], args[index].value, name, options)
         continue
       }
       if (args[index].value === undefined) continue
-      values[name] = normalizeValue(this.params[name], args[index].value, name)
+      values[name] = normalizeValue(this.params[name], args[index].value, name, options)
     }
     for (const name of this.paramNames) {
       if (!(name in values)) throw new TypeError(`Missing required parameter "${name}" for ${this.id}`)
