@@ -509,8 +509,14 @@ class CompileScope extends Map {
             const letKey = this.get(item.name).letKey ?? this.letKey(item.name, 'effect')
             const chain = prepareEffectChain(override.value, this, letKey, { countBody: false })
             const call = singleEffect(chain)
+            const held = call && this.boundOf(call)
             const mark = call && this.letElements.get(call)
-            this.set(item.name, mark ? { kind: 'partial', call, ...mark } : { kind: 'chainLet', chain, letKey })
+            if (held?.kind === 'partial') {
+              this.set(item.name, { ...held, call: mergePartial(held.call, call) })
+            } else if (mark) {
+              const effect = held?.kind === 'alias' ? { ...call, name: held.name } : call
+              this.set(item.name, { kind: 'partial', call: effect, ...mark })
+            } else this.set(item.name, { kind: 'chainLet', chain, letKey })
           } else this.set(item.name, { kind: 'value', expr: override.value, resolved: true, value: override.value, at: null })
         }
       })
@@ -1090,10 +1096,12 @@ function prepareEffectChain(value, bindings, letKey, { countBody = true } = {}) 
   const counts = new Map()
   for (const call of chain.calls) {
     if (call.kind !== 'Call' || bindings.letElements.has(call)) continue
+    const held = bindings.boundOf(call)
+    const partial = held?.kind === 'partial' ? held : null
+    // A part override keeps any key already assigned by an enclosing let.
+    if (!countBody && partial) continue
     const definition = elementDefinition(call, bindings)
     if (definition) {
-      const held = bindings.boundOf(call)
-      const partial = held?.kind === 'partial' ? held : null
       const func = definition.func
       let occurrence
       if (partial?.ownName) occurrence = partial.ownName

@@ -1303,5 +1303,47 @@
    "synth/solid"
   ],
   "dsl": "search synth, filter, mixer\nseed 3\nlet v = pick(noise(scaleX: 3), solid())\npart p {\n  let t = 1\n  solid().blendMode(tex: t).write(o0)\n}\nuse(p, t: v)\nnoise(scaleX: rand(1, 9)).write(o1)\nrender(o0)"
+ },
+ {
+  "name": "GAP-054-outer-partial-override-chosen-as-texture",
+  "effects": [
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\nlet v = pick(a, solid())\npart p {\n  let t = 1\n  solid().blendMode(tex: t).write(o0)\n}\nuse(p, t: v)\nrender(o0)"
+ },
+ {
+  "name": "GAP-052-outer-partial-override-call",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\npart p {\n  let e = noise()\n  e().write(o0)\n}\nuse(p, e: a())\nrender(o0)"
+ },
+ {
+  "name": "GAP-052-outer-partial-override-merged-argument",
+  "effects": [
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\npart p {\n  let e = 1\n  solid().blendMode(tex: e).write(o0)\n}\nuse(p, e: a(scaleY: rand(1, 9)))\nrender(o0)"
+ },
+ {
+  "name": "GAP-052-outer-partial-override-compound-texture",
+  "effects": [
+   "filter/tint",
+   "mixer/blendMode",
+   "synth/noise",
+   "synth/solid"
+  ],
+  "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\npart p {\n  let e = 1\n  solid().blendMode(tex: e).write(o0)\n}\nuse(p, e: a().tint())\nrender(o0)"
+ },
+ {
+  "name": "GAP-052-outer-effect-alias-override-call",
+  "effects": [
+   "synth/noise"
+  ],
+  "dsl": "search synth\nseed 3\nlet a = noise\npart p {\n  let e = noise()\n  e().write(o0)\n}\nuse(p, e: a())\nrender(o0)"
  }
 ]

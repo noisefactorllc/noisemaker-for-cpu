@@ -5519,6 +5519,140 @@
      }
     }
    ]
+  },
+  {
+   "name": "GAP-054-outer-partial-override-chosen-as-texture",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\nlet v = pick(a, solid())\npart p {\n  let t = 1\n  solid().blendMode(tex: t).write(o0)\n}\nuse(p, t: v)\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "let:v",
+     "u": 832950976
+    },
+    {
+     "seed": 3,
+     "key": "use@use_1/outer/let:a/synth.noise@noise_1/seed/inherit",
+     "u": 3113536675
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 76
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "GAP-052-outer-partial-override-call",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\npart p {\n  let e = noise()\n  e().write(o0)\n}\nuse(p, e: a())\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/outer/let:a/synth.noise@noise_1/seed/inherit",
+     "u": 3113536675
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 76
+     }
+    }
+   ]
+  },
+  {
+   "name": "GAP-052-outer-partial-override-merged-argument",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\npart p {\n  let e = 1\n  solid().blendMode(tex: e).write(o0)\n}\nuse(p, e: a(scaleY: rand(1, 9)))\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/outer/let:a/synth.noise@noise_1/scaleY",
+     "u": 516594538
+    },
+    {
+     "seed": 3,
+     "key": "use@use_1/outer/let:a/synth.noise@noise_1/seed/inherit",
+     "u": 3113536675
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "scaleY": 1.9622321128845215,
+      "seed": 76
+     }
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "GAP-052-outer-partial-override-compound-texture",
+   "dsl": "search synth, filter, mixer\nseed 3\nlet a = noise()\npart p {\n  let e = 1\n  solid().blendMode(tex: e).write(o0)\n}\nuse(p, e: a().tint())\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/outer/let:a/synth.noise@noise_1/seed/inherit",
+     "u": 3113536675
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.solid",
+     "values": {}
+    },
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 76
+     }
+    },
+    {
+     "op": "filter.tint",
+     "values": {}
+    },
+    {
+     "op": "mixer.blendMode",
+     "values": {}
+    }
+   ]
+  },
+  {
+   "name": "GAP-052-outer-effect-alias-override-call",
+   "dsl": "search synth\nseed 3\nlet a = noise\npart p {\n  let e = noise()\n  e().write(o0)\n}\nuse(p, e: a())\nrender(o0)",
+   "draws": [
+    {
+     "seed": 3,
+     "key": "use@use_1/let:e/synth.noise@noise_1/seed/inherit",
+     "u": 180264044
+    }
+   ],
+   "elements": [
+    {
+     "op": "synth.noise",
+     "values": {
+      "seed": 45
+     }
+    }
+   ]
   }
  ]
 }
