@@ -795,12 +795,14 @@ function effectArguments(call, definition, bindings) {
     bound.push(...extraNamed)
     return bound
   }
-  if (args.filter((arg) => arg.name === null).length > definition.paramNames.length) {
-    console.warn(`Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`)
-    let positionalIndex = 0
-    args = args.filter((arg) => arg.name !== null || positionalIndex++ < definition.paramNames.length)
-  }
   const positional = args.filter(arg => arg.name === null)
+  if (positional.length > definition.paramNames.length) {
+    throw new DslError(
+      `Too many positional arguments for ${call.name}(): '${call.name}' takes ${definition.paramNames.length}`,
+      positional[definition.paramNames.length].loc ?? call.loc,
+      'S009',
+    )
+  }
   const r = definition.paramNames.indexOf('r')
   if (r >= 0 && r < positional.length && r < (call.colorSplatLimit ?? Infinity) &&
       definition.params.r.type !== 'color' && definition.paramNames[r + 1] === 'g' && definition.paramNames[r + 2] === 'b') {

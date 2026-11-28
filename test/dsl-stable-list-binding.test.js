@@ -67,27 +67,39 @@ test('mixed calls bind positionals to unclaimed slots while object literals rema
   assert.throws(() => noiseStep('noise({seed: 7})'), /Expected DSL value|Unexpected character/)
 })
 
-test('excess positional arguments warn without rejecting the stable call', (t) => {
-  const warnings = []
-  t.mock.method(console, 'warn', (message) => warnings.push(message))
-  for (const call of ['solid(#ff0000, 1, 99)', 'let red = solid(#ff0000)\nred(1, 99)']) {
-    const source = `search synth\n${call}.write(o0)\nrender(o0)`
-    const renderer = new CpuRenderer({ registry, kernels, kernelFactories })
-    assert.deepEqual([...renderer.render(source, { width: 1, height: 1 }).toRgba8()], [255, 0, 0, 255])
-  }
-  assert.deepEqual(warnings, [
-    "Too many positional arguments for solid(): 'solid' takes 2",
-    "Too many positional arguments for solid(): 'solid' takes 2",
-  ])
+for (const [call, name, count] of [
+  ['solid(#ff0000, 0.5, 0.7)', 'solid', 2],
+  ['noise(1, 2, 75, 75, 1, true, false, 300, 75, 25, 1, 99)', 'noise', 11],
+  ['solid().blendMode(noise(), 0, 0.5, 9)', 'blendMode', 3],
+  ['solid(#ff0000, 1, 99)', 'solid', 2],
+  ['let red = solid(#ff0000)\nred(1, 99)', 'solid', 2],
+]) {
+  test(`${call} refuses excess positionals with the authority's S009 error`, (t) => {
+    const warnings = []
+    t.mock.method(console, 'warn', (message) => warnings.push(message))
+    const source = `search synth, filter, mixer\nseed 3\n${call}.write(o0)\nrender(o0)`
+    const message = `Too many positional arguments for ${name}(): '${name}' takes ${count}`
+    assert.throws(() => compileDsl(source, registry), (error) => {
+      assert.equal(error.code, 'S009')
+      assert.equal(error.message, `${error.sourceName}:${error.line}:${error.column}: ${message}`)
+      return true
+    })
+    assert.deepEqual(warnings, [])
+  })
+}
+
+test('an exact-fit positional call still compiles with its supplied values', () => {
+  const compiled = compileDsl('search synth\nseed 3\nsolid(#ff0000, 0.5).write(o0)\nrender(o0)', registry)
+  assert.deepEqual(compiled.chains[0].steps[0].params, { color: [1, 0, 0], alpha: 0.5 })
+  assert.deepEqual(compiled.diagnostics, [])
 })
 
-test('ignored positional arguments are discarded before evaluating values or compiling chains', (t) => {
+test('excess arguments fail and overridden positionals stay unused before evaluation', (t) => {
   t.mock.method(console, 'warn', () => {})
   for (const unused of ['bogus()', 'noise()']) {
     const source = `search synth\nsolid(#ff0000, 1, ${unused}).write(o0)\nrender(o0)`
-    const step = compileDsl(source, registry).chains[0].steps[0]
-    assert.deepEqual(step.params, { color: [1, 0, 0], alpha: 1 })
-    assert.equal(step.inlineChains, undefined)
+    assert.throws(() => compileDsl(source, registry),
+      { code: 'S009', message: /: Too many positional arguments for solid\(\): 'solid' takes 2$/ })
 
     const merged = noiseStep(`let tuned = noise(type: 3)\ntuned(${unused}, 4)`)
     assert.equal(merged.params.type, 3)
