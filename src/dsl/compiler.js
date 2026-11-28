@@ -356,7 +356,9 @@ function boundExpression(value, bindings) {
 // whether it is written by position or by name.
 function resolveArgs(args, bindings, call, definition, elementKey) {
   let positional = 0
-  return args.map((arg) => {
+  const diagnosticGroups = []
+  const resolvedArgs = args.map((arg) => {
+    const diagnosticStart = bindings.diagnostics.length
     const written = arg.name ?? definition?.paramNames[positional++]
     const name = definition?.paramAliases?.[written] ?? written
     const chain = boundExpression(arg.value, bindings)
@@ -374,8 +376,27 @@ function resolveArgs(args, bindings, call, definition, elementKey) {
         !(Object.hasOwn(param.choices ?? {}, value.name) && param.choices[value.name] !== null)) {
       throw unassignedVariable(value.name, value.loc)
     }
-    return { ...arg, value: evaluateValue(arg.value, bindings, 0, [], at) }
+    let resolved = evaluateValue(arg.value, bindings, 0, [], at)
+    if ((param?.type === 'float' || param?.type === 'int') && typeof resolved === 'number' && Number.isFinite(resolved)) {
+      const clamped = typeof param.min === 'number' && resolved < param.min ? param.min
+        : typeof param.max === 'number' && resolved > param.max ? param.max : resolved
+      if (clamped !== resolved) {
+        bindings.diagnostics.push(Object.freeze({
+          code: 'S002',
+          severity: 'warning',
+          message: `Argument out of range for '${name}' in ${call.name}() (got ${resolved}, clamped to ${clamped})`,
+        }))
+        resolved = clamped
+      }
+    }
+    diagnosticGroups.push({ index: definition?.paramNames.indexOf(name) ?? 0, entries: bindings.diagnostics.splice(diagnosticStart) })
+    return { ...arg, value: resolved }
   })
+  // The authority visits parameters in definition order, including inline chains.
+  // Keep that warning order without changing the existing random evaluation order.
+  diagnosticGroups.sort((a, b) => a.index - b.index)
+  for (const group of diagnosticGroups) bindings.diagnostics.push(...group.entries)
+  return resolvedArgs
 }
 
 // The `let` bindings of a program, plus the compiler of chain arguments. A chain in
@@ -388,6 +409,7 @@ class CompileScope extends Map {
     super()
     this.registry = registry
     this.search = search
+    this.diagnostics = []
     this.pending = null
     this.inlineCount = 0
     // The program's draws, and the occurrence counts that name its elements
@@ -1779,5 +1801,5 @@ export function compileDsl(source, registry, options = {}) {
   // only where it expands, so it compiles without one.
   if (!renderSurface && !bindings.controlFlow.length) throw new DslError('No render surface specified and no write() found - add render(oN) or write(oN)', ast.loc)
 
-  return Object.freeze({ search: Object.freeze(ast.search.slice()), chains: Object.freeze(chains), renderSurface, controlFlow: Object.freeze(bindings.controlFlow.slice()), ast })
+  return Object.freeze({ search: Object.freeze(ast.search.slice()), chains: Object.freeze(chains), renderSurface, controlFlow: Object.freeze(bindings.controlFlow.slice()), diagnostics: Object.freeze(bindings.diagnostics.slice()), ast })
 }
