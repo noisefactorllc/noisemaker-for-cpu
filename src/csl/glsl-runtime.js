@@ -123,7 +123,9 @@ export class GlslCpuRuntime {
       const length = typeof initializer === 'number' ? initializer : initializer.length
       const out = runtime.alloc(length)
       if (typeof initializer === 'number') out.fill(0)
-      else out.set(initializer)
+      else if (Array.isArray(initializer) && length <= 4) {
+        for (let index = 0; index < length; index += 1) out[index] = initializer[index]
+      } else out.set(initializer)
       return out
     }
     this.stdlib = this.#createStdlib()
