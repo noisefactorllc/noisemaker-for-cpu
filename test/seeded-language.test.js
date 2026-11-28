@@ -288,3 +288,34 @@ test('a unary plus is checked as the value it wraps, as upstream drops it', () =
     assert.throws(() => compile(`search synth\nseed 5\n${source}`), message, source)
   }
 })
+
+test('a random let refuses declaration-time self-references and indirect cycles even when unused', () => {
+  for (const [source, cycle] of [
+    ['let a = pick(noise(scaleX: a), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise(scaleX: a).tint(), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(solid(), noise(scaleX: a))\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = 3\nlet a = pick(noise(scaleX: a), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise().tint(color: vec3(a, 1, 1)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise(scaleX: osc(min: a)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise(scaleX: pick(a, 2)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let b = noise(scaleX: a)\nlet a = pick(b, solid())\nnoise().write(o0)\nrender(o0)', 'a -> b -> a'],
+    ['let b = noise(scaleX: a)\nlet a = pick(solid().blendMode(tex: b), solid())\nnoise().write(o0)\nrender(o0)', 'a -> b -> a'],
+  ]) {
+    assert.throws(
+      () => compile(`search synth, filter, mixer\nseed 3\n${source}`),
+      (error) => error.code === 'S001' && error.message.includes(`Automation cycle detected: ${cycle}`),
+      source,
+    )
+  }
+
+  for (const source of [
+    'let a = pick(noise(scaleX: 3), solid())\nnoise().write(o0)\nrender(o0)',
+    'let a = pick(noise(scaleX: 3).tint(), solid())\nnoise().write(o0)\nrender(o0)',
+    'let a = pick(noise(scaleX: a, scaleX: 3), solid())\nnoise().write(o0)\nrender(o0)',
+    'let a = pick(noise().tint(color: [a, 1, 1]), solid())\nnoise().write(o0)\nrender(o0)',
+  ]) {
+    const draws = []
+    assert.ok(compile(`search synth, filter\nseed 3\n${source}`, { onDraw: (draw) => draws.push(draw) }), source)
+    assert.equal(draws.length, 2, source)
+  }
+})

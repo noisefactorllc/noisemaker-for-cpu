@@ -1080,6 +1080,53 @@ function collectNames(value, names) {
   else if (value.kind === 'vector') value.values.forEach((item) => collectNames(item, names))
 }
 
+// Check a random let's authored expression for declaration-time cycles before
+// selection runs, matching upstream's substitute(expr, [name]) resolution stack
+// without drawing or compiling deferred effects.
+function checkRandomLetCycles(value, bindings, resolving) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return
+  if (value.kind === 'identifier') {
+    if (resolving.includes(value.name)) {
+      const start = resolving.indexOf(value.name)
+      const cycle = [...resolving.slice(start), value.name]
+      throw new DslError(`Automation cycle detected: ${cycle.join(' -> ')}`, value.loc, 'S001')
+    }
+    const binding = bindings.boundOf(value) ?? bindings.get(value.name)
+    if (!binding) return
+    if (binding.kind === 'partial') {
+      checkRandomLetCycles(binding.call, bindings, [...resolving, value.name])
+    } else if (binding.kind === 'value') {
+      checkRandomLetCycles(binding.resolved ? binding.value : binding.expr, bindings, [...resolving, value.name])
+    }
+    return
+  }
+  if (value.kind === 'Chain') {
+    for (const entry of value.calls) {
+      if (entry.kind !== 'Call') continue
+      const definition = VALUE_CALLS.has(entry.name) || isRandomCall(entry) ? null : elementDefinition(entry, bindings)
+      for (const arg of lastOfEachName(entry.args, definition)) checkRandomLetCycles(arg.value, bindings, resolving)
+    }
+    return
+  }
+  if (value.kind === 'Call') {
+    const definition = VALUE_CALLS.has(value.name) || isRandomCall(value) ? null : elementDefinition(value, bindings)
+    for (const arg of lastOfEachName(value.args, definition)) checkRandomLetCycles(arg.value, bindings, resolving)
+    return
+  }
+  if (value.kind === 'binary') {
+    checkRandomLetCycles(value.left, bindings, resolving)
+    checkRandomLetCycles(value.right, bindings, resolving)
+    return
+  }
+  if (value.kind === 'unary') {
+    checkRandomLetCycles(value.argument, bindings, resolving)
+    return
+  }
+  if (value.kind === 'vector') {
+    for (const item of value.values) checkRandomLetCycles(item, bindings, resolving)
+  }
+}
+
 // Whether a let's argument holds a random call, in effects passed as values too,
 // reading only the last of a keyword written twice at every depth.
 function randomInLetValue(value, bindings) {
@@ -1248,6 +1295,7 @@ function declareBinding(binding, bindings) {
   if (entry.expr?.kind === 'Chain') markLetChains(entry.expr, bindings)
   bindings.set(binding.name, entry)
   if (containsRandom(binding.value)) {
+    checkRandomLetCycles(entry.expr, bindings, [binding.name])
     bindings.deferChains = true
     try {
       entry.value = evaluateValue(entry.expr, bindings, 0, [binding.name], entry.at)
