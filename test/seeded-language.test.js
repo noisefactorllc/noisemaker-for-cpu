@@ -437,3 +437,69 @@ test('if and elif conditions resolve enum paths directly and through bindings ag
     assert.ok(compile(`search synth, filter\nseed 3\n${source}`), source)
   }
 })
+
+test('a texture argument refuses a non-effect chain selected by a random let while preserving valid selections', () => {
+  for (const [source, param, effect] of [
+    [
+      'search synth, filter, mixer\nseed 3\nlet t = read(o1).tint()\nlet v = pick(t, noise())\nnoise().write(o1)\nsolid().blendMode(tex: v).write(o0)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\nlet t = read(o1).tint()\nnoise().write(o1)\nsolid().blendMode(tex: t).write(o0)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\nlet v = pick(read(o1).tint(), noise())\nnoise().write(o1)\nsolid().blendMode(tex: v).write(o0)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\nlet t = read(o1).tint()\nlet v = pick(t, noise())\nnoise().write(o1)\nsolid().blendMode(v).write(o0)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\npart p {\n  let t = read(o1).tint()\n  let v = pick(t, noise())\n  solid().blendMode(tex: v).write(o0)\n}\nnoise().write(o1)\nuse(p)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\npart p { tint() }\nlet t = noise().use(p)\nlet v = pick(t, noise())\nsolid().blendMode(tex: v).write(o0)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\nlet t = noise().subchain() { .tint() }\nlet v = pick(t, noise())\nsolid().blendMode(tex: v).write(o0)\nrender(o0)',
+      'tex',
+      'blendMode',
+    ],
+    [
+      'search synth, filter, points\nseed 3\nlet t = read(o1).tint()\nlet v = pick(t, noise())\nnoise().write(o1)\nsolid().dla(fieldTex: v).write(o0)\nrender(o0)',
+      'heightTex',
+      'dla',
+    ],
+  ]) {
+    assert.throws(
+      () => compile(source),
+      (error) => error.code === 'S001' && error.message.includes(`Chain for argument '${param}' in ${effect}() may contain only effect calls`),
+      source,
+    )
+  }
+
+  for (const [source, expectedDraws] of [
+    [
+      'search synth, filter, mixer\nseed 3\nlet t = read(o1).tint()\nlet v = pick(noise(), t)\nnoise().write(o1)\nsolid().blendMode(tex: v).write(o0)\nrender(o0)',
+      3,
+    ],
+    [
+      'search synth, filter, mixer\nseed 3\nlet t = read(o1)\nlet v = pick(t, noise())\nnoise().write(o1)\nsolid().blendMode(tex: v).write(o0)\nrender(o0)',
+      2,
+    ],
+  ]) {
+    const draws = []
+    assert.ok(compile(source, { onDraw: (draw) => draws.push(draw) }), source)
+    assert.equal(draws.length, expectedDraws, source)
+  }
+})

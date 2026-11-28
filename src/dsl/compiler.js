@@ -337,9 +337,10 @@ function boundExpression(value, bindings) {
   const seen = new Set()
   while (value?.kind === 'identifier' && !seen.has(value.name)) {
     seen.add(value.name)
-    const binding = bindings.get(value.name)
+    const binding = bindings.boundOf(value) ?? bindings.get(value.name)
     if (binding?.kind === 'chainLet') return binding.chain
     if (binding?.kind !== 'value') break
+    if (binding.resolved && binding.value?.kind === 'Chain') return binding.value
     value = binding.expr
   }
   return value
@@ -349,15 +350,14 @@ function boundExpression(value, bindings) {
 // whether it is written by position or by name.
 function resolveArgs(args, bindings, call, definition, elementKey) {
   let positional = 0
-  return args.map((arg, index) => {
+  return args.map((arg) => {
+    const written = arg.name ?? definition?.paramNames[positional++]
+    const name = definition?.paramAliases?.[written] ?? written
     const chain = boundExpression(arg.value, bindings)
     if (definition && chain?.kind === 'Chain' && chain.calls.some(entry =>
       entry.kind !== 'Call' || entry.name === 'read' || entry.name === 'read3d')) {
-      const name = definition?.paramAliases?.[arg.name] ?? arg.name ?? definition?.paramNames[index]
       throw new DslError(`Chain for argument '${name}' in ${call.name}() may contain only effect calls`, chain.loc, 'S001')
     }
-    const written = arg.name ?? definition?.paramNames[positional++]
-    const name = definition?.paramAliases?.[written] ?? written
     const at = elementKey && name ? { key: joinKey(elementKey, name), path: [] } : null
     return { ...arg, value: evaluateValue(arg.value, bindings, 0, [], at) }
   })
