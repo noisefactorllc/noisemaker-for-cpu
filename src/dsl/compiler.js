@@ -274,6 +274,7 @@ function boundExpression(value, bindings) {
   while (value?.kind === 'identifier' && !seen.has(value.name)) {
     seen.add(value.name)
     const binding = bindings.get(value.name)
+    if (binding?.kind === 'chainLet') return binding.chain
     if (binding?.kind !== 'value') break
     value = binding.expr
   }

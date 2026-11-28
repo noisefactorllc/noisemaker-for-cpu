@@ -213,6 +213,19 @@ test('a compound effect let supplies a texture with its own draw key', () => {
   ])
 })
 
+const directTextureChainCases = [
+  ['a part use', 'part p { .tint() }\nlet t = noise().use(p)\nsolid().blendMode(tex: t).write(o0)'],
+  ['a copied part use', 'part p { .tint() }\nlet t = noise().use(p)\nlet u = t\nsolid().blendMode(tex: u).write(o0)'],
+  ['a subchain', 'let t = noise().subchain() { .tint() }\nsolid().blendMode(tex: t).write(o0)'],
+  ['a use override with a part use', 'part p { .tint() }\npart q {\n  let e = 1\n  solid().blendMode(tex: e).write(o0)\n}\nuse(q, e: noise().use(p))'],
+]
+for (const [name, body] of directTextureChainCases) {
+  test(`a direct texture chain rejects ${name}`, () => {
+    assert.throws(() => compile(`search synth, filter, mixer\nseed 3\n${body}\nrender(o0)`),
+      { code: 'S001', message: /Chain for argument 'tex' in blendMode\(\) may contain only effect calls/ })
+  })
+}
+
 test('a chain let that names itself in vecN() is a cycle', () => {
   for (const source of [
     'let t = noise().tint(color: vec3(t, 1, 1))\nnoise().write(o0)',
