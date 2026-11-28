@@ -66,13 +66,53 @@ noise(scaleX: outer).write(o0)
   assert.equal(descriptor.speed.speed, 2)
 })
 
-test('a cyclic let set fails with a cycle report', () => {
-  assert.throws(() => compileDsl(`
+test('a cyclic let set fails with S001 and the authority cycle order', () => {
+  for (const [source, cycle] of [
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = osc(type: oscKind.tri, speed: a)\nnoise(scaleX: a).write(o0)',
+      'b -> a -> b',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = osc(type: oscKind.tri, speed: a)\nnoise(scaleX: b).write(o0)',
+      'b -> a -> b',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = osc(type: oscKind.tri, speed: a)\nnoise().write(o0)',
+      'b -> a -> b',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: b)\nlet b = osc(type: oscKind.tri, speed: c)\nlet c = osc(type: oscKind.saw, speed: a)\nnoise(scaleX: a).write(o0)',
+      'c -> a -> b -> c',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: c)\nlet b = osc(type: oscKind.tri, speed: a)\nlet c = osc(type: oscKind.saw, speed: b)\nnoise(scaleX: a).write(o0)',
+      'c -> b -> c',
+    ],
+    [
+      'let a = osc(type: oscKind.sine, speed: a)\nnoise().write(o0)',
+      'a -> a',
+    ],
+  ]) {
+    assert.throws(
+      () => compileDsl(`search synth\n${source}\nrender(o0)`, registry),
+      (error) => error.code === 'S001' && error.message.includes(`Automation cycle detected: ${cycle}`),
+      source,
+    )
+  }
+
+  // Reassigning a name after another let already bound its earlier value is not a cycle.
+  const shadowed = compileDsl(`
 search synth
-let a = osc(type: oscKind.sine, speed: b)
+let a = 2
 let b = osc(type: oscKind.tri, speed: a)
+let a = osc(type: oscKind.sine, speed: b)
 noise(scaleX: a).write(o0)
-`, registry), (error) => error.message.includes('Automation cycle detected: a -> b -> a'))
+render(o0)
+`, registry)
+  const osc = shadowed.chains[0].steps[0].params.scaleX
+  assert.equal(osc.type, 'Oscillator')
+  assert.equal(osc.speed.type, 'Oscillator')
+  assert.equal(osc.speed.speed, 2)
 })
 
 test('a let whose bare identifier names nothing resolvable reports S003 at declaration', () => {

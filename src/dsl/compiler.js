@@ -284,7 +284,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
         if (bindings.deferChains) return binding.value
         if (bindings.pending) {
           // Its chain reading the let again is a cycle.
-          if (binding.evaluating) throw new DslError(`Automation cycle detected: ${value.name} -> ${value.name}`, value.loc)
+          if (binding.evaluating) throw new DslError(`Automation cycle detected: ${value.name} -> ${value.name}`, value.loc, 'S001')
           binding.evaluating = true
           try {
             return bindings.compileInlineChain(binding.value, at, { count: false })
@@ -295,14 +295,15 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
       }
       if (binding.resolved) return binding.value
       // An inline chain resolves its arguments afresh, so a let read again
-      // while it evaluates is a cycle too.
-      if (resolving.includes(value.name) || binding.evaluating) {
-        const cycle = resolving.includes(value.name) ? [...resolving, value.name] : [value.name, value.name]
-        throw new DslError(`Automation cycle detected: ${cycle.join(' -> ')}`, value.loc)
+      // while it evaluates is a cycle too; a shadowed earlier binding is distinct.
+      if (binding.evaluating) {
+        const start = resolving.findIndex((entry) => entry.binding === binding)
+        const cycle = start >= 0 ? [...resolving.slice(start).map((entry) => entry.name), value.name] : [value.name, value.name]
+        throw new DslError(`Automation cycle detected: ${cycle.join(' -> ')}`, value.loc, 'S001')
       }
       binding.evaluating = true
       try {
-        binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, value.name], binding.at)
+        binding.value = evaluateValue(binding.expr, bindings, oscDepth, [...resolving, { name: value.name, binding }], binding.at)
       } finally {
         binding.evaluating = false
       }
@@ -1344,50 +1345,59 @@ function collectNames(value, names) {
   else if (value.kind === 'vector') value.values.forEach((item) => collectNames(item, names))
 }
 
-// Check a random let's authored expression for declaration-time cycles before
-// selection runs, matching upstream's substitute(expr, [name]) resolution stack
+// Check a let's authored expression for declaration-time cycles, matching
+// upstream's declareVar -> substitute(clone(v.expr), [v.name]) resolution stack
 // without drawing or compiling deferred effects.
-function checkRandomLetCycles(value, bindings, resolving) {
+function checkLetCycles(value, bindings, resolving, inExpanded = false) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return
   if (value.kind === 'identifier') {
+    const bound = bindings.boundOf(value)
+    // Inside an already-declared let, an identifier bound when that let was
+    // declared has already been substituted in upstream's AST, so it expands
+    // inline under the same resolving stack rather than naming a symbol.
+    if (inExpanded && bound) {
+      if (bound.kind === 'partial') checkLetCycles(bound.call, bindings, resolving, true)
+      else if (bound.kind === 'chainLet') checkLetCycles(bound.chain, bindings, resolving, true)
+      else if (bound.kind === 'value') checkLetCycles(bound.resolved ? bound.value : bound.expr, bindings, resolving, true)
+      return
+    }
     if (resolving.includes(value.name)) {
       const start = resolving.indexOf(value.name)
       const cycle = [...resolving.slice(start), value.name]
       throw new DslError(`Automation cycle detected: ${cycle.join(' -> ')}`, value.loc, 'S001')
     }
-    const binding = bindings.boundOf(value) ?? bindings.get(value.name)
+    const binding = bound ?? bindings.get(value.name)
     if (!binding) return
-    if (binding.kind === 'partial') {
-      checkRandomLetCycles(binding.call, bindings, [...resolving, value.name])
-    } else if (binding.kind === 'value') {
-      checkRandomLetCycles(binding.resolved ? binding.value : binding.expr, bindings, [...resolving, value.name])
-    }
+    const next = [...resolving, value.name]
+    if (binding.kind === 'partial') checkLetCycles(binding.call, bindings, next, true)
+    else if (binding.kind === 'chainLet') checkLetCycles(binding.chain, bindings, next, true)
+    else if (binding.kind === 'value') checkLetCycles(binding.resolved ? binding.value : binding.expr, bindings, next, true)
     return
   }
   if (value.kind === 'Chain') {
     for (const entry of value.calls) {
       if (entry.kind !== 'Call') continue
       const definition = VALUE_CALLS.has(entry.name) || isRandomCall(entry) ? null : elementDefinition(entry, bindings)
-      for (const arg of lastOfEachName(entry.args, definition)) checkRandomLetCycles(arg.value, bindings, resolving)
+      for (const arg of lastOfEachName(entry.args, definition)) checkLetCycles(arg.value, bindings, resolving, inExpanded)
     }
     return
   }
   if (value.kind === 'Call') {
     const definition = VALUE_CALLS.has(value.name) || isRandomCall(value) ? null : elementDefinition(value, bindings)
-    for (const arg of lastOfEachName(value.args, definition)) checkRandomLetCycles(arg.value, bindings, resolving)
+    for (const arg of lastOfEachName(value.args, definition)) checkLetCycles(arg.value, bindings, resolving, inExpanded)
     return
   }
   if (value.kind === 'binary') {
-    checkRandomLetCycles(value.left, bindings, resolving)
-    checkRandomLetCycles(value.right, bindings, resolving)
+    checkLetCycles(value.left, bindings, resolving, inExpanded)
+    checkLetCycles(value.right, bindings, resolving, inExpanded)
     return
   }
   if (value.kind === 'unary') {
-    checkRandomLetCycles(value.argument, bindings, resolving)
+    checkLetCycles(value.argument, bindings, resolving, inExpanded)
     return
   }
   if (value.kind === 'vector') {
-    for (const item of value.values) checkRandomLetCycles(item, bindings, resolving)
+    for (const item of value.values) checkLetCycles(item, bindings, resolving, inExpanded)
   }
 }
 
@@ -1430,10 +1440,11 @@ function declareBinding(binding, bindings) {
   // Count compound let elements where they are written. A read chain follows
   // the value path so argument validation still sees the surface read.
   if (binding.value?.kind === 'Chain') {
-    // A chain that reads its own let is a cycle (upstream S001).
+    // A chain that reads its own let or closes a cycle is S001 at declaration.
     const names = new Set()
     collectNames(binding.value, names)
-    if (names.has(binding.name)) throw new DslError(`Automation cycle detected: ${binding.name} -> ${binding.name}`, binding.loc)
+    if (names.has(binding.name)) throw new DslError(`Automation cycle detected: ${binding.name} -> ${binding.name}`, binding.loc, 'S001')
+    checkLetCycles(binding.value, bindings, [binding.name])
     if (randomInLetValue(binding.value, bindings)) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
@@ -1513,6 +1524,7 @@ function declareBinding(binding, bindings) {
     // twice (upstream keeps one). The merge above keeps these same nodes.
     const written = lastOfEachName(own.args, definition)
     written.forEach((arg) => bindCalls(arg.value, bindings))
+    checkLetCycles(call, bindings, [binding.name])
     if (written.some((arg) => randomInLetValue(arg.value, bindings))) {
       throw new DslError(`Random calls in an effect held by a let are not supported yet: '${binding.name}'`, binding.loc)
     }
@@ -1561,11 +1573,11 @@ function declareBinding(binding, bindings) {
   // stores is not counted again where it is used.
   if (entry.expr?.kind === 'Chain') markLetChains(entry.expr, bindings)
   bindings.set(binding.name, entry)
+  checkLetCycles(entry.expr, bindings, [binding.name])
   if (containsRandom(binding.value)) {
-    checkRandomLetCycles(entry.expr, bindings, [binding.name])
     bindings.deferChains = true
     try {
-      entry.value = evaluateValue(entry.expr, bindings, 0, [binding.name], entry.at)
+      entry.value = evaluateValue(entry.expr, bindings, 0, [{ name: binding.name, binding: entry }], entry.at)
     } finally {
       bindings.deferChains = false
     }
