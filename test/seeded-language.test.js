@@ -315,9 +315,14 @@ test('a random let refuses declaration-time self-references and indirect cycles 
     ['let a = pick(noise(scaleX: a).tint(), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
     ['let a = pick(solid(), noise(scaleX: a))\nnoise().write(o0)\nrender(o0)', 'a -> a'],
     ['let a = 3\nlet a = pick(noise(scaleX: a), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = randInt(1, 3)\nlet a = pick(noise(octaves: a), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
     ['let a = pick(noise().tint(color: vec3(a, 1, 1)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
     ['let a = pick(noise(scaleX: osc(min: a)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise(scaleX: midi(1, min: a)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise(scaleX: audio(a, band: 0)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let a = pick(noise(scaleX: rand(1, a)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
     ['let a = pick(noise(scaleX: pick(a, 2)), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
+    ['let x = noise\nlet a = pick(x(scaleX: a), solid())\nnoise().write(o0)\nrender(o0)', 'a -> a'],
     ['let b = noise(scaleX: a)\nlet a = pick(b, solid())\nnoise().write(o0)\nrender(o0)', 'a -> b -> a'],
     ['let b = noise(scaleX: a)\nlet a = pick(solid().blendMode(tex: b), solid())\nnoise().write(o0)\nrender(o0)', 'a -> b -> a'],
   ]) {
@@ -328,15 +333,17 @@ test('a random let refuses declaration-time self-references and indirect cycles 
     )
   }
 
-  for (const source of [
-    'let a = pick(noise(scaleX: 3), solid())\nnoise().write(o0)\nrender(o0)',
-    'let a = pick(noise(scaleX: 3).tint(), solid())\nnoise().write(o0)\nrender(o0)',
-    'let a = pick(noise(scaleX: a, scaleX: 3), solid())\nnoise().write(o0)\nrender(o0)',
-    'let a = pick(noise().tint(color: [a, 1, 1]), solid())\nnoise().write(o0)\nrender(o0)',
+  for (const [source, expectedDraws] of [
+    ['let a = pick(noise(scaleX: 3), solid())\nnoise().write(o0)\nrender(o0)', 2],
+    ['let a = pick(noise(scaleX: 3).tint(), solid())\nnoise().write(o0)\nrender(o0)', 2],
+    ['let a = pick(noise(scaleX: a, scaleX: 3), solid())\nnoise().write(o0)\nrender(o0)', 2],
+    ['let a = pick(noise().tint(color: [a, 1, 1]), solid())\nnoise().write(o0)\nrender(o0)', 2],
+    ['let b = blendMode(tex: noise(scaleX: a))\nlet a = pick(solid().b(), solid())\nnoise().write(o0)\nrender(o0)', 2],
+    ['let b = randInt(1, 3)\nlet a = pick(noise(octaves: b), solid())\nnoise().write(o0)\nrender(o0)', 3],
   ]) {
     const draws = []
-    assert.ok(compile(`search synth, filter\nseed 3\n${source}`, { onDraw: (draw) => draws.push(draw) }), source)
-    assert.equal(draws.length, 2, source)
+    assert.ok(compile(`search synth, filter, mixer\nseed 3\n${source}`, { onDraw: (draw) => draws.push(draw) }), source)
+    assert.equal(draws.length, expectedDraws, source)
   }
 })
 
