@@ -33,11 +33,13 @@ let x = 20
 test('a let may reference a later let inside its value expression', () => {
   const program = compileDsl(`
 search synth
-let a = b + 1
+let a = osc(type: oscKind.sine, speed: b)
 let b = 5
 noise(scaleX: a).write(o0)
 `, registry)
-  assert.equal(program.chains[0].steps[0].params.scaleX, 6)
+  const descriptor = program.chains[0].steps[0].params.scaleX
+  assert.equal(descriptor.type, 'Oscillator')
+  assert.equal(descriptor.speed, 5)
 })
 
 test('a bare identifier naming a later let reports S003 at declaration', () => {
@@ -67,8 +69,8 @@ noise(scaleX: outer).write(o0)
 test('a cyclic let set fails with a cycle report', () => {
   assert.throws(() => compileDsl(`
 search synth
-let a = b + 1
-let b = a + 1
+let a = osc(type: oscKind.sine, speed: b)
+let b = osc(type: oscKind.tri, speed: a)
 noise(scaleX: a).write(o0)
 `, registry), (error) => error.message.includes('Automation cycle detected: a -> b -> a'))
 })

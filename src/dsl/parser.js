@@ -4,6 +4,18 @@ import { tokenizeDsl } from './tokenize.js'
 
 const MAX_SEED = 4294967295
 
+// Upstream's parser defers an arithmetic operation only when an operand is a
+// random call or another deferred arithmetic node (isDeferred, toNumber).
+function isDeferred(node) {
+  return node != null && typeof node === 'object' &&
+    ((node.kind === 'Call' && RANDOM_FUNCTIONS.has(node.name)) || node.kind === 'binary' || node.kind === 'unary')
+}
+
+function toNumber(node, loc) {
+  if (typeof node !== 'number') throw new DslError('Expected number', node?.loc ?? loc)
+  return node
+}
+
 // Upstream's parser checks every midi() and audio() call where it is written
 // (transformMidiInvocation, transformAudioInvocation), read or not.
 const AUTOMATION_SIGNATURES = {
@@ -514,8 +526,15 @@ class Parser {
     const precedence = { '+': 1, '-': 1, '*': 2, '/': 2 }
     while (this.peek().type === 'operator' && precedence[this.peek().lexeme] >= minPrecedence) {
       const operator = this.tokens[this.current++]
+      const opLoc = location(operator)
       const right = this.parseValueExpression(precedence[operator.lexeme] + 1)
-      left = { kind: 'binary', operator: operator.lexeme, left, right, loc: location(operator) }
+      if (isDeferred(left) || isDeferred(right)) {
+        left = { kind: 'binary', operator: operator.lexeme, left, right, loc: opLoc }
+        continue
+      }
+      const l = toNumber(left, opLoc)
+      const r = toNumber(right, opLoc)
+      left = operator.lexeme === '+' ? l + r : operator.lexeme === '-' ? l - r : operator.lexeme === '*' ? l * r : l / r
     }
     return left
   }
@@ -525,7 +544,10 @@ class Parser {
     if (this.match('+')) return this.parseValueUnary()
     if (this.match('-')) {
       const operator = this.previous()
-      return { kind: 'unary', operator: '-', argument: this.parseValueUnary(), loc: location(operator) }
+      const opLoc = location(operator)
+      const argument = this.parseValueUnary()
+      if (isDeferred(argument)) return { kind: 'unary', operator: '-', argument, loc: opLoc }
+      return -toNumber(argument, opLoc)
     }
     return this.parseValuePrimary()
   }

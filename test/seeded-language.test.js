@@ -343,3 +343,27 @@ test('unary plus on a non-numeric random call compiles as its operand while unar
     /Unary arithmetic requires a number/,
   )
 })
+
+test('arithmetic refuses let names and non-numeric non-deferred operands in every value position, while literal and deferred random arithmetic compile', () => {
+  for (const source of [
+    'let n = 2\nnoise(scaleX: n + 1).write(o0)\nrender(o0)',
+    'let n = 2\nlet m = n + 1\nnoise(scaleX: m).write(o0)\nrender(o0)',
+    'let n = 2\nnoise(scaleX: -n).write(o0)\nrender(o0)',
+    'let n = rand(1, 9)\nnoise(scaleX: n + 1).write(o0)\nrender(o0)',
+    'let n = 2\nnoise().write(o0)\nreturn vec2(n + 1, 2)\nrender(o0)',
+    'noise(scaleX: true + 1).write(o0)\nrender(o0)',
+  ]) {
+    assert.throws(() => compile(`search synth, filter\nseed 3\n${source}`), /Expected number/, source)
+  }
+
+  for (const source of [
+    'noise(scaleX: 2 + 1).write(o0)\nrender(o0)',
+    'let m = 2 * 3 - 1\nnoise(scaleX: m).write(o0)\nrender(o0)',
+    'noise(scaleX: rand(1, 9) + 1).write(o0)\nrender(o0)',
+    'let n = 2\nnoise(scaleX: rand(1, 9) + n).write(o0)\nrender(o0)',
+    'let x = -rand(1, 5)\nnoise().write(o0)\nrender(o0)',
+    'noise(scaleX: -rand(-9, -1)).write(o0)\nrender(o0)',
+  ]) {
+    assert.ok(compile(`search synth, filter\nseed 3\n${source}`), source)
+  }
+})
