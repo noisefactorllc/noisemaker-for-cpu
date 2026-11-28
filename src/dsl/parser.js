@@ -249,9 +249,9 @@ class Parser {
       if (!this.isPunctuation('.')) break
       this.current += 1
       if (this.atSubchain()) calls.push(this.parseSubchain())
-      else if (this.peek().lexeme === 'write3d' && this.peek().type === 'identifier') calls.push(this.parseWrite3d())
+      else if (this.peek().lexeme === 'write3d' && this.peek().type === 'keyword') calls.push(this.parseWrite3d())
       else if (this.atMaybe()) calls.push(this.parseMaybeTail())
-      else calls.push(this.toUse(this.parseCall()))
+      else calls.push(this.toUse(this.parseCall(true)))
     }
     return calls
   }
@@ -323,23 +323,25 @@ class Parser {
     if (start.lexeme === 'break') return { kind: 'Break', loc }
     if (start.lexeme === 'continue') return { kind: 'Continue', loc }
     if (start.lexeme === 'return') {
-      // A value follows only where an expression can start (upstream
-      // exprStartTokens): not at a keyword other than true and false.
+      // Match upstream's exprStartTokens without crossing a comment.
       const next = this.peek()
-      const ends = this.atEnd() || this.check('}') || this.check(';') ||
-        (next.type === 'keyword' && next.lexeme !== 'true' && next.lexeme !== 'false')
-      return ends ? { kind: 'Return', loc } : { kind: 'Return', value: this.parseValueExpression(), loc }
+      const hasValue = !next.commentBefore && (
+        ['number', 'string', 'color', 'identifier', 'surface'].includes(next.type) ||
+        (next.type === 'keyword' && ['true', 'false'].includes(next.lexeme)) ||
+        (next.type === 'operator' && ['+', '-'].includes(next.lexeme)) ||
+        (next.type === 'punctuation' && ['(', '[', '{'].includes(next.lexeme)))
+      return hasValue ? { kind: 'Return', value: this.parseValueExpression(), loc } : { kind: 'Return', loc }
     }
     const condition = this.parseCondition()
     const then = this.parseBlock(false)
     const elif = []
-    while (this.peek().type === 'keyword' && this.peek().lexeme === 'elif') {
+    while (!this.peek().commentBefore && this.peek().type === 'keyword' && this.peek().lexeme === 'elif') {
       this.current += 1
       const branchCondition = this.parseCondition()
       elif.push({ condition: branchCondition, then: this.parseBlock(false) })
     }
     let otherwise = null
-    if (this.peek().type === 'keyword' && this.peek().lexeme === 'else') {
+    if (!this.peek().commentBefore && this.peek().type === 'keyword' && this.peek().lexeme === 'else') {
       this.current += 1
       otherwise = this.parseBlock(false)
     }
@@ -355,7 +357,7 @@ class Parser {
   // Port of upstream parseWriteCall for write3d: two positional references, a
   // volume and a geometry (`write3d(vol0, geo0)`), each an identifier or a surface.
   parseWrite3d() {
-    const name = this.identifier()
+    const name = this.consume('write3d')
     this.consume('(')
     const reference = () => {
       const token = this.peek()
@@ -449,8 +451,10 @@ class Parser {
     return { kind: 'Subchain', name: meta.name || null, id: meta.id || null, body, loc: location(start) }
   }
 
-  parseCall() {
-    const name = this.identifier('Expected effect or IO function name')
+  parseCall(allowWrite = false) {
+    const name = allowWrite && this.peek().type === 'keyword' && this.check('write')
+      ? this.tokens[this.current++]
+      : this.identifier('Expected effect or IO function name')
     this.consume('(')
     const args = []
     let mode = null

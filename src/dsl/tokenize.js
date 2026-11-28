@@ -3,7 +3,7 @@ import { DslError } from './error.js'
 // `subchain` is reserved as in upstream's lexer (RESERVED_KEYWORDS), so it can
 // only open a subchain block after a '.' in a chain.
 // Upstream's lexer also reserves the control-flow words.
-const KEYWORDS = new Set(['search', 'let', 'render', 'true', 'false', 'subchain', 'if', 'elif', 'else', 'break', 'continue', 'return'])
+const KEYWORDS = new Set(['search', 'let', 'render', 'write', 'write3d', 'true', 'false', 'subchain', 'if', 'elif', 'else', 'break', 'continue', 'return'])
 const PUNCTUATION = new Set(['(', ')', '[', ']', '{', '}', ',', '.', ':', '=', ';'])
 const OPERATORS = new Set(['+', '-', '*', '/'])
 
@@ -14,6 +14,7 @@ export function tokenizeDsl(source, options = {}) {
   let index = 0
   let line = 1
   let column = 1
+  let commentBefore = false
 
   const start = () => ({ sourceName, line, column, index })
   const advance = () => {
@@ -24,7 +25,14 @@ export function tokenizeDsl(source, options = {}) {
     } else column += 1
     return char
   }
-  const push = (type, lexeme, location, value = undefined) => tokens.push({ type, lexeme, value, ...location })
+  const push = (type, lexeme, location, value = undefined) => {
+    const token = { type, lexeme, value, ...location }
+    // Comments stay out of the public token shape but delimit return values
+    // and branch attachment, as upstream's COMMENT tokens do.
+    if (commentBefore) Object.defineProperty(token, 'commentBefore', { value: true })
+    tokens.push(token)
+    commentBefore = false
+  }
 
   while (index < source.length) {
     const char = source[index]
@@ -33,10 +41,12 @@ export function tokenizeDsl(source, options = {}) {
       continue
     }
     if (char === '/' && source[index + 1] === '/') {
+      commentBefore = true
       while (index < source.length && source[index] !== '\n') advance()
       continue
     }
     if (char === '/' && source[index + 1] === '*') {
+      commentBefore = true
       const location = start()
       advance()
       advance()
