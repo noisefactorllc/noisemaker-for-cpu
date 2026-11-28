@@ -215,6 +215,12 @@ function extend(at, segment) {
   return at && { key: at.key, path: [...at.path, segment] }
 }
 
+function unassignedVariable(name, loc) {
+  const message = 'Variable used before assignment'
+  // Upstream appends the name only when the diagnostic does not already contain it.
+  return new DslError(message.includes(name) ? message : `${message}: '${name}'`, loc, 'S003')
+}
+
 // `resolving` threads the chain of binding names currently being resolved so a
 // cyclic let set (`let a = b`, `let b = a`) fails instead of looping forever,
 // as upstream's validator substitution detects the same cycle.
@@ -298,7 +304,7 @@ function evaluateValue(value, bindings, oscDepth = 0, resolving = [], at = null)
       return binding.value
     }
     if (bindings.pendingNames?.has(value.name)) {
-      throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
+      throw unassignedVariable(value.name, value.loc)
     }
     return value.name
   }
@@ -359,6 +365,15 @@ function resolveArgs(args, bindings, call, definition, elementKey) {
       throw new DslError(`Chain for argument '${name}' in ${call.name}() may contain only effect calls`, chain.loc, 'S001')
     }
     const at = elementKey && name ? { key: joinKey(elementKey, name), path: [] } : null
+    const param = definition?.params[name]
+    const value = arg.value
+    if (value?.kind === 'identifier' && !value.name.includes('.') &&
+        !bindings.boundOf(value) && !bindings.has(value.name) &&
+        !STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name) &&
+        ['float', 'int', 'bool', 'boolean', 'enum', 'member', 'palette'].includes(param?.type) &&
+        !(Object.hasOwn(param.choices ?? {}, value.name) && param.choices[value.name] !== null)) {
+      throw unassignedVariable(value.name, value.loc)
+    }
     return { ...arg, value: evaluateValue(arg.value, bindings, 0, [], at) }
   })
 }
@@ -1443,7 +1458,7 @@ function declareBinding(binding, bindings) {
   }
   if (binding.value?.kind === 'identifier' && !binding.value.name.includes('.') &&
       !bindings.has(binding.value.name) && !bindings.registry.resolve(binding.value.name, bindings.search)) {
-    throw new DslError(`Variable used before assignment: '${binding.value.name}'`, binding.value.loc)
+    throw unassignedVariable(binding.value.name, binding.value.loc)
   }
   // A value let draws once, under its own key, wherever it is used. One that
   // holds a random call draws where it is written, used or not, as upstream's
@@ -1566,7 +1581,7 @@ function checkConditionValue(value, bindings, loc, seen = new Set()) {
     return
   }
   if (!STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name)) {
-    throw new DslError(`Variable used before assignment: '${value.name}'`, at)
+    throw unassignedVariable(value.name, at)
   }
 }
 
@@ -1604,7 +1619,7 @@ function checkPendingReads(value, bindings) {
     if (segments.some((segment) => /^(o|s|vol|geo|xyz|vel|rgba|mesh)\d+[A-Za-z_]/.test(segment))) throw new DslError("Expect '('", value.loc)
     if (segments.length > 1 && /^(o|s|vol|geo|xyz|vel|rgba|mesh)\d+$/.test(segments[0])) throw new DslError('Expected identifier', value.loc)
     if (!bindings.has(value.name) && bindings.pendingNames?.has(value.name)) {
-      throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
+      throw unassignedVariable(value.name, value.loc)
     }
   } else if (value.kind === 'binary') {
     // Checked only when neither operand is deferred (upstream isDeferred).

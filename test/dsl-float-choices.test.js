@@ -110,10 +110,11 @@ test('the CLI renders every float choice name to the same PNG as its numeric val
   }
 })
 
-test('a name that is not a float choice still fails with an error that names the parameter', () => {
+test('an unknown float choice reports S003 with the unresolved name', () => {
   const registry = createDefaultRegistry()
   for (const id of Object.keys(PROGRAMS)) {
-    assert.throws(() => compileDsl(PROGRAMS[id].replace('%', 'wobble'), registry), /Parameter "rotation"/, id)
+    assert.throws(() => compileDsl(PROGRAMS[id].replace('%', 'wobble'), registry),
+      { code: 'S003', message: /: Variable used before assignment: 'wobble'$/ }, id)
   }
 })
 

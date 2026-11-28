@@ -27,7 +27,7 @@ test('a chain reading a let declared by a later statement reports S003', () => {
 search synth
 noise(scaleX: x).write(o0)
 let x = 20
-`, registry), (error) => error.message.includes("Variable used before assignment: 'x'"))
+`, registry), { code: 'S003', message: /: Variable used before assignment: 'x'$/ })
 })
 
 test('a let may reference a later let inside its value expression', () => {
@@ -48,7 +48,7 @@ search synth
 let a = b
 let b = 5
 noise(scaleX: a).write(o0)
-`, registry), (error) => error.message.includes("Variable used before assignment: 'b'"))
+`, registry), { code: 'S003', message: /: Variable used before assignment$/ })
 })
 
 test('a value call may reference a later let in its arguments', () => {
@@ -80,5 +80,27 @@ test('a let whose bare identifier names nothing resolvable reports S003 at decla
 search synth
 let y = x
 noise().write(o0)
-`, registry), (error) => error.message.includes("Variable used before assignment: 'x'"))
+`, registry), { code: 'S003', message: /: Variable used before assignment: 'x'$/ })
 })
+
+for (const [name, body, message] of [
+  ['an unknown if condition', 'noise().write(o0)\nif (zzz) { noise().write(o1) }', "Variable used before assignment: 'zzz'"],
+  ['an unknown elif condition', 'noise().write(o0)\nif (0) { noise().write(o1) } elif (zzz) { noise().write(o2) }', "Variable used before assignment: 'zzz'"],
+  ['a bare enum namespace in a let', 'let k = oscKind\nnoise().write(o0)', "Variable used before assignment: 'oscKind'"],
+  ['an unknown let value', 'let y = zzz\nnoise().write(o0)', "Variable used before assignment: 'zzz'"],
+  ['an unknown numeric argument', 'noise(scaleX: zzz).write(o0)', "Variable used before assignment: 'zzz'"],
+  ['a later let in a condition', 'noise().write(o0)\nif (b) { noise().write(o1) }\nlet b = 1', 'Variable used before assignment'],
+  ['a later let in an argument', 'noise(scaleX: b).write(o0)\nlet b = 2', 'Variable used before assignment'],
+  ['an unknown name already in the diagnostic text', 'noise().write(o0)\nif (b) { noise().write(o1) }', 'Variable used before assignment'],
+  ['a later name absent from the diagnostic text', 'noise(scaleX: zzz).write(o0)\nlet zzz = 2', "Variable used before assignment: 'zzz'"],
+  ['an unknown numeric choice', 'noise(type: zzz).write(o0)', "Variable used before assignment: 'zzz'"],
+  ['an unknown boolean argument', 'noise(ridges: zzz).write(o0)', "Variable used before assignment: 'zzz'"],
+]) {
+  test(`${name} reports the authority's S003 code and message`, () => {
+    assert.throws(() => compileDsl(`search synth, filter\nseed 3\n${body}\nrender(o0)`, registry), (error) => {
+      assert.equal(error.code, 'S003')
+      assert.equal(error.message, `${error.sourceName}:${error.line}:${error.column}: ${message}`)
+      return true
+    })
+  })
+}
