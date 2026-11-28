@@ -387,3 +387,46 @@ test('arithmetic refuses let names and non-numeric non-deferred operands in ever
     assert.ok(compile(`search synth, filter\nseed 3\n${source}`), source)
   }
 })
+
+test('if and elif conditions resolve enum paths directly and through bindings against registered and standard enums', () => {
+  for (const [source, path] of [
+    ['noise().write(o0)\nif (foo.bar) {\n  noise(scaleX: rand(1, 9)).write(o1)\n}\nrender(o0)', 'foo.bar'],
+    ['let x = foo.o1\nnoise().write(o0)\nif (x) {\n  noise().write(o1)\n}\nrender(o0)', 'foo.o1'],
+    ['let x = foo.bar\nnoise().write(o0)\nif (x) {\n  noise().write(o1)\n}\nrender(o0)', 'foo.bar'],
+    ['let y = foo.bar\nlet x = y\nnoise().write(o0)\nif (x) {\n  noise().write(o1)\n}\nrender(o0)', 'foo.bar'],
+    ['noise().write(o0)\nif (true) {\n  noise().write(o1)\n} elif (foo.bar) {\n  noise().write(o2)\n}\nrender(o0)', 'foo.bar'],
+    ['noise().write(o0)\nif (+foo.bar) {\n  noise().write(o1)\n}\nrender(o0)', 'foo.bar'],
+    ['noise().write(o0)\nif (synth.noise.colorMode.nope) {\n  noise().write(o1)\n}\nrender(o0)', 'synth.noise.colorMode.nope'],
+    ['noise().write(o0)\nif (filter.palette.index.afterimage) {\n  noise().write(o1)\n}\nrender(o0)', 'filter.palette.index.afterimage'],
+    ['noise().write(o0)\nif (oscKind.nope) {\n  noise().write(o1)\n}\nrender(o0)', 'oscKind.nope'],
+    ['noise().write(o0)\nif (oscKind.toString) {\n  noise().write(o1)\n}\nrender(o0)', 'oscKind.toString'],
+    ['noise().write(o0)\nif (toString.foo) {\n  noise().write(o1)\n}\nrender(o0)', 'toString.foo'],
+    ['let m = 1\nnoise().write(o0)\nif (m.rgb) {\n  noise().write(o1)\n}\nrender(o0)', 'm.rgb'],
+    ['let x = synth.noise\nnoise().write(o0)\nif (x.colorMode.nope) {\n  noise().write(o1)\n}\nrender(o0)', 'x.colorMode.nope'],
+    ['let x = pick(foo.bar, foo.baz)\nnoise().write(o0)\nif (x) {\n  noise().write(o1)\n}\nrender(o0)', 'foo.bar'],
+    ['noise().write(o0)\nif (pick(foo.bar, foo.baz)) {\n  noise().write(o1)\n}\nrender(o0)', 'foo.baz'],
+  ]) {
+    assert.throws(
+      () => compile(`search synth, filter\nseed 3\n${source}`),
+      (error) => error.code === 'S001' && error.message.includes(`Unknown enum path: '${path}'`),
+      source,
+    )
+  }
+
+  for (const source of [
+    'noise().write(o0)\nif (synth.noise.colorMode.rgb) {\n  noise().write(o1)\n}\nrender(o0)',
+    'let c = synth.noise.colorMode.rgb\nnoise().write(o0)\nif (c) {\n  noise().write(o1)\n}\nrender(o0)',
+    'let m = synth.noise.colorMode\nnoise().write(o0)\nif (m.rgb) {\n  noise().write(o1)\n}\nrender(o0)',
+    'let n = synth.noise\nnoise().write(o0)\nif (n.colorMode.rgb) {\n  noise().write(o1)\n}\nrender(o0)',
+    'noise().write(o0)\nif (oscKind.sine) {\n  noise().write(o1)\n}\nrender(o0)',
+    'noise().write(o0)\nif (channel.r) {\n  noise().write(o1)\n}\nrender(o0)',
+    'noise().write(o0)\nif (palette.afterimage) {\n  noise().write(o1)\n}\nrender(o0)',
+    'let x = pick(synth.noise.colorMode.rgb, synth.noise.colorMode.mono)\nnoise().write(o0)\nif (x) {\n  noise().write(o1)\n}\nrender(o0)',
+    'noise().write(o0)\nif (1) {\n  noise().write(o1)\n}\nrender(o0)',
+    'let n = 1\nnoise().write(o0)\nif (n) {\n  noise().write(o1)\n}\nrender(o0)',
+    'noise().write(o0)\nif (time) {\n  noise().write(o1)\n}\nrender(o0)',
+    'noise().write(o0)\nreturn foo.bar\nrender(o0)',
+  ]) {
+    assert.ok(compile(`search synth, filter\nseed 3\n${source}`), source)
+  }
+})

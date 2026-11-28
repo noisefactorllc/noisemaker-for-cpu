@@ -11,6 +11,70 @@ const OSC_PARAM_ORDER = ['type', 'min', 'max', 'speed', 'offset', 'seed']
 const MAX_AUTOMATION_DEPTH = 8
 const VALUE_CALLS = new Set(['osc', 'midi', 'audio'])
 
+function nullMap(entries = {}) {
+  return Object.assign(Object.create(null), entries)
+}
+
+// Mirrors upstream shaders/src/lang/std_enums.js (palette entries come from the
+// registry's filter/palette definition so they stay in lockstep with the catalog).
+const STATIC_STD_ENUMS = nullMap({
+  channel: nullMap({ r: 0, g: 1, b: 2, a: 3 }),
+  color: nullMap({ mono: 0, rgb: 1, hsv: 2 }),
+  oscType: nullMap({ sine: 0, linear: 1, sawtooth: 2, sawtoothInv: 3, square: 4, noise1d: 5, noise2d: 6 }),
+  oscKind: nullMap(OSC_KINDS),
+  midiMode: nullMap({
+    noteChange: 0, gateNote: 1, gateVelocity: 2, triggerNote: 3, velocity: 4,
+    cc: 5, cc14: 6, nrpn: 7, pitchBend: 8, pressure: 9, polyPressure: 10,
+  }),
+  midiZone: nullMap({ lower: 0, upper: 1 }),
+  audioBand: nullMap({ low: 0, mid: 1, high: 2, vol: 3, raw: 4 }),
+})
+
+// Mirrors upstream shaders/src/renderer/canvas.js sanitizeEnumName.
+function sanitizeEnumName(name) {
+  const result = name.replace(/\s+(.)/g, (_, ch) => ch.toUpperCase()).replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '')
+  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(result) ? result : null
+}
+
+const conditionEnumCache = new WeakMap()
+
+// Builds the condition enum tables for a registry: registered effect choices
+// (excluding palette params which live under standard `palette.*`, matching
+// upstream registerEffectWithRuntime) and standard enums. Kept separate from
+// argument choice coercion in EffectDefinition.
+function conditionEnumsFor(registry) {
+  const count = registry.effects?.size ?? 0
+  const cached = conditionEnumCache.get(registry)
+  if (cached && cached.count === count) return cached.tables
+
+  const registered = Object.create(null)
+  const palette = Object.create(null)
+  const paletteChoices = registry.get('filter', 'palette')?.params?.index?.choices
+  if (paletteChoices && typeof paletteChoices === 'object') {
+    for (const [name, val] of Object.entries(paletteChoices)) {
+      if (!name.endsWith(':') && val !== null) palette[name] = val
+    }
+  }
+  for (const effect of registry.list()) {
+    for (const [paramName, spec] of Object.entries(effect.params ?? {})) {
+      if (!spec?.choices || typeof spec.choices !== 'object' || spec.enum || spec.enumPath) continue
+      const ns = (registered[effect.namespace] ??= Object.create(null))
+      const fn = (ns[effect.func] ??= Object.create(null))
+      const table = (fn[paramName] ??= Object.create(null))
+      for (const [choiceName, val] of Object.entries(spec.choices)) {
+        if (choiceName.endsWith(':') || val === null) continue
+        table[choiceName] = val
+        const sanitized = sanitizeEnumName(choiceName)
+        if (sanitized && sanitized !== choiceName) table[sanitized] = val
+      }
+    }
+  }
+  const standard = nullMap({ ...STATIC_STD_ENUMS, palette })
+  const tables = { registered, standard }
+  conditionEnumCache.set(registry, { count, tables })
+  return tables
+}
+
 function isOscValue(value) {
   return isAutomationValue(value)
 }
@@ -1419,21 +1483,96 @@ const REFERENCE_NAME = /^(s|vol|geo|xyz|vel|rgba|mesh)\d+$/
 
 // The reads of a condition or a return value, as upstream checks them: a let
 // written later is S003 at any depth (reportReadsBeforeLet); arithmetic on a
-// boolean is refused ("Expected number"); and a condition that is one name
-// must name a let, a state value or a reference (evalCondition). An enum path
-// is not checked.
+// boolean is refused ("Expected number"); and a condition resolves bindings and
+// member paths against scoped bindings, registered choices and standard enums
+// (evalCondition / resolveEnum).
+function containsDottedIdentifier(node, name) {
+  if (Array.isArray(node)) return node.some((item) => containsDottedIdentifier(item, name))
+  if (!node || typeof node !== 'object') return false
+  if (node.kind === 'identifier') return node.name === name
+  if (node.kind === 'Call') return node.args.some((arg) => containsDottedIdentifier(arg.value, name))
+  if (node.kind === 'unary') return containsDottedIdentifier(node.argument, name)
+  if (node.kind === 'binary') return containsDottedIdentifier(node.left, name) || containsDottedIdentifier(node.right, name)
+  if (node.kind === 'vector') return containsDottedIdentifier(node.values, name)
+  return false
+}
+
+function resolveConditionBinding(binding, bindings, seen) {
+  let target = binding.resolved ? binding.value : binding.expr
+  while (target?.kind === 'unary' && target.operator === '+') target = target.argument
+  if (binding.resolved && typeof target === 'string' && target.includes('.') && containsDottedIdentifier(binding.expr, target)) {
+    return resolveConditionEnum(target.split('.'), bindings, seen)
+  }
+  if (target?.kind === 'identifier') {
+    if (target.name.includes('.')) return resolveConditionEnum(target.name.split('.'), bindings, seen)
+    const next = bindings.boundOf(target) ?? bindings.get(target.name)
+    if (next?.kind === 'value' && !seen.has(target.name)) {
+      const nextSeen = new Set(seen)
+      nextSeen.add(target.name)
+      return resolveConditionBinding(next, bindings, nextSeen)
+    }
+    return undefined
+  }
+  return target
+}
+
+function resolveConditionEnum(segments, bindings, seen = new Set()) {
+  if (!Array.isArray(segments) || segments.length === 0) return undefined
+  const [head, ...rest] = segments
+  const { registered, standard } = conditionEnumsFor(bindings.registry)
+  let cur
+  if (bindings.has(head)) {
+    const binding = bindings.get(head)
+    if (binding.kind !== 'value' || seen.has(head)) return undefined
+    const nextSeen = new Set(seen)
+    nextSeen.add(head)
+    cur = resolveConditionBinding(binding, bindings, nextSeen)
+  } else if (Object.hasOwn(registered, head)) {
+    cur = registered[head]
+  } else if (Object.hasOwn(standard, head)) {
+    cur = standard[head]
+  } else {
+    return undefined
+  }
+  for (const part of rest) {
+    if (cur && typeof cur === 'object' && Object.hasOwn(cur, part)) cur = cur[part]
+    else return undefined
+  }
+  return cur
+}
+
+function checkConditionValue(value, bindings, loc, seen = new Set()) {
+  while (value?.kind === 'unary' && value.operator === '+') value = value.argument
+  if (value?.kind !== 'identifier') return
+  const at = value.loc ?? loc
+  if (value.name.includes('.')) {
+    if (resolveConditionEnum(value.name.split('.'), bindings, seen) === undefined) {
+      throw new DslError(`Unknown enum path: '${value.name}'`, at, 'S001')
+    }
+    return
+  }
+  const binding = bindings.boundOf(value) ?? bindings.get(value.name)
+  if (binding) {
+    if (binding.kind !== 'value' || seen.has(value.name)) return
+    const nextSeen = new Set(seen)
+    nextSeen.add(value.name)
+    if (!binding.resolved) {
+      checkConditionValue(binding.expr, bindings, at, nextSeen)
+    } else if (typeof binding.value === 'string' && binding.value.includes('.') && containsDottedIdentifier(binding.expr, binding.value)) {
+      if (resolveConditionEnum(binding.value.split('.'), bindings, nextSeen) === undefined) {
+        throw new DslError(`Unknown enum path: '${binding.value}'`, at, 'S001')
+      }
+    }
+    return
+  }
+  if (!STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name)) {
+    throw new DslError(`Variable used before assignment: '${value.name}'`, at)
+  }
+}
+
 function checkReads(value, bindings, { condition = false } = {}) {
   checkPendingReads(value, bindings)
-  // Upstream's parser drops a unary `+`, so `+foo` is checked as `foo`.
-  while (value?.kind === 'unary' && value.operator === '+') value = value.argument
-  // No enum has an output reference as a member (upstream: unknown enum path).
-  if (condition && value?.kind === 'identifier' && value.name.split('.').slice(1).some((segment) => /^o\d+$/.test(segment))) {
-    throw new DslError(`Unknown enum path: '${value.name}'`, value.loc)
-  }
-  if (condition && value?.kind === 'identifier' && !value.name.includes('.') && !bindings.has(value.name) &&
-      !STATE_VALUES.has(value.name) && !REFERENCE_NAME.test(value.name)) {
-    throw new DslError(`Variable used before assignment: '${value.name}'`, value.loc)
-  }
+  if (condition) checkConditionValue(value, bindings, value?.loc)
 }
 
 // Upstream folds an operation on constants to a number, and defers one that
@@ -1493,7 +1632,14 @@ function compileStatement(statement, bindings) {
     const ifKey = `if_${++bindings.ifCount}`
     const condition = (node, k) => {
       checkReads(node, bindings, { condition: true })
-      if (containsRandom(node)) evaluateValue(node, bindings, 0, [], { key: bindings.scoped(ifKey, `cond${k}`), path: [] })
+      if (containsRandom(node)) {
+        const resolved = evaluateValue(node, bindings, 0, [], { key: bindings.scoped(ifKey, `cond${k}`), path: [] })
+        if (typeof resolved === 'string' && resolved.includes('.') && containsDottedIdentifier(node, resolved)) {
+          if (resolveConditionEnum(resolved.split('.'), bindings) === undefined) {
+            throw new DslError(`Unknown enum path: '${resolved}'`, node.loc, 'S001')
+          }
+        }
+      }
     }
     const branch = (k, body) => {
       bindings.keyScope.push(`${ifKey}/b${k}`)
